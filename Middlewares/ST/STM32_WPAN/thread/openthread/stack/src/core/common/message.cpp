@@ -37,11 +37,11 @@
 #include "common/code_utils.hpp"
 #include "common/debug.hpp"
 #include "common/heap.hpp"
-#include "common/instance.hpp"
 #include "common/locator_getters.hpp"
 #include "common/log.hpp"
 #include "common/num_utils.hpp"
 #include "common/numeric_limits.hpp"
+#include "instance/instance.hpp"
 #include "net/checksum.hpp"
 #include "net/ip6.hpp"
 
@@ -75,11 +75,13 @@ Message *MessagePool::Allocate(Message::Type aType, uint16_t aReserveHeader, con
 
     VerifyOrExit((message = static_cast<Message *>(NewBuffer(aSettings.GetPriority()))) != nullptr);
 
-    memset(message, 0, sizeof(*message));
+    ClearAllBytes(*message);
     message->SetMessagePool(this);
     message->SetType(aType);
     message->SetReserved(aReserveHeader);
     message->SetLinkSecurityEnabled(aSettings.IsLinkSecurityEnabled());
+    message->SetLoopbackToHostAllowed(OPENTHREAD_CONFIG_IP6_ALLOW_LOOP_BACK_HOST_DATAGRAMS);
+    message->SetOrigin(Message::kOriginHostTrusted);
 
     SuccessOrExit(error = message->SetPriority(aSettings.GetPriority()));
     SuccessOrExit(error = message->SetLength(0));
@@ -545,6 +547,8 @@ exit:
     return error;
 }
 
+void Message::RemoveFooter(uint16_t aLength) { IgnoreError(SetLength(GetLength() - Min(aLength, GetLength()))); }
+
 void Message::GetFirstChunk(uint16_t aOffset, uint16_t &aLength, Chunk &aChunk) const
 {
     // This method gets the first message chunk (contiguous data
@@ -768,10 +772,19 @@ Message *Message::Clone(uint16_t aLength) const
     SuccessOrExit(error = messageCopy->AppendBytesFromMessage(*this, 0, aLength));
 
     // Copy selected message information.
+
     offset = Min(GetOffset(), aLength);
     messageCopy->SetOffset(offset);
 
     messageCopy->SetSubType(GetSubType());
+    messageCopy->SetLoopbackToHostAllowed(IsLoopbackToHostAllowed());
+    messageCopy->SetOrigin(GetOrigin());
+    messageCopy->SetTimestamp(GetTimestamp());
+    messageCopy->SetMeshDest(GetMeshDest());
+    messageCopy->SetPanId(GetPanId());
+    messageCopy->SetChannel(GetChannel());
+    messageCopy->SetRssAverager(GetRssAverager());
+    messageCopy->SetLqiAverager(GetLqiAverager());
 #if OPENTHREAD_CONFIG_TIME_SYNC_ENABLE
     messageCopy->SetTimeSync(IsTimeSync());
 #endif
@@ -791,18 +804,48 @@ void Message::SetChildMask(uint16_t aChildIndex) { GetMetadata().mChildMask.Set(
 bool Message::IsChildPending(void) const { return GetMetadata().mChildMask.HasAny(); }
 #endif
 
-void Message::SetLinkInfo(const ThreadLinkInfo &aLinkInfo)
+Error Message::GetLinkInfo(ThreadLinkInfo &aLinkInfo) const
 {
-    SetLinkSecurityEnabled(aLinkInfo.mLinkSecurity);
-    SetPanId(aLinkInfo.mPanId);
-    AddRss(aLinkInfo.mRss);
-#if OPENTHREAD_CONFIG_MLE_LINK_METRICS_SUBJECT_ENABLE
-    AddLqi(aLinkInfo.mLqi);
+    Error error = kErrorNone;
+
+    VerifyOrExit(IsOriginThreadNetif(), error = kErrorNotFound);
+
+    aLinkInfo.Clear();
+
+    aLinkInfo.mPanId               = GetPanId();
+    aLinkInfo.mChannel             = GetChannel();
+    aLinkInfo.mRss                 = GetAverageRss();
+    aLinkInfo.mLqi                 = GetAverageLqi();
+    aLinkInfo.mLinkSecurity        = IsLinkSecurityEnabled();
+    aLinkInfo.mIsDstPanIdBroadcast = IsDstPanIdBroadcast();
+
+#if OPENTHREAD_CONFIG_TIME_SYNC_ENABLE
+    aLinkInfo.mTimeSyncSeq       = GetTimeSyncSeq();
+    aLinkInfo.mNetworkTimeOffset = GetNetworkTimeOffset();
 #endif
+
+#if OPENTHREAD_CONFIG_MULTI_RADIO
+    aLinkInfo.mRadioType = GetRadioType();
+#endif
+
+exit:
+    return error;
+}
+
+void Message::UpdateLinkInfoFrom(const ThreadLinkInfo &aLinkInfo)
+{
+    SetPanId(aLinkInfo.mPanId);
+    SetChannel(aLinkInfo.mChannel);
+    AddRss(aLinkInfo.mRss);
+    AddLqi(aLinkInfo.mLqi);
+    SetLinkSecurityEnabled(aLinkInfo.mLinkSecurity);
+    GetMetadata().mIsDstPanIdBroadcast = aLinkInfo.IsDstPanIdBroadcast();
+
 #if OPENTHREAD_CONFIG_TIME_SYNC_ENABLE
     SetTimeSyncSeq(aLinkInfo.mTimeSyncSeq);
     SetNetworkTimeOffset(aLinkInfo.mNetworkTimeOffset);
 #endif
+
 #if OPENTHREAD_CONFIG_MULTI_RADIO
     SetRadioType(static_cast<Mac::RadioType>(aLinkInfo.mRadioType));
 #endif

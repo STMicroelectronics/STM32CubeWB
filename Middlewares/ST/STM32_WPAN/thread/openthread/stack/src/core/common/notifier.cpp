@@ -186,6 +186,9 @@ void Notifier::EmitEvents(void)
     // being published (if needed).
     Get<NetworkData::Publisher>().HandleNotifierEvents(events);
 #endif
+#if OPENTHREAD_CONFIG_LINK_METRICS_MANAGER_ENABLE
+    Get<Utils::LinkMetricsManager>().HandleNotifierEvents(events);
+#endif
 
     for (ExternalCallback &callback : mExternalCallbacks)
     {
@@ -207,7 +210,7 @@ void Notifier::LogEvents(Events aEvents) const
     bool                           didLog   = false;
     String<kFlagsStringBufferSize> string;
 
-    for (uint8_t bit = 0; bit < sizeof(Events::Flags) * CHAR_BIT; bit++)
+    for (uint8_t bit = 0; bit < BitSizeOf(Events::Flags); bit++)
     {
         VerifyOrExit(flags != 0);
 

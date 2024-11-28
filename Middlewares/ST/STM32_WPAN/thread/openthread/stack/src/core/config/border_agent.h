@@ -36,6 +36,16 @@
 #define CONFIG_BORDER_AGENT_H_
 
 /**
+ * @addtogroup config-border-agent
+ *
+ * @brief
+ *   This module includes configuration variables for Border Agent.
+ *
+ * @{
+ *
+ */
+
+/**
  * @def OPENTHREAD_CONFIG_BORDER_AGENT_ENABLE
  *
  * Define to 1 to enable Border Agent support.
@@ -58,11 +68,26 @@
 /**
  * @def OPENTHREAD_CONFIG_BORDER_AGENT_ID_ENABLE
  *
- * Define ro 1 to enable Border Agent ID support.
+ * Define to 1 to enable Border Agent ID support.
  *
  */
 #ifndef OPENTHREAD_CONFIG_BORDER_AGENT_ID_ENABLE
-#define OPENTHREAD_CONFIG_BORDER_AGENT_ID_ENABLE 0
+#define OPENTHREAD_CONFIG_BORDER_AGENT_ID_ENABLE 1
 #endif
+
+/**
+ * @def OPENTHREAD_CONFIG_BORDER_AGENT_EPHEMERAL_KEY_ENABLE
+ *
+ * Define to 1 to enable ephemeral key mechanism and its APIs in Border Agent.
+ *
+ */
+#ifndef OPENTHREAD_CONFIG_BORDER_AGENT_EPHEMERAL_KEY_ENABLE
+#define OPENTHREAD_CONFIG_BORDER_AGENT_EPHEMERAL_KEY_ENABLE (OPENTHREAD_CONFIG_THREAD_VERSION >= OT_THREAD_VERSION_1_4)
+#endif
+
+/**
+ * @}
+ *
+ */
 
 #endif // CONFIG_BORDER_AGENT_H_

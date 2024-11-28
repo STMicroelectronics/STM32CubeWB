@@ -1,12 +1,13 @@
+/* USER CODE BEGIN Header */
 /**
- ******************************************************************************
-  * File Name          : app_conf.h
-  * Description        : Application configuration file for STM32WPAN Middleware.
-  *
- ******************************************************************************
+  ******************************************************************************
+  * @file    app_conf.h
+  * @author  MCD Application Team
+  * @brief   Application configuration file for STM32WPAN Middleware.
+  ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2019-2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -15,6 +16,7 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef APP_CONF_H
@@ -52,7 +54,6 @@
  * It shall be at least 4 to receive the command status event in one frame.
  * The default value is set to 27 to allow receiving an event of MTU size in a single buffer. This value maybe reduced
  * further depending on the application.
- *
  */
 #define CFG_TL_MOST_EVENT_PAYLOAD_SIZE 255   /**< Set to 255 with the memory manager and the mailbox */
 
@@ -64,9 +65,9 @@
 /**
  * Select UART interfaces
  */
-#define CFG_DEBUG_TRACE_UART   hw_uart1 
-#define CFG_CONSOLE_MENU      
-#define CFG_CLI_UART           hw_lpuart1
+#define CFG_DEBUG_TRACE_UART    hw_uart1
+#define CFG_CONSOLE_MENU
+#define CFG_CLI_UART            hw_lpuart1
 /******************************************************************************
  * USB interface
  ******************************************************************************/
@@ -75,6 +76,18 @@
  * Enable/Disable USB interface
  */
 #define CFG_USB_INTERFACE_ENABLE    0
+
+/******************************************************************************
+ * IPCC interface
+ ******************************************************************************/
+
+/**
+ * The IPCC is dedicated to the communication between the CPU2 and the CPU1
+ * and shall not be modified by the application
+ * The two following definitions shall not be modified
+ */
+#define HAL_IPCC_TX_IRQHandler(...)  HW_IPCC_Tx_Handler( )
+#define HAL_IPCC_RX_IRQHandler(...)  HW_IPCC_Rx_Handler( )
 
 /******************************************************************************
  * Low Power
@@ -93,14 +106,18 @@
 #undef CFG_LPM_SUPPORTED
 #define CFG_LPM_SUPPORTED   1
 #endif /* CFG_FULL_LOW_POWER */
+/******************************************************************************
+ * RTC interface
+ ******************************************************************************/
+#define HAL_RTCEx_WakeUpTimerIRQHandler(...)  HW_TS_RTC_Wakeup_Handler( )
 
 /******************************************************************************
  * Timer Server
  ******************************************************************************/
 /**
  *  CFG_RTC_WUCKSEL_DIVIDER:  This sets the RTCCLK divider to the wakeup timer.
- *  The higher is the value, the better is the power consumption and the accuracy of the timerserver
- *  The lower is the value, the finest is the granularity
+ *  The lower is the value, the better is the power consumption and the accuracy of the timerserver
+ *  The higher is the value, the finest is the granularity
  *
  *  CFG_RTC_ASYNCH_PRESCALER: This sets the asynchronous prescaler of the RTC. It should as high as possible ( to output
  *  clock as low as possible) but the output clock should be equal or higher frequency compare to the clock feeding
@@ -117,6 +134,7 @@
  *
  *  The following settings are computed with LSI as input to the RTC
  */
+
 #define CFG_RTCCLK_DIVIDER_CONF 0
 
 #if (CFG_RTCCLK_DIVIDER_CONF == 0)
@@ -125,10 +143,11 @@
  * It does not support 1Hz calendar
  * It divides the RTC CLK by 16
  */
-#define CFG_RTCCLK_DIV  (16)
-#define CFG_RTC_WUCKSEL_DIVIDER (0)
-#define CFG_RTC_ASYNCH_PRESCALER (CFG_RTCCLK_DIV - 1)
-#define CFG_RTC_SYNCH_PRESCALER (0x7FFF)
+
+#define CFG_RTCCLK_DIV            (16)
+#define CFG_RTC_WUCKSEL_DIVIDER   (0)
+#define CFG_RTC_ASYNCH_PRESCALER  (0x0F)
+#define CFG_RTC_SYNCH_PRESCALER   (0x7FFF)
 
 #else
 
@@ -166,12 +185,13 @@
 
 #endif
 
-/** tick timer value in us */
+/** tick timer values */
 #define CFG_TS_TICK_VAL           DIVR( (CFG_RTCCLK_DIV * 1000000), LSE_VALUE )
+#define CFG_TS_TICK_VAL_PS        DIVR( ((uint64_t)CFG_RTCCLK_DIV * 1e12), (uint64_t)LSE_VALUE )
 
 typedef enum
 {
-    CFG_TIM_PROC_ID_ISR,
+  CFG_TIM_PROC_ID_ISR,
 } CFG_TimProcID_t;
 
 /******************************************************************************
@@ -184,7 +204,7 @@ typedef enum
  * This shall be set to 0 in a final product
  *
  */
-#define CFG_HW_RESET_BY_FW         1
+#define CFG_HW_RESET_BY_FW         0
 
 /**
  * keep debugger enabled while in any low power mode when set to 1
@@ -205,7 +225,7 @@ typedef enum
  * Note : Refer to utilities_conf.h file in order to details
  *        the level of traces : CFG_DEBUG_TRACE_FULL or CFG_DEBUG_TRACE_LIGHT
  *****************************************************************************/
-#define CFG_DEBUG_TRACE    1
+#define CFG_DEBUG_TRACE    0
 
 #if (CFG_FULL_LOW_POWER == 1)
 #undef CFG_DEBUG_TRACE
@@ -246,7 +266,7 @@ typedef enum
  * Only Used if DBG_TRACE_USE_CIRCULAR_QUEUE is defined
  */
 #define DBG_TRACE_MSG_QUEUE_SIZE 4096
-#define MAX_DBG_TRACE_MSG_SIZE 1024
+#define MAX_DBG_TRACE_MSG_SIZE   1024
 
 /******************************************************************************
  * Configure Log level for Application
@@ -277,7 +297,8 @@ typedef enum
  * Each Id shall be in the range 0..31
  */
 
-typedef enum {
+typedef enum
+{
   CFG_TASK_NOTIFY_FROM_M0_TO_M4,
   CFG_TASK_REQUEST_FROM_M0_TO_M4,
   CFG_TASK_SYSTEM_HCI_ASYNCH_EVT,
@@ -289,15 +310,19 @@ typedef enum {
 #if (CFG_USB_INTERFACE_ENABLE != 0)
   CFG_TASK_VCP_SEND_DATA,
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
-  CFG_TASK_NBR /**< Shall be last in the list */
+  /* USER CODE BEGIN CFG_IdleTask_Id_t */
+
+  /* USER CODE END CFG_IdleTask_Id_t */
+  CFG_TASK_NBR  /**< Shall be last in the list */
 } CFG_IdleTask_Id_t;
 
 /* Scheduler types and defines        */
 /*------------------------------------*/
-
-//#define TASK_MSG_FROM_M0_TO_M4      (1U << CFG_TASK_MSG_FROM_M0_TO_M4)
 #define EVENT_ACK_FROM_M0_EVT        (1U << CFG_EVT_ACK_FROM_M0_EVT)
 #define EVENT_SYNCHRO_BYPASS_IDLE    (1U << CFG_EVT_SYNCHRO_BYPASS_IDLE)
+/* USER CODE BEGIN DEFINE_TASK */
+
+/* USER CODE END DEFINE_TASK */
 
 /**
  * This is the list of priority required by the application
@@ -305,40 +330,48 @@ typedef enum {
  */
 typedef enum
 {
-    CFG_SCH_PRIO_0,
-    CFG_SCH_PRIO_1,
-    CFG_PRIO_NBR,
+  CFG_SCH_PRIO_0,
+  CFG_SCH_PRIO_1,
+  /* USER CODE BEGIN CFG_SCH_Prio_Id_t */
+
+  /* USER CODE END CFG_SCH_Prio_Id_t */
+  CFG_SCH_PRIO_NBR  /**< Shall be last in the list */
 } CFG_SCH_Prio_Id_t;
 
 /**
  * This is a bit mapping over 32bits listing all events id supported in the application
  */
-typedef enum {
-    CFG_EVT_SYSTEM_HCI_CMD_EVT_RESP,
-    CFG_EVT_ACK_FROM_M0_EVT,
-    CFG_EVT_SYNCHRO_BYPASS_IDLE,
-    CFG_EVT_ZIGBEE_STARTUP_ENDED,
+typedef enum
+{
+  CFG_EVT_SYSTEM_HCI_CMD_EVT_RESP,
+  CFG_EVT_ACK_FROM_M0_EVT,
+  CFG_EVT_SYNCHRO_BYPASS_IDLE,
+  CFG_EVT_ZIGBEE_STARTUP_ENDED,
+  /* USER CODE BEGIN CFG_IdleEvt_Id_t */
+
+  /* USER CODE END CFG_IdleEvt_Id_t */
 } CFG_IdleEvt_Id_t;
 
 #define EVENT_ACK_FROM_M0_EVT           (1U << CFG_EVT_ACK_FROM_M0_EVT)
 #define EVENT_SYNCHRO_BYPASS_IDLE       (1U << CFG_EVT_SYNCHRO_BYPASS_IDLE)
 #define EVENT_ZIGBEE_STARTUP_ENDED      (1U << CFG_EVT_ZIGBEE_STARTUP_ENDED)
+/* USER CODE BEGIN DEFINE_EVENT */
 
-/******************************************************************************
- * Configure Log level for Application
- ******************************************************************************/
-#define APPLI_CONFIG_LOG_LEVEL          LOG_LEVEL_INFO
-#define APPLI_PRINT_FILE_FUNC_LINE      0
+/* USER CODE END DEFINE_EVENT */
 
 /******************************************************************************
  * LOW POWER
  ******************************************************************************/
 /**
  * Supported requester to the MCU Low Power Manager - can be increased up  to 32
- * It lists a bit mapping of all user of the Low Power Manager
+ * It list a bit mapping of all user of the Low Power Manager
  */
-typedef enum {
-    CFG_LPM_APP,
+typedef enum
+{
+  CFG_LPM_APP,
+  /* USER CODE BEGIN CFG_LPM_Id_t */
+
+  /* USER CODE END CFG_LPM_Id_t */
 } CFG_LPM_Id_t;
 
 /******************************************************************************

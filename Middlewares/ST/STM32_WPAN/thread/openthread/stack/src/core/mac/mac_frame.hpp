@@ -36,22 +36,15 @@
 
 #include "openthread-core-config.h"
 
-#include <limits.h>
-#include <stdint.h>
-
 #include "common/as_core_type.hpp"
 #include "common/const_cast.hpp"
 #include "common/encoding.hpp"
+#include "common/numeric_limits.hpp"
 #include "mac/mac_types.hpp"
 #include "meshcop/network_name.hpp"
 
 namespace ot {
 namespace Mac {
-
-using ot::Encoding::LittleEndian::HostSwap16;
-using ot::Encoding::LittleEndian::HostSwap64;
-using ot::Encoding::LittleEndian::ReadUint24;
-using ot::Encoding::LittleEndian::WriteUint24;
 
 /**
  * @addtogroup core-mac
@@ -89,7 +82,7 @@ public:
      * @returns the IE Element Id.
      *
      */
-    uint16_t GetId(void) const { return (HostSwap16(mFields.m16) & kIdMask) >> kIdOffset; }
+    uint16_t GetId(void) const { return (LittleEndian::HostSwap16(mFields.m16) & kIdMask) >> kIdOffset; }
 
     /**
      * Sets the IE Element Id.
@@ -99,7 +92,8 @@ public:
      */
     void SetId(uint16_t aId)
     {
-        mFields.m16 = HostSwap16((HostSwap16(mFields.m16) & ~kIdMask) | ((aId << kIdOffset) & kIdMask));
+        mFields.m16 = LittleEndian::HostSwap16((LittleEndian::HostSwap16(mFields.m16) & ~kIdMask) |
+                                               ((aId << kIdOffset) & kIdMask));
     }
 
     /**
@@ -159,7 +153,7 @@ public:
      * @returns The Vendor OUI.
      *
      */
-    uint32_t GetVendorOui(void) const { return ReadUint24(mOui); }
+    uint32_t GetVendorOui(void) const { return LittleEndian::ReadUint24(mOui); }
 
     /**
      * Sets the Vendor OUI.
@@ -167,7 +161,7 @@ public:
      * @param[in]  aVendorOui  A Vendor OUI.
      *
      */
-    void SetVendorOui(uint32_t aVendorOui) { WriteUint24(aVendorOui, mOui); }
+    void SetVendorOui(uint32_t aVendorOui) { LittleEndian::WriteUint24(aVendorOui, mOui); }
 
     /**
      * Returns the Vendor IE sub-type.
@@ -238,7 +232,7 @@ public:
      * @returns the network time, in microseconds.
      *
      */
-    uint64_t GetTime(void) const { return HostSwap64(mTime); }
+    uint64_t GetTime(void) const { return LittleEndian::HostSwap64(mTime); }
 
     /**
      * Sets the network time.
@@ -246,7 +240,7 @@ public:
      * @param[in]  aTime  The network time.
      *
      */
-    void SetTime(uint64_t aTime) { mTime = HostSwap64(aTime); }
+    void SetTime(uint64_t aTime) { mTime = LittleEndian::HostSwap64(aTime); }
 
 private:
     uint8_t  mSequence;
@@ -383,11 +377,11 @@ public:
      * Determines and writes the Frame Control Field (FCF) and Security Control in the frame along with
      * given source and destination addresses and PAN IDs.
      *
-     * The Ack Request bit in FCF is set if there is destination and it is not broadcast. The Frame Pending and IE
-     * Present bits are not set.
+     * The Ack Request bit in FCF is set if there is destination and it is not broadcast and frame type @p aType is not
+     * ACK. The Frame Pending and IE Present bits are not set.
      *
      * @param[in] aType          Frame type.
-     * @param[in] aVerion        Frame version.
+     * @param[in] aVersion       Frame version.
      * @param[in] aAddrs         Frame source and destination addresses (each can be none, short, or extended).
      * @param[in] aPanIds        Source and destination PAN IDs.
      * @param[in] aSecurityLevel Frame security level.
@@ -503,6 +497,14 @@ public:
      *
      */
     bool IsIePresent(void) const { return (GetFrameControlField() & kFcfIePresent) != 0; }
+
+    /**
+     * Sets the IE Present bit.
+     *
+     * @param[in]  aIePresent   The IE Present bit.
+     *
+     */
+    void SetIePresent(bool aIePresent);
 
     /**
      * Returns the Sequence Number value.
@@ -1107,9 +1109,9 @@ protected:
     static constexpr uint8_t kKeyIdModeMask = 3 << 3;
 
     static constexpr uint8_t kMic0Size   = 0;
-    static constexpr uint8_t kMic32Size  = 32 / CHAR_BIT;
-    static constexpr uint8_t kMic64Size  = 64 / CHAR_BIT;
-    static constexpr uint8_t kMic128Size = 128 / CHAR_BIT;
+    static constexpr uint8_t kMic32Size  = 32 / kBitsPerByte;
+    static constexpr uint8_t kMic64Size  = 64 / kBitsPerByte;
+    static constexpr uint8_t kMic128Size = 128 / kBitsPerByte;
     static constexpr uint8_t kMaxMicSize = kMic128Size;
 
     static constexpr uint8_t kKeySourceSizeMode0 = 0;
@@ -1122,6 +1124,7 @@ protected:
     static constexpr uint8_t kMaxPsduSize   = kInvalidSize - 1;
     static constexpr uint8_t kSequenceIndex = kFcfSize;
 
+    void    SetFrameControlField(uint16_t aFcf);
     uint8_t FindDstPanIdIndex(void) const;
     uint8_t FindDstAddrIndex(void) const;
     uint8_t FindSrcPanIdIndex(void) const;
@@ -1148,8 +1151,6 @@ protected:
     static uint8_t CalculateAddrFieldSize(uint16_t aFcf);
     static uint8_t CalculateSecurityHeaderSize(uint8_t aSecurityControl);
     static uint8_t CalculateMicSize(uint8_t aSecurityControl);
-
-public:
 };
 
 /**
@@ -1204,10 +1205,18 @@ public:
 
     /**
      * Returns the timestamp when the frame was received.
-     * The timestamp marks the frame detection time: the end of the last symbol of SFD.
      *
-     * @returns The timestamp when the frame SFD was received, in microseconds.
+     * The value SHALL be the time of the local radio clock in
+     * microseconds when the end of the SFD (or equivalently: the start
+     * of the first symbol of the PHR) was present at the local antenna,
+     * see the definition of a "symbol boundary" in IEEE 802.15.4-2020,
+     * section 6.5.2 or equivalently the RMARKER definition in section
+     * 6.9.1 (albeit both unrelated to OT).
      *
+     * The time is relative to the local radio clock as defined by
+     * `otPlatRadioGetNow`.
+     *
+     * @returns The timestamp in microseconds.
      */
     const uint64_t &GetTimestamp(void) const { return mInfo.mRxInfo.mTimestamp; }
 
@@ -1502,16 +1511,16 @@ public:
     /**
      * Generate Enh-Ack in this frame object.
      *
-     * @param[in]    aFrame             A reference to the frame received.
+     * @param[in]    aRxFrame           A reference to the received frame.
      * @param[in]    aIsFramePending    Value of the ACK's frame pending bit.
      * @param[in]    aIeData            A pointer to the IE data portion of the ACK to be sent.
      * @param[in]    aIeLength          The length of IE data portion of the ACK to be sent.
      *
      * @retval  kErrorNone           Successfully generated Enh Ack.
-     * @retval  kErrorParse          @p aFrame has incorrect format.
+     * @retval  kErrorParse          @p aRxFrame has incorrect format.
      *
      */
-    Error GenerateEnhAck(const RxFrame &aFrame, bool aIsFramePending, const uint8_t *aIeData, uint8_t aIeLength);
+    Error GenerateEnhAck(const RxFrame &aRxFrame, bool aIsFramePending, const uint8_t *aIeData, uint8_t aIeLength);
 
 #if OPENTHREAD_CONFIG_THREAD_VERSION >= OT_THREAD_VERSION_1_2
     /**
@@ -1544,7 +1553,7 @@ public:
      */
     void Init(void)
     {
-        mSuperframeSpec     = HostSwap16(kSuperFrameSpec);
+        mSuperframeSpec     = LittleEndian::HostSwap16(kSuperFrameSpec);
         mGtsSpec            = 0;
         mPendingAddressSpec = 0;
     }
@@ -1558,7 +1567,8 @@ public:
      */
     bool IsValid(void) const
     {
-        return (mSuperframeSpec == HostSwap16(kSuperFrameSpec)) && (mGtsSpec == 0) && (mPendingAddressSpec == 0);
+        return (mSuperframeSpec == LittleEndian::HostSwap16(kSuperFrameSpec)) && (mGtsSpec == 0) &&
+               (mPendingAddressSpec == 0);
     }
 
     /**
@@ -1739,7 +1749,7 @@ public:
      * @returns the CSL Period.
      *
      */
-    uint16_t GetPeriod(void) const { return HostSwap16(mPeriod); }
+    uint16_t GetPeriod(void) const { return LittleEndian::HostSwap16(mPeriod); }
 
     /**
      * Sets the CSL Period.
@@ -1747,7 +1757,7 @@ public:
      * @param[in]  aPeriod  The CSL Period.
      *
      */
-    void SetPeriod(uint16_t aPeriod) { mPeriod = HostSwap16(aPeriod); }
+    void SetPeriod(uint16_t aPeriod) { mPeriod = LittleEndian::HostSwap16(aPeriod); }
 
     /**
      * Returns the CSL Phase.
@@ -1755,7 +1765,7 @@ public:
      * @returns the CSL Phase.
      *
      */
-    uint16_t GetPhase(void) const { return HostSwap16(mPhase); }
+    uint16_t GetPhase(void) const { return LittleEndian::HostSwap16(mPhase); }
 
     /**
      * Sets the CSL Phase.
@@ -1763,7 +1773,7 @@ public:
      * @param[in]  aPhase  The CSL Phase.
      *
      */
-    void SetPhase(uint16_t aPhase) { mPhase = HostSwap16(aPhase); }
+    void SetPhase(uint16_t aPhase) { mPhase = LittleEndian::HostSwap16(aPhase); }
 
 private:
     uint16_t mPhase;

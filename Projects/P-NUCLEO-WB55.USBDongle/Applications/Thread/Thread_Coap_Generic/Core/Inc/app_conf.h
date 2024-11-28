@@ -315,8 +315,6 @@ typedef enum
 #define TASK_COAP_MSG_BUTTON        (1U << CFG_TASK_COAP_MSG_BUTTON)
 #define TASK_MSG_FROM_M0_TO_M4      (1U << CFG_TASK_MSG_FROM_M0_TO_M4)
 
-#define EVENT_ACK_FROM_M0_EVT        (1U << CFG_EVT_ACK_FROM_M0_EVT)
-#define EVENT_SYNCHRO_BYPASS_IDLE    (1U << CFG_EVT_SYNCHRO_BYPASS_IDLE)
 
 /**
  * This is the list of priority required by the application
@@ -326,7 +324,7 @@ typedef enum
 {
     CFG_SCH_PRIO_0,
     CFG_SCH_PRIO_1,
-    CFG_PRIO_NBR,
+    CFG_SCH_PRIO_NBR,
 } CFG_SCH_Prio_Id_t;
 
  /**

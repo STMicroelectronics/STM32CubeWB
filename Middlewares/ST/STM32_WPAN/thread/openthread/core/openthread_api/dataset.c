@@ -33,6 +33,8 @@ extern otDatasetMgmtSetCallback otDatasetMgmtSetPendingCb;
 
 bool otDatasetIsCommissioned(otInstance *aInstance)
 {
+  bool rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -44,11 +46,17 @@ bool otDatasetIsCommissioned(otInstance *aInstance)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (bool)p_ot_req->Data[0];
+  rspData = (bool)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otDatasetGetActive(otInstance *aInstance, otOperationalDataset *aDataset)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -61,11 +69,17 @@ otError otDatasetGetActive(otInstance *aInstance, otOperationalDataset *aDataset
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otDatasetGetActiveTlvs(otInstance *aInstance, otOperationalDatasetTlvs *aDataset)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -78,11 +92,17 @@ otError otDatasetGetActiveTlvs(otInstance *aInstance, otOperationalDatasetTlvs *
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otDatasetSetActive(otInstance *aInstance, const otOperationalDataset *aDataset)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -95,11 +115,17 @@ otError otDatasetSetActive(otInstance *aInstance, const otOperationalDataset *aD
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otDatasetSetActiveTlvs(otInstance *aInstance, const otOperationalDatasetTlvs *aDataset)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -112,11 +138,17 @@ otError otDatasetSetActiveTlvs(otInstance *aInstance, const otOperationalDataset
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otDatasetGetPending(otInstance *aInstance, otOperationalDataset *aDataset)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -129,11 +161,17 @@ otError otDatasetGetPending(otInstance *aInstance, otOperationalDataset *aDatase
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otDatasetGetPendingTlvs(otInstance *aInstance, otOperationalDatasetTlvs *aDataset)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -146,11 +184,17 @@ otError otDatasetGetPendingTlvs(otInstance *aInstance, otOperationalDatasetTlvs 
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otDatasetSetPending(otInstance *aInstance, const otOperationalDataset *aDataset)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -163,11 +207,17 @@ otError otDatasetSetPending(otInstance *aInstance, const otOperationalDataset *a
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otDatasetSetPendingTlvs(otInstance *aInstance, const otOperationalDatasetTlvs *aDataset)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -180,7 +230,11 @@ otError otDatasetSetPendingTlvs(otInstance *aInstance, const otOperationalDatase
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otDatasetSendMgmtActiveGet(otInstance *                          aInstance,
@@ -189,6 +243,8 @@ otError otDatasetSendMgmtActiveGet(otInstance *                          aInstan
                                    uint8_t                               aLength,
                                    const otIp6Address *                  aAddress)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -204,7 +260,11 @@ otError otDatasetSendMgmtActiveGet(otInstance *                          aInstan
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otDatasetSendMgmtActiveSet(otInstance *                aInstance,
@@ -214,6 +274,8 @@ otError otDatasetSendMgmtActiveSet(otInstance *                aInstance,
                                    otDatasetMgmtSetCallback    aCallback,
                                    void *                      aContext)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -231,7 +293,11 @@ otError otDatasetSendMgmtActiveSet(otInstance *                aInstance,
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otDatasetSendMgmtPendingGet(otInstance *aInstance,
@@ -240,6 +306,8 @@ otError otDatasetSendMgmtPendingGet(otInstance *aInstance,
     uint8_t aLength,
     const otIp6Address *aAddress)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -255,7 +323,11 @@ otError otDatasetSendMgmtPendingGet(otInstance *aInstance,
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otDatasetSendMgmtPendingSet(otInstance *                aInstance,
@@ -265,6 +337,8 @@ otError otDatasetSendMgmtPendingSet(otInstance *                aInstance,
                                     otDatasetMgmtSetCallback    aCallback,
                                     void *                      aContext)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -282,7 +356,11 @@ otError otDatasetSendMgmtPendingSet(otInstance *                aInstance,
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 #if OPENTHREAD_FTD
@@ -291,6 +369,8 @@ otError otDatasetGeneratePskc(const char *           aPassPhrase,
                               const otExtendedPanId *aExtPanId,
                               otPskc *               aPskc)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -306,11 +386,18 @@ otError otDatasetGeneratePskc(const char *           aPassPhrase,
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];}
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
+}
 #endif // OPENTHREAD_FTD
 
 otError otNetworkNameFromString(otNetworkName *aNetworkName, const char *aNameString)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -324,11 +411,17 @@ otError otNetworkNameFromString(otNetworkName *aNetworkName, const char *aNameSt
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otDatasetParseTlvs(const otOperationalDatasetTlvs *aDatasetTlvs, otOperationalDataset *aDataset)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -342,10 +435,14 @@ otError otDatasetParseTlvs(const otOperationalDatasetTlvs *aDatasetTlvs, otOpera
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
-otError otDatasetConvertToTlvs(const otOperationalDataset *aDataset, otOperationalDatasetTlvs *aDatasetTlvs)
+void otDatasetConvertToTlvs(const otOperationalDataset *aDataset, otOperationalDatasetTlvs *aDatasetTlvs)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -358,13 +455,14 @@ otError otDatasetConvertToTlvs(const otOperationalDataset *aDataset, otOperation
   p_ot_req->Data[1] = (uint32_t) aDatasetTlvs;
 
   Ot_Cmd_Transfer();
-
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
 }
 
 otError otDatasetUpdateTlvs(const otOperationalDataset *aDataset, otOperationalDatasetTlvs *aDatasetTlvs)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -378,5 +476,9 @@ otError otDatasetUpdateTlvs(const otOperationalDataset *aDataset, otOperationalD
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }

@@ -43,7 +43,6 @@
 #include "common/timer.hpp"
 #include "mac/channel_mask.hpp"
 #include "meshcop/dataset.hpp"
-#include "meshcop/dataset_local.hpp"
 #include "net/udp6.hpp"
 #include "thread/tmf.hpp"
 
@@ -51,16 +50,34 @@ namespace ot {
 
 namespace MeshCoP {
 
+class ActiveDatasetManager;
+class PendingDatasetManager;
+
 class DatasetManager : public InstanceLocator
 {
+    friend class ActiveDatasetManager;
+    friend class PendingDatasetManager;
+
 public:
     /**
-     * Returns a pointer to the Timestamp.
-     *
-     * @returns A pointer to the Timestamp.
+     * Callback function pointer, invoked when a response to a MGMT_SET request is received or times out.
      *
      */
-    const Timestamp *GetTimestamp(void) const;
+    typedef otDatasetMgmtSetCallback MgmtSetCallback;
+
+    /**
+     * Returns the network Timestamp.
+     *
+     * @returns The network Timestamp.
+     *
+     */
+    const Timestamp &GetTimestamp(void) const { return mNetworkTimestamp; }
+
+    /**
+     * Clears the Operational Dataset.
+     *
+     */
+    void Clear(void);
 
     /**
      * Restores the Operational Dataset from non-volatile memory.
@@ -80,7 +97,7 @@ public:
      * @retval kErrorNotFound  There is no corresponding dataset stored in non-volatile memory.
      *
      */
-    Error Read(Dataset &aDataset) const { return mLocal.Read(aDataset); }
+    Error Read(Dataset &aDataset) const;
 
     /**
      * Retrieves the dataset from non-volatile memory.
@@ -91,18 +108,59 @@ public:
      * @retval kErrorNotFound  There is no corresponding dataset stored in non-volatile memory.
      *
      */
-    Error Read(Dataset::Info &aDatasetInfo) const { return mLocal.Read(aDatasetInfo); }
+    Error Read(Dataset::Info &aDatasetInfo) const;
 
     /**
      * Retrieves the dataset from non-volatile memory.
      *
-     * @param[out]  aDataset  Where to place the dataset.
+     * @param[out]  aDatasetTlvs  Where to place the dataset.
      *
      * @retval kErrorNone      Successfully retrieved the dataset.
      * @retval kErrorNotFound  There is no corresponding dataset stored in non-volatile memory.
      *
      */
-    Error Read(otOperationalDatasetTlvs &aDataset) const { return mLocal.Read(aDataset); }
+    Error Read(Dataset::Tlvs &aDatasetTlvs) const;
+
+    /**
+     * Saves the Operational Dataset in non-volatile memory.
+     *
+     * @param[in]  aDataset  The Operational Dataset.
+     *
+     */
+    void SaveLocal(const Dataset &aDataset);
+
+    /**
+     * Saves the Operational Dataset in non-volatile memory.
+     *
+     * @param[in]  aDatasetInfo  The Operational Dataset as `Dataset::Info`.
+     *
+     */
+    void SaveLocal(const Dataset::Info &aDatasetInfo);
+
+    /**
+     * Saves the Operational Dataset in non-volatile memory.
+     *
+     * @param[in]  aDatasetTlvs  The Operational Dataset as `Dataset::Tlvs`.
+     *
+     * @retval kErrorNone         Successfully saved the dataset.
+     * @retval kErrorInvalidArgs  The @p aDatasetTlvs is invalid. It is too long or contains incorrect TLV formatting.
+     *
+     */
+    Error SaveLocal(const Dataset::Tlvs &aDatasetTlvs);
+
+    /**
+     * Sets the Operational Dataset for the partition.
+     *
+     * Also updates the non-volatile local version if the partition's Operational Dataset is newer. If Active
+     * Operational Dataset is changed, applies the configuration to to Thread interface.
+     *
+     * @param[in]  aDataset  The Operational Dataset.
+     *
+     * @retval kErrorNone   Successfully applied configuration.
+     * @retval kErrorParse  The dataset has at least one TLV with invalid format.
+     *
+     */
+    Error Save(const Dataset &aDataset) { return Save(aDataset, /* aAllowOlderTimestamp */ false); }
 
     /**
      * Retrieves the channel mask from local dataset.
@@ -125,14 +183,6 @@ public:
     Error ApplyConfiguration(void) const;
 
     /**
-     * Updates the Operational Dataset when detaching from the network.
-     *
-     * On detach, the Operational Dataset is restored from non-volatile memory.
-     *
-     */
-    void HandleDetach(void);
-
-    /**
      * Sends a MGMT_SET request to the Leader.
      *
      * @param[in]  aDatasetInfo  The Operational Dataset.
@@ -146,11 +196,11 @@ public:
      * @retval kErrorBusy    A previous request is ongoing.
      *
      */
-    Error SendSetRequest(const Dataset::Info     &aDatasetInfo,
-                         const uint8_t           *aTlvs,
-                         uint8_t                  aLength,
-                         otDatasetMgmtSetCallback aCallback,
-                         void                    *aContext);
+    Error SendSetRequest(const Dataset::Info &aDatasetInfo,
+                         const uint8_t       *aTlvs,
+                         uint8_t              aLength,
+                         MgmtSetCallback      aCallback,
+                         void                *aContext);
 
     /**
      * Sends a MGMT_GET request.
@@ -168,200 +218,100 @@ public:
                          const uint8_t             *aTlvTypes,
                          uint8_t                    aLength,
                          const otIp6Address        *aAddress) const;
-#if OPENTHREAD_FTD
-    /**
-     * Appends the MLE Dataset TLV but excluding MeshCoP Sub Timestamp TLV.
-     *
-     * @param[in] aMessage       The message to append the TLV to.
-     *
-     * @retval kErrorNone    Successfully append MLE Dataset TLV without MeshCoP Sub Timestamp TLV.
-     * @retval kErrorNoBufs  Insufficient available buffers to append the message with MLE Dataset TLV.
-     *
-     */
-    Error AppendMleDatasetTlv(Message &aMessage) const;
-#endif
-
-protected:
-    /**
-     * Defines a generic Dataset TLV to read from a message.
-     *
-     */
-    OT_TOOL_PACKED_BEGIN
-    class DatasetTlv : public Tlv
-    {
-    public:
-        /**
-         * Reads the Dataset TLV from a given message at a given offset.
-         *
-         * @param[in]  aMessage  A message to read the TLV from.
-         * @param[in]  aOffset   An offset into the message to read from.
-         *
-         * @retval kErrorNone    The TLV was read successfully.
-         * @retval kErrorParse   The TLV was not well-formed and could not be parsed.
-         *
-         */
-        Error ReadFromMessage(const Message &aMessage, uint16_t aOffset);
-
-    private:
-        uint8_t mValue[Dataset::kMaxValueSize];
-    } OT_TOOL_PACKED_END;
-
-    /**
-     * Initializes the object.
-     *
-     * @param[in]  aInstance      A reference to the OpenThread instance.
-     * @param[in]  aType          Dataset type, Active or Pending.
-     * @param[in]  aTimerHandler  The registration timer handler.
-     *
-     */
-    DatasetManager(Instance &aInstance, Dataset::Type aType, TimerMilli::Handler aTimerHandler);
-
-    /**
-     * Gets the Operational Dataset type (Active or Pending).
-     *
-     * @returns The Operational Dataset type.
-     *
-     */
-    Dataset::Type GetType(void) const { return mLocal.GetType(); }
-
-    /**
-     * Clears the Operational Dataset.
-     *
-     */
-    void Clear(void);
-
-    /**
-     * Saves the Operational Dataset in non-volatile memory.
-     *
-     * @param[in]  aDataset  The Operational Dataset.
-     *
-     * @retval kErrorNone   Successfully applied configuration.
-     * @retval kErrorParse  The dataset has at least one TLV with invalid format.
-     *
-     */
-    Error Save(const Dataset &aDataset);
-
-    /**
-     * Saves the Operational Dataset in non-volatile memory.
-     *
-     * @param[in]  aDatasetInfo  The Operational Dataset as `Dataset::Info`.
-     *
-     * @retval kErrorNone             Successfully saved the dataset.
-     * @retval kErrorNotImplemented   The platform does not implement settings functionality.
-     *
-     */
-    Error Save(const Dataset::Info &aDatasetInfo);
-
-    /**
-     * Saves the Operational Dataset in non-volatile memory.
-     *
-     * @param[in]  aDataset  The Operational Dataset.
-     *
-     * @retval kErrorNone             Successfully saved the dataset.
-     * @retval kErrorNotImplemented   The platform does not implement settings functionality.
-     *
-     */
-    Error Save(const otOperationalDatasetTlvs &aDataset);
-
-    /**
-     * Sets the Operational Dataset for the partition.
-     *
-     * Also updates the non-volatile version if the partition's Operational Dataset is newer.
-     *
-     * @param[in]  aTimestamp  The timestamp for the Operational Dataset.
-     * @param[in]  aMessage    The message buffer.
-     * @param[in]  aOffset     The offset where the Operational Dataset begins.
-     * @param[in]  aLength     The length of the Operational Dataset.
-     *
-     * @retval kErrorNone     Successfully parsed the Dataset from the @p aMessage and saved it.
-     * @retval kErrorParse    Could not parse the Dataset from @p aMessage.
-     *
-     */
-    Error Save(const Timestamp &aTimestamp, const Message &aMessage, uint16_t aOffset, uint8_t aLength);
-
-    /**
-     * Saves the Operational Dataset in non-volatile memory.
-     *
-     * @param[in]  aDataset  The Operational Dataset.
-     *
-     * @retval kErrorNone   Successfully applied configuration.
-     * @retval kErrorParse  The dataset has at least one TLV with invalid format.
-     *
-     */
-    Error SaveLocal(const Dataset &aDataset);
-
-    /**
-     * Handles a MGMT_GET request message.
-     *
-     * @param[in]  aMessage      The CoAP message buffer.
-     * @param[in]  aMessageInfo  The message info.
-     *
-     */
-    void HandleGet(const Coap::Message &aMessage, const Ip6::MessageInfo &aMessageInfo) const;
-
-    /**
-     * Compares the partition's Operational Dataset with that stored in non-volatile memory.
-     *
-     * If the partition's Operational Dataset is newer, the non-volatile storage is updated.
-     * If the partition's Operational Dataset is older, the registration process is started.
-     *
-     */
-    void HandleNetworkUpdate(void);
-
-    /**
-     * Initiates a network data registration message with the Leader.
-     *
-     */
-    void HandleTimer(void);
-
-#if OPENTHREAD_FTD
-    /**
-     * Handles the MGMT_SET request message.
-     *
-     * @param[in]  aMessage      The CoAP message buffer.
-     * @param[in]  aMessageInfo  The message info.
-     *
-     * @retval kErrorNone  The MGMT_SET request message was handled successfully.
-     * @retval kErrorDrop  The MGMT_SET request message was dropped.
-     *
-     */
-    Error HandleSet(Coap::Message &aMessage, const Ip6::MessageInfo &aMessageInfo);
-#endif
-
-    DatasetLocal mLocal;
-    Timestamp    mTimestamp;
-    bool         mTimestampValid : 1;
 
 private:
+    static constexpr uint8_t  kMaxGetTypes  = 64;   // Max number of types in MGMT_GET.req
+    static constexpr uint32_t kSendSetDelay = 5000; // in msec.
+
+    using Type = Dataset::Type;
+
+    class TlvList : public Array<uint8_t, kMaxGetTypes>
+    {
+    public:
+        TlvList(void) = default;
+        void Add(uint8_t aTlvType);
+    };
+
+#if OPENTHREAD_CONFIG_PLATFORM_KEY_REFERENCES_ENABLE
+    struct SecurelyStoredTlv
+    {
+        Crypto::Storage::KeyRef GetKeyRef(Dataset::Type aType) const
+        {
+            return (aType == Dataset::kActive) ? mActiveKeyRef : mPendingKeyRef;
+        }
+
+        Tlv::Type               mTlvType;
+        Crypto::Storage::KeyRef mActiveKeyRef;
+        Crypto::Storage::KeyRef mPendingKeyRef;
+    };
+
+    static const SecurelyStoredTlv kSecurelyStoredTlvs[];
+#endif
+
+#if OPENTHREAD_FTD
+    enum MgmtCommand : uint8_t
+    {
+        kMgmtSet,
+        kMgmtReplace,
+    };
+
+    struct RequestInfo : Clearable<RequestInfo> // Info from a MGMT_SET or MGMT_REPLACE request.
+    {
+        Dataset mDataset;
+        bool    mIsFromCommissioner;
+        bool    mAffectsConnectivity;
+        bool    mAffectsNetworkKey;
+    };
+#endif
+
+    DatasetManager(Instance &aInstance, Type aType, TimerMilli::Handler aTimerHandler);
+
+    bool  IsActiveDataset(void) const { return (mType == Dataset::kActive); }
+    bool  IsPendingDataset(void) const { return (mType == Dataset::kPending); }
+    void  Restore(const Dataset &aDataset);
+    Error ApplyConfiguration(const Dataset &aDataset) const;
+    void  HandleGet(const Coap::Message &aMessage, const Ip6::MessageInfo &aMessageInfo) const;
+    void  HandleTimer(void);
+    Error Save(const Dataset &aDataset, bool aAllowOlderTimestamp);
+    void  LocalSave(const Dataset &aDataset);
+    void  SignalDatasetChange(void) const;
+    void  SyncLocalWithLeader(const Dataset &aDataset);
+    Error SendSetRequest(const Dataset &aDataset);
+    void  SendGetResponse(const Coap::Message    &aRequest,
+                          const Ip6::MessageInfo &aMessageInfo,
+                          const TlvList          &aTlvList) const;
+    void  HandleMgmtSetResponse(Coap::Message *aMessage, const Ip6::MessageInfo *aMessageInfo, Error aError);
+
     static void HandleMgmtSetResponse(void                *aContext,
                                       otMessage           *aMessage,
                                       const otMessageInfo *aMessageInfo,
                                       Error                aError);
-    void        HandleMgmtSetResponse(Coap::Message *aMessage, const Ip6::MessageInfo *aMessageInfo, Error aError);
 
-    bool  IsActiveDataset(void) const { return GetType() == Dataset::kActive; }
-    bool  IsPendingDataset(void) const { return GetType() == Dataset::kPending; }
-    void  SignalDatasetChange(void) const;
-    void  HandleDatasetUpdated(void);
-    Error AppendDatasetToMessage(const Dataset::Info &aDatasetInfo, Message &aMessage) const;
-    void  SendSet(void);
-    void  SendGetResponse(const Coap::Message    &aRequest,
-                          const Ip6::MessageInfo &aMessageInfo,
-                          uint8_t                *aTlvs,
-                          uint8_t                 aLength) const;
-
-#if OPENTHREAD_FTD
-    void SendSetResponse(const Coap::Message &aRequest, const Ip6::MessageInfo &aMessageInfo, StateTlv::State aState);
+#if OPENTHREAD_CONFIG_PLATFORM_KEY_REFERENCES_ENABLE
+    void MoveKeysToSecureStorage(Dataset &aDataset) const;
+    void DestroySecurelyStoredKeys(void) const;
+    void EmplaceSecurelyStoredKeys(Dataset &aDataset) const;
 #endif
 
-    static constexpr uint8_t  kMaxDatasetTlvs = 16;   // Maximum number of TLVs in a Dataset.
-    static constexpr uint32_t kSendSetDelay   = 5000; // Milliseconds
+#if OPENTHREAD_FTD
+    Error HandleSetOrReplace(MgmtCommand aCommand, const Coap::Message &aMessage, const Ip6::MessageInfo &aMessageInfo);
+    Error ProcessSetOrReplaceRequest(MgmtCommand aCommand, const Coap::Message &aMessage, RequestInfo &aInfo) const;
+    void  SendSetOrReplaceResponse(const Coap::Message    &aRequest,
+                                   const Ip6::MessageInfo &aMessageInfo,
+                                   StateTlv::State         aState);
+#endif
 
-    bool       mMgmtPending : 1;
-    TimerMilli mTimer;
-
-    Callback<otDatasetMgmtSetCallback> mMgmtSetCallback;
+    Type                      mType;
+    bool                      mLocalSaved : 1;
+    bool                      mMgmtPending : 1;
+    TimeMilli                 mLocalUpdateTime;
+    Timestamp                 mLocalTimestamp;
+    Timestamp                 mNetworkTimestamp;
+    TimerMilli                mTimer;
+    Callback<MgmtSetCallback> mMgmtSetCallback;
 };
+
+//----------------------------------------------------------------------------------------------------------------------
 
 class ActiveDatasetManager : public DatasetManager, private NonCopyable
 {
@@ -406,61 +356,6 @@ public:
      */
     bool IsCommissioned(void) const;
 
-    /**
-     * Clears the Active Operational Dataset.
-     *
-     */
-    void Clear(void) { DatasetManager::Clear(); }
-
-    /**
-     * Saves the Operational Dataset in non-volatile memory.
-     *
-     * Also reconfigures the Thread interface.
-     *
-     * @param[in]  aDataset  The Operational Dataset.
-     *
-     */
-    void Save(const Dataset &aDataset) { IgnoreError(DatasetManager::Save(aDataset)); }
-
-    /**
-     * Sets the Operational Dataset for the partition.
-     *
-     * Also reconfigures the Thread interface.
-     * Also updates the non-volatile version if the partition's Operational Dataset is newer.
-     *
-     * @param[in]  aTimestamp  The timestamp for the Operational Dataset.
-     * @param[in]  aMessage    The message buffer.
-     * @param[in]  aOffset     The offset where the Operational Dataset begins.
-     * @param[in]  aLength     The length of the Operational Dataset.
-     *
-     * @retval kErrorNone     Successfully parsed the Dataset from the @p aMessage and saved it.
-     * @retval kErrorParse    Could not parse the Dataset from @p aMessage.
-     *
-     */
-    Error Save(const Timestamp &aTimestamp, const Message &aMessage, uint16_t aOffset, uint16_t aLength);
-
-    /**
-     * Sets the Operational Dataset in non-volatile memory.
-     *
-     * @param[in]  aDatasetInfo  The Operational Dataset as `Dataset::Info`.
-     *
-     * @retval kErrorNone            Successfully saved the dataset.
-     * @retval kErrorNotImplemented  The platform does not implement settings functionality.
-     *
-     */
-    Error Save(const Dataset::Info &aDatasetInfo) { return DatasetManager::Save(aDatasetInfo); }
-
-    /**
-     * Sets the Operational Dataset in non-volatile memory.
-     *
-     * @param[in]  aDataset  The Operational Dataset.
-     *
-     * @retval kErrorNone            Successfully saved the dataset.
-     * @retval kErrorNotImplemented  The platform does not implement settings functionality.
-     *
-     */
-    Error Save(const otOperationalDatasetTlvs &aDataset) { return DatasetManager::Save(aDataset); }
-
 #if OPENTHREAD_FTD
 
     /**
@@ -503,11 +398,15 @@ private:
 DeclareTmfHandler(ActiveDatasetManager, kUriActiveGet);
 #if OPENTHREAD_FTD
 DeclareTmfHandler(ActiveDatasetManager, kUriActiveSet);
+DeclareTmfHandler(ActiveDatasetManager, kUriActiveReplace);
 #endif
+
+//----------------------------------------------------------------------------------------------------------------------
 
 class PendingDatasetManager : public DatasetManager, private NonCopyable
 {
     friend class Tmf::Agent;
+    friend class DatasetManager;
 
 public:
     /**
@@ -518,93 +417,21 @@ public:
      */
     explicit PendingDatasetManager(Instance &aInstance);
 
-    /**
-     * Clears the Pending Operational Dataset.
-     *
-     * Also stops the Delay Timer if it was active.
-     *
-     */
-    void Clear(void);
-
-    /**
-     * Clears the network Pending Operational Dataset.
-     *
-     * Also stops the Delay Timer if it was active.
-     *
-     */
-    void ClearNetwork(void);
-
-    /**
-     * Saves the Operational Dataset in non-volatile memory.
-     *
-     * Also starts the Delay Timer.
-     *
-     * @param[in]  aDatasetInfo  The Operational Dataset as `Dataset::Info`.
-     *
-     * @retval kErrorNone            Successfully saved the dataset.
-     * @retval kErrorNotImplemented  The platform does not implement settings functionality.
-     *
-     */
-    Error Save(const Dataset::Info &aDatasetInfo);
-
-    /**
-     * Saves the Operational Dataset in non-volatile memory.
-     *
-     * Also starts the Delay Timer.
-     *
-     * @param[in]  aDataset  The Operational Dataset.
-     *
-     * @retval kErrorNone            Successfully saved the dataset.
-     * @retval kErrorNotImplemented  The platform does not implement settings functionality.
-     *
-     */
-    Error Save(const otOperationalDatasetTlvs &aDataset);
-
-    /**
-     * Sets the Operational Dataset for the partition.
-     *
-     * Also updates the non-volatile version if the partition's Operational Dataset is newer.
-     *
-     * Also starts the Delay Timer.
-     *
-     * @param[in]  aTimestamp  The timestamp for the Operational Dataset.
-     * @param[in]  aMessage    The message buffer.
-     * @param[in]  aOffset     The offset where the Operational Dataset begins.
-     * @param[in]  aLength     The length of the Operational Dataset.
-     *
-     */
-    Error Save(const Timestamp &aTimestamp, const Message &aMessage, uint16_t aOffset, uint16_t aLength);
-
-    /**
-     * Saves the Operational Dataset in non-volatile memory.
-     *
-     * @param[in]  aDataset  The Operational Dataset.
-     *
-     * @retval kErrorNone   Successfully applied configuration.
-     * @retval kErrorParse  The dataset has at least one TLV with invalid format.
-     *
-     */
-    Error Save(const Dataset &aDataset);
-
 #if OPENTHREAD_FTD
     /**
      * Starts the Leader functions for maintaining the Active Operational Dataset.
      *
      */
     void StartLeader(void);
-
-    /**
-     * Generates a Pending Dataset from an Active Dataset.
-     *
-     * @param[in]  aTimestamp  The Active Dataset Timestamp.
-     * @param[in]  aMessage    The MGMT_SET message that contains an Active Dataset.
-     *
-     */
-    void ApplyActiveDataset(const Timestamp &aTimestamp, Coap::Message &aMessage);
 #endif
 
 private:
+#if OPENTHREAD_FTD
+    void ApplyActiveDataset(Dataset &aDataset);
+#endif
+
     void StartDelayTimer(void);
+    void StartDelayTimer(const Dataset &aDataset);
 
     static void HandleTimer(Timer &aTimer);
     void        HandleTimer(void) { DatasetManager::HandleTimer(); }

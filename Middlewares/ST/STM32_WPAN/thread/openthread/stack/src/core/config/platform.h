@@ -35,6 +35,18 @@
 #ifndef CONFIG_PLATFORM_H_
 #define CONFIG_PLATFORM_H_
 
+#include "config/srp_server.h"
+
+/**
+ * @addtogroup config-platform
+ *
+ * @brief
+ *   This module includes configuration variables for platform-specific services.
+ *
+ * @{
+ *
+ */
+
 /**
  * @def OPENTHREAD_CONFIG_PLATFORM_INFO
  *
@@ -98,6 +110,30 @@
 #endif
 
 /**
+ * @def OPENTHREAD_CONFIG_PLATFORM_DNSSD_ENABLE
+ *
+ * Define as 1 to enable DNSSD (mDNS) platform module.
+ *
+ */
+#ifndef OPENTHREAD_CONFIG_PLATFORM_DNSSD_ENABLE
+#define OPENTHREAD_CONFIG_PLATFORM_DNSSD_ENABLE 0
+#endif
+
+/**
+ * @def OPENTHREAD_CONFIG_PLATFORM_DNSSD_ALLOW_RUN_TIME_SELECTION
+ *
+ * Define as 1 to enable run-time selection of DNSSD module, i.e., whether the native OpenThread mDNS module is used or
+ * the platform `otPlatDnssd` APIs are used (DNSSD support is delegated to the platform layer).
+ *
+ * This config is mainly intended for testing, allowing test-specific `otPlatDnssd` APIs to be used instead of the
+ * native mDNS module in unit tests.
+ *
+ */
+#ifndef OPENTHREAD_CONFIG_PLATFORM_DNSSD_ALLOW_RUN_TIME_SELECTION
+#define OPENTHREAD_CONFIG_PLATFORM_DNSSD_ALLOW_RUN_TIME_SELECTION 0
+#endif
+
+/**
  * @def OPENTHREAD_CONFIG_PLATFORM_RADIO_COEX_ENABLE
  *
  * Define to 1 if you want to enable radio coexistence implemented in platform.
@@ -105,17 +141,6 @@
  */
 #ifndef OPENTHREAD_CONFIG_PLATFORM_RADIO_COEX_ENABLE
 #define OPENTHREAD_CONFIG_PLATFORM_RADIO_COEX_ENABLE 0
-#endif
-
-/**
- * @def OPENTHREAD_CONFIG_PLATFORM_RADIO_SPINEL_RX_FRAME_BUFFER_SIZE
- *
- * Specifies the rx frame buffer size used by `SpinelInterface` in RCP host (posix) code. This is applicable/used when
- * `RadioSpinel` platform is used.
- *
- */
-#ifndef OPENTHREAD_CONFIG_PLATFORM_RADIO_SPINEL_RX_FRAME_BUFFER_SIZE
-#define OPENTHREAD_CONFIG_PLATFORM_RADIO_SPINEL_RX_FRAME_BUFFER_SIZE 8192
 #endif
 
 /**
@@ -185,5 +210,10 @@
 #error "Maximum Proprietary Channel Page value currently supported is 31."
 #endif
 #endif
+
+/**
+ * @}
+ *
+ */
 
 #endif // CONFIG_PLATFORM_H_

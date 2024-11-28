@@ -35,6 +35,8 @@ extern otStateChangedCallback otStateChangedCb;
 #if OPENTHREAD_CONFIG_MULTIPLE_INSTANCE_ENABLE
 otInstance *otInstanceInit(void *aInstanceBuffer, size_t *aInstanceBufferSize)
 {
+  otInstance * rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -48,11 +50,17 @@ otInstance *otInstanceInit(void *aInstanceBuffer, size_t *aInstanceBufferSize)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otInstance *)p_ot_req->Data[0];
+  rspData = (otInstance *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 #else
 otInstance *otInstanceInitSingle(void)
 {
+  otInstance * rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -64,12 +72,18 @@ otInstance *otInstanceInitSingle(void)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otInstance *)p_ot_req->Data[0];
+  rspData = (otInstance *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 #endif /* #if OPENTHREAD_CONFIG_MULTIPLE_INSTANCE_ENABLE */
 
 uint32_t otInstanceGetId(otInstance *aInstance)
 {
+  uint32_t rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -81,11 +95,17 @@ uint32_t otInstanceGetId(otInstance *aInstance)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (uint32_t)p_ot_req->Data[0];
+  rspData = (uint32_t)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 bool otInstanceIsInitialized(otInstance *aInstance)
 {
+  bool rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -97,7 +117,11 @@ bool otInstanceIsInitialized(otInstance *aInstance)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (bool)p_ot_req->Data[0];
+  rspData = (bool)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 void otInstanceFinalize(otInstance *aInstance)
@@ -112,7 +136,7 @@ void otInstanceFinalize(otInstance *aInstance)
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 
 void otInstanceReset(otInstance *aInstance)
@@ -127,12 +151,14 @@ void otInstanceReset(otInstance *aInstance)
 
   Ot_Cmd_TransferWithNotif();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 
 #if OPENTHREAD_CONFIG_UPTIME_ENABLE
 uint64_t otInstanceGetUptime(otInstance *aInstance)
 {
+  uint64_t rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -145,7 +171,11 @@ uint64_t otInstanceGetUptime(otInstance *aInstance)
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
   /* 64bit word is returned with two 32bits words (MSB are at offset 1 and LSB are offset 0) */
-  return (uint64_t)(((uint64_t)p_ot_req->Data[1] << 32) | p_ot_req->Data[0]);
+  rspData = (uint64_t)(((uint64_t)p_ot_req->Data[1] << 32) | p_ot_req->Data[0]);
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 void otInstanceGetUptimeAsString(otInstance *aInstance, char *aBuffer, uint16_t aSize)
@@ -162,7 +192,7 @@ void otInstanceGetUptimeAsString(otInstance *aInstance, char *aBuffer, uint16_t 
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 #endif
 
@@ -170,6 +200,8 @@ void otInstanceGetUptimeAsString(otInstance *aInstance, char *aBuffer, uint16_t 
 otError otSetStateChangedCallback(otInstance *aInstance, otStateChangedCallback aCallback,
     void *aContext)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* Store the callback function */
   otStateChangedCb = aCallback;
@@ -184,7 +216,11 @@ otError otSetStateChangedCallback(otInstance *aInstance, otStateChangedCallback 
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 void otRemoveStateChangeCallback(otInstance *aInstance, otStateChangedCallback aCallback,
@@ -203,7 +239,7 @@ void otRemoveStateChangeCallback(otInstance *aInstance, otStateChangedCallback a
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 
 void otInstanceFactoryReset(otInstance *aInstance)
@@ -218,11 +254,13 @@ void otInstanceFactoryReset(otInstance *aInstance)
 
   Ot_Cmd_TransferWithNotif();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 
 otError otInstanceErasePersistentInfo(otInstance *aInstance)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -234,7 +272,11 @@ otError otInstanceErasePersistentInfo(otInstance *aInstance)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 #endif // OPENTHREAD_MTD || OPENTHREAD_FTD
 
@@ -251,12 +293,14 @@ void otInstanceResetRadioStack(otInstance *aInstance)
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 #endif
 
 const char *otGetVersionString(void)
 {
+  const char * rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -268,11 +312,17 @@ const char *otGetVersionString(void)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (char *)p_ot_req->Data[0];
+  rspData = (const char *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 const char *otGetRadioVersionString(otInstance *aInstance)
 {
+  const char * rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -284,5 +334,9 @@ const char *otGetRadioVersionString(otInstance *aInstance)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (char *)p_ot_req->Data[0];
+  rspData = (const char *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }

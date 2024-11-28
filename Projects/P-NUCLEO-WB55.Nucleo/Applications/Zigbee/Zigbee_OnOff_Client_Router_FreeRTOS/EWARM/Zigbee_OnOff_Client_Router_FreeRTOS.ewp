@@ -1362,11 +1362,5 @@
                 </file>
             </group>
         </group>
-        <group>
-            <name>sequencer</name>
-            <file>
-                <name>$PROJ_DIR$\..\..\..\..\..\..\Utilities\sequencer\stm32_seq.c</name>
-            </file>
-        </group>
     </group>
 </project>

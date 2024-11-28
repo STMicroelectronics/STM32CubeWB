@@ -39,14 +39,12 @@
 #include "common/as_core_type.hpp"
 #include "common/code_utils.hpp"
 #include "common/encoding.hpp"
-#include "common/instance.hpp"
 #include "common/num_utils.hpp"
 #include "common/numeric_limits.hpp"
 #include "common/random.hpp"
+#include "instance/instance.hpp"
 #include "net/ip4_types.hpp"
 #include "net/netif.hpp"
-
-using ot::Encoding::BigEndian::HostSwap32;
 
 namespace ot {
 namespace Ip6 {
@@ -72,7 +70,8 @@ void Prefix::Set(const uint8_t *aPrefix, uint8_t aLength)
 
 bool Prefix::IsLinkLocal(void) const
 {
-    return (mLength >= 10) && ((mPrefix.mFields.m16[0] & HostSwap16(0xffc0)) == HostSwap16(0xfe80));
+    return (mLength >= 10) &&
+           ((mPrefix.mFields.m16[0] & BigEndian::HostSwap16(0xffc0)) == BigEndian::HostSwap16(0xfe80));
 }
 
 bool Prefix::IsMulticast(void) const { return (mLength >= 8) && (mPrefix.mFields.m8[0] == 0xff); }
@@ -132,7 +131,7 @@ bool Prefix::operator<(const Prefix &aOther) const
         ExitNow();
     }
 
-    isSmaller = GetBytes()[matchedLength / CHAR_BIT] < aOther.GetBytes()[matchedLength / CHAR_BIT];
+    isSmaller = GetBytes()[matchedLength / kBitsPerByte] < aOther.GetBytes()[matchedLength / kBitsPerByte];
 
 exit:
     return isSmaller;
@@ -150,7 +149,7 @@ uint8_t Prefix::MatchLength(const uint8_t *aPrefixA, const uint8_t *aPrefixB, ui
 
         if (diff == 0)
         {
-            matchedLength += CHAR_BIT;
+            matchedLength += kBitsPerByte;
         }
         else
         {
@@ -251,8 +250,8 @@ bool InterfaceIdentifier::IsReservedSubnetAnycast(void) const
     // | 1111110111...111 | anycast ID |
     // +------------------+------------+
 
-    return (mFields.m32[0] == HostSwap32(0xfdffffff) && mFields.m16[2] == HostSwap16(0xffff) && mFields.m8[6] == 0xff &&
-            mFields.m8[7] >= 0x80);
+    return (mFields.m32[0] == BigEndian::HostSwap32(0xfdffffff) && mFields.m16[2] == BigEndian::HostSwap16(0xffff) &&
+            mFields.m8[6] == 0xff && mFields.m8[7] >= 0x80);
 }
 
 void InterfaceIdentifier::GenerateRandom(void) { SuccessOrAssert(Random::Crypto::Fill(*this)); }
@@ -283,15 +282,15 @@ void InterfaceIdentifier::ConvertToMacAddress(Mac::Address &aMacAddress) const
 void InterfaceIdentifier::SetToLocator(uint16_t aLocator)
 {
     // Locator IID pattern `0000:00ff:fe00:xxxx`
-    mFields.m32[0] = HostSwap32(0x000000ff);
-    mFields.m16[2] = HostSwap16(0xfe00);
-    mFields.m16[3] = HostSwap16(aLocator);
+    mFields.m32[0] = BigEndian::HostSwap32(0x000000ff);
+    mFields.m16[2] = BigEndian::HostSwap16(0xfe00);
+    mFields.m16[3] = BigEndian::HostSwap16(aLocator);
 }
 
 bool InterfaceIdentifier::IsLocator(void) const
 {
     // Locator IID pattern 0000:00ff:fe00:xxxx
-    return (mFields.m32[0] == HostSwap32(0x000000ff) && mFields.m16[2] == HostSwap16(0xfe00));
+    return (mFields.m32[0] == BigEndian::HostSwap32(0x000000ff) && mFields.m16[2] == BigEndian::HostSwap16(0xfe00));
 }
 
 bool InterfaceIdentifier::IsRoutingLocator(void) const
@@ -340,21 +339,25 @@ bool Address::IsUnspecified(void) const
 
 bool Address::IsLoopback(void) const
 {
-    return (mFields.m32[0] == 0 && mFields.m32[1] == 0 && mFields.m32[2] == 0 && mFields.m32[3] == HostSwap32(1));
+    return (mFields.m32[0] == 0 && mFields.m32[1] == 0 && mFields.m32[2] == 0 &&
+            mFields.m32[3] == BigEndian::HostSwap32(1));
 }
 
-bool Address::IsLinkLocal(void) const { return (mFields.m16[0] & HostSwap16(0xffc0)) == HostSwap16(0xfe80); }
+bool Address::IsLinkLocal(void) const
+{
+    return (mFields.m16[0] & BigEndian::HostSwap16(0xffc0)) == BigEndian::HostSwap16(0xfe80);
+}
 
 void Address::SetToLinkLocalAddress(const Mac::ExtAddress &aExtAddress)
 {
-    mFields.m32[0] = HostSwap32(0xfe800000);
+    mFields.m32[0] = BigEndian::HostSwap32(0xfe800000);
     mFields.m32[1] = 0;
     GetIid().SetFromExtAddress(aExtAddress);
 }
 
 void Address::SetToLinkLocalAddress(const InterfaceIdentifier &aIid)
 {
-    mFields.m32[0] = HostSwap32(0xfe800000);
+    mFields.m32[0] = BigEndian::HostSwap32(0xfe800000);
     mFields.m32[1] = 0;
     SetIid(aIid);
 }
@@ -385,6 +388,18 @@ bool Address::IsRealmLocalAllMplForwarders(void) const { return (*this == GetRea
 
 void Address::SetToRealmLocalAllMplForwarders(void) { *this = GetRealmLocalAllMplForwarders(); }
 
+bool Address::IsIp4Mapped(void) const
+{
+    return (mFields.m32[0] == 0) && (mFields.m32[1] == 0) && (mFields.m32[2] == BigEndian::HostSwap32(0xffff));
+}
+
+void Address::SetToIp4Mapped(const Ip4::Address &aIp4Address)
+{
+    Clear();
+    mFields.m16[5] = 0xffff;
+    memcpy(&mFields.m8[12], aIp4Address.GetBytes(), sizeof(Ip4::Address));
+}
+
 bool Address::MatchesPrefix(const Prefix &aPrefix) const
 {
     return Prefix::MatchLength(mFields.m8, aPrefix.GetBytes(), aPrefix.GetBytesSize()) >= aPrefix.GetLength();
@@ -405,8 +420,8 @@ void Address::CopyBits(uint8_t *aDst, const uint8_t *aSrc, uint8_t aNumBits)
     // the case where `aNumBits` may not be a multiple of 8. It leaves the
     // remaining bits beyond `aNumBits` in `aDst` unchanged.
 
-    uint8_t numBytes  = aNumBits / CHAR_BIT;
-    uint8_t extraBits = aNumBits % CHAR_BIT;
+    uint8_t numBytes  = aNumBits / kBitsPerByte;
+    uint8_t extraBits = aNumBits % kBitsPerByte;
 
     memcpy(aDst, aSrc, numBytes);
 
@@ -520,7 +535,7 @@ void Address::SynthesizeFromIp4Address(const Prefix &aPrefix, const Ip4::Address
     Clear();
     SetPrefix(aPrefix);
 
-    ip6Index = aPrefix.GetLength() / CHAR_BIT;
+    ip6Index = aPrefix.GetLength() / kBitsPerByte;
 
     for (uint8_t i = 0; i < Ip4::Address::kSize; i++)
     {
@@ -571,22 +586,9 @@ Error Address::ParseFrom(const char *aString, char aTerminatorChar)
 
         while (true)
         {
-            char    c = *aString;
             uint8_t digit;
 
-            if (('A' <= c) && (c <= 'F'))
-            {
-                digit = static_cast<uint8_t>(c - 'A' + 10);
-            }
-            else if (('a' <= c) && (c <= 'f'))
-            {
-                digit = static_cast<uint8_t>(c - 'a' + 10);
-            }
-            else if (('0' <= c) && (c <= '9'))
-            {
-                digit = static_cast<uint8_t>(c - '0');
-            }
-            else
+            if (ParseHexDigit(*aString, digit) != kErrorNone)
             {
                 break;
             }
@@ -612,7 +614,7 @@ Error Address::ParseFrom(const char *aString, char aTerminatorChar)
         VerifyOrExit((*aString == kColonChar) || (*aString == aTerminatorChar));
 
         VerifyOrExit(index < endIndex);
-        mFields.m16[index++] = HostSwap16(static_cast<uint16_t>(value));
+        mFields.m16[index++] = BigEndian::HostSwap16(static_cast<uint16_t>(value));
 
         if (*aString == kColonChar)
         {
@@ -685,7 +687,7 @@ void Address::AppendHexWords(StringWriter &aWriter, uint8_t aLength) const
             aWriter.Append(":");
         }
 
-        aWriter.Append("%x", HostSwap16(mFields.m16[index]));
+        aWriter.Append("%x", BigEndian::HostSwap16(mFields.m16[index]));
     }
 }
 

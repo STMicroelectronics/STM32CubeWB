@@ -26,7 +26,7 @@
 /*  PORT SPECIFIC C INFORMATION                            RELEASE        */
 /*                                                                        */
 /*    tx_user.h                                           PORTABLE C      */
-/*                                                           6.1.11       */
+/*                                                           6.3.0        */
 /*                                                                        */
 /*  AUTHOR                                                                */
 /*                                                                        */
@@ -62,6 +62,10 @@
 /*                                            optimized the definition of */
 /*                                            TX_TIMER_TICKS_PER_SECOND,  */
 /*                                            resulting in version 6.1.11 */
+/*  10-31-2023      Xiuwen Cai              Modified comment(s),          */
+/*                                            added option for random     */
+/*                                            number stack filling,       */
+/*                                            resulting in version 6.3.0  */
 /*                                                                        */
 /**************************************************************************/
 
@@ -168,6 +172,14 @@
 
 /*
 #define TX_ENABLE_STACK_CHECKING
+*/
+
+/* Determine if random number is used for stack filling. By default, ThreadX uses a fixed
+   pattern for stack filling. When the following is defined, ThreadX uses a random number
+   for stack filling. This is effective only when TX_ENABLE_STACK_CHECKING is defined.  */ 
+
+/*
+#define TX_ENABLE_RANDOM_NUMBER_STACK_FILLING
 */
 
 /* Determine if preemption-threshold should be disabled. By default, preemption-threshold is

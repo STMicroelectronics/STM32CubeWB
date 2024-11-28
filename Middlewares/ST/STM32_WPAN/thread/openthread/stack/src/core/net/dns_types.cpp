@@ -35,15 +35,14 @@
 
 #include "common/code_utils.hpp"
 #include "common/debug.hpp"
-#include "common/instance.hpp"
 #include "common/num_utils.hpp"
+#include "common/numeric_limits.hpp"
 #include "common/random.hpp"
 #include "common/string.hpp"
+#include "instance/instance.hpp"
 
 namespace ot {
 namespace Dns {
-
-using ot::Encoding::BigEndian::HostSwap16;
 
 Error Header::SetRandomMessageId(void)
 {
@@ -100,6 +99,69 @@ Error Header::ResponseCodeToError(Response aResponse)
     }
 
     return error;
+}
+
+bool Name::Matches(const char *aFirstLabel, const char *aLabels, const char *aDomain) const
+{
+    bool matches = false;
+
+    VerifyOrExit(!IsEmpty());
+
+    if (IsFromCString())
+    {
+        const char *namePtr = mString;
+
+        if (aFirstLabel != nullptr)
+        {
+            matches = CompareAndSkipLabels(namePtr, aFirstLabel, kLabelSeparatorChar);
+            VerifyOrExit(matches);
+        }
+
+        matches = CompareAndSkipLabels(namePtr, aLabels, kLabelSeparatorChar);
+        VerifyOrExit(matches);
+
+        matches = CompareAndSkipLabels(namePtr, aDomain, kNullChar);
+    }
+    else
+    {
+        uint16_t offset = mOffset;
+
+        if (aFirstLabel != nullptr)
+        {
+            SuccessOrExit(CompareLabel(*mMessage, offset, aFirstLabel));
+        }
+
+        SuccessOrExit(CompareMultipleLabels(*mMessage, offset, aLabels));
+        SuccessOrExit(CompareName(*mMessage, offset, aDomain));
+        matches = true;
+    }
+
+exit:
+    return matches;
+}
+
+bool Name::CompareAndSkipLabels(const char *&aNamePtr, const char *aLabels, char aExpectedNextChar)
+{
+    // Compares `aNamePtr` to the label string `aLabels` followed by
+    // the `aExpectedNextChar`(using case-insensitive match). Upon
+    // successful comparison, `aNamePtr` is advanced to point after
+    // the matched portion.
+
+    bool     matches = false;
+    uint16_t len     = StringLength(aLabels, kMaxNameSize);
+
+    VerifyOrExit(len < kMaxNameSize);
+
+    VerifyOrExit(StringStartsWith(aNamePtr, aLabels, kStringCaseInsensitiveMatch));
+    aNamePtr += len;
+
+    VerifyOrExit(*aNamePtr == aExpectedNextChar);
+    aNamePtr++;
+
+    matches = true;
+
+exit:
+    return matches;
 }
 
 Error Name::AppendTo(Message &aMessage) const
@@ -167,11 +229,6 @@ exit:
 
 Error Name::AppendMultipleLabels(const char *aLabels, Message &aMessage)
 {
-    return AppendMultipleLabels(aLabels, kMaxNameLength, aMessage);
-}
-
-Error Name::AppendMultipleLabels(const char *aLabels, uint8_t aLength, Message &aMessage)
-{
     Error    error           = kErrorNone;
     uint16_t index           = 0;
     uint16_t labelStartIndex = 0;
@@ -181,7 +238,7 @@ Error Name::AppendMultipleLabels(const char *aLabels, uint8_t aLength, Message &
 
     do
     {
-        ch = index < aLength ? aLabels[index] : static_cast<char>(kNullChar);
+        ch = aLabels[index];
 
         if ((ch == kNullChar) || (ch == kLabelSeparatorChar))
         {
@@ -249,7 +306,7 @@ Error Name::AppendPointerLabel(uint16_t aOffset, Message &aMessage)
 
     OT_ASSERT(aOffset < kPointerLabelTypeUint16);
 
-    value = HostSwap16(aOffset | kPointerLabelTypeUint16);
+    value = BigEndian::HostSwap16(aOffset | kPointerLabelTypeUint16);
 
     ExitNow(error = aMessage.Append(value));
 
@@ -371,6 +428,27 @@ Error Name::CompareLabel(const Message &aMessage, uint16_t &aOffset, const char 
     SuccessOrExit(error = iterator.GetNextLabel());
     VerifyOrExit(iterator.CompareLabel(aLabel, kIsSingleLabel), error = kErrorNotFound);
     aOffset = iterator.mNextLabelOffset;
+
+exit:
+    return error;
+}
+
+Error Name::CompareMultipleLabels(const Message &aMessage, uint16_t &aOffset, const char *aLabels)
+{
+    Error         error;
+    LabelIterator iterator(aMessage, aOffset);
+
+    while (true)
+    {
+        SuccessOrExit(error = iterator.GetNextLabel());
+        VerifyOrExit(iterator.CompareLabel(aLabels, !kIsSingleLabel), error = kErrorNotFound);
+
+        if (*aLabels == kNullChar)
+        {
+            aOffset = iterator.mNextLabelOffset;
+            ExitNow();
+        }
+    }
 
 exit:
     return error;
@@ -533,9 +611,10 @@ Error Name::LabelIterator::GetNextLabel(void)
 
             // `mMessage.GetOffset()` must point to the start of the
             // DNS header.
-            nextLabelOffset = mMessage.GetOffset() + (HostSwap16(pointerValue) & kPointerLabelOffsetMask);
-            VerifyOrExit(nextLabelOffset < mNextLabelOffset, error = kErrorParse);
+            nextLabelOffset = mMessage.GetOffset() + (BigEndian::HostSwap16(pointerValue) & kPointerLabelOffsetMask);
+            VerifyOrExit(nextLabelOffset < mMinLabelOffset, error = kErrorParse);
             mNextLabelOffset = nextLabelOffset;
+            mMinLabelOffset  = nextLabelOffset;
 
             // Go back through the `while(true)` loop to get the next label.
         }
@@ -628,6 +707,39 @@ Error Name::LabelIterator::AppendLabel(Message &aMessage) const
     VerifyOrExit((0 < mLabelLength) && (mLabelLength <= kMaxLabelLength), error = kErrorInvalidArgs);
     SuccessOrExit(error = aMessage.Append(mLabelLength));
     error = aMessage.AppendBytesFromMessage(mMessage, mLabelStartOffset, mLabelLength);
+
+exit:
+    return error;
+}
+
+Error Name::ExtractLabels(const char *aName, const char *aSuffixName, char *aLabels, uint16_t aLabelsSize)
+{
+    Error       error        = kErrorParse;
+    uint16_t    nameLength   = StringLength(aName, kMaxNameSize);
+    uint16_t    suffixLength = StringLength(aSuffixName, kMaxNameSize);
+    const char *suffixStart;
+
+    VerifyOrExit(nameLength < kMaxNameSize);
+    VerifyOrExit(suffixLength < kMaxNameSize);
+
+    VerifyOrExit(nameLength > suffixLength);
+
+    suffixStart = aName + nameLength - suffixLength;
+    VerifyOrExit(StringMatch(suffixStart, aSuffixName, kStringCaseInsensitiveMatch));
+    suffixStart--;
+    VerifyOrExit(*suffixStart == kLabelSeparatorChar);
+
+    // Determine the labels length to copy
+    nameLength -= (suffixLength + 1);
+    VerifyOrExit(nameLength < aLabelsSize, error = kErrorNoBufs);
+
+    if (aLabels != aName)
+    {
+        memmove(aLabels, aName, nameLength);
+    }
+
+    aLabels[nameLength] = kNullChar;
+    error               = kErrorNone;
 
 exit:
     return error;
@@ -929,7 +1041,7 @@ Error TxtEntry::Iterator::GetNextEntry(TxtEntry &aEntry)
     const char *cur;
     char       *keyBuffer = GetKeyBuffer();
 
-    static_assert(sizeof(mChar) == TxtEntry::kMaxKeyLength + 1, "KeyBuffer cannot fit the max key length");
+    static_assert(sizeof(mChar) >= TxtEntry::kMaxKeyLength + 1, "KeyBuffer cannot fit the max key length");
 
     VerifyOrExit(GetTxtData() != nullptr, error = kErrorParse);
 
@@ -961,9 +1073,9 @@ Error TxtEntry::Iterator::GetNextEntry(TxtEntry &aEntry)
                 ExitNow();
             }
 
-            if (index >= kMaxKeyLength)
+            if (index >= sizeof(mChar) - 1)
             {
-                // The key is larger than recommended max key length.
+                // The key is larger than supported key string length.
                 // In this case, we return the full encoded string in
                 // `mValue` and `mValueLength` and set `mKey` to
                 // `nullptr`.
@@ -1235,6 +1347,36 @@ bool TxtRecord::VerifyTxtData(const uint8_t *aTxtData, uint16_t aTxtLength, bool
 
 exit:
     return valid;
+}
+
+void NsecRecord::TypeBitMap::AddType(uint16_t aType)
+{
+    if ((aType >> 8) == mBlockNumber)
+    {
+        uint8_t  type  = static_cast<uint8_t>(aType & 0xff);
+        uint8_t  index = (type / kBitsPerByte);
+        uint16_t mask  = (0x80 >> (type % kBitsPerByte));
+
+        mBitmaps[index] |= mask;
+        mBitmapLength = Max<uint8_t>(mBitmapLength, index + 1);
+    }
+}
+
+bool NsecRecord::TypeBitMap::ContainsType(uint16_t aType) const
+{
+    bool     contains = false;
+    uint8_t  type     = static_cast<uint8_t>(aType & 0xff);
+    uint8_t  index    = (type / kBitsPerByte);
+    uint16_t mask     = (0x80 >> (type % kBitsPerByte));
+
+    VerifyOrExit((aType >> 8) == mBlockNumber);
+
+    VerifyOrExit(index < mBitmapLength);
+
+    contains = (mBitmaps[index] & mask);
+
+exit:
+    return contains;
 }
 
 } // namespace Dns

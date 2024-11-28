@@ -813,7 +813,7 @@ void VCP_DataReceived(uint8_t* Buf , uint32_t *Len)
   }
 
   /* Process the buffer commands one by one     */
-  /* A command is limited by a \r caracaters    */
+  /* A command is limited by a \r characters    */
   while (flag_continue_checking == TRUE)
   {
     char_remaining = ProcessCmdString(TmpString,len_total);

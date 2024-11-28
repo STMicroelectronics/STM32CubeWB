@@ -59,6 +59,16 @@
 #endif
 
 /**
+ * @def OPENTHREAD_CONFIG_CLI_BLE_SECURE_ENABLE
+ *
+ * Indicates whether TCAT should be enabled in the CLI tool.
+ *
+ */
+#ifndef OPENTHREAD_CONFIG_CLI_BLE_SECURE_ENABLE
+#define OPENTHREAD_CONFIG_CLI_BLE_SECURE_ENABLE 1
+#endif
+
+/**
  * @def OPENTHREAD_CONFIG_CLI_TCP_ENABLE
  *
  * Indicates whether TCP should be enabled in the CLI tool.
@@ -184,6 +194,16 @@
  */
 #ifndef OPENTHREAD_CONFIG_CLI_REGISTER_IP6_RECV_CALLBACK
 #define OPENTHREAD_CONFIG_CLI_REGISTER_IP6_RECV_CALLBACK 0
+#endif
+
+/**
+ * @def OPENTHREAD_CONFIG_CLI_BLE_SECURE_ENABLE
+ *
+ * Define to 1 to enable BLE secure support.
+ *
+ */
+#ifndef OPENTHREAD_CONFIG_CLI_BLE_SECURE_ENABLE
+#define OPENTHREAD_CONFIG_CLI_BLE_SECURE_ENABLE 0
 #endif
 
 #endif // CONFIG_CLI_H_

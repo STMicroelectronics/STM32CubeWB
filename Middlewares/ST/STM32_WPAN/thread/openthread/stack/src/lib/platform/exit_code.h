@@ -38,6 +38,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <openthread/logging.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -82,6 +83,12 @@ enum
      * No response from radio spinel.
      */
     OT_EXIT_RADIO_SPINEL_NO_RESPONSE = 6,
+
+    /**
+     * Invalid state.
+     */
+    OT_EXIT_INVALID_STATE = 7,
+
 };
 
 /**

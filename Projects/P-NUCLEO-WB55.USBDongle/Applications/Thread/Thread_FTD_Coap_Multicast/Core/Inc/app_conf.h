@@ -177,7 +177,6 @@ typedef enum
 #define CFG_HW_RESET_BY_FW        1
 
 #define CFG_LED_SUPPORTED         1
-
 #define CFG_BUTTON_SUPPORTED      1
 
 /**
@@ -292,11 +291,12 @@ typedef enum
 /******************************************************************************
  * Scheduler
  ******************************************************************************/
-  /**
-   * This is the list of task id required by the application
-   * Each Id shall be in the range 0..31
-   */
-typedef enum
+/**
+ * This is the list of task id required by the application
+ * Each Id shall be in the range 0..31
+ */
+
+ typedef enum
 {
   CFG_TASK_COAP_MSG_BUTTON,
   CFG_TASK_MSG_FROM_M0_TO_M4,
@@ -310,21 +310,26 @@ typedef enum
   CFG_TASK_NBR  /**< Shall be last in the list */
 } CFG_IdleTask_Id_t;
 
-
-typedef enum
-{
-  CFG_SCH_PRIO_0,
-  CFG_SCH_PRIO_1,
-  CFG_PRIO_NBR,
-} CFG_SCH_Prio_Id_t;
-
+/* Scheduler types and defines        */
+/*------------------------------------*/
 #define TASK_COAP_MSG_BUTTON        (1U << CFG_TASK_COAP_MSG_BUTTON)
 #define TASK_MSG_FROM_M0_TO_M4      (1U << CFG_TASK_MSG_FROM_M0_TO_M4)
 
 
-  /**
-   * This is a bit mapping over 32bits listing all events id supported in the application
-   */
+/**
+ * This is the list of priority required by the application
+ * Each Id shall be in the range 0..31
+ */
+typedef enum
+{
+    CFG_SCH_PRIO_0,
+    CFG_SCH_PRIO_1,
+    CFG_SCH_PRIO_NBR,
+} CFG_SCH_Prio_Id_t;
+
+ /**
+ * This is a bit mapping over 32bits listing all events id supported in the application
+ */
 typedef enum
 {
   CFG_EVT_SYSTEM_HCI_CMD_EVT_RESP,
@@ -332,9 +337,9 @@ typedef enum
   CFG_EVT_SYNCHRO_BYPASS_IDLE,
 } CFG_IdleEvt_Id_t;
 
-#define EVENT_ACK_FROM_M0_EVT           (1U << CFG_EVT_ACK_FROM_M0_EVT)
-#define EVENT_SYNCHRO_BYPASS_IDLE       (1U << CFG_EVT_SYNCHRO_BYPASS_IDLE)
- 
+#define EVENT_ACK_FROM_M0_EVT        (1U << CFG_EVT_ACK_FROM_M0_EVT)
+#define EVENT_SYNCHRO_BYPASS_IDLE    (1U << CFG_EVT_SYNCHRO_BYPASS_IDLE)
+#define EVENT_TIMER                  (1U << CFG_EVT_TIMER)
 /******************************************************************************
  * Configure Log level for Application
  ******************************************************************************/

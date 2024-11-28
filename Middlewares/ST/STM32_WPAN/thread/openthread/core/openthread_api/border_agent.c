@@ -42,6 +42,8 @@ otBorderAgentState otBorderAgentGetState(otInstance *aInstance);
   p_ot_req->Size=0;
 
   Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
 }
 
 uint16_t otBorderAgentGetUdpPort(otInstance *aInstance)
@@ -55,6 +57,8 @@ uint16_t otBorderAgentGetUdpPort(otInstance *aInstance)
   p_ot_req->Size=0;
 
   Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
 }
 
 #endif // OPENTHREAD_CONFIG_BORDER_AGENT_ENABLE

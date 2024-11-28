@@ -38,6 +38,8 @@ otError otDatasetUpdaterRequestUpdate(otInstance *                aInstance,
                                       otDatasetUpdaterCallback    aCallback,
                                       void *                      aContext)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -53,7 +55,11 @@ otError otDatasetUpdaterRequestUpdate(otInstance *                aInstance,
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 void otDatasetUpdaterCancelUpdate(otInstance *aInstance)
@@ -68,11 +74,13 @@ void otDatasetUpdaterCancelUpdate(otInstance *aInstance)
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 
 bool otDatasetUpdaterIsUpdateOngoing(otInstance *aInstance)
 {
+  bool rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -84,7 +92,11 @@ bool otDatasetUpdaterIsUpdateOngoing(otInstance *aInstance)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (bool)p_ot_req->Data[0];
+  rspData = (bool)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 

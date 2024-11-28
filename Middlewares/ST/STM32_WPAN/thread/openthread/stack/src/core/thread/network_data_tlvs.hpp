@@ -48,9 +48,6 @@
 namespace ot {
 namespace NetworkData {
 
-using ot::Encoding::BigEndian::HostSwap16;
-using ot::Encoding::BigEndian::HostSwap32;
-
 /**
  * @addtogroup core-netdata-tlvs
  *
@@ -424,7 +421,7 @@ public:
      *
      * @returns The RLOC16 value.
      */
-    uint16_t GetRloc(void) const { return HostSwap16(mRloc); }
+    uint16_t GetRloc(void) const { return BigEndian::HostSwap16(mRloc); }
 
     /**
      * Sets the RLOC16 value.
@@ -432,7 +429,7 @@ public:
      * @param[in]  aRloc16  The RLOC16 value.
      *
      */
-    void SetRloc(uint16_t aRloc16) { mRloc = HostSwap16(aRloc16); }
+    void SetRloc(uint16_t aRloc16) { mRloc = BigEndian::HostSwap16(aRloc16); }
 
     /**
      * Returns the Preference value.
@@ -466,6 +463,15 @@ public:
      *
      */
     bool IsNat64(void) const { return (mFlags & kNat64Flag) != 0; }
+
+    /**
+     * Indicates whether or not the Advertising PIO (AP) flag is set.
+     *
+     * @retval TRUE   If the AP flag is set.
+     * @retval FALSE  If the AP flag is not set.
+     *
+     */
+    bool IsAdvPio(void) const { return (mFlags & kAdvPioFlag) != 0; }
 
     /**
      * Returns a pointer to the next HasRouteEntry.
@@ -508,6 +514,7 @@ private:
     static constexpr uint8_t kPreferenceOffset = 6;
     static constexpr uint8_t kPreferenceMask   = 3 << kPreferenceOffset;
     static constexpr uint8_t kNat64Flag        = 1 << 5;
+    static constexpr uint8_t kAdvPioFlag       = 1 << 4;
 
     uint16_t mRloc;
     uint8_t  mFlags;
@@ -925,7 +932,7 @@ public:
      *
      * @returns The RLOC16 value.
      */
-    uint16_t GetRloc(void) const { return HostSwap16(mRloc); }
+    uint16_t GetRloc(void) const { return BigEndian::HostSwap16(mRloc); }
 
     /**
      * Sets the RLOC16 value.
@@ -933,7 +940,7 @@ public:
      * @param[in]  aRloc16  The RLOC16 value.
      *
      */
-    void SetRloc(uint16_t aRloc16) { mRloc = HostSwap16(aRloc16); }
+    void SetRloc(uint16_t aRloc16) { mRloc = BigEndian::HostSwap16(aRloc16); }
 
     /**
      * Returns the Flags value.
@@ -941,7 +948,7 @@ public:
      * @returns The Flags value.
      *
      */
-    uint16_t GetFlags(void) const { return HostSwap16(mFlags); }
+    uint16_t GetFlags(void) const { return BigEndian::HostSwap16(mFlags); }
 
     /**
      * Sets the Flags value.
@@ -949,7 +956,7 @@ public:
      * @param[in]  aFlags  The Flags value.
      *
      */
-    void SetFlags(uint16_t aFlags) { mFlags = HostSwap16(aFlags); }
+    void SetFlags(uint16_t aFlags) { mFlags = BigEndian::HostSwap16(aFlags); }
 
     /**
      * Returns the Preference value.
@@ -966,7 +973,7 @@ public:
      * @retval FALSE  If the Preferred flag is not set.
      *
      */
-    bool IsPreferred(void) const { return (HostSwap16(mFlags) & kPreferredFlag) != 0; }
+    bool IsPreferred(void) const { return (BigEndian::HostSwap16(mFlags) & kPreferredFlag) != 0; }
 
     /**
      * Indicates whether or not the SLAAC flag is set.
@@ -975,7 +982,7 @@ public:
      * @retval FALSE  If the SLAAC flag is not set.
      *
      */
-    bool IsSlaac(void) const { return (HostSwap16(mFlags) & kSlaacFlag) != 0; }
+    bool IsSlaac(void) const { return (BigEndian::HostSwap16(mFlags) & kSlaacFlag) != 0; }
 
     /**
      * Indicates whether or not the DHCP flag is set.
@@ -984,7 +991,7 @@ public:
      * @retval FALSE  If the DHCP flag is not set.
      *
      */
-    bool IsDhcp(void) const { return (HostSwap16(mFlags) & kDhcpFlag) != 0; }
+    bool IsDhcp(void) const { return (BigEndian::HostSwap16(mFlags) & kDhcpFlag) != 0; }
 
     /**
      * Indicates whether or not the Configure flag is set.
@@ -993,7 +1000,7 @@ public:
      * @retval FALSE  If the Configure flag is not set.
      *
      */
-    bool IsConfigure(void) const { return (HostSwap16(mFlags) & kConfigureFlag) != 0; }
+    bool IsConfigure(void) const { return (BigEndian::HostSwap16(mFlags) & kConfigureFlag) != 0; }
 
     /**
      * Indicates whether or not the Default Route flag is set.
@@ -1002,7 +1009,7 @@ public:
      * @retval FALSE  If the Default Route flag is not set.
      *
      */
-    bool IsDefaultRoute(void) const { return (HostSwap16(mFlags) & kDefaultRouteFlag) != 0; }
+    bool IsDefaultRoute(void) const { return (BigEndian::HostSwap16(mFlags) & kDefaultRouteFlag) != 0; }
 
     /**
      * Indicates whether or not the On-Mesh flag is set.
@@ -1011,7 +1018,7 @@ public:
      * @retval FALSE  If the On-Mesh flag is not set.
      *
      */
-    bool IsOnMesh(void) const { return (HostSwap16(mFlags) & kOnMeshFlag) != 0; }
+    bool IsOnMesh(void) const { return (BigEndian::HostSwap16(mFlags) & kOnMeshFlag) != 0; }
 
     /**
      * Indicates whether or not the Nd-Dns flag is set.
@@ -1020,7 +1027,7 @@ public:
      * @retval FALSE  If the Nd-Dns flag is not set.
      *
      */
-    bool IsNdDns(void) const { return (HostSwap16(mFlags) & kNdDnsFlag) != 0; }
+    bool IsNdDns(void) const { return (BigEndian::HostSwap16(mFlags) & kNdDnsFlag) != 0; }
 
     /**
      * Indicates whether or not the Domain Prefix flag is set.
@@ -1029,7 +1036,7 @@ public:
      * @retval FALSE  If the Domain Prefix flag is not set.
      *
      */
-    bool IsDp(void) const { return (HostSwap16(mFlags) & kDpFlag) != 0; }
+    bool IsDp(void) const { return (BigEndian::HostSwap16(mFlags) & kDpFlag) != 0; }
 
     /**
      * Returns a pointer to the next BorderRouterEntry
@@ -1339,7 +1346,7 @@ public:
     uint32_t GetEnterpriseNumber(void) const
     {
         return IsThreadEnterprise() ? static_cast<uint32_t>(kThreadEnterpriseNumber)
-                                    : HostSwap32(mShared.mEnterpriseNumber);
+                                    : BigEndian::HostSwap32(mShared.mEnterpriseNumber);
     }
 
     /**
@@ -1495,7 +1502,7 @@ public:
      * @returns The Server16 value.
      *
      */
-    uint16_t GetServer16(void) const { return HostSwap16(mServer16); }
+    uint16_t GetServer16(void) const { return BigEndian::HostSwap16(mServer16); }
 
     /*
      * Sets the Server16 value.
@@ -1503,7 +1510,7 @@ public:
      * @param[in]  aServer16  The Server16 value.
      *
      */
-    void SetServer16(uint16_t aServer16) { mServer16 = HostSwap16(aServer16); }
+    void SetServer16(uint16_t aServer16) { mServer16 = BigEndian::HostSwap16(aServer16); }
 
     /**
      * Gets the Server Data.

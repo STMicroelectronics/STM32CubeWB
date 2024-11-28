@@ -37,6 +37,8 @@ otError otThreadGetNextDiagnosticTlv(const otMessage *      aMessage,
                                      otNetworkDiagIterator *aIterator,
                                      otNetworkDiagTlv *     aNetworkDiagTlv)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -51,7 +53,11 @@ otError otThreadGetNextDiagnosticTlv(const otMessage *      aMessage,
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otThreadSendDiagnosticGet(otInstance *                   aInstance,
@@ -61,6 +67,8 @@ otError otThreadSendDiagnosticGet(otInstance *                   aInstance,
                                   otReceiveDiagnosticGetCallback aCallback,
                                   void *                         aCallbackContext)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -78,7 +86,11 @@ otError otThreadSendDiagnosticGet(otInstance *                   aInstance,
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otThreadSendDiagnosticReset(otInstance *        aInstance,
@@ -86,6 +98,8 @@ otError otThreadSendDiagnosticReset(otInstance *        aInstance,
                                     const uint8_t       aTlvTypes[],
                                     uint8_t             aCount)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -100,13 +114,19 @@ otError otThreadSendDiagnosticReset(otInstance *        aInstance,
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 #endif // OPENTHREAD_CONFIG_TMF_NETDIAG_CLIENT_ENABLE
 
 const char *otThreadGetVendorName(otInstance *aInstance)
 {
+  const char * rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -118,11 +138,17 @@ const char *otThreadGetVendorName(otInstance *aInstance)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (const char*)p_ot_req->Data[0];
+  rspData = (const char *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 const char *otThreadGetVendorModel(otInstance *aInstance)
 {
+  const char * rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -134,11 +160,17 @@ const char *otThreadGetVendorModel(otInstance *aInstance)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (const char*)p_ot_req->Data[0];
+  rspData = (const char *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 const char *otThreadGetVendorSwVersion(otInstance *aInstance)
 {
+  const char * rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -150,5 +182,31 @@ const char *otThreadGetVendorSwVersion(otInstance *aInstance)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (const char*)p_ot_req->Data[0];
+  rspData = (const char *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
+}
+
+const char *otThreadGetVendorAppUrl(otInstance *aInstance)
+{
+  const char * rspData;
+  
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_GET_VENDOR_APP_URL;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  rspData = (const char *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }

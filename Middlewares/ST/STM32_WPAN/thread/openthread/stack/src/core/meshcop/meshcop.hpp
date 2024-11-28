@@ -37,8 +37,6 @@
 
 #include "openthread-core-config.h"
 
-#include <limits.h>
-
 #include <openthread/commissioner.h>
 #include <openthread/instance.h>
 #include <openthread/joiner.h>
@@ -49,6 +47,7 @@
 #include "common/equatable.hpp"
 #include "common/log.hpp"
 #include "common/message.hpp"
+#include "common/numeric_limits.hpp"
 #include "common/string.hpp"
 #include "mac/mac_types.hpp"
 #include "meshcop/meshcop_tlvs.hpp"
@@ -393,10 +392,10 @@ public:
 private:
     static constexpr uint8_t kPermitAll = 0xff;
 
-    uint8_t GetNumBits(void) const { return (mLength * CHAR_BIT); }
+    uint8_t GetNumBits(void) const { return (mLength * kBitsPerByte); }
 
-    uint8_t BitIndex(uint8_t aBit) const { return (mLength - 1 - (aBit / CHAR_BIT)); }
-    uint8_t BitFlag(uint8_t aBit) const { return static_cast<uint8_t>(1U << (aBit % CHAR_BIT)); }
+    uint8_t BitIndex(uint8_t aBit) const { return (mLength - 1 - (aBit / kBitsPerByte)); }
+    uint8_t BitFlag(uint8_t aBit) const { return static_cast<uint8_t>(1U << (aBit % kBitsPerByte)); }
 
     bool GetBit(uint8_t aBit) const { return (m8[BitIndex(aBit)] & BitFlag(aBit)) != 0; }
     void SetBit(uint8_t aBit) { m8[BitIndex(aBit)] |= BitFlag(aBit); }
@@ -404,6 +403,134 @@ private:
 
     bool DoesAllMatch(uint8_t aMatch) const;
     void UpdateBloomFilter(const HashBitIndexes &aIndexes);
+};
+
+/**
+ * Represents a Commissioning Dataset.
+ *
+ */
+class CommissioningDataset : public otCommissioningDataset, public Clearable<CommissioningDataset>
+{
+public:
+    /**
+     * Indicates whether or not the Border Router RLOC16 Locator is set in the Dataset.
+     *
+     * @returns TRUE if Border Router RLOC16 Locator is set, FALSE otherwise.
+     *
+     */
+    bool IsLocatorSet(void) const { return mIsLocatorSet; }
+
+    /**
+     * Gets the Border Router RLOC16 Locator in the Dataset.
+     *
+     * MUST be used when Locator is set in the Dataset, otherwise its behavior is undefined.
+     *
+     * @returns The Border Router RLOC16 Locator in the Dataset.
+     *
+     */
+    uint16_t GetLocator(void) const { return mLocator; }
+
+    /**
+     * Sets the Border Router RLOCG16 Locator in the Dataset.
+     *
+     * @param[in] aLocator  A Locator.
+     *
+     */
+    void SetLocator(uint16_t aLocator)
+    {
+        mIsLocatorSet = true;
+        mLocator      = aLocator;
+    }
+
+    /**
+     * Indicates whether or not the Session ID is set in the Dataset.
+     *
+     * @returns TRUE if Session ID is set, FALSE otherwise.
+     *
+     */
+    bool IsSessionIdSet(void) const { return mIsSessionIdSet; }
+
+    /**
+     * Gets the Session ID in the Dataset.
+     *
+     * MUST be used when Session ID is set in the Dataset, otherwise its behavior is undefined.
+     *
+     * @returns The Session ID in the Dataset.
+     *
+     */
+    uint16_t GetSessionId(void) const { return mSessionId; }
+
+    /**
+     * Sets the Session ID in the Dataset.
+     *
+     * @param[in] aSessionId  The Session ID.
+     *
+     */
+    void SetSessionId(uint16_t aSessionId)
+    {
+        mIsSessionIdSet = true;
+        mSessionId      = aSessionId;
+    }
+
+    /**
+     * Indicates whether or not the Steering Data is set in the Dataset.
+     *
+     * @returns TRUE if Steering Data is set, FALSE otherwise.
+     *
+     */
+    bool IsSteeringDataSet(void) const { return mIsSteeringDataSet; }
+
+    /**
+     * Gets the Steering Data in the Dataset.
+     *
+     * MUST be used when Steering Data is set in the Dataset, otherwise its behavior is undefined.
+     *
+     * @returns The Steering Data in the Dataset.
+     *
+     */
+    const SteeringData &GetSteeringData(void) const { return static_cast<const SteeringData &>(mSteeringData); }
+
+    /**
+     * Returns a reference to the Steering Data in the Dataset to be updated by caller.
+     *
+     * @returns A reference to the Steering Data in the Dataset.
+     *
+     */
+    SteeringData &UpdateSteeringData(void)
+    {
+        mIsSteeringDataSet = true;
+        return static_cast<SteeringData &>(mSteeringData);
+    }
+
+    /**
+     * Indicates whether or not the Joiner UDP port is set in the Dataset.
+     *
+     * @returns TRUE if Joiner UDP port is set, FALSE otherwise.
+     *
+     */
+    bool IsJoinerUdpPortSet(void) const { return mIsJoinerUdpPortSet; }
+
+    /**
+     * Gets the Joiner UDP port in the Dataset.
+     *
+     * MUST be used when Joiner UDP port is set in the Dataset, otherwise its behavior is undefined.
+     *
+     * @returns The Joiner UDP port in the Dataset.
+     *
+     */
+    uint16_t GetJoinerUdpPort(void) const { return mJoinerUdpPort; }
+
+    /**
+     * Sets the Joiner UDP Port in the Dataset.
+     *
+     * @param[in] aJoinerUdpPort  The Joiner UDP Port.
+     *
+     */
+    void SetJoinerUdpPort(uint16_t aJoinerUdpPort)
+    {
+        mIsJoinerUdpPortSet = true;
+        mJoinerUdpPort      = aJoinerUdpPort;
+    }
 };
 
 /**
@@ -434,39 +561,12 @@ Error GeneratePskc(const char          *aPassPhrase,
  */
 void ComputeJoinerId(const Mac::ExtAddress &aEui64, Mac::ExtAddress &aJoinerId);
 
-/**
- * Gets the border agent RLOC.
- *
- * @param[in]   aNetIf  A reference to the thread interface.
- * @param[out]  aRloc   Border agent RLOC.
- *
- * @retval kErrorNone       Successfully got the Border Agent Rloc.
- * @retval kErrorNotFound   Border agent is not available.
- *
- */
-Error GetBorderAgentRloc(ThreadNetif &aNetIf, uint16_t &aRloc);
-
-#if OT_SHOULD_LOG_AT(OT_LOG_LEVEL_WARN)
-/**
- * Emits a log message indicating an error during a MeshCoP action.
- *
- * Note that log message is emitted only if there is an error, i.e. @p aError is not `kErrorNone`. The log
- * message will have the format "Failed to {aActionText} : {ErrorString}".
- *
- * @param[in] aActionText   A string representing the failed action.
- * @param[in] aError        The error in sending the message.
- *
- */
-void LogError(const char *aActionText, Error aError);
-#else
-inline void LogError(const char *, Error) {}
-#endif
-
 } // namespace MeshCoP
 
 DefineCoreType(otJoinerPskd, MeshCoP::JoinerPskd);
 DefineCoreType(otJoinerDiscerner, MeshCoP::JoinerDiscerner);
 DefineCoreType(otSteeringData, MeshCoP::SteeringData);
+DefineCoreType(otCommissioningDataset, MeshCoP::CommissioningDataset);
 
 } // namespace ot
 

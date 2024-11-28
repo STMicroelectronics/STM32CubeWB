@@ -67,8 +67,8 @@
 enum ZbZclPollControlSvrAttrT {
     ZCL_POLL_CHECK_IN_INTERVAL = 0x0000, /**< Check-inInterval */
     ZCL_POLL_LONG_POLL_INTERVAL = 0x0001, /**< LongPollInterval */
-    ZCL_POLL_SHORT_POLL_INTERVAL = 0x0002, /**< ShortPollInterval */
-    ZCL_POLL_FAST_POLL_TIMEOUT = 0x0003, /**< FastPollTimeout */
+    ZCL_POLL_SHORT_POLL_INTERVAL = 0x0002, /**< ShortPollInterval  */
+    ZCL_POLL_FAST_POLL_TIMEOUT = 0x0003, /**< FastPollTimeout : Value ranging from 250 msec up to 1sec*/
     ZCL_POLL_CHECK_IN_INTERVAL_MIN = 0x0004, /**< Check-inIntervalMin (Optional) */
     ZCL_POLL_LONG_POLL_INTERVAL_MIN = 0x0005, /**< LongPollIntervalMin (Optional) */
     ZCL_POLL_FAST_POLL_TIMEOUT_MAX = 0x0006, /**< FastPollTimeoutMax (Optional) */

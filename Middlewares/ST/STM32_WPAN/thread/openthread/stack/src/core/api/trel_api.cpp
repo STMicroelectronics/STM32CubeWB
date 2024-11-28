@@ -39,7 +39,7 @@
 
 #include "common/as_core_type.hpp"
 #include "common/code_utils.hpp"
-#include "common/instance.hpp"
+#include "instance/instance.hpp"
 
 using namespace ot;
 
@@ -60,6 +60,11 @@ const otTrelPeer *otTrelGetNextPeer(otInstance *aInstance, otTrelPeerIterator *a
     return AsCoreType(aInstance).Get<Trel::Interface>().GetNextPeer(*aIterator);
 }
 
+uint16_t otTrelGetNumberOfPeers(otInstance *aInstance)
+{
+    return AsCoreType(aInstance).Get<Trel::Interface>().GetNumberOfPeers();
+}
+
 void otTrelSetFilterEnabled(otInstance *aInstance, bool aEnable)
 {
     AsCoreType(aInstance).Get<Trel::Interface>().SetFilterEnabled(aEnable);
@@ -69,5 +74,12 @@ bool otTrelIsFilterEnabled(otInstance *aInstance)
 {
     return AsCoreType(aInstance).Get<Trel::Interface>().IsFilterEnabled();
 }
+
+const otTrelCounters *otTrelGetCounters(otInstance *aInstance)
+{
+    return AsCoreType(aInstance).Get<Trel::Interface>().GetCounters();
+}
+
+void otTrelResetCounters(otInstance *aInstance) { AsCoreType(aInstance).Get<Trel::Interface>().ResetCounters(); }
 
 #endif // OPENTHREAD_CONFIG_RADIO_LINK_TREL_ENABLE

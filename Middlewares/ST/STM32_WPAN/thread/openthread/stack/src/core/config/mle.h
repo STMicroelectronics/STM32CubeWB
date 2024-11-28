@@ -36,6 +36,16 @@
 #define CONFIG_MLE_H_
 
 /**
+ * @addtogroup config-mle
+ *
+ * @brief
+ *   This module includes configuration variables for the MLE service.
+ *
+ * @{
+ *
+ */
+
+/**
  * @def OPENTHREAD_CONFIG_MLE_MAX_ROUTERS
  *
  * The maximum number of routers in a Thread network.
@@ -86,6 +96,20 @@
  */
 #ifndef OPENTHREAD_CONFIG_MLE_IP_ADDRS_TO_REGISTER
 #define OPENTHREAD_CONFIG_MLE_IP_ADDRS_TO_REGISTER (OPENTHREAD_CONFIG_MLE_IP_ADDRS_PER_CHILD)
+#endif
+
+/**
+ * @def OPENTHREAD_CONFIG_MLE_DEVICE_PROPERTY_LEADER_WEIGHT_ENABLE
+ *
+ * Define as 1 to enable feature to set device properties which are used for calculating the local leader weight on a
+ * device.
+ *
+ * It is enabled by default on Thread Version 1.4 or later.
+ *
+ */
+#ifndef OPENTHREAD_CONFIG_MLE_DEVICE_PROPERTY_LEADER_WEIGHT_ENABLE
+#define OPENTHREAD_CONFIG_MLE_DEVICE_PROPERTY_LEADER_WEIGHT_ENABLE \
+    (OPENTHREAD_CONFIG_THREAD_VERSION >= OT_THREAD_VERSION_1_4)
 #endif
 
 /**
@@ -313,5 +337,20 @@
 #ifndef OPENTHREAD_CONFIG_MLE_LINK_METRICS_MAX_SERIES_SUPPORTED
 #define OPENTHREAD_CONFIG_MLE_LINK_METRICS_MAX_SERIES_SUPPORTED OPENTHREAD_CONFIG_MLE_MAX_CHILDREN
 #endif
+
+/**
+ * @def OPENTHREAD_CONFIG_MLE_LINK_METRICS_SERIES_MTD
+ *
+ * The max number of series that a Link Metrics Subject (MTD device) can track simultaneously.
+ *
+ */
+#ifndef OPENTHREAD_CONFIG_MLE_LINK_METRICS_SERIES_MTD
+#define OPENTHREAD_CONFIG_MLE_LINK_METRICS_SERIES_MTD 2
+#endif
+
+/**
+ * @}
+ *
+ */
 
 #endif // CONFIG_MLE_H_

@@ -131,6 +131,11 @@
 			<type>1</type>
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_uart_ex.c</locationURI>
 		</link>
+                <link>
+			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_hal_exti.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_exti.c</locationURI>
+		</link>
 		<link>
 			<name>Drivers/STM32WBxx_HAL_Driver/stm32wbxx_ll_usb.c</name>
 			<type>1</type>

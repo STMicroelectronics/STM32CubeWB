@@ -33,6 +33,7 @@
 #include "stm_list.h"
 #include "advanced_memory_manager.h"
 #include "stm32_mm.h"
+#include "vcp.h"
 
 /* Private includes -----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -116,6 +117,13 @@ static AMM_InitParameters_t ammInitConfig =
   .p_VirtualMemoryConfigList = vmConfig
 };
 
+#if (CFG_USB_INTERFACE_ENABLE != 0)
+#define C_SIZE_CMD_STRING       256U
+static uint8_t CommandString[C_SIZE_CMD_STRING];
+static uint8_t VcpTxBuffer[MAX_DBG_TRACE_MSG_SIZE]; /* Transmit buffer over USB */
+static uint8_t VcpRxBuffer[MAX_DBG_TRACE_MSG_SIZE]; /* Receive buffer over USB */
+EXTI_HandleTypeDef exti_handle;
+#endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 
 /* USER CODE BEGIN PV */
 
@@ -133,6 +141,10 @@ static void APPE_SysUserEvtRx( void * pPayload );
 static void APPE_SysEvtReadyProcessing( void );
 static void APPE_SysEvtError( SCHI_SystemErrCode_t ErrorCode);
 static void writeTrace(char * buffer, uint32_t size);
+
+#if (CFG_USB_INTERFACE_ENABLE != 0)
+static void CmdExecute(void);
+#endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 
 /* USER CODE BEGIN PFP */
 static void Led_Init( void );
@@ -159,7 +171,7 @@ void APPE_Init( void )
 
 /* USER CODE BEGIN APPE_Init_1 */
   Init_Debug();
-  
+
   UTIL_LPM_SetOffMode(1 << CFG_LPM_APP, UTIL_LPM_DISABLE);
   Led_Init();
   Button_Init();
@@ -237,6 +249,7 @@ static void Init_Debug( void )
  */
 static void SystemPower_Config(void)
 {
+
   /**
    * Select HSI as system clock source after Wake Up from Stop mode
    */
@@ -378,8 +391,6 @@ static void Button_Init( void )
 
   return;
 }
-
-
 /* USER CODE END FD_LOCAL_FUNCTIONS */
 
 /*************************************************************
@@ -523,7 +534,7 @@ void ProcessTrace(void)
 #if(CFG_DEBUG_TRACE != 0)
 void DbgOutputInit( void )
 {
-  HW_UART_Init(CFG_DEBUG_TRACE_UART);
+  VCP_Init( &VcpTxBuffer[0], &VcpRxBuffer[0] );
   return;
 }
 
@@ -536,11 +547,57 @@ void DbgOutputInit( void )
   */
 void DbgOutputTraces(  uint8_t *p_data, uint16_t size, void (*cb)(void) )
 {
-  HW_UART_Transmit_DMA(CFG_DEBUG_TRACE_UART, p_data, size, cb);
-
+  VCP_SendData ( p_data , size , cb );
   return;
 }
 #endif
+
+#if (CFG_USB_INTERFACE_ENABLE != 0)
+/**
+ * @brief  This function is called when thereare some data coming
+ *         from the Hyperterminal via the USB port
+ *         Data received over USB OUT endpoint are sent over CDC interface
+ *         through this function.
+ * @param  Buf: Buffer of data received
+ * @param  Len: Number of data received (in bytes)
+ */
+void VCP_DataReceived(uint8_t* Buf , uint32_t *Len)
+{
+  static uint32_t len_total = 0;
+
+  if(len_total < C_SIZE_CMD_STRING)
+  {
+    memcpy(&CommandString[len_total], Buf, *Len);
+    len_total += *Len;
+    
+    if(len_total >= 1)
+    {
+      if(CommandString[len_total-1] == '\r')
+      {
+        CmdExecute();
+        len_total = 0;
+      }
+    }
+  }
+}
+
+static void CmdExecute(void)
+{
+  /* Parse received */
+  if(strcmp((char const*)CommandString, "SW1\r") == 0)
+  {
+    APP_DBG("SW1 OK");
+    exti_handle.Line = BUTTON_SW1_EXTI_LINE;
+    HAL_EXTI_GenerateSWI(&exti_handle);
+  }
+  else
+  {
+    APP_DBG("NOT RECOGNIZED COMMAND : %s", CommandString);
+  }
+
+  memset(CommandString, 0, C_SIZE_CMD_STRING);
+}
+#endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 
 /* USER CODE BEGIN FD_WRAP_FUNCTIONS */
 static void writeTrace(char * buffer, uint32_t size)

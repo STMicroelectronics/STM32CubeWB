@@ -66,6 +66,8 @@ void USB_HP_IRQHandler(void);
 void USB_FS_WKUP_IRQHandler(void);
 #endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 
+void EXTI15_10_IRQHandler(void);
+
 
 #ifdef __cplusplus
 } /* extern "C" */

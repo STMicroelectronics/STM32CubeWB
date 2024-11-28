@@ -33,6 +33,8 @@
 
 otError otDatasetCreateNewNetwork(otInstance *aInstance, otOperationalDataset *aDataset)
 {
+	otError rspData;
+	
     Pre_OtCmdProcessing();
     /* prepare buffer */
     Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -45,11 +47,17 @@ otError otDatasetCreateNewNetwork(otInstance *aInstance, otOperationalDataset *a
     Ot_Cmd_Transfer();
 
     p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-    return (otError)p_ot_req->Data[0];
+    rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 uint32_t otDatasetGetDelayTimerMinimal(otInstance *aInstance)
 {
+	uint32_t rspData;
+	
     Pre_OtCmdProcessing();
     /* prepare buffer */
     Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -61,11 +69,17 @@ uint32_t otDatasetGetDelayTimerMinimal(otInstance *aInstance)
     Ot_Cmd_Transfer();
 
     p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-    return (uint32_t)p_ot_req->Data[0];
+    rspData = (uint32_t)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otDatasetSetDelayTimerMinimal(otInstance *aInstance, uint32_t aDelayTimerMinimal)
 {
+	otError rspData;
+	
     Pre_OtCmdProcessing();
     /* prepare buffer */
     Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -78,7 +92,11 @@ otError otDatasetSetDelayTimerMinimal(otInstance *aInstance, uint32_t aDelayTime
     Ot_Cmd_Transfer();
 
     p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-    return (otError)p_ot_req->Data[0];
+    rspData = (otError)p_ot_req->Data[0];
+  
+    Post_OtCmdProcessing();
+  
+    return rspData;
 }
 
 #endif //OPENTHREAD_FTD

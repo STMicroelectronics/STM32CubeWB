@@ -221,6 +221,9 @@
                     <state>STM32WB55xx</state>
                     <state>ST_OT_DEBUG</state>
                     <state>OPENTHREAD_CONFIG_FILE=&lt;openthread_api_config_ftd.h&gt;</state>
+                    <state>OPENTHREAD_PROJECT_CORE_CONFIG_FILE=&lt;stm32wb-openthread-ftd-config.h&gt;</state>
+                    <state>MBEDTLS_CONFIG_FILE=&lt;mbedtls-config.h&gt;</state>
+                    <state>MBEDTLS_USER_CONFIG_FILE=&lt;stm32wb-mbedtls-config.h&gt;</state>
                 </option>
                 <option>
                     <name>CCPreprocFile</name>
@@ -341,29 +344,38 @@
                 </option>
                 <option>
                     <name>CCIncludePath2</name>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Inc</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Drivers\CMSIS\Include</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Drivers\CMSIS\Device\ST\STM32WBxx\Include</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Drivers\BSP\P-NUCLEO-WB55.USBDongle\</state>
-                    <state>$PROJ_DIR$\..\Core\Inc</state>
-                    <state>$PROJ_DIR$\..\STM32_WPAN\App</state>
-                    <state>$PROJ_DIR$\..\STM32_WPAN\Target</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\include</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\include\openthread</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\../Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/include</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\../Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/include/mbedtls</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\../Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/core</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\utilities</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Utilities\lpm\tiny_lpm</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Utilities\sequencer</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\tl</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\shci</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\vcp</state>
+                    <state>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc</state>
+                    <state>$PROJ_DIR$/../../../../../../Drivers/CMSIS/Include</state>
+                    <state>$PROJ_DIR$/../../../../../../Drivers/CMSIS/Device/ST/STM32WBxx/Include</state>
+                    <state>$PROJ_DIR$/../../../../../../Drivers/BSP/P-NUCLEO-WB55.USBDongle</state>
+                    <state>$PROJ_DIR$/../Core/Inc</state>
+                    <state>$PROJ_DIR$/../STM32_WPAN/App</state>
+                    <state>$PROJ_DIR$/../STM32_WPAN/Target</state>
+                    <state>$PROJ_DIR$/../../../../../../Utilities/lpm/tiny_lpm</state>
+                    <state>$PROJ_DIR$/../../../../../../Utilities/sequencer</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include/openthread</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_config</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/mbedtls_config</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/utilities</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/vcp</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include/openthread/platform</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/include</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/include/mbedtls</state>
+                    <state>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc/Legacy</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/core</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/core/config</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/cli</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/src</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/examples/platforms</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/examples/platforms/utils</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_USB_Device_Library\Class\CDC\Inc</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_USB_Device_Library\Core\Inc</state>
                 </option>
@@ -1174,6 +1186,9 @@
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_dma.c</name>
             </file>
             <file>
+                <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_exti.c</name>
+            </file>
+            <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Src\stm32wbxx_hal_flash.c</name>
             </file>
             <file>
@@ -1299,6 +1314,18 @@
                         <group>
                             <name>openthread_api</name>
                             <file>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\backbone_router.c</name>
+                            </file>
+                            <file>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\backbone_router_ftd.c</name>
+                            </file>
+                            <file>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\border_agent.c</name>
+                            </file>
+                            <file>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\border_router.c</name>
+                            </file>
+                            <file>
                                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\channel_manager.c</name>
                             </file>
                             <file>
@@ -1306,6 +1333,9 @@
                             </file>
                             <file>
                                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\child_supervision.c</name>
+                            </file>
+                            <file>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\cli_platform.c</name>
                             </file>
                             <file>
                                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\coap.c</name>
@@ -1326,10 +1356,28 @@
                                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\dataset_ftd.c</name>
                             </file>
                             <file>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\dataset_updater.c</name>
+                            </file>
+                            <file>
                                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\diag.c</name>
                             </file>
                             <file>
                                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\dns.c</name>
+                            </file>
+                            <file>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\dns_server.c</name>
+                            </file>
+                            <file>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\entropy.c</name>
+                            </file>
+                            <file>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\errors.c</name>
+                            </file>
+                            <file>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\heap.c</name>
+                            </file>
+                            <file>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\history_tracker.c</name>
                             </file>
                             <file>
                                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\icmp6.c</name>
@@ -1350,13 +1398,34 @@
                                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\link.c</name>
                             </file>
                             <file>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\link_metrics.c</name>
+                            </file>
+                            <file>
                                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\link_raw.c</name>
+                            </file>
+                            <file>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\logging.c</name>
+                            </file>
+                            <file>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\mesh_diag.c</name>
                             </file>
                             <file>
                                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\message.c</name>
                             </file>
                             <file>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\multi_radio.c</name>
+                            </file>
+                            <file>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\nat64.c</name>
+                            </file>
+                            <file>
                                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\netdata.c</name>
+                            </file>
+                            <file>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\netdata_publisher.c</name>
+                            </file>
+                            <file>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\netdiag.c</name>
                             </file>
                             <file>
                                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\network_time.c</name>
@@ -1368,13 +1437,40 @@
                                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\openthread_api_wb.c</name>
                             </file>
                             <file>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\ping_sender.c</name>
+                            </file>
+                            <file>
                                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\radio.c</name>
+                            </file>
+                            <file>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\random_crypto.c</name>
+                            </file>
+                            <file>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\random_noncrypto.c</name>
                             </file>
                             <file>
                                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\server.c</name>
                             </file>
                             <file>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\sntp.c</name>
+                            </file>
+                            <file>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\srp_client.c</name>
+                            </file>
+                            <file>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\srp_client_buffers.c</name>
+                            </file>
+                            <file>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\srp_server.c</name>
+                            </file>
+                            <file>
                                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\tasklet.c</name>
+                            </file>
+                            <file>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\tcp.c</name>
+                            </file>
+                            <file>
+                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\tcp_ext.c</name>
                             </file>
                             <file>
                                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\thread.c</name>
@@ -1385,6 +1481,258 @@
                             <file>
                                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\udp.c</name>
                             </file>
+                        </group>
+                    </group>
+                    <group>
+                        <name>stack</name>
+                        <excluded>
+                            <configuration>STM32WBxx_USBD_Thread_FTD_Coap_Multicast</configuration>
+                        </excluded>
+                        <group>
+                            <name>examples</name>
+                            <group>
+                                <name>apps</name>
+                                <group>
+                                    <name>cli</name>
+                                    <file>
+                                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\examples\apps\cli\cli_uart.cpp</name>
+                                    </file>
+                                </group>
+                            </group>
+                        </group>
+                        <group>
+                            <name>src</name>
+                            <group>
+                                <name>cli</name>
+                                <file>
+                                    <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\cli\cli.cpp</name>
+                                </file>
+                                <file>
+                                    <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\cli\cli_bbr.cpp</name>
+                                </file>
+                                <file>
+                                    <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\cli\cli_coap.cpp</name>
+                                </file>
+                                <file>
+                                    <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\cli\cli_coap_secure.cpp</name>
+                                </file>
+                                <file>
+                                    <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\cli\cli_commissioner.cpp</name>
+                                </file>
+                                <file>
+                                    <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\cli\cli_dataset.cpp</name>
+                                </file>
+                                <file>
+                                    <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\cli\cli_dns.cpp</name>
+                                </file>
+                                <file>
+                                    <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\cli\cli_joiner.cpp</name>
+                                </file>
+                                <file>
+                                    <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\cli\cli_link_metrics.cpp</name>
+                                </file>
+                                <file>
+                                    <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\cli\cli_mac_filter.cpp</name>
+                                </file>
+                                <file>
+                                    <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\cli\cli_network_data.cpp</name>
+                                </file>
+                                <file>
+                                    <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\cli\cli_ping.cpp</name>
+                                </file>
+                                <file>
+                                    <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\cli\cli_srp_client.cpp</name>
+                                </file>
+                                <file>
+                                    <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\cli\cli_tcp.cpp</name>
+                                </file>
+                                <file>
+                                    <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\cli\cli_udp.cpp</name>
+                                </file>
+                                <file>
+                                    <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\cli\cli_utils.cpp</name>
+                                </file>
+                            </group>
+                            <group>
+                                <name>core</name>
+                                <group>
+                                    <name>common</name>
+                                    <file>
+                                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\common\binary_search.cpp</name>
+                                    </file>
+                                    <file>
+                                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\common\string.cpp</name>
+                                    </file>
+                                    <file>
+                                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\common\timer.cpp</name>
+                                    </file>
+                                    <file>
+                                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\common\tlvs.cpp</name>
+                                    </file>
+                                </group>
+                                <group>
+                                    <name>crypto</name>
+                                    <file>
+                                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\crypto\crypto_platform.cpp</name>
+                                    </file>
+                                    <file>
+                                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\crypto\mbedtls.cpp</name>
+                                    </file>
+                                </group>
+                                <group>
+                                    <name>instance</name>
+                                    <file>
+                                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\instance\instance.cpp</name>
+                                    </file>
+                                </group>
+                                <group>
+                                    <name>meshcop</name>
+                                    <file>
+                                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\meshcop\dataset.cpp</name>
+                                    </file>
+                                    <file>
+                                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\meshcop\meshcop_tlvs.cpp</name>
+                                    </file>
+                                    <file>
+                                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\meshcop\network_name.cpp</name>
+                                    </file>
+                                    <file>
+                                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\meshcop\timestamp.cpp</name>
+                                    </file>
+                                </group>
+                                <group>
+                                    <name>thread</name>
+                                    <file>
+                                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\thread\key_manager.cpp</name>
+                                    </file>
+                                </group>
+                                <group>
+                                    <name>utils</name>
+                                    <file>
+                                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\utils\parse_cmdline.cpp</name>
+                                    </file>
+                                </group>
+                            </group>
+                        </group>
+                        <group>
+                            <name>third_party</name>
+                            <group>
+                                <name>mbedtls</name>
+                                <group>
+                                    <name>repo</name>
+                                    <group>
+                                        <name>library</name>
+                                        <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\aes.c</name>
+                                        </file>
+                                        <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\asn1parse.c</name>
+                                        </file>
+                                        <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\asn1write.c</name>
+                                        </file>
+                                        <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\base64.c</name>
+                                        </file>
+                                        <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\bignum.c</name>
+                                        </file>
+                                        <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\bignum_core.c</name>
+                                        </file>
+                                        <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\ccm.c</name>
+                                        </file>
+                                        <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\cipher.c</name>
+                                        </file>
+                                        <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\cipher_wrap.c</name>
+                                        </file>
+                                        <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\constant_time.c</name>
+                                        </file>
+                                        <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\ctr_drbg.c</name>
+                                        </file>
+                                        <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\ecdh.c</name>
+                                        </file>
+                                        <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\ecdsa.c</name>
+                                        </file>
+                                        <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\ecjpake.c</name>
+                                        </file>
+                                        <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\ecp.c</name>
+                                        </file>
+                                        <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\ecp_curves.c</name>
+                                        </file>
+                                        <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\entropy.c</name>
+                                        </file>
+                                        <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\hmac_drbg.c</name>
+                                        </file>
+                                        <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\md.c</name>
+                                        </file>
+                                        <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\oid.c</name>
+                                        </file>
+                                        <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\pem.c</name>
+                                        </file>
+                                        <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\pk.c</name>
+                                        </file>
+                                        <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\pk_ecc.c</name>
+                                        </file>
+                                        <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\pk_wrap.c</name>
+                                        </file>
+                                        <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\pkparse.c</name>
+                                        </file>
+                                        <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\platform.c</name>
+                                        </file>
+                                        <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\platform_util.c</name>
+                                        </file>
+                                        <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\sha256.c</name>
+                                        </file>
+                                        <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\ssl_ciphersuites.c</name>
+                                        </file>
+                                        <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\ssl_client.c</name>
+                                        </file>
+                                        <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\ssl_msg.c</name>
+                                        </file>
+                                        <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\ssl_tls.c</name>
+                                        </file>
+                                        <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\ssl_tls12_client.c</name>
+                                        </file>
+                                        <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\ssl_tls12_server.c</name>
+                                        </file>
+                                        <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\x509.c</name>
+                                        </file>
+                                        <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\x509_crt.c</name>
+                                        </file>
+                                    </group>
+                                </group>
+                            </group>
                         </group>
                     </group>
                 </group>

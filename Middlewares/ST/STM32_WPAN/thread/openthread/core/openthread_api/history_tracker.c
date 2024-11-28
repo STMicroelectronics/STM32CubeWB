@@ -45,13 +45,15 @@ void otHistoryTrackerInitIterator(otHistoryTrackerIterator *aIterator)
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 
 const otHistoryTrackerNetworkInfo *otHistoryTrackerIterateNetInfoHistory(otInstance *              aInstance,
                                                                          otHistoryTrackerIterator *aIterator,
                                                                          uint32_t *                aEntryAge)
 {
+  const otHistoryTrackerNetworkInfo *rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -65,7 +67,11 @@ const otHistoryTrackerNetworkInfo *otHistoryTrackerIterateNetInfoHistory(otInsta
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otHistoryTrackerNetworkInfo *)p_ot_req->Data[0];
+  rspData = (const otHistoryTrackerNetworkInfo *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 const otHistoryTrackerUnicastAddressInfo *otHistoryTrackerIterateUnicastAddressHistory(
@@ -73,6 +79,8 @@ const otHistoryTrackerUnicastAddressInfo *otHistoryTrackerIterateUnicastAddressH
     otHistoryTrackerIterator *aIterator,
     uint32_t *                aEntryAge)
 {
+  const otHistoryTrackerUnicastAddressInfo * rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -86,7 +94,11 @@ const otHistoryTrackerUnicastAddressInfo *otHistoryTrackerIterateUnicastAddressH
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otHistoryTrackerUnicastAddressInfo *)p_ot_req->Data[0];
+  rspData = (const otHistoryTrackerUnicastAddressInfo *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 const otHistoryTrackerMulticastAddressInfo *otHistoryTrackerIterateMulticastAddressHistory(
@@ -94,6 +106,7 @@ const otHistoryTrackerMulticastAddressInfo *otHistoryTrackerIterateMulticastAddr
     otHistoryTrackerIterator *aIterator,
     uint32_t *                aEntryAge)
 {
+  const otHistoryTrackerMulticastAddressInfo * rspData;	
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -107,13 +120,19 @@ const otHistoryTrackerMulticastAddressInfo *otHistoryTrackerIterateMulticastAddr
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otHistoryTrackerMulticastAddressInfo *)p_ot_req->Data[0];
+  rspData = (const otHistoryTrackerMulticastAddressInfo *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 const otHistoryTrackerMessageInfo *otHistoryTrackerIterateRxHistory(otInstance *              aInstance,
                                                                     otHistoryTrackerIterator *aIterator,
                                                                     uint32_t *                aEntryAge)
 {
+  const otHistoryTrackerMessageInfo * rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -127,13 +146,19 @@ const otHistoryTrackerMessageInfo *otHistoryTrackerIterateRxHistory(otInstance *
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otHistoryTrackerMessageInfo *)p_ot_req->Data[0];
+  rspData = (const otHistoryTrackerMessageInfo *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 const otHistoryTrackerMessageInfo *otHistoryTrackerIterateTxHistory(otInstance *              aInstance,
                                                                     otHistoryTrackerIterator *aIterator,
                                                                     uint32_t *                aEntryAge)
 {
+  const otHistoryTrackerMessageInfo * rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -147,13 +172,19 @@ const otHistoryTrackerMessageInfo *otHistoryTrackerIterateTxHistory(otInstance *
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otHistoryTrackerMessageInfo *)p_ot_req->Data[0];
+  rspData = (const otHistoryTrackerMessageInfo *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 const otHistoryTrackerNeighborInfo *otHistoryTrackerIterateNeighborHistory(otInstance *              aInstance,
                                                                            otHistoryTrackerIterator *aIterator,
                                                                            uint32_t *                aEntryAge)
 {
+  const otHistoryTrackerNeighborInfo * rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -167,13 +198,19 @@ const otHistoryTrackerNeighborInfo *otHistoryTrackerIterateNeighborHistory(otIns
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otHistoryTrackerNeighborInfo *)p_ot_req->Data[0];
+  rspData = (const otHistoryTrackerNeighborInfo *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 const otHistoryTrackerOnMeshPrefixInfo *otHistoryTrackerIterateOnMeshPrefixHistory(otInstance *              aInstance,
                                                                                    otHistoryTrackerIterator *aIterator,
                                                                                    uint32_t *                aEntryAge)
 {
+  const otHistoryTrackerOnMeshPrefixInfo * rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -187,7 +224,11 @@ const otHistoryTrackerOnMeshPrefixInfo *otHistoryTrackerIterateOnMeshPrefixHisto
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otHistoryTrackerOnMeshPrefixInfo *)p_ot_req->Data[0];
+  rspData = (const otHistoryTrackerOnMeshPrefixInfo *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 const otHistoryTrackerExternalRouteInfo *otHistoryTrackerIterateExternalRouteHistory(
@@ -195,6 +236,8 @@ const otHistoryTrackerExternalRouteInfo *otHistoryTrackerIterateExternalRouteHis
     otHistoryTrackerIterator *aIterator,
     uint32_t *                aEntryAge)
 {
+  const otHistoryTrackerExternalRouteInfo * rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -208,7 +251,11 @@ const otHistoryTrackerExternalRouteInfo *otHistoryTrackerIterateExternalRouteHis
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otHistoryTrackerExternalRouteInfo *)p_ot_req->Data[0];
+  rspData = (const otHistoryTrackerExternalRouteInfo *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 void otHistoryTrackerEntryAgeToString(uint32_t aEntryAge, char *aBuffer, uint16_t aSize)
@@ -226,7 +273,7 @@ void otHistoryTrackerEntryAgeToString(uint32_t aEntryAge, char *aBuffer, uint16_
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 
 #endif // OPENTHREAD_CONFIG_HISTORY_TRACKER_ENABLE

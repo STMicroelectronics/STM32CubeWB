@@ -36,6 +36,16 @@
 #define CONFIG_CHANNEL_MANAGER_H_
 
 /**
+ * @addtogroup config-channel-manager
+ *
+ * @brief
+ *   This module includes configuration variables for Channel Manager.
+ *
+ * @{
+ *
+ */
+
+/**
  * @def OPENTHREAD_CONFIG_CHANNEL_MANAGER_ENABLE
  *
  * Define as 1 to enable Channel Manager support.
@@ -43,6 +53,18 @@
  */
 #ifndef OPENTHREAD_CONFIG_CHANNEL_MANAGER_ENABLE
 #define OPENTHREAD_CONFIG_CHANNEL_MANAGER_ENABLE 0
+#endif
+
+/**
+ * @def OPENTHREAD_CONFIG_CHANNEL_MANAGER_CSL_CHANNEL_SELECT_ENABLE
+ *
+ * Define as 1 to enable Channel Manager support for selecting CSL channels.
+ *
+ * `OPENTHREAD_CONFIG_MAC_CSL_RECEIVER_ENABLE` must be enabled in addition.
+ *
+ */
+#ifndef OPENTHREAD_CONFIG_CHANNEL_MANAGER_CSL_CHANNEL_SELECT_ENABLE
+#define OPENTHREAD_CONFIG_CHANNEL_MANAGER_CSL_CHANNEL_SELECT_ENABLE 0
 #endif
 
 /**
@@ -135,5 +157,10 @@
 #ifndef OPENTHREAD_CONFIG_CHANNEL_MANAGER_CCA_FAILURE_THRESHOLD
 #define OPENTHREAD_CONFIG_CHANNEL_MANAGER_CCA_FAILURE_THRESHOLD (0xffff * 14 / 100)
 #endif
+
+/**
+ * @}
+ *
+ */
 
 #endif // CONFIG_CHANNEL_MANAGER_H_

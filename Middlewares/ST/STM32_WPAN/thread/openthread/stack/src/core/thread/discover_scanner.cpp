@@ -35,8 +35,8 @@
 
 #include "common/as_core_type.hpp"
 #include "common/code_utils.hpp"
-#include "common/instance.hpp"
 #include "common/locator_getters.hpp"
+#include "instance/instance.hpp"
 #include "thread/mesh_forwarder.hpp"
 #include "thread/mle.hpp"
 #include "thread/mle_router.hpp"
@@ -205,7 +205,7 @@ Mac::TxFrame *DiscoverScanner::PrepareDiscoveryRequestFrame(Mac::TxFrame &aFrame
     return frame;
 }
 
-void DiscoverScanner::HandleDiscoveryRequestFrameTxDone(Message &aMessage)
+void DiscoverScanner::HandleDiscoveryRequestFrameTxDone(Message &aMessage, Error aError)
 {
     switch (mState)
     {
@@ -213,15 +213,28 @@ void DiscoverScanner::HandleDiscoveryRequestFrameTxDone(Message &aMessage)
         break;
 
     case kStateScanning:
-        // Mark the Discovery Request message for direct tx to ensure it
-        // is not dequeued and freed by `MeshForwarder` and is ready for
-        // the next scan channel. Also pause message tx on `MeshForwarder`
-        // while listening to receive Discovery Responses.
-        aMessage.SetDirectTransmission();
-        aMessage.SetTimestampToNow();
-        Get<MeshForwarder>().PauseMessageTransmissions();
-        mTimer.Start(kDefaultScanDuration);
-        break;
+        if ((aError == kErrorNone) || (aError == kErrorChannelAccessFailure))
+        {
+            // Mark the Discovery Request message for direct tx to ensure it
+            // is not dequeued and freed by `MeshForwarder` and is ready for
+            // the next scan channel. Also pause message tx on `MeshForwarder`
+            // while listening to receive Discovery Responses.
+            aMessage.SetDirectTransmission();
+            aMessage.SetTimestampToNow();
+            Get<MeshForwarder>().PauseMessageTransmissions();
+            mTimer.Start(kDefaultScanDuration);
+            break;
+        }
+
+        // If we encounter other error failures (e.g., `kErrorDrop` due
+        // to queue management dropping the message or if message being
+        // evicted), `aMessage` may be immediately freed. This prevents
+        // us from reusing it to request a scan on the next scan channel.
+        // As a result, we stop the scan operation in such cases.
+
+        mState = kStateScanDone;
+
+        OT_FALL_THROUGH;
 
     case kStateScanDone:
         HandleDiscoverComplete();
@@ -295,8 +308,7 @@ exit:
 
 void DiscoverScanner::HandleDiscoveryResponse(Mle::RxInfo &aRxInfo) const
 {
-    Error                         error    = kErrorNone;
-    const ThreadLinkInfo         *linkInfo = aRxInfo.mMessageInfo.GetThreadLinkInfo();
+    Error                         error = kErrorNone;
     MeshCoP::Tlv                  meshcopTlv;
     MeshCoP::DiscoveryResponseTlv discoveryResponse;
     MeshCoP::NetworkNameTlv       networkName;
@@ -312,12 +324,12 @@ void DiscoverScanner::HandleDiscoveryResponse(Mle::RxInfo &aRxInfo) const
     // Find MLE Discovery TLV
     SuccessOrExit(error = Tlv::FindTlvValueStartEndOffsets(aRxInfo.mMessage, Tlv::kDiscovery, offset, end));
 
-    memset(&result, 0, sizeof(result));
+    ClearAllBytes(result);
     result.mDiscover = true;
-    result.mPanId    = linkInfo->mPanId;
-    result.mChannel  = linkInfo->mChannel;
-    result.mRssi     = linkInfo->mRss;
-    result.mLqi      = linkInfo->mLqi;
+    result.mPanId    = aRxInfo.mMessage.GetPanId();
+    result.mChannel  = aRxInfo.mMessage.GetChannel();
+    result.mRssi     = aRxInfo.mMessage.GetAverageRss();
+    result.mLqi      = aRxInfo.mMessage.GetAverageLqi();
 
     aRxInfo.mMessageInfo.GetPeerAddr().GetIid().ConvertToExtAddress(AsCoreType(&result.mExtAddress));
 

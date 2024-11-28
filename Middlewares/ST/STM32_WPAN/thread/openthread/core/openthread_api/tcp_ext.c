@@ -46,6 +46,8 @@ void otTcpCircularSendBufferInitialize(otTcpCircularSendBuffer *aSendBuffer, voi
   p_ot_req->Data[2] = (uint32_t) aCapacity;
 
   Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
 }
 
 otError otTcpCircularSendBufferWrite(otTcpEndpoint           *aEndpoint,
@@ -55,6 +57,8 @@ otError otTcpCircularSendBufferWrite(otTcpEndpoint           *aEndpoint,
                                      size_t                  *aWritten,
                                      uint32_t                 aFlags)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -72,7 +76,11 @@ otError otTcpCircularSendBufferWrite(otTcpEndpoint           *aEndpoint,
   Ot_Cmd_Transfer();
   
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 void otTcpCircularSendBufferHandleForwardProgress(otTcpCircularSendBuffer *aSendBuffer, size_t aInSendBuffer)
@@ -88,10 +96,14 @@ void otTcpCircularSendBufferHandleForwardProgress(otTcpCircularSendBuffer *aSend
   p_ot_req->Data[1] = (uint32_t) aInSendBuffer;
 
   Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
 }
 
 size_t otTcpCircularSendBufferGetFreeSpace(const otTcpCircularSendBuffer *aSendBuffer)
 {
+  size_t rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -104,7 +116,11 @@ size_t otTcpCircularSendBufferGetFreeSpace(const otTcpCircularSendBuffer *aSendB
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (size_t)p_ot_req->Data[0];
+  rspData = (size_t)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 void otTcpCircularSendBufferForceDiscardAll(otTcpCircularSendBuffer *aSendBuffer)
@@ -119,10 +135,14 @@ void otTcpCircularSendBufferForceDiscardAll(otTcpCircularSendBuffer *aSendBuffer
   p_ot_req->Data[0] = (uint32_t) aSendBuffer;
 
   Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
 }
 
 otError otTcpCircularSendBufferDeinitialize(otTcpCircularSendBuffer *aSendBuffer)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -135,11 +155,17 @@ otError otTcpCircularSendBufferDeinitialize(otTcpCircularSendBuffer *aSendBuffer
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 int otTcpMbedTlsSslSendCallback(void *aCtx, const unsigned char *aBuf, size_t aLen)
 {
+  int rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -154,11 +180,17 @@ int otTcpMbedTlsSslSendCallback(void *aCtx, const unsigned char *aBuf, size_t aL
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (int)p_ot_req->Data[0];
+  rspData = (int)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 int otTcpMbedTlsSslRecvCallback(void *aCtx, unsigned char *aBuf, size_t aLen)
 {
+  int rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -173,7 +205,11 @@ int otTcpMbedTlsSslRecvCallback(void *aCtx, unsigned char *aBuf, size_t aLen)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (int)p_ot_req->Data[0];
+  rspData = (int)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 #endif // OPENTHREAD_CONFIG_TCP_ENABLE

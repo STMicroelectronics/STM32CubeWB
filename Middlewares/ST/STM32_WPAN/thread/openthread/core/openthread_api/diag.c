@@ -45,10 +45,12 @@ void otDiagProcessCmdLine(otInstance *aInstance, const char *aString, char *aOut
   p_ot_req->Data[2] = (uint32_t) aOutputMaxLen;
 
   Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
 }
 
 otError otDiagProcessCmd(otInstance *aInstance, uint8_t aArgsLength, char *aArgs[], char *aOutput, size_t aOutputMaxLen)
-{
+{ 
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -62,10 +64,14 @@ otError otDiagProcessCmd(otInstance *aInstance, uint8_t aArgsLength, char *aArgs
   p_ot_req->Data[3] = (uint32_t) aOutputMaxLen;
 
   Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
 }
 
 bool otDiagIsEnabled(void)
 {
+  bool rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -77,7 +83,11 @@ bool otDiagIsEnabled(void)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (bool)p_ot_req->Data[0];
+  rspData = (bool)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 #endif // OPENTHREAD_CONFIG_DIAG_ENABLE

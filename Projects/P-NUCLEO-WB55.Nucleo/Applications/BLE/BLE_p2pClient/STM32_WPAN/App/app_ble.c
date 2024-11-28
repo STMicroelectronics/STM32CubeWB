@@ -658,6 +658,10 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *pckt)
                   k += adlength + 1;
                 } /* end while */
               } /* end if ADV_IND */
+
+              /* USER CODE BEGIN EVT_LE_ADVERTISING_REPORT_2 */
+
+              /* USER CODE END EVT_LE_ADVERTISING_REPORT_2 */
             }
             break;
 

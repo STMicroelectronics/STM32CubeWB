@@ -133,9 +133,9 @@ On the other STM32WB boards, (MB1355C) for example:
 - Switch on ST BLE Router and the first ST BLE Server board.
 
  On an android/ios device, enable the Bluetooth communications, and if not done before,
- - Install the ST BLE StarNet application:
-    https://wiki.st.com/stm32mcu/wiki/Connectivity:BLE_smartphone_applications#ST_BLE_StarNet
- - click on the ST BLE StarNet app
+ - Install the ST BLE Toolbox application:
+    https://wiki.st.com/stm32mcu/wiki/Connectivity:BLE_smartphone_applications#ST_BLE_Toolbox
+ - click on the ST BLE Toolbox app
  - connect to a device
  - select the P2PROUT in the device list
 

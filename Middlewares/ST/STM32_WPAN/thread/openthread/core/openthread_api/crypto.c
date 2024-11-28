@@ -46,7 +46,7 @@ void otCryptoHmacSha256(const otCryptoKey *aKey, const uint8_t *aBuf, uint16_t a
 
     Ot_Cmd_Transfer();
 
-    p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+    Post_OtCmdProcessing();
 }
 
 
@@ -83,5 +83,5 @@ void otCryptoAesCcm(const otCryptoKey *aKey,
 
     Ot_Cmd_Transfer();
 
-    p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+    Post_OtCmdProcessing();
 }

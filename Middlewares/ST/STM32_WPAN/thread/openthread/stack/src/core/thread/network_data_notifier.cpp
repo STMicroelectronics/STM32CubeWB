@@ -36,9 +36,9 @@
 #if OPENTHREAD_FTD || OPENTHREAD_CONFIG_BORDER_ROUTER_ENABLE || OPENTHREAD_CONFIG_TMF_NETDATA_SERVICE_ENABLE
 
 #include "common/code_utils.hpp"
-#include "common/instance.hpp"
 #include "common/locator_getters.hpp"
 #include "common/log.hpp"
+#include "instance/instance.hpp"
 #include "thread/network_data_leader.hpp"
 #include "thread/network_data_local.hpp"
 #include "thread/tmf.hpp"
@@ -108,7 +108,7 @@ exit:
         break;
 #if OPENTHREAD_FTD
     case kErrorInvalidState:
-        mTimer.Start(Time::SecToMsec(Get<Mle::MleRouter>().GetRouterSelectionJitterTimeout() + 1));
+        mTimer.Start(Time::SecToMsec(Get<Mle::MleRouter>().GetRouterRoleTransitionTimeout() + 1));
         break;
 #endif
     case kErrorNotFound:
@@ -129,13 +129,14 @@ Error Notifier::RemoveStaleChildEntries(void)
     // - `kErrorNoBufs` if could not allocate message to send message.
     // - `kErrorNotFound` if no stale child entries were found.
 
-    Error    error    = kErrorNotFound;
-    Iterator iterator = kIteratorInit;
-    uint16_t rloc16;
+    Error error = kErrorNotFound;
+    Rlocs rlocs;
 
     VerifyOrExit(Get<Mle::MleRouter>().IsRouterOrLeader());
 
-    while (Get<Leader>().GetNextServer(iterator, rloc16) == kErrorNone)
+    Get<Leader>().FindRlocs(kAnyBrOrServer, kAnyRole, rlocs);
+
+    for (uint16_t rloc16 : rlocs)
     {
         if (!Mle::IsActiveRouter(rloc16) && Mle::RouterIdMatch(Get<Mle::MleRouter>().GetRloc16(), rloc16) &&
             Get<ChildTable>().FindChild(rloc16, Child::kInStateValid) == nullptr)

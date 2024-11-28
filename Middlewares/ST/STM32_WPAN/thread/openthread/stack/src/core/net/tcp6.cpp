@@ -40,11 +40,11 @@
 #include "common/as_core_type.hpp"
 #include "common/code_utils.hpp"
 #include "common/error.hpp"
-#include "common/instance.hpp"
 #include "common/locator_getters.hpp"
 #include "common/log.hpp"
 #include "common/num_utils.hpp"
 #include "common/random.hpp"
+#include "instance/instance.hpp"
 #include "net/checksum.hpp"
 #include "net/ip6.hpp"
 #include "net/netif.hpp"
@@ -53,9 +53,6 @@
 
 namespace ot {
 namespace Ip6 {
-
-using ot::Encoding::BigEndian::HostSwap16;
-using ot::Encoding::BigEndian::HostSwap32;
 
 RegisterLogModule("Tcp");
 
@@ -84,7 +81,7 @@ Error Tcp::Endpoint::Initialize(Instance &aInstance, const otTcpEndpointInitiali
     Error         error;
     struct tcpcb &tp = GetTcb();
 
-    memset(&tp, 0x00, sizeof(tp));
+    ClearAllBytes(tp);
 
     SuccessOrExit(error = aInstance.Get<Tcp>().mEndpoints.Add(*this));
 
@@ -95,8 +92,8 @@ Error Tcp::Endpoint::Initialize(Instance &aInstance, const otTcpEndpointInitiali
     mReceiveAvailableCallback = aArgs.mReceiveAvailableCallback;
     mDisconnectedCallback     = aArgs.mDisconnectedCallback;
 
-    memset(mTimers, 0x00, sizeof(mTimers));
-    memset(&mSockAddr, 0x00, sizeof(mSockAddr));
+    ClearAllBytes(mTimers);
+    ClearAllBytes(mSockAddr);
     mPendingCallbacks = 0;
 
     /*
@@ -133,7 +130,7 @@ const SockAddr &Tcp::Endpoint::GetLocalAddress(void) const
     static otSockAddr temp;
 
     memcpy(&temp.mAddress, &tp.laddr, sizeof(temp.mAddress));
-    temp.mPort = HostSwap16(tp.lport);
+    temp.mPort = BigEndian::HostSwap16(tp.lport);
 
     return AsCoreType(&temp);
 }
@@ -145,7 +142,7 @@ const SockAddr &Tcp::Endpoint::GetPeerAddress(void) const
     static otSockAddr temp;
 
     memcpy(&temp.mAddress, &tp.faddr, sizeof(temp.mAddress));
-    temp.mPort = HostSwap16(tp.fport);
+    temp.mPort = BigEndian::HostSwap16(tp.fport);
 
     return AsCoreType(&temp);
 }
@@ -159,7 +156,7 @@ Error Tcp::Endpoint::Bind(const SockAddr &aSockName)
     VerifyOrExit(Get<Tcp>().CanBind(aSockName), error = kErrorInvalidState);
 
     memcpy(&tp.laddr, &aSockName.mAddress, sizeof(tp.laddr));
-    tp.lport = HostSwap16(aSockName.mPort);
+    tp.lport = BigEndian::HostSwap16(aSockName.mPort);
     error    = kErrorNone;
 
 exit:
@@ -168,17 +165,28 @@ exit:
 
 Error Tcp::Endpoint::Connect(const SockAddr &aSockName, uint32_t aFlags)
 {
-    Error               error = kErrorNone;
-    struct tcpcb       &tp    = GetTcb();
-    struct sockaddr_in6 sin6p;
-
-    OT_UNUSED_VARIABLE(aFlags);
+    Error         error = kErrorNone;
+    struct tcpcb &tp    = GetTcb();
 
     VerifyOrExit(tp.t_state == TCP6S_CLOSED, error = kErrorInvalidState);
 
-    memcpy(&sin6p.sin6_addr, &aSockName.mAddress, sizeof(sin6p.sin6_addr));
-    sin6p.sin6_port = HostSwap16(aSockName.mPort);
-    error           = BsdErrorToOtError(tcp6_usr_connect(&tp, &sin6p));
+    if (aFlags & OT_TCP_CONNECT_NO_FAST_OPEN)
+    {
+        struct sockaddr_in6 sin6p;
+
+        tp.t_flags &= ~TF_FASTOPEN;
+        memcpy(&sin6p.sin6_addr, &aSockName.mAddress, sizeof(sin6p.sin6_addr));
+        sin6p.sin6_port = BigEndian::HostSwap16(aSockName.mPort);
+        error           = BsdErrorToOtError(tcp6_usr_connect(&tp, &sin6p));
+    }
+    else
+    {
+        tp.t_flags |= TF_FASTOPEN;
+
+        /* Stash the destination address in tp. */
+        memcpy(&tp.faddr, &aSockName.mAddress, sizeof(tp.faddr));
+        tp.fport = BigEndian::HostSwap16(aSockName.mPort);
+    }
 
 exit:
     return error;
@@ -192,7 +200,17 @@ Error Tcp::Endpoint::SendByReference(otLinkedBuffer &aBuffer, uint32_t aFlags)
     size_t backlogBefore = GetBacklogBytes();
     size_t sent          = aBuffer.mLength;
 
-    SuccessOrExit(error = BsdErrorToOtError(tcp_usr_send(&tp, (aFlags & OT_TCP_SEND_MORE_TO_COME) != 0, &aBuffer, 0)));
+    struct sockaddr_in6  sin6p;
+    struct sockaddr_in6 *name = nullptr;
+
+    if (IS_FASTOPEN(tp.t_flags))
+    {
+        memcpy(&sin6p.sin6_addr, &tp.faddr, sizeof(sin6p.sin6_addr));
+        sin6p.sin6_port = tp.fport;
+        name            = &sin6p;
+    }
+    SuccessOrExit(
+        error = BsdErrorToOtError(tcp_usr_send(&tp, (aFlags & OT_TCP_SEND_MORE_TO_COME) != 0, &aBuffer, 0, name)));
 
     PostCallbacksAfterSend(sent, backlogBefore);
 
@@ -208,9 +226,19 @@ Error Tcp::Endpoint::SendByExtension(size_t aNumBytes, uint32_t aFlags)
     size_t        backlogBefore = GetBacklogBytes();
     int           bsdError;
 
+    struct sockaddr_in6  sin6p;
+    struct sockaddr_in6 *name = nullptr;
+
     VerifyOrExit(lbuf_head(&tp.sendbuf) != nullptr, error = kErrorInvalidState);
 
-    bsdError = tcp_usr_send(&tp, moreToCome ? 1 : 0, nullptr, aNumBytes);
+    if (IS_FASTOPEN(tp.t_flags))
+    {
+        memcpy(&sin6p.sin6_addr, &tp.faddr, sizeof(sin6p.sin6_addr));
+        sin6p.sin6_port = tp.fport;
+        name            = &sin6p;
+    }
+
+    bsdError = tcp_usr_send(&tp, moreToCome ? 1 : 0, nullptr, aNumBytes, name);
     SuccessOrExit(error = BsdErrorToOtError(bsdError));
 
     PostCallbacksAfterSend(aNumBytes, backlogBefore);
@@ -401,7 +429,7 @@ bool Tcp::Endpoint::FirePendingTimers(TimeMilli aNow, bool &aHasFutureTimer, Tim
                  * this only happens if the connection is dropped (e.g., it
                  * times out).
                  */
-                int dropped;
+                int dropped = 0;
 
                 switch (timerIndex)
                 {
@@ -499,8 +527,8 @@ bool Tcp::Endpoint::Matches(const MessageInfo &aMessageInfo) const
     const struct tcpcb *tp      = &GetTcb();
 
     VerifyOrExit(tp->t_state != TCP6S_CLOSED);
-    VerifyOrExit(tp->lport == HostSwap16(aMessageInfo.GetSockPort()));
-    VerifyOrExit(tp->fport == HostSwap16(aMessageInfo.GetPeerPort()));
+    VerifyOrExit(tp->lport == BigEndian::HostSwap16(aMessageInfo.GetSockPort()));
+    VerifyOrExit(tp->fport == BigEndian::HostSwap16(aMessageInfo.GetPeerPort()));
     VerifyOrExit(GetLocalIp6Address().IsUnspecified() || GetLocalIp6Address() == aMessageInfo.GetSockAddr());
     VerifyOrExit(GetForeignIp6Address() == aMessageInfo.GetPeerAddr());
 
@@ -521,7 +549,7 @@ Error Tcp::Listener::Initialize(Instance &aInstance, const otTcpListenerInitiali
     mAcceptReadyCallback = aArgs.mAcceptReadyCallback;
     mAcceptDoneCallback  = aArgs.mAcceptDoneCallback;
 
-    memset(tpl, 0x00, sizeof(struct tcpcb_listen));
+    ClearAllBytes(*tpl);
     tpl->instance = &aInstance;
 
 exit:
@@ -533,7 +561,7 @@ Instance &Tcp::Listener::GetInstance(void) const { return AsNonConst(AsCoreType(
 Error Tcp::Listener::Listen(const SockAddr &aSockName)
 {
     Error                error;
-    uint16_t             port = HostSwap16(aSockName.mPort);
+    uint16_t             port = BigEndian::HostSwap16(aSockName.mPort);
     struct tcpcb_listen *tpl  = &GetTcbListen();
 
     VerifyOrExit(Get<Tcp>().CanBind(aSockName), error = kErrorInvalidState);
@@ -551,7 +579,7 @@ Error Tcp::Listener::StopListening(void)
 {
     struct tcpcb_listen *tpl = &GetTcbListen();
 
-    memset(&tpl->laddr, 0x00, sizeof(tpl->laddr));
+    ClearAllBytes(tpl->laddr);
     tpl->lport   = 0;
     tpl->t_state = TCP6S_CLOSED;
     return kErrorNone;
@@ -583,7 +611,7 @@ bool Tcp::Listener::Matches(const MessageInfo &aMessageInfo) const
     const struct tcpcb_listen *tpl     = &GetTcbListen();
 
     VerifyOrExit(tpl->t_state == TCP6S_LISTEN);
-    VerifyOrExit(tpl->lport == HostSwap16(aMessageInfo.GetSockPort()));
+    VerifyOrExit(tpl->lport == BigEndian::HostSwap16(aMessageInfo.GetSockPort()));
     VerifyOrExit(GetLocalIp6Address().IsUnspecified() || GetLocalIp6Address() == aMessageInfo.GetSockAddr());
 
     matches = true;
@@ -614,6 +642,9 @@ Error Tcp::HandleMessage(ot::Ip6::Header &aIp6Header, Message &aMessage, Message
     Listener *listener;
     Listener *listenerPrev;
 
+    struct tcplp_signals sig;
+    int                  nextAction;
+
     VerifyOrExit(length == aMessage.GetLength() - aMessage.GetOffset(), error = kErrorParse);
     VerifyOrExit(length >= sizeof(Tcp::Header), error = kErrorParse);
     SuccessOrExit(error = aMessage.Read(aMessage.GetOffset() + offsetof(struct tcphdr, th_off_x2), headerSize));
@@ -628,20 +659,18 @@ Error Tcp::HandleMessage(ot::Ip6::Header &aIp6Header, Message &aMessage, Message
     tcpHeader = reinterpret_cast<struct tcphdr *>(&header[0]);
     tcp_fields_to_host(tcpHeader);
 
-    aMessageInfo.mPeerPort = HostSwap16(tcpHeader->th_sport);
-    aMessageInfo.mSockPort = HostSwap16(tcpHeader->th_dport);
+    aMessageInfo.mPeerPort = BigEndian::HostSwap16(tcpHeader->th_sport);
+    aMessageInfo.mSockPort = BigEndian::HostSwap16(tcpHeader->th_dport);
 
     endpoint = mEndpoints.FindMatching(aMessageInfo, endpointPrev);
     if (endpoint != nullptr)
     {
-        struct tcplp_signals sig;
-        int                  nextAction;
-        struct tcpcb        *tp = &endpoint->GetTcb();
+        struct tcpcb *tp = &endpoint->GetTcb();
 
         otLinkedBuffer *priorHead    = lbuf_head(&tp->sendbuf);
         size_t          priorBacklog = endpoint->GetSendBufferBytes() - endpoint->GetInFlightBytes();
 
-        memset(&sig, 0x00, sizeof(sig));
+        ClearAllBytes(sig);
         nextAction = tcp_input(ip6Header, tcpHeader, &aMessage, tp, nullptr, &sig);
         if (nextAction != RELOOKUP_REQUIRED)
         {
@@ -656,7 +685,13 @@ Error Tcp::HandleMessage(ot::Ip6::Header &aIp6Header, Message &aMessage, Message
     {
         struct tcpcb_listen *tpl = &listener->GetTcbListen();
 
-        tcp_input(ip6Header, tcpHeader, &aMessage, nullptr, tpl, nullptr);
+        ClearAllBytes(sig);
+        nextAction = tcp_input(ip6Header, tcpHeader, &aMessage, nullptr, tpl, &sig);
+        OT_ASSERT(nextAction != RELOOKUP_REQUIRED);
+        if (sig.accepted_connection != nullptr)
+        {
+            ProcessSignals(Tcp::Endpoint::FromTcb(*sig.accepted_connection), nullptr, 0, sig);
+        }
         ExitNow();
     }
 
@@ -682,6 +717,8 @@ void Tcp::ProcessSignals(Endpoint             &aEndpoint,
     if (aEndpoint.mSendDoneCallback != nullptr)
     {
         otLinkedBuffer *curr = aPriorHead;
+
+        OT_ASSERT(curr != nullptr || aSignals.links_popped == 0);
 
         for (uint32_t i = 0; i != aSignals.links_popped; i++)
         {
@@ -741,7 +778,7 @@ Error Tcp::BsdErrorToOtError(int aBsdError)
 
 bool Tcp::CanBind(const SockAddr &aSockName)
 {
-    uint16_t port    = HostSwap16(aSockName.mPort);
+    uint16_t port    = BigEndian::HostSwap16(aSockName.mPort);
     bool     allowed = false;
 
     for (Endpoint &endpoint : mEndpoints)
@@ -973,7 +1010,7 @@ struct tcpcb *tcplp_sys_accept_ready(struct tcpcb_listen *aTcbListen, struct in6
     VerifyOrExit(listener.mAcceptReadyCallback != nullptr);
 
     memcpy(&addr.mAddress, aAddr, sizeof(addr.mAddress));
-    addr.mPort = HostSwap16(aPort);
+    addr.mPort = BigEndian::HostSwap16(aPort);
     action     = listener.mAcceptReadyCallback(&listener, &addr, &endpointPtr);
 
     VerifyOrExit(tcp.IsInitialized(listener) && !listener.IsClosed());
@@ -1023,7 +1060,7 @@ bool tcplp_sys_accepted_connection(struct tcpcb_listen *aTcbListen,
         otSockAddr addr;
 
         memcpy(&addr.mAddress, aAddr, sizeof(addr.mAddress));
-        addr.mPort = HostSwap16(aPort);
+        addr.mPort = BigEndian::HostSwap16(aPort);
         listener.mAcceptDoneCallback(&listener, &endpoint, &addr);
 
         if (!tcp.IsInitialized(endpoint) || endpoint.IsClosed())
@@ -1118,9 +1155,9 @@ uint32_t tcplp_sys_generate_isn()
     return isn;
 }
 
-uint16_t tcplp_sys_hostswap16(uint16_t aHostPort) { return HostSwap16(aHostPort); }
+uint16_t tcplp_sys_hostswap16(uint16_t aHostPort) { return BigEndian::HostSwap16(aHostPort); }
 
-uint32_t tcplp_sys_hostswap32(uint32_t aHostPort) { return HostSwap32(aHostPort); }
+uint32_t tcplp_sys_hostswap32(uint32_t aHostPort) { return BigEndian::HostSwap32(aHostPort); }
 }
 
 #endif // OPENTHREAD_CONFIG_TCP_ENABLE

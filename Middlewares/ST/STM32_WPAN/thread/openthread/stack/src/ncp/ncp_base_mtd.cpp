@@ -70,8 +70,8 @@
 
 #include "common/code_utils.hpp"
 #include "common/debug.hpp"
-#include "common/instance.hpp"
 #include "common/string.hpp"
+#include "instance/instance.hpp"
 #include "net/ip6.hpp"
 
 #if OPENTHREAD_MTD || OPENTHREAD_FTD
@@ -261,12 +261,12 @@ exit:
 #if OPENTHREAD_CONFIG_MAC_CSL_RECEIVER_ENABLE
 template <> otError NcpBase::HandlePropertySet<SPINEL_PROP_THREAD_CSL_PERIOD>(void)
 {
-    uint16_t cslPeriod;
+    uint32_t cslPeriod;
     otError  error = OT_ERROR_NONE;
 
-    SuccessOrExit(error = mDecoder.ReadUint16(cslPeriod));
+    SuccessOrExit(error = mDecoder.ReadUint32(cslPeriod));
 
-    error = otLinkCslSetPeriod(mInstance, cslPeriod);
+    error = otLinkSetCslPeriod(mInstance, cslPeriod);
 
 exit:
     return error;
@@ -274,7 +274,7 @@ exit:
 
 template <> otError NcpBase::HandlePropertyGet<SPINEL_PROP_THREAD_CSL_PERIOD>(void)
 {
-    return mEncoder.WriteUint16(otLinkCslGetPeriod(mInstance));
+    return mEncoder.WriteUint32(otLinkGetCslPeriod(mInstance));
 }
 
 template <> otError NcpBase::HandlePropertySet<SPINEL_PROP_THREAD_CSL_TIMEOUT>(void)
@@ -284,7 +284,7 @@ template <> otError NcpBase::HandlePropertySet<SPINEL_PROP_THREAD_CSL_TIMEOUT>(v
 
     SuccessOrExit(error = mDecoder.ReadUint32(cslTimeout));
 
-    error = otLinkCslSetTimeout(mInstance, cslTimeout);
+    error = otLinkSetCslTimeout(mInstance, cslTimeout);
 
 exit:
     return error;
@@ -292,7 +292,7 @@ exit:
 
 template <> otError NcpBase::HandlePropertyGet<SPINEL_PROP_THREAD_CSL_TIMEOUT>(void)
 {
-    return mEncoder.WriteUint32(otLinkCslGetTimeout(mInstance));
+    return mEncoder.WriteUint32(otLinkGetCslTimeout(mInstance));
 }
 
 template <> otError NcpBase::HandlePropertySet<SPINEL_PROP_THREAD_CSL_CHANNEL>(void)
@@ -302,7 +302,7 @@ template <> otError NcpBase::HandlePropertySet<SPINEL_PROP_THREAD_CSL_CHANNEL>(v
 
     SuccessOrExit(error = mDecoder.ReadUint8(cslChannel));
 
-    error = otLinkCslSetChannel(mInstance, cslChannel);
+    error = otLinkSetCslChannel(mInstance, cslChannel);
 
 exit:
     return error;
@@ -310,7 +310,7 @@ exit:
 
 template <> otError NcpBase::HandlePropertyGet<SPINEL_PROP_THREAD_CSL_CHANNEL>(void)
 {
-    return mEncoder.WriteUint8(otLinkCslGetChannel(mInstance));
+    return mEncoder.WriteUint8(otLinkGetCslChannel(mInstance));
 }
 #endif // OPENTHREAD_CONFIG_MAC_CSL_RECEIVER_ENABLE
 
@@ -536,6 +536,9 @@ template <> otError NcpBase::HandlePropertyGet<SPINEL_PROP_NET_ROLE>(void)
     switch (otThreadGetDeviceRole(mInstance))
     {
     case OT_DEVICE_ROLE_DISABLED:
+        role = SPINEL_NET_ROLE_DISABLED;
+        break;
+
     case OT_DEVICE_ROLE_DETACHED:
         role = SPINEL_NET_ROLE_DETACHED;
         break;
@@ -687,7 +690,7 @@ template <> otError NcpBase::HandlePropertySet<SPINEL_PROP_NET_KEY_SWITCH_GUARDT
 
     SuccessOrExit(error = mDecoder.ReadUint32(keyGuardTime));
 
-    otThreadSetKeySwitchGuardTime(mInstance, keyGuardTime);
+    otThreadSetKeySwitchGuardTime(mInstance, static_cast<uint16_t>(keyGuardTime));
 
 exit:
     return error;
@@ -2069,6 +2072,9 @@ template <> otError NcpBase::HandlePropertyGet<SPINEL_PROP_IPV6_ICMP_PING_OFFLOA
     case OT_ICMP6_ECHO_HANDLER_ALL:
         mode = SPINEL_IPV6_ICMP_PING_OFFLOAD_ALL;
         break;
+    case OT_ICMP6_ECHO_HANDLER_RLOC_ALOC_ONLY:
+        mode = SPINEL_IPV6_ICMP_PING_OFFLOAD_RLOC_ALOC_ONLY;
+        break;
     };
 
     return mEncoder.WriteUint8(mode);
@@ -2095,6 +2101,9 @@ template <> otError NcpBase::HandlePropertySet<SPINEL_PROP_IPV6_ICMP_PING_OFFLOA
         break;
     case SPINEL_IPV6_ICMP_PING_OFFLOAD_ALL:
         mode = OT_ICMP6_ECHO_HANDLER_ALL;
+        break;
+    case SPINEL_IPV6_ICMP_PING_OFFLOAD_RLOC_ALOC_ONLY:
+        mode = OT_ICMP6_ECHO_HANDLER_RLOC_ALOC_ONLY;
         break;
     };
 
@@ -2266,6 +2275,7 @@ template <> otError NcpBase::HandlePropertySet<SPINEL_PROP_STREAM_NET>(void)
     // STREAM_NET requires layer 2 security.
     message = otIp6NewMessageFromBuffer(mInstance, framePtr, frameLen, nullptr);
     VerifyOrExit(message != nullptr, error = OT_ERROR_NO_BUFS);
+    otMessageSetOrigin(message, OT_MESSAGE_ORIGIN_HOST_UNTRUSTED);
 
     error = otIp6Send(mInstance, message);
 
@@ -2432,7 +2442,7 @@ template <> otError NcpBase::HandlePropertyGet<SPINEL_PROP_CHANNEL_MONITOR_CHANN
 {
     otError  error       = OT_ERROR_NONE;
     uint32_t channelMask = otLinkGetSupportedChannelMask(mInstance);
-    uint8_t  channelNum  = sizeof(channelMask) * CHAR_BIT;
+    uint8_t  channelNum  = sizeof(channelMask) * kBitsPerByte;
 
     for (uint8_t channel = 0; channel < channelNum; channel++)
     {
@@ -3300,6 +3310,7 @@ template <> otError NcpBase::HandlePropertySet<SPINEL_PROP_STREAM_NET_INSECURE>(
     // STREAM_NET_INSECURE packets are not secured at layer 2.
     message = otIp6NewMessageFromBuffer(mInstance, framePtr, frameLen, &msgSettings);
     VerifyOrExit(message != nullptr, error = OT_ERROR_NO_BUFS);
+    otMessageSetOrigin(message, OT_MESSAGE_ORIGIN_HOST_UNTRUSTED);
 
     // Ensure the insecure message is forwarded using direct transmission.
     otMessageSetDirectTransmission(message, true);
@@ -4230,7 +4241,7 @@ void NcpBase::HandleJoinerCallback(otError aError)
 #if OPENTHREAD_CONFIG_MLE_LINK_METRICS_INITIATOR_ENABLE
 void NcpBase::HandleLinkMetricsReport_Jump(const otIp6Address        *aSource,
                                            const otLinkMetricsValues *aMetricsValues,
-                                           uint8_t                    aStatus,
+                                           otLinkMetricsStatus        aStatus,
                                            void                      *aContext)
 {
     static_cast<NcpBase *>(aContext)->HandleLinkMetricsReport(aSource, aMetricsValues, aStatus);
@@ -4238,7 +4249,7 @@ void NcpBase::HandleLinkMetricsReport_Jump(const otIp6Address        *aSource,
 
 void NcpBase::HandleLinkMetricsReport(const otIp6Address        *aSource,
                                       const otLinkMetricsValues *aMetricsValues,
-                                      uint8_t                    aStatus)
+                                      otLinkMetricsStatus        aStatus)
 {
     SuccessOrExit(mEncoder.BeginFrame(SPINEL_HEADER_FLAG | SPINEL_HEADER_IID_0, SPINEL_CMD_PROP_VALUE_IS,
                                       SPINEL_PROP_THREAD_LINK_METRICS_QUERY_RESULT));
@@ -4253,12 +4264,14 @@ exit:
     return;
 }
 
-void NcpBase::HandleLinkMetricsMgmtResponse_Jump(const otIp6Address *aSource, uint8_t aStatus, void *aContext)
+void NcpBase::HandleLinkMetricsMgmtResponse_Jump(const otIp6Address *aSource,
+                                                 otLinkMetricsStatus aStatus,
+                                                 void               *aContext)
 {
     static_cast<NcpBase *>(aContext)->HandleLinkMetricsMgmtResponse(aSource, aStatus);
 }
 
-void NcpBase::HandleLinkMetricsMgmtResponse(const otIp6Address *aSource, uint8_t aStatus)
+void NcpBase::HandleLinkMetricsMgmtResponse(const otIp6Address *aSource, otLinkMetricsStatus aStatus)
 {
     SuccessOrExit(mEncoder.BeginFrame(SPINEL_HEADER_FLAG | SPINEL_HEADER_IID_0, SPINEL_CMD_PROP_VALUE_IS,
                                       SPINEL_PROP_THREAD_LINK_METRICS_MGMT_RESPONSE));
@@ -4537,6 +4550,24 @@ template <> otError NcpBase::HandlePropertySet<SPINEL_PROP_PHY_PCAP_ENABLED>(voi
 
 exit:
     return error;
+}
+
+template <> otError NcpBase::HandlePropertyGet<SPINEL_PROP_NET_LEAVE_GRACEFULLY>(void) { return OT_ERROR_NONE; }
+
+template <> otError NcpBase::HandlePropertySet<SPINEL_PROP_NET_LEAVE_GRACEFULLY>(void)
+{
+    return otThreadDetachGracefully(mInstance, ThreadDetachGracefullyHandler, this);
+}
+
+void NcpBase::ThreadDetachGracefullyHandler(void *aContext)
+{
+    static_cast<NcpBase *>(aContext)->ThreadDetachGracefullyHandler();
+}
+
+void NcpBase::ThreadDetachGracefullyHandler(void)
+{
+    mChangedPropsSet.AddProperty(SPINEL_PROP_NET_LEAVE_GRACEFULLY);
+    mUpdateChangedPropsTask.Post();
 }
 
 // ----------------------------------------------------------------------------

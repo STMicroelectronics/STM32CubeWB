@@ -46,10 +46,14 @@ extern RTC_HandleTypeDef hrtc;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t EvtPool[POOL_SIZE];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t SystemCmdBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t SystemSpareEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
+extern uint8_t g_ot_notification_allowed;
 
 #if (CFG_USB_INTERFACE_ENABLE != 0)
+#define C_SIZE_CMD_STRING       256U
+static uint8_t CommandString[C_SIZE_CMD_STRING];
 static uint8_t VcpTxBuffer[MAX_DBG_TRACE_MSG_SIZE]; /* Transmit buffer over USB */
 static uint8_t VcpRxBuffer[MAX_DBG_TRACE_MSG_SIZE]; /* Receive buffer over USB */
+EXTI_HandleTypeDef exti_handle;
 #endif
 
 /* Global function prototypes -----------------------------------------------*/
@@ -64,29 +68,14 @@ static void APPE_SysUserEvtRx(void *pPayload);
 static void APPE_SysEvtReadyProcessing(void);
 static void APPE_SysEvtError(SCHI_SystemErrCode_t ErrorCode);
 
-#if (CFG_HW_LPUART1_ENABLED == 1)
-extern void MX_LPUART1_UART_Init(void);
-#endif
-#if (CFG_HW_USART1_ENABLED == 1)
-extern void MX_USART1_UART_Init(void);
-#endif
+#if (CFG_USB_INTERFACE_ENABLE != 0)
+static void CmdExecute(void);
+#endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 
 /* USER CODE BEGIN PFP */
 static void Led_Init(void);
 static void Button_Init(void);
 
-/* Section specific to button management using UART */
-static void RxUART_Init(void);
-static void RxCpltCallback(void);
-static void UartCmdExecute(void);
-
-#define C_SIZE_CMD_STRING       256U
-#define RX_BUFFER_SIZE          8U
-
-static uint8_t aRxBuffer[RX_BUFFER_SIZE];
-static uint8_t CommandString[C_SIZE_CMD_STRING];
-static uint16_t indexReceiveChar = 0;
-EXTI_HandleTypeDef exti_handle;
 /* USER CODE END PFP */
 
 /* Functions Definition ------------------------------------------------------*/
@@ -104,7 +93,6 @@ void APPE_Init( void )
     UTIL_LPM_SetOffMode(1 << CFG_LPM_APP, UTIL_LPM_DISABLE);
     Led_Init();
     Button_Init();
-    RxUART_Init();
     appe_Tl_Init(); /* Initialize all transport layers */
 
     /**
@@ -344,6 +332,10 @@ void UTIL_SEQ_Idle( void )
   */
 void UTIL_SEQ_EvtIdle( UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm )
 {
+	/* Check the notification condition */
+	if (g_ot_notification_allowed) {
+		UTIL_SEQ_Run(1U << CFG_TASK_NOTIFY_FROM_M0_TO_M4);
+	}	
   switch (evt_waited_bm) {
     case EVENT_ACK_FROM_M0_EVT:
       /* Run only the task CFG_TASK_REQUEST_FROM_M0_TO_M4 to process
@@ -406,11 +398,7 @@ void TL_TRACES_EvtReceived( TL_EvtPacket_t * hcievt )
 #if(CFG_DEBUG_TRACE != 0)
 void DbgOutputInit( void )
 {
-#if (CFG_USB_INTERFACE_ENABLE == 0)
-  MX_USART1_UART_Init(); 
-#else
   VCP_Init(&VcpTxBuffer[0], &VcpRxBuffer[0]);
-#endif
   return;
 }
 
@@ -423,12 +411,7 @@ void DbgOutputInit( void )
   */
 void DbgOutputTraces(  uint8_t *p_data, uint16_t size, void (*cb)(void) )
 {
-#if (CFG_USB_INTERFACE_ENABLE == 0)
-  HW_UART_Transmit_DMA(CFG_DEBUG_TRACE_UART, p_data, size, cb);
-#else
   VCP_SendData ( p_data , size , cb );
-#endif
-  return;
 }
 #endif
 
@@ -450,48 +433,51 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
   }
 }
 
-static void RxUART_Init(void)
+#if (CFG_USB_INTERFACE_ENABLE != 0)
+/**
+ * @brief  This function is called when thereare some data coming
+ *         from the Hyperterminal via the USB port
+ *         Data received over USB OUT endpoint are sent over CDC interface
+ *         through this function.
+ * @param  Buf: Buffer of data received
+ * @param  Len: Number of data received (in bytes)
+ */
+void VCP_DataReceived(uint8_t* Buf , uint32_t *Len)
 {
-  HW_UART_Receive_IT(CFG_DEBUG_TRACE_UART, aRxBuffer, 1U, RxCpltCallback);
-}
+  static uint32_t len_total = 0;
 
-static void RxCpltCallback(void)
-{
-  /* Filling buffer and wait for '\r' char */
-  if (indexReceiveChar < C_SIZE_CMD_STRING)
+  if(len_total < C_SIZE_CMD_STRING)
   {
-    if (aRxBuffer[0] == '\r')
-    {
-      APP_DBG("received %s", CommandString);
+    memcpy(&CommandString[len_total], Buf, *Len);
+    len_total += *Len;
 
-      UartCmdExecute();
-
-      /* Clear receive buffer and character counter*/
-      indexReceiveChar = 0;
-      memset(CommandString, 0, C_SIZE_CMD_STRING);
-    }
-    else
+    if(len_total >= 1)
     {
-      CommandString[indexReceiveChar++] = aRxBuffer[0];
+      if(CommandString[len_total-1] == '\r')
+      {
+        CmdExecute();
+        len_total = 0;
+      }
     }
   }
-
-  /* Once a character has been sent, put back the device in reception mode */
-  HW_UART_Receive_IT(CFG_DEBUG_TRACE_UART, aRxBuffer, 1U, RxCpltCallback);
 }
 
-static void UartCmdExecute(void)
+static void CmdExecute(void)
 {
-  /* Parse received CommandString */
-  if(strcmp((char const*)CommandString, "SW1") == 0)
+  /* Parse received */
+  if(strcmp((char const*)CommandString, "SW1\r") == 0)
   {
     APP_DBG("SW1 OK");
-    exti_handle.Line = EXTI_LINE_10;
+    exti_handle.Line = BUTTON_SW1_EXTI_LINE;
     HAL_EXTI_GenerateSWI(&exti_handle);
   }
   else
   {
     APP_DBG("NOT RECOGNIZED COMMAND : %s", CommandString);
   }
+
+  memset(CommandString, 0, C_SIZE_CMD_STRING);
 }
+#endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
+
 /* USER CODE END FD_WRAP_FUNCTIONS */

@@ -43,6 +43,8 @@ void otTrelEnable(otInstance *aInstance)
   p_ot_req->Size=0;
 
   Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
 }
 
 void otTrelDisable(otInstance *aInstance)
@@ -56,10 +58,14 @@ void otTrelDisable(otInstance *aInstance)
   p_ot_req->Size=0;
 
   Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
 }
 
 bool otTrelIsEnabled(otInstance *aInstance)
 {
+  bool rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -71,7 +77,11 @@ bool otTrelIsEnabled(otInstance *aInstance)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (bool)p_ot_req->Data[0];
+  rspData = (bool)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 void otTrelInitPeerIterator(otInstance *aInstance, otTrelPeerIterator *aIterator)
@@ -86,10 +96,14 @@ void otTrelInitPeerIterator(otInstance *aInstance, otTrelPeerIterator *aIterator
   p_ot_req->Data[0] = (uint32_t) aIterator;
 
   Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
 }
 
 const otTrelPeer *otTrelGetNextPeer(otInstance *aInstance, otTrelPeerIterator *aIterator)
 {
+  const otTrelPeer * rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -102,7 +116,11 @@ const otTrelPeer *otTrelGetNextPeer(otInstance *aInstance, otTrelPeerIterator *a
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otTrelPeer*)p_ot_req->Data[0];
+  rspData = (const otTrelPeer *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 void otTrelSetFilterEnabled(otInstance *aInstance, bool aEnable)
@@ -117,10 +135,14 @@ void otTrelSetFilterEnabled(otInstance *aInstance, bool aEnable)
   p_ot_req->Data[0] = (uint32_t) aEnable;
 
   Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
 }
 
 bool otTrelIsFilterEnabled(otInstance *aInstance)
 {
+  bool rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -132,7 +154,11 @@ bool otTrelIsFilterEnabled(otInstance *aInstance)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (bool)p_ot_req->Data[0];
+  rspData = (bool)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 #endif // OPENTHREAD_CONFIG_RADIO_LINK_TREL_ENABLE

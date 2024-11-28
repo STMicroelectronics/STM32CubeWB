@@ -55,6 +55,7 @@ PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t EvtPool[POOL_SIZE];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t SystemCmdBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t    SystemSpareEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t    BleSpareEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255];
+extern uint8_t g_ot_notification_allowed;
 
 static ConcurentModeStateType concurentModeState = State_Ble;
 static int NbTotalSwitch = 0;
@@ -199,6 +200,34 @@ static void Process_ActivateNewProtocol(void)
       APP_ZIGBEE_Init();
       concurentModeState = State_Zigbee;
     }
+		  /**
+   *  When the application wants to disable the output of traces, it is not 
+   *  enough to just disable the UART. Indeed, CPU2 will still send its traces 
+   *  through IPCC to CPU1. By default, CPU2 enables the debug traces. The 
+   *  command below will indicate to CPU2 to disable its traces if 
+   *  CFG_DEBUG_TRACE is set to 0.
+   *  The result is a gain of performance for both CPUs and a reduction of power
+   *  consumption, especially in dense networks where there can be a massive
+   *  amount of data to print.
+   */
+  SHCI_C2_DEBUG_TracesConfig_t APPD_TracesConfig;
+  /* Set to 1 to enable Zigbee traces, 0 to disable */
+  APPD_TracesConfig.zigbee_config = CFG_DEBUG_TRACE;
+  /* Set to 1 to enable BLE traces, 0 to disable */
+  APPD_TracesConfig.ble_config = CFG_DEBUG_TRACE;
+  
+  SHCI_C2_DEBUG_Init_Cmd_Packet_t DebugCmdPacket =
+  {
+    {{0,0,0}},
+    {(uint8_t *)NULL,
+    (uint8_t *)&APPD_TracesConfig,
+    (uint8_t *)NULL,
+    0,
+    0,
+    0}
+  };
+  
+  SHCI_C2_DEBUG_Init(&DebugCmdPacket);
 }
 
 /*************************************************************
@@ -396,6 +425,10 @@ void UTIL_SEQ_Idle( void )
   */
 void UTIL_SEQ_EvtIdle( UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm )
 {
+	/* Check the notification condition */
+	if (g_ot_notification_allowed) {
+		UTIL_SEQ_Run(1U << CFG_TASK_NOTIFY_FROM_M0_TO_M4);
+	}	
   switch (evt_waited_bm) {
     case EVENT_ACK_FROM_M0_EVT:
       /* Run only the task CFG_TASK_REQUEST_FROM_M0_TO_M4 to process

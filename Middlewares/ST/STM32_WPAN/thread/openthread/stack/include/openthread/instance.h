@@ -53,7 +53,7 @@ extern "C" {
  * @note This number versions both OpenThread platform and user APIs.
  *
  */
-#define OPENTHREAD_API_VERSION (340)
+#define OPENTHREAD_API_VERSION (420)
 
 /**
  * @addtogroup api-instance
@@ -101,6 +101,23 @@ otInstance *otInstanceInit(void *aInstanceBuffer, size_t *aInstanceBufferSize);
  *
  */
 otInstance *otInstanceInitSingle(void);
+
+/**
+ * Initializes the OpenThread instance.
+ *
+ * This function initializes OpenThread and prepares it for subsequent OpenThread API calls. This function must be
+ * called before any other calls to OpenThread. This method utilizes static buffer to initialize the OpenThread
+ * instance.
+ *
+ * This function is available and can only be used when support for multiple OpenThread static instances is
+ * enabled (`OPENTHREAD_CONFIG_MULTIPLE_STATIC_INSTANCE_ENABLE`)
+ *
+ * @param[in] aIdx The index of the OpenThread instance to initialize.
+ *
+ * @returns  A pointer to the new OpenThread instance.
+ *
+ */
+otInstance *otInstanceInitMultiple(uint8_t aIdx);
 
 /**
  * Gets the instance identifier.
@@ -254,6 +271,20 @@ void otRemoveStateChangeCallback(otInstance *aInstance, otStateChangedCallback a
  *
  */
 void otInstanceReset(otInstance *aInstance);
+
+/**
+ * Triggers a platform reset to bootloader mode, if supported.
+ *
+ * Requires `OPENTHREAD_CONFIG_PLATFORM_BOOTLOADER_MODE_ENABLE`.
+ *
+ * @param[in]  aInstance  A pointer to an OpenThread instance.
+ *
+ * @retval OT_ERROR_NONE         Reset to bootloader successfully.
+ * @retval OT_ERROR_BUSY         Failed due to another operation is ongoing.
+ * @retval OT_ERROR_NOT_CAPABLE  Not capable of resetting to bootloader.
+ *
+ */
+otError otInstanceResetToBootloader(otInstance *aInstance);
 
 /**
  * Deletes all the settings stored on non-volatile memory, and then triggers a platform reset.

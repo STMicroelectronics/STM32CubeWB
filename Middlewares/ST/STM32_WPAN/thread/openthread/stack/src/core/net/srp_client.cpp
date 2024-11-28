@@ -33,12 +33,12 @@
 #include "common/as_core_type.hpp"
 #include "common/code_utils.hpp"
 #include "common/debug.hpp"
-#include "common/instance.hpp"
 #include "common/locator_getters.hpp"
 #include "common/num_utils.hpp"
 #include "common/random.hpp"
 #include "common/settings.hpp"
 #include "common/string.hpp"
+#include "instance/instance.hpp"
 
 /**
  * @file
@@ -68,13 +68,19 @@ void Client::HostInfo::Clear(void)
     SetState(kRemoved);
 }
 
-void Client::HostInfo::SetState(ItemState aState)
+bool Client::HostInfo::SetState(ItemState aState)
 {
-    if (aState != GetState())
-    {
-        LogInfo("HostInfo %s -> %s", ItemStateToString(GetState()), ItemStateToString(aState));
-        mState = MapEnum(aState);
-    }
+    bool didChange;
+
+    VerifyOrExit(aState != GetState(), didChange = false);
+
+    LogInfo("HostInfo %s -> %s", ItemStateToString(GetState()), ItemStateToString(aState));
+
+    mState    = MapEnum(aState);
+    didChange = true;
+
+exit:
+    return didChange;
 }
 
 void Client::HostInfo::EnableAutoAddress(void)
@@ -121,9 +127,11 @@ exit:
     return error;
 }
 
-void Client::Service::SetState(ItemState aState)
+bool Client::Service::SetState(ItemState aState)
 {
-    VerifyOrExit(GetState() != aState);
+    bool didChange;
+
+    VerifyOrExit(GetState() != aState, didChange = false);
 
     LogInfo("Service %s -> %s, \"%s\" \"%s\"", ItemStateToString(GetState()), ItemStateToString(aState),
             GetInstanceName(), GetName());
@@ -150,10 +158,11 @@ void Client::Service::SetState(ItemState aState)
                 GetPriority(), GetNumTxtEntries());
     }
 
-    mState = MapEnum(aState);
+    mState    = MapEnum(aState);
+    didChange = true;
 
 exit:
-    return;
+    return didChange;
 }
 
 bool Client::Service::Matches(const Service &aOther) const
@@ -244,13 +253,14 @@ Client::Client(Instance &aInstance)
     , mState(kStateStopped)
     , mTxFailureRetryCount(0)
     , mShouldRemoveKeyLease(false)
-    , mAutoHostAddressAddedMeshLocal(false)
     , mSingleServiceMode(false)
 #if OPENTHREAD_CONFIG_REFERENCE_DEVICE_ENABLE
     , mServiceKeyRecordEnabled(false)
     , mUseShortLeaseOption(false)
 #endif
-    , mUpdateMessageId(0)
+    , mNextMessageId(0)
+    , mResponseMessageId(0)
+    , mAutoHostAddressCount(0)
     , mRetryWaitInterval(kMinRetryWaitInterval)
     , mTtl(0)
     , mLease(0)
@@ -345,6 +355,7 @@ void Client::Stop(Requester aRequester, StopMode aMode)
 
     mShouldRemoveKeyLease = false;
     mTxFailureRetryCount  = 0;
+    mResponseMessageId    = mNextMessageId;
 
     if (aMode == kResetRetryInterval)
     {
@@ -421,20 +432,11 @@ void Client::HandleNotifierEvents(Events aEvents)
     }
 #endif
 
-    if (mHostInfo.IsAutoAddressEnabled())
+    if (aEvents.ContainsAny(kEventIp6AddressAdded | kEventIp6AddressRemoved | kEventThreadMeshLocalAddrChanged) &&
+        ShouldUpdateHostAutoAddresses())
     {
-        Events::Flags eventFlags = (kEventIp6AddressAdded | kEventIp6AddressRemoved);
-
-        if (mAutoHostAddressAddedMeshLocal)
-        {
-            eventFlags |= kEventThreadMeshLocalAddrChanged;
-        }
-
-        if (aEvents.ContainsAny(eventFlags))
-        {
-            IgnoreError(UpdateHostInfoStateOnAddressChange());
-            UpdateState();
-        }
+        IgnoreError(UpdateHostInfoStateOnAddressChange());
+        UpdateState();
     }
 }
 
@@ -494,6 +496,13 @@ Error Client::EnableAutoHostAddress(void)
     VerifyOrExit(!mHostInfo.IsAutoAddressEnabled());
     SuccessOrExit(error = UpdateHostInfoStateOnAddressChange());
 
+    for (Ip6::Netif::UnicastAddress &unicastAddress : Get<ThreadNetif>().GetUnicastAddresses())
+    {
+        unicastAddress.mSrpRegistered = false;
+    }
+
+    mAutoHostAddressCount = 0;
+
     mHostInfo.EnableAutoAddress();
     UpdateState();
 
@@ -513,6 +522,68 @@ Error Client::SetHostAddresses(const Ip6::Address *aAddresses, uint8_t aNumAddre
 
 exit:
     return error;
+}
+
+bool Client::ShouldUpdateHostAutoAddresses(void) const
+{
+    bool                        shouldUpdate    = false;
+    uint16_t                    registeredCount = 0;
+    Ip6::Netif::UnicastAddress &ml64            = Get<Mle::Mle>().GetMeshLocal64UnicastAddress();
+
+    VerifyOrExit(mHostInfo.IsAutoAddressEnabled());
+
+    // Check all addresses on `ThreadNetif` excluding the mesh local
+    // EID (`ml64`). If any address should be registered but is not,
+    // or if any address was registered earlier but no longer should
+    // be, the host information needs to be re-registered to update
+    // the addresses. If there is no eligible address, then `ml64`
+    // should be registered, so its status is checked. Finally, the
+    // number of addresses that should be registered is verified
+    // against the previous value `mAutoHostAddressCount` to handle
+    // the case where an earlier registered address is now removed.
+
+    for (const Ip6::Netif::UnicastAddress &unicastAddress : Get<ThreadNetif>().GetUnicastAddresses())
+    {
+        if (&unicastAddress == &ml64)
+        {
+            continue;
+        }
+
+        if (ShouldHostAutoAddressRegister(unicastAddress) != unicastAddress.mSrpRegistered)
+        {
+            ExitNow(shouldUpdate = true);
+        }
+
+        if (unicastAddress.mSrpRegistered)
+        {
+            registeredCount++;
+        }
+    }
+
+    if (registeredCount == 0)
+    {
+        ExitNow(shouldUpdate = !ml64.mSrpRegistered);
+    }
+
+    shouldUpdate = (registeredCount != mAutoHostAddressCount);
+
+exit:
+    return shouldUpdate;
+}
+
+bool Client::ShouldHostAutoAddressRegister(const Ip6::Netif::UnicastAddress &aUnicastAddress) const
+{
+    bool shouldRegister = false;
+
+    VerifyOrExit(aUnicastAddress.mValid);
+    VerifyOrExit(aUnicastAddress.mPreferred);
+    VerifyOrExit(!aUnicastAddress.GetAddress().IsLinkLocal());
+    VerifyOrExit(!Get<Mle::Mle>().IsMeshLocalAddress(aUnicastAddress.GetAddress()));
+
+    shouldRegister = true;
+
+exit:
+    return shouldRegister;
 }
 
 Error Client::UpdateHostInfoStateOnAddressChange(void)
@@ -679,13 +750,15 @@ exit:
     return;
 }
 
-void Client::ChangeHostAndServiceStates(const ItemState *aNewStates, ServiceStateChangeMode aMode)
+bool Client::ChangeHostAndServiceStates(const ItemState *aNewStates, ServiceStateChangeMode aMode)
 {
+    bool anyChanged;
+
 #if OPENTHREAD_CONFIG_SRP_CLIENT_AUTO_START_API_ENABLE && OPENTHREAD_CONFIG_SRP_CLIENT_SAVE_SELECTED_SERVER_ENABLE
     ItemState oldHostState = mHostInfo.GetState();
 #endif
 
-    mHostInfo.SetState(aNewStates[mHostInfo.GetState()]);
+    anyChanged = mHostInfo.SetState(aNewStates[mHostInfo.GetState()]);
 
     for (Service &service : mServices)
     {
@@ -694,7 +767,7 @@ void Client::ChangeHostAndServiceStates(const ItemState *aNewStates, ServiceStat
             continue;
         }
 
-        service.SetState(aNewStates[service.GetState()]);
+        anyChanged |= service.SetState(aNewStates[service.GetState()]);
     }
 
 #if OPENTHREAD_CONFIG_SRP_CLIENT_AUTO_START_API_ENABLE && OPENTHREAD_CONFIG_SRP_CLIENT_SAVE_SELECTED_SERVER_ENABLE
@@ -721,6 +794,8 @@ void Client::ChangeHostAndServiceStates(const ItemState *aNewStates, ServiceStat
         }
     }
 #endif // OPENTHREAD_CONFIG_SRP_CLIENT_AUTO_START_API_ENABLE && OPENTHREAD_CONFIG_SRP_CLIENT_SAVE_SELECTED_SERVER_ENABLE
+
+    return anyChanged;
 }
 
 void Client::InvokeCallback(Error aError) const { InvokeCallback(aError, mHostInfo, nullptr); }
@@ -746,6 +821,7 @@ void Client::SendUpdate(void)
     Error    error   = kErrorNone;
     Message *message = mSocket.NewMessage();
     uint32_t length;
+    bool     anyChanged;
 
     VerifyOrExit(message != nullptr, error = kErrorNoBufs);
     SuccessOrExit(error = PrepareUpdateMessage(*message));
@@ -762,14 +838,35 @@ void Client::SendUpdate(void)
 
     SuccessOrExit(error = mSocket.SendTo(*message, Ip6::MessageInfo()));
 
-    LogInfo("Send update");
+    LogInfo("Send update, msg-id:0x%x", mNextMessageId);
 
     // State changes:
     //   kToAdd     -> kAdding
     //   kToRefresh -> kRefreshing
     //   kToRemove  -> kRemoving
 
-    ChangeHostAndServiceStates(kNewStateOnMessageTx, kForServicesAppendedInMessage);
+    anyChanged = ChangeHostAndServiceStates(kNewStateOnMessageTx, kForServicesAppendedInMessage);
+
+    // `mNextMessageId` tracks the message ID used in the prepared
+    // update message. It is incremented after a successful
+    // `mSocket.SendTo()` call. If unsuccessful, the same ID can be
+    // reused for the next update.
+    //
+    // Acceptable response message IDs fall within the range starting
+    // at `mResponseMessageId ` and ending before `mNextMessageId`.
+    //
+    // `anyChanged` tracks if any host or service states have changed.
+    // If not, the prepared message is identical to the last one with
+    // the same hosts/services, allowing us to accept earlier message
+    // IDs. If changes occur, `mResponseMessageId ` is updated to
+    // ensure only responses to the latest message are accepted.
+
+    if (anyChanged)
+    {
+        mResponseMessageId = mNextMessageId;
+    }
+
+    mNextMessageId++;
 
     // Remember the update message tx time to use later to determine the
     // lease renew time.
@@ -842,13 +939,7 @@ Error Client::PrepareUpdateMessage(Message &aMessage)
     SuccessOrExit(error = ReadOrGenerateKey(info.mKeyPair));
 #endif
 
-    // Generate random Message ID and ensure it is different from last one
-    do
-    {
-        SuccessOrExit(error = header.SetRandomMessageId());
-    } while (header.GetMessageId() == mUpdateMessageId);
-
-    mUpdateMessageId = header.GetMessageId();
+    header.SetMessageId(mNextMessageId);
 
     // SRP Update (DNS Update) message must have exactly one record in
     // Zone section, no records in Prerequisite Section, can have
@@ -901,19 +992,16 @@ Error Client::ReadOrGenerateKey(Crypto::Ecdsa::P256::KeyPairAsRef &aKeyRef)
 
     if (error == kErrorNone)
     {
-        Crypto::Ecdsa::P256::PublicKey publicKey;
-
-        if (keyPair.GetPublicKey(publicKey) == kErrorNone)
+        if (aKeyRef.ImportKeyPair(keyPair) != kErrorNone)
         {
-            SuccessOrExit(error = aKeyRef.ImportKeyPair(keyPair));
-            IgnoreError(Get<Settings>().Delete<Settings::SrpEcdsaKey>());
-            ExitNow();
+            SuccessOrExit(error = aKeyRef.Generate());
         }
         IgnoreError(Get<Settings>().Delete<Settings::SrpEcdsaKey>());
     }
-
-    error = aKeyRef.Generate();
-
+    else
+    {
+        SuccessOrExit(error = aKeyRef.Generate());
+    }
 exit:
     return error;
 }
@@ -1240,27 +1328,33 @@ Error Client::AppendHostDescriptionInstruction(Message &aMessage, Info &aInfo)
 
     if (mHostInfo.IsAutoAddressEnabled())
     {
-        // Append all addresses on Thread netif excluding link-local and
-        // mesh-local addresses. If no address is appended, we include
-        // the mesh local address.
+        // Append all preferred addresses on Thread netif excluding link-local
+        // and mesh-local addresses. If no address is appended, we include
+        // the mesh local EID.
 
-        mAutoHostAddressAddedMeshLocal = true;
+        mAutoHostAddressCount = 0;
 
-        for (const Ip6::Netif::UnicastAddress &unicastAddress : Get<ThreadNetif>().GetUnicastAddresses())
+        for (Ip6::Netif::UnicastAddress &unicastAddress : Get<ThreadNetif>().GetUnicastAddresses())
         {
-            if (unicastAddress.GetAddress().IsLinkLocal() ||
-                Get<Mle::Mle>().IsMeshLocalAddress(unicastAddress.GetAddress()))
+            if (ShouldHostAutoAddressRegister(unicastAddress))
             {
-                continue;
+                SuccessOrExit(error = AppendAaaaRecord(unicastAddress.GetAddress(), aMessage, aInfo));
+                unicastAddress.mSrpRegistered = true;
+                mAutoHostAddressCount++;
             }
-
-            SuccessOrExit(error = AppendAaaaRecord(unicastAddress.GetAddress(), aMessage, aInfo));
-            mAutoHostAddressAddedMeshLocal = false;
+            else
+            {
+                unicastAddress.mSrpRegistered = false;
+            }
         }
 
-        if (mAutoHostAddressAddedMeshLocal)
+        if (mAutoHostAddressCount == 0)
         {
-            SuccessOrExit(error = AppendAaaaRecord(Get<Mle::Mle>().GetMeshLocal64(), aMessage, aInfo));
+            Ip6::Netif::UnicastAddress &ml64 = Get<Mle::Mle>().GetMeshLocal64UnicastAddress();
+
+            SuccessOrExit(error = AppendAaaaRecord(ml64.GetAddress(), aMessage, aInfo));
+            ml64.mSrpRegistered = true;
+            mAutoHostAddressCount++;
         }
     }
     else
@@ -1515,22 +1609,32 @@ void Client::ProcessResponse(Message &aMessage)
     uint16_t            recordCount;
     LinkedList<Service> removedServices;
 
-    VerifyOrExit(GetState() == kStateUpdating);
+    switch (GetState())
+    {
+    case kStateToUpdate:
+    case kStateUpdating:
+    case kStateToRetry:
+        break;
+    case kStateStopped:
+    case kStatePaused:
+    case kStateUpdated:
+        ExitNow();
+    }
 
     SuccessOrExit(error = aMessage.Read(offset, header));
 
     VerifyOrExit(header.GetType() == Dns::Header::kTypeResponse, error = kErrorParse);
     VerifyOrExit(header.GetQueryType() == Dns::Header::kQueryTypeUpdate, error = kErrorParse);
-    VerifyOrExit(header.GetMessageId() == mUpdateMessageId, error = kErrorDrop);
+
+    VerifyOrExit(IsResponseMessageIdValid(header.GetMessageId()), error = kErrorDrop);
+    mResponseMessageId = header.GetMessageId() + 1;
 
     if (!Get<Mle::Mle>().IsRxOnWhenIdle())
     {
         Get<DataPollSender>().StopFastPolls();
     }
 
-    // Response is for the earlier request message.
-
-    LogInfo("Received response");
+    LogInfo("Received response, msg-id:0x%x", header.GetMessageId());
 
 #if OPENTHREAD_CONFIG_SRP_CLIENT_AUTO_START_API_ENABLE && OPENTHREAD_CONFIG_SRP_CLIENT_SWITCH_SERVER_ON_FAILURE
     mAutoStart.ResetTimeoutFailureCount();
@@ -1659,6 +1763,13 @@ exit:
     }
 }
 
+bool Client::IsResponseMessageIdValid(uint16_t aId) const
+{
+    // Semantically equivalent to `(aId >= mResponseMessageId) && (aId < mNextMessageId)`
+
+    return !SerialNumber::IsLess(aId, mResponseMessageId) && SerialNumber::IsLess(aId, mNextMessageId);
+}
+
 void Client::HandleUpdateDone(void)
 {
     HostInfo            hostInfoCopy = mHostInfo;
@@ -1732,9 +1843,8 @@ exit:
 
 void Client::UpdateState(void)
 {
-    TimeMilli now               = TimerMilli::GetNow();
-    TimeMilli earliestRenewTime = now.GetDistantFuture();
-    bool      shouldUpdate      = false;
+    NextFireTime nextRenewTime;
+    bool         shouldUpdate = false;
 
     VerifyOrExit((GetState() != kStateStopped) && (GetState() != kStatePaused));
     VerifyOrExit(mHostInfo.GetName() != nullptr);
@@ -1754,7 +1864,7 @@ void Client::UpdateState(void)
         break;
 
     case kRegistered:
-        if (now < mLeaseRenewTime)
+        if (nextRenewTime.GetNow() < mLeaseRenewTime)
         {
             break;
         }
@@ -1801,14 +1911,14 @@ void Client::UpdateState(void)
                 break;
 
             case kRegistered:
-                if (service.GetLeaseRenewTime() <= now)
+                if (service.GetLeaseRenewTime() <= nextRenewTime.GetNow())
                 {
                     service.SetState(kToRefresh);
                     shouldUpdate = true;
                 }
                 else
                 {
-                    earliestRenewTime = Min(earliestRenewTime, service.GetLeaseRenewTime());
+                    nextRenewTime.UpdateIfEarlier(service.GetLeaseRenewTime());
                 }
 
                 break;
@@ -1828,9 +1938,9 @@ void Client::UpdateState(void)
         ExitNow();
     }
 
-    if ((GetState() == kStateUpdated) && (earliestRenewTime != now.GetDistantFuture()))
+    if (GetState() == kStateUpdated)
     {
-        mTimer.FireAt(earliestRenewTime);
+        mTimer.FireAt(nextRenewTime);
     }
 
 exit:

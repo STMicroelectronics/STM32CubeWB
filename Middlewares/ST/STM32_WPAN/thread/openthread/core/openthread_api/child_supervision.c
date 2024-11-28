@@ -33,6 +33,8 @@
 
 uint16_t otChildSupervisionGetInterval(otInstance *aInstance)
 {
+	uint16_t rspData;
+	
     Pre_OtCmdProcessing();
     /* prepare buffer */
     Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -44,7 +46,11 @@ uint16_t otChildSupervisionGetInterval(otInstance *aInstance)
     Ot_Cmd_Transfer();
 
     p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-    return (uint16_t)p_ot_req->Data[0];
+    rspData = (uint16_t)p_ot_req->Data[0];
+  
+    Post_OtCmdProcessing();
+  
+    return rspData;
 }
 
 void otChildSupervisionSetInterval(otInstance *aInstance, uint16_t aInterval)
@@ -60,11 +66,13 @@ void otChildSupervisionSetInterval(otInstance *aInstance, uint16_t aInterval)
 
     Ot_Cmd_Transfer();
 
-    p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+    Post_OtCmdProcessing();
 }
 
 uint16_t otChildSupervisionGetCheckTimeout(otInstance *aInstance)
 {
+	uint16_t rspData;
+	
     Pre_OtCmdProcessing();
     /* prepare buffer */
     Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -76,7 +84,11 @@ uint16_t otChildSupervisionGetCheckTimeout(otInstance *aInstance)
     Ot_Cmd_Transfer();
 
     p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-    return (uint16_t)p_ot_req->Data[0];
+    rspData = (uint16_t)p_ot_req->Data[0];
+  
+	Post_OtCmdProcessing();
+  
+	return rspData;
 }
 
 void otChildSupervisionSetCheckTimeout(otInstance *aInstance, uint16_t aTimeout)
@@ -92,11 +104,13 @@ void otChildSupervisionSetCheckTimeout(otInstance *aInstance, uint16_t aTimeout)
 
     Ot_Cmd_Transfer();
 
-    p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+    Post_OtCmdProcessing();
 }
 
 uint16_t otChildSupervisionGetCheckFailureCounter(otInstance *aInstance)
 {
+	uint16_t rspData;
+	
     Pre_OtCmdProcessing();
     /* prepare buffer */
     Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -108,7 +122,11 @@ uint16_t otChildSupervisionGetCheckFailureCounter(otInstance *aInstance)
     Ot_Cmd_Transfer();
 
     p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-    return (uint16_t)p_ot_req->Data[0];
+    rspData = (uint16_t)p_ot_req->Data[0];
+  
+    Post_OtCmdProcessing();
+  
+    return rspData;
 }
 
 void otChildSupervisionResetCheckFailureCounter(otInstance *aInstance)
@@ -123,5 +141,5 @@ void otChildSupervisionResetCheckFailureCounter(otInstance *aInstance)
 
     Ot_Cmd_Transfer();
 
-    p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+    Post_OtCmdProcessing();
 }

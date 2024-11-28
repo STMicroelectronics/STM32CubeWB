@@ -65,6 +65,7 @@ public:
     static constexpr uint32_t kOneMinuteInMsec = kOneSecondInMsec * 60; ///< One minute interval in msec.
     static constexpr uint32_t kOneHourInMsec   = kOneMinuteInMsec * 60; ///< One hour interval in msec.
     static constexpr uint32_t kOneDayInMsec    = kOneHourInMsec * 24;   ///< One day interval in msec.
+    static constexpr uint32_t kOneMsecInUsec   = 1000u;                 ///< One millisecond in microseconds.
 
     /**
      * This constant defines a maximum time duration ensured to be longer than any other duration.
@@ -217,26 +218,28 @@ public:
     /**
      * Returns a new `Time` instance which is in distant future relative to current `Time` object.
      *
-     * The returned distance future `Time` is guaranteed to be equal or after (as defined by comparison operator `<=`)
-     * any other `Time` which is after this `Time` object, i.e., for any `t` for which we have `*this <= t`, it is
-     * ensured that `t <= this->GetGetDistantFuture()`.
+     * The distant future is the largest time that is ahead of `Time`. For any time `t`, if `(*this <= t)`, then
+     * `t <= this->GetGetDistantFuture()`, except for the ambiguous `t` value which is half range `(1 << 31)` apart.
+     *
+     * When comparing `GetDistantFuture()` with a time `t` the caller must ensure that `t` is already ahead of `*this`.
      *
      * @returns A new `Time` in distance future relative to current `Time` object.
      *
      */
-    Time GetDistantFuture(void) const { return Time(mValue + kDistantFuture); }
+    Time GetDistantFuture(void) const { return Time(mValue + kDistantInterval); }
 
     /**
      * Returns a new `Time` instance which is in distant past relative to current `Time` object.
      *
-     * The returned distance past `Time` is guaranteed to be equal or before (as defined by comparison operator `>=`)
-     * any other `Time` which is before this `Time` object, i.e., for any `t` for which we have `*this >= t`, it is
-     * ensured that `t >= this->GetDistantPast()`.
+     * The distant past is the smallest time that is before `Time`. For any time `t`, if `(t <= *this )`, then
+     * `this->GetGetDistantPast() <= t`, except for the ambiguous `t` value which is half range `(1 << 31)` apart.
+     *
+     * When comparing `GetDistantPast()` with a time `t` the caller must ensure that the `t` is already before `*this`.
      *
      * @returns A new `Time` in distance past relative to current `Time` object.
      *
      */
-    Time GetDistantPast(void) const { return Time(mValue - kDistantFuture); }
+    Time GetDistantPast(void) const { return Time(mValue - kDistantInterval); }
 
     /**
      * Converts a given number of seconds to milliseconds.
@@ -259,7 +262,7 @@ public:
     static uint32_t constexpr MsecToSec(uint32_t aMilliseconds) { return aMilliseconds / 1000u; }
 
 private:
-    static constexpr uint32_t kDistantFuture = (1UL << 31);
+    static constexpr uint32_t kDistantInterval = (1UL << 31) - 1;
 
     uint32_t mValue;
 };

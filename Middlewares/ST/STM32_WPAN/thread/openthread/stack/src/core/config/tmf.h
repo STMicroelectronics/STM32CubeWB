@@ -35,6 +35,17 @@
 #ifndef CONFIG_TMF_H_
 #define CONFIG_TMF_H_
 
+/**
+ * @addtogroup config-tmf
+ *
+ * @brief
+ *   This module includes configuration variables for the Thread Management
+ *   Framework service.
+ *
+ * @{
+ *
+ */
+
 #include "config/border_router.h"
 
 /**
@@ -57,9 +68,11 @@
  * The maximum number of EID-to-RLOC cache entries that can be used for "snoop optimization" where an entry is created
  * by inspecting a received message.
  *
+ * By default a 1/16 fraction of `OPENTHREAD_CONFIG_TMF_ADDRESS_CACHE_ENTRIES` is used.
+ *
  */
 #ifndef OPENTHREAD_CONFIG_TMF_ADDRESS_CACHE_MAX_SNOOP_ENTRIES
-#define OPENTHREAD_CONFIG_TMF_ADDRESS_CACHE_MAX_SNOOP_ENTRIES 2
+#define OPENTHREAD_CONFIG_TMF_ADDRESS_CACHE_MAX_SNOOP_ENTRIES (OPENTHREAD_CONFIG_TMF_ADDRESS_CACHE_ENTRIES / 16)
 #endif
 
 /**
@@ -244,5 +257,10 @@
 #if OPENTHREAD_CONFIG_TMF_PROXY_MLR_ENABLE && OPENTHREAD_CONFIG_THREAD_VERSION < OT_THREAD_VERSION_1_2
 #error "Thread 1.2 or higher version is required for OPENTHREAD_CONFIG_TMF_PROXY_MLR_ENABLE"
 #endif
+
+/**
+ * @}
+ *
+ */
 
 #endif // CONFIG_TMF_H_

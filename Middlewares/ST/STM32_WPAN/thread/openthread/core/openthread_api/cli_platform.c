@@ -103,6 +103,8 @@ otError otPlatRadioSetFemLnaGain(otInstance *aInstance, int8_t aGain)
  */
 bool otPlatRadioGetPromiscuous(otInstance *aInstance)
 {
+  bool rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -114,7 +116,11 @@ bool otPlatRadioGetPromiscuous(otInstance *aInstance)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (bool) p_ot_req->Data[0];
+  rspData = (bool)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 /**
@@ -155,6 +161,8 @@ const char *otPlatRadioGetVersionString(otInstance *aInstance)
  */
 otError otPlatEntropyGet(uint8_t *aOutput, uint16_t aOutputLength)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -168,7 +176,11 @@ otError otPlatEntropyGet(uint8_t *aOutput, uint16_t aOutputLength)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError) p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 /**
@@ -204,6 +216,8 @@ void otPlatAlarmMilliStartAt(otInstance *aInstance, uint32_t aT0, uint32_t aDt)
  */
 uint32_t otPlatAlarmMilliGetNow(void)
 {
+  uint32_t rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -215,7 +229,11 @@ uint32_t otPlatAlarmMilliGetNow(void)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (uint32_t) p_ot_req->Data[0];
+  rspData = (uint32_t)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 /**

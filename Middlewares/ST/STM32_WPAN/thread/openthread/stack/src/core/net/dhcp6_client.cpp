@@ -38,9 +38,9 @@
 #include "common/as_core_type.hpp"
 #include "common/code_utils.hpp"
 #include "common/encoding.hpp"
-#include "common/instance.hpp"
 #include "common/locator_getters.hpp"
 #include "common/log.hpp"
+#include "instance/instance.hpp"
 #include "mac/mac.hpp"
 #include "net/dhcp6.hpp"
 #include "thread/thread_netif.hpp"
@@ -57,7 +57,7 @@ Client::Client(Instance &aInstance)
     , mStartTime(0)
     , mIdentityAssociationCurrent(nullptr)
 {
-    memset(mIdentityAssociations, 0, sizeof(mIdentityAssociations));
+    ClearAllBytes(mIdentityAssociations);
 }
 
 bool Client::MatchNetifAddressWithPrefix(const Ip6::Netif::UnicastAddress &aNetifAddress, const Ip6::Prefix &aIp6Prefix)
@@ -288,7 +288,7 @@ exit:
     if (error != kErrorNone)
     {
         FreeMessage(message);
-        LogWarn("Failed to send DHCPv6 Solicit: %s", ErrorToString(error));
+        LogWarnOnError(error, "send DHCPv6 Solicit");
     }
 }
 

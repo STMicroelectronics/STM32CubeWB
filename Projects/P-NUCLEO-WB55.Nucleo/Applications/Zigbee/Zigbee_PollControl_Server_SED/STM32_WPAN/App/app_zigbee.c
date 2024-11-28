@@ -27,6 +27,7 @@
 #include "stm32wbxx_core_interface_def.h"
 #include "zigbee_types.h"
 #include "stm32_seq.h"
+#include "stm32_lpm.h"
 
 #include <assert.h>
 #include "zcl/zcl.h"
@@ -83,6 +84,7 @@ PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static TL_ZIGBEE_Config_t ZigbeeConfigBuffe
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ZigbeeOtCmdBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t ZigbeeNotifRspEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t ZigbeeNotifRequestBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
+uint8_t g_ot_notification_allowed = 0U;
 
 struct zigbee_app_info {
   bool has_init;
@@ -408,7 +410,12 @@ static void APP_ZIGBEE_NwkForm(void)
     APP_DBG("ZbStartup Callback (status = 0x%02x)", status);
     zigbee_app_info.join_status = status;
 
-    if (status == ZB_STATUS_SUCCESS) {
+    if (status == ZB_STATUS_SUCCESS)
+    {
+      /* Enabling Stop mode */
+      UTIL_LPM_SetStopMode(1U << CFG_LPM_APP, UTIL_LPM_ENABLE);
+      UTIL_LPM_SetOffMode(1U << CFG_LPM_APP, UTIL_LPM_DISABLE);
+
       zigbee_app_info.join_delay = 0U;
       BSP_LED_On(LED_BLUE);
     }
@@ -606,7 +613,6 @@ static void APP_ZIGBEE_SW1_Process(void)
   
   UTIL_SEQ_SetTask(1U << CFG_TASK_ZIGBEE_APP_POLL_CONTROL_SHOW_ATTR, CFG_SCH_PRIO_0);
 } /* APP_ZIGBEE_SW1_Process */
-
 /*************************************************************
  *
  * WRAP FUNCTIONS
@@ -659,6 +665,18 @@ void ZIGBEE_CmdTransfer(void)
   /* Wait completion of cmd */
   Wait_Getting_Ack_From_M0();
 } /* ZIGBEE_CmdTransfer */
+
+/**
+ * @brief  This function is used to transfer the commands from the M4 to the M0 with notification
+ *
+ * @param   None
+ * @return  None
+ */
+void ZIGBEE_CmdTransferWithNotif(void)
+{
+	g_ot_notification_allowed = 1;
+	ZIGBEE_CmdTransfer();
+}
 
 /**
  * @brief  This function is called when the M0+ acknowledge  the fact that it has received a Cmd

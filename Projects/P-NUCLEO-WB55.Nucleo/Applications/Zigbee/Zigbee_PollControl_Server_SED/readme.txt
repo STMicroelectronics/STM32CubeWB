@@ -82,13 +82,13 @@ It can be used to validate the client remote operation during the server Fast Po
              |        |                                                                                |        |
              |        |                             /* Checkin request */                              |        |
              |        | <----------------------------------------------------------------------------- |        |
-             |        |             /* Checkin response (Fast Poll true) => Short Poll */              |        |=> GREEN LED ON
+             |        |             /* Checkin response (Fast Poll true) => Short Poll */              |        |=> GREEN LED ON if CFG_FULL_LOW_POWER=0
              |        | -----------------------------------------------------------------------------> |        |   (during fast poll timeout)
              |        |                                                                                |        |
              |        |                                                                                |        |
              |        |                                                                             -->|        | 
-             |        |                            /* Show local Poll Control server attributes */ |   |        |<=PushB SW1
-             |        |                                                                             ---|        |
+             |        |                            /* Show local Poll Control server attributes */ |   |        |<=PushB SW1 if CFG_FULL_LOW_POWER=0
+             |        |                                log visible if CFG_FULL_LOW_POWER=0          ---|        |
              |        |                                                                                |        |
              +--------+                                                                                +--------+
   
@@ -102,7 +102,9 @@ To setup the application :
       the device running Zigbee_PollControl_Client_Coord application (Device 1 in the above diagram). 
       Wait for the Blue LED (LED1) ON. 
       Start the second board. This board is configured as Zigbee SED and will attached to the network created 
-      by the coordinator. Do the same for the other boards if applicable.
+      by the coordinator. The Blue LED (LED1) of the SED will turn ON depending on the value of CFG_FULL_LOW_POWER 
+	  (if the CFG_FULL_LOW_POWER=0 then the power will be minimal BUT the SED'LEDs will not light).
+	  Do the same for the other boards if applicable.
       
   b)  At this stage, the Zigbee network is automatically created and BLUE LED (LED1) is ON on all devices.
 

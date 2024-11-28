@@ -39,9 +39,9 @@
 #include "common/as_core_type.hpp"
 #include "common/code_utils.hpp"
 #include "common/encoding.hpp"
-#include "common/instance.hpp"
 #include "common/locator_getters.hpp"
 #include "common/log.hpp"
+#include "instance/instance.hpp"
 #include "thread/mle.hpp"
 #include "thread/thread_netif.hpp"
 
@@ -56,7 +56,7 @@ Server::Server(Instance &aInstance)
     , mPrefixAgentsCount(0)
     , mPrefixAgentsMask(0)
 {
-    memset(mPrefixAgents, 0, sizeof(mPrefixAgents));
+    ClearAllBytes(mPrefixAgents);
 }
 
 Error Server::UpdateService(void)
@@ -172,11 +172,8 @@ void Server::AddPrefixAgent(const Ip6::Prefix &aIp6Prefix, const Lowpan::Context
     mPrefixAgentsCount++;
 
 exit:
-
-    if (error != kErrorNone)
-    {
-        LogNote("Failed to add DHCPv6 prefix agent: %s", ErrorToString(error));
-    }
+    LogWarnOnError(error, "add DHCPv6 prefix agent");
+    OT_UNUSED_VARIABLE(error);
 }
 
 void Server::HandleUdpReceive(void *aContext, otMessage *aMessage, const otMessageInfo *aMessageInfo)
@@ -483,21 +480,6 @@ Error Server::AppendRapidCommit(Message &aMessage)
 
     option.Init();
     return aMessage.Append(option);
-}
-
-void Server::ApplyMeshLocalPrefix(void)
-{
-    for (PrefixAgent &prefixAgent : mPrefixAgents)
-    {
-        if (prefixAgent.IsValid())
-        {
-            PrefixAgent *entry = &prefixAgent;
-
-            Get<ThreadNetif>().RemoveUnicastAddress(entry->GetAloc());
-            entry->GetAloc().GetAddress().SetPrefix(Get<Mle::MleRouter>().GetMeshLocalPrefix());
-            Get<ThreadNetif>().AddUnicastAddress(entry->GetAloc());
-        }
-    }
 }
 
 } // namespace Dhcp6

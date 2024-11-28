@@ -98,6 +98,7 @@ PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static TL_ZIGBEE_Config_t ZigbeeConfigBuffe
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ZigbeeOtCmdBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t ZigbeeNotifRspEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t ZigbeeNotifRequestBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
+uint8_t g_ot_notification_allowed = 0U;
 
 struct zigbee_app_info
 {
@@ -519,6 +520,18 @@ void ZIGBEE_CmdTransfer(void)
 
   /* Wait completion of cmd */
   Wait_Getting_Ack_From_M0();
+}
+
+/**
+ * @brief  This function is used to transfer the commands from the M4 to the M0 with notification
+ *
+ * @param   None
+ * @return  None
+ */
+void ZIGBEE_CmdTransferWithNotif(void)
+{
+	g_ot_notification_allowed = 1;
+	ZIGBEE_CmdTransfer();
 }
 
 /**

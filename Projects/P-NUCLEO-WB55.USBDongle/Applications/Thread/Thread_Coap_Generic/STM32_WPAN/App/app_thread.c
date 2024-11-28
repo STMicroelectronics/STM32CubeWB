@@ -30,10 +30,6 @@
 #include "app_conf.h"
 #include "stm32_lpm.h"
 #include "stm32_seq.h"
-#if (CFG_USB_INTERFACE_ENABLE != 0)
-#include "vcp.h"
-#include "vcp_conf.h"
-#endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 
 /* Private includes -----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -74,13 +70,9 @@ static void HostTxCb( void );
 static void Wait_Getting_Ack_From_M0(void);
 static void Receive_Ack_From_M0(void);
 static void Receive_Notification_From_M0(void);
-#if (CFG_USB_INTERFACE_ENABLE != 0)
-static uint32_t ProcessCmdString(uint8_t* buf , uint32_t len);
-#else
 #if (CFG_FULL_LOW_POWER == 0)
 static void RxCpltCallback(void);
 #endif /* (CFG_FULL_LOW_POWER == 0) */
-#endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 
 /* USER CODE BEGIN PFP */
 static void APP_THREAD_CoapSendRequest(otCoapResource* aCoapRessource,
@@ -111,15 +103,9 @@ static bool APP_THREAD_CheckMsgValidity(void);
 /* USER CODE END PFP */
 
 /* Private variables -----------------------------------------------*/
-#if (CFG_USB_INTERFACE_ENABLE != 0)
-static uint8_t TmpString[C_SIZE_CMD_STRING];
-static uint8_t VcpRxBuffer[sizeof(TL_CmdSerial_t)];        /* Received Data over USB are stored in this buffer */
-static uint8_t VcpTxBuffer[sizeof(TL_EvtPacket_t) + 254U]; /* Transmit buffer over USB */
-#else
 #if (CFG_FULL_LOW_POWER == 0)
 static uint8_t aRxBuffer[C_SIZE_CMD_STRING];
 #endif /* (CFG_FULL_LOW_POWER == 0) */
-#endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 
 #if (CFG_FULL_LOW_POWER == 0)
 static uint8_t CommandString[C_SIZE_CMD_STRING];
@@ -160,10 +146,6 @@ void APP_THREAD_Init( void )
 
   /* Check the compatibility with the Coprocessor Wireless Firmware loaded */
   APP_THREAD_CheckWirelessFirmwareInfo();
-
-#if (CFG_USB_INTERFACE_ENABLE != 0)
-  VCP_Init(&VcpTxBuffer[0], &VcpRxBuffer[0]);
-#endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 
   /* Register cmdbuffer */
   APP_THREAD_RegisterCmdBuffer(&ThreadOtCmdBuffer);
@@ -892,8 +874,6 @@ static void Receive_Notification_From_M0(void)
   UTIL_SEQ_SetTask(TASK_MSG_FROM_M0_TO_M4,CFG_SCH_PRIO_0);
 }
 
-#if (CFG_USB_INTERFACE_ENABLE != 0)
-#else
 #if (CFG_FULL_LOW_POWER == 0)
 static void RxCpltCallback(void)
 {
@@ -914,47 +894,6 @@ static void RxCpltCallback(void)
   HW_UART_Receive_IT(CFG_CLI_UART, aRxBuffer, 1U, RxCpltCallback);
 }
 #endif /* (CFG_FULL_LOW_POWER == 0) */
-#endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
-
-#if (CFG_USB_INTERFACE_ENABLE != 0)
-/**
- * @brief Process the command strings.
- *        As soon as a complete command string has been received, the task
- *        in charge of sending the command to the M0 is scheduled
- * @param  None
- * @retval None
- */
-static uint32_t  ProcessCmdString( uint8_t* buf , uint32_t len )
-{
-  uint32_t i,j,tmp_start;
-  tmp_start = 0;
-  uint32_t res = 0;
-
-  i= 0;
-  while ((buf[i] != '\r') && (i < len))
-  {
-    i++;
-  }
-
-  if (i != len)
-  {
-    memcpy(CommandString, buf,(i+1));
-    indexReceiveChar = i + 1U; /* Length of the buffer containing the command string */
-    UTIL_SEQ_SetTask(1U << CFG_TASK_SEND_CLI_TO_M0, CFG_SCH_PRIO_0);
-    tmp_start = i;
-    for (j = 0; j < (len - tmp_start - 1U) ; j++)
-    {
-      buf[j] = buf[tmp_start + j + 1U];
-    }
-    res = len - tmp_start - 1U;
-  }
-  else
-  {
-    res = len;
-  }
-  return res; /* Remaining characters in the temporary buffer */
-}
-#endif/* (CFG_USB_INTERFACE_ENABLE != 0) */
 
 #if (CFG_FULL_LOW_POWER == 0)
 /**
@@ -1001,11 +940,8 @@ void APP_THREAD_Init_UART_CLI(void)
   UTIL_SEQ_RegTask( 1<<CFG_TASK_SEND_CLI_TO_M0, UTIL_SEQ_RFU,Send_CLI_To_M0);
 #endif /* (CFG_FULL_LOW_POWER == 0) */
 
-#if (CFG_USB_INTERFACE_ENABLE != 0)
-#else
   HW_UART_Init(CFG_CLI_UART);
   HW_UART_Receive_IT(CFG_CLI_UART, aRxBuffer, 1, RxCpltCallback);
-#endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 }
 
 /**
@@ -1038,11 +974,7 @@ void TL_THREAD_CliNotReceived( TL_EvtPacket_t * Notbuffer )
   if (strcmp((const char *)l_CliBuffer->cmdserial.cmd.payload, "> ") != 0)
   {
     /* Write to CLI UART */
-#if (CFG_USB_INTERFACE_ENABLE != 0)
-    VCP_SendData( l_CliBuffer->cmdserial.cmd.payload, l_size, HostTxCb);
-#else
     HW_UART_Transmit_IT(CFG_CLI_UART, l_CliBuffer->cmdserial.cmd.payload, l_size, HostTxCb);
-#endif /*USAGE_OF_VCP */
   }
   else
   {
@@ -1083,47 +1015,6 @@ void APP_THREAD_ProcessMsgM0ToM4(void)
     CptReceiveMsgFromM0 = 0;
   }
 }
-
-#if (CFG_USB_INTERFACE_ENABLE != 0)
-/**
- * @brief  This function is called when thereare some data coming
- *         from the Hyperterminal via the USB port
- *         Data received over USB OUT endpoint are sent over CDC interface
- *         through this function.
- * @param  Buf: Buffer of data received
- * @param  Len: Number of data received (in bytes)
- * @retval Number of characters remaining in the buffer and not yet processed
- */
-void VCP_DataReceived(uint8_t* Buf , uint32_t *Len)
-{
-  uint32_t i,flag_continue_checking = TRUE;
-  uint32_t char_remaining = 0;
-  static uint32_t len_total = 0;
-
-  /* Copy the characters  in the temporary buffer */
-  for (i = 0; i < *Len; i++)
-  {
-    TmpString[len_total++] = Buf[i];
-  }
-
-  /* Process the buffer commands one by one     */
-  /* A command is limited by a \r caracaters    */
-  while (flag_continue_checking == TRUE)
-  {
-    char_remaining = ProcessCmdString(TmpString,len_total);
-    /* If char_remaining is equal to len_total, it means that the command string is not yet
-     * completed.
-     * If char_remaining is equal to 0, it means that the command string has
-     * been entirely processed.
-     */
-    if ((char_remaining == 0) || (char_remaining == len_total))
-    {
-      flag_continue_checking = FALSE;
-    }
-    len_total = char_remaining;
-  }
-}
-#endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 
 /* USER CODE BEGIN FD_WRAP_FUNCTIONS */
 

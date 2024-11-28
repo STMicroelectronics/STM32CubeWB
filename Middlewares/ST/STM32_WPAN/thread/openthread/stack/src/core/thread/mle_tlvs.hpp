@@ -49,9 +49,6 @@ namespace ot {
 
 namespace Mle {
 
-using ot::Encoding::BigEndian::HostSwap16;
-using ot::Encoding::BigEndian::HostSwap32;
-
 /**
  * @addtogroup core-mle-tlvs
  *
@@ -670,7 +667,7 @@ public:
      */
     void Get(LeaderData &aLeaderData) const
     {
-        aLeaderData.SetPartitionId(HostSwap32(mPartitionId));
+        aLeaderData.SetPartitionId(BigEndian::HostSwap32(mPartitionId));
         aLeaderData.SetWeighting(mWeighting);
         aLeaderData.SetDataVersion(mDataVersion);
         aLeaderData.SetStableDataVersion(mStableDataVersion);
@@ -685,7 +682,7 @@ public:
      */
     void Set(const LeaderData &aLeaderData)
     {
-        mPartitionId       = HostSwap32(aLeaderData.GetPartitionId());
+        mPartitionId       = BigEndian::HostSwap32(aLeaderData.GetPartitionId());
         mWeighting         = aLeaderData.GetWeighting();
         mDataVersion       = aLeaderData.GetDataVersion(NetworkData::kFullSet);
         mStableDataVersion = aLeaderData.GetDataVersion(NetworkData::kStableSubset);
@@ -855,6 +852,15 @@ public:
     uint8_t GetActiveRouters(void) const { return mActiveRouters; }
 
     /**
+     * Indicates whether or not the partition is a singleton based on Active Routers value.
+     *
+     * @retval TRUE   The partition is a singleton.
+     * @retval FALSE  The partition is not a singleton.
+     *
+     */
+    bool IsSingleton(void) const { return (mActiveRouters <= 1); }
+
+    /**
      * Sets the Active Routers value.
      *
      * @param[in]  aActiveRouters  The Active Routers value.
@@ -906,7 +912,7 @@ public:
 
         if (IsSedBufferingIncluded())
         {
-            buffersize = HostSwap16(mSedBufferSize);
+            buffersize = BigEndian::HostSwap16(mSedBufferSize);
         }
         return buffersize;
     }
@@ -917,7 +923,7 @@ public:
      * @param[in]  aSedBufferSize  The SED Buffer Size value.
      *
      */
-    void SetSedBufferSize(uint16_t aSedBufferSize) { mSedBufferSize = HostSwap16(aSedBufferSize); }
+    void SetSedBufferSize(uint16_t aSedBufferSize) { mSedBufferSize = BigEndian::HostSwap16(aSedBufferSize); }
 
     /**
      * Returns the SED Datagram Count value.
@@ -1028,31 +1034,44 @@ private:
 };
 
 /**
- * Implements Channel TLV generation and parsing.
+ * Implements Channel TLV value format.
+ *
+ * This is used by both Channel TLV and CSL Channel TLV.
  *
  */
 OT_TOOL_PACKED_BEGIN
-class ChannelTlv : public Tlv, public TlvInfo<Tlv::kChannel>
+class ChannelTlvValue
 {
 public:
     /**
-     * Initializes the TLV.
+     * Default constructor.
      *
      */
-    void Init(void)
+    ChannelTlvValue(void) = default;
+
+    /**
+     * Initializes the `ChannelTlvValue` with a given channel page and channel values.
+     *
+     * @param[in] aChannelPage   The channel page.
+     * @param[in] aChannel       The channel.
+     *
+     */
+    ChannelTlvValue(uint8_t aChannelPage, uint16_t aChannel)
+        : mChannelPage(aChannelPage)
+        , mChannel(BigEndian::HostSwap16(aChannel))
     {
-        SetType(kChannel);
-        SetLength(sizeof(*this) - sizeof(Tlv));
     }
 
     /**
-     * Indicates whether or not the TLV appears to be well-formed.
+     * Initializes the `ChannelTlvValue` with zero channel page and a given channel value.
      *
-     * @retval TRUE   If the TLV appears to be well-formed.
-     * @retval FALSE  If the TLV does not appear to be well-formed.
+     * @param[in] aChannel       The channel.
      *
      */
-    bool IsValid(void) const { return GetLength() >= sizeof(*this) - sizeof(Tlv); }
+    ChannelTlvValue(uint16_t aChannel)
+        : ChannelTlvValue(0, aChannel)
+    {
+    }
 
     /**
      * Returns the Channel Page value.
@@ -1076,7 +1095,7 @@ public:
      * @returns The Channel value.
      *
      */
-    uint16_t GetChannel(void) const { return HostSwap16(mChannel); }
+    uint16_t GetChannel(void) const { return BigEndian::HostSwap16(mChannel); }
 
     /**
      * Sets the Channel value.
@@ -1084,12 +1103,41 @@ public:
      * @param[in]  aChannel  The Channel value.
      *
      */
-    void SetChannel(uint16_t aChannel) { mChannel = HostSwap16(aChannel); }
+    void SetChannel(uint16_t aChannel) { mChannel = BigEndian::HostSwap16(aChannel); }
+
+    /**
+     * Sets the Channel and determines and sets the Channel Page from the given channel.
+     *
+     * @param[in]  aChannel  The Channel value.
+     *
+     */
+    void SetChannelAndPage(uint16_t aChannel);
+
+    /**
+     * Indicates whether or not the Channel and Channel Page values are valid.
+     *
+     * @retval TRUE   If the Channel and Channel Page values are valid.
+     * @retval FALSE  If the Channel and Channel Page values are not valid.
+     *
+     */
+    bool IsValid(void) const;
 
 private:
     uint8_t  mChannelPage;
     uint16_t mChannel;
 } OT_TOOL_PACKED_END;
+
+/**
+ * Defines Channel TLV constants and types.
+ *
+ */
+typedef SimpleTlvInfo<Tlv::kChannel, ChannelTlvValue> ChannelTlv;
+
+/**
+ * Defines CSL Channel TLV constants and types.
+ *
+ */
+typedef SimpleTlvInfo<Tlv::kCslChannel, ChannelTlvValue> CslChannelTlv;
 
 #if OPENTHREAD_CONFIG_TIME_SYNC_ENABLE
 /**
@@ -1131,7 +1179,7 @@ public:
      * @returns The time sync period.
      *
      */
-    uint16_t GetTimeSyncPeriod(void) const { return HostSwap16(mTimeSyncPeriod); }
+    uint16_t GetTimeSyncPeriod(void) const { return BigEndian::HostSwap16(mTimeSyncPeriod); }
 
     /**
      * Sets the time sync period.
@@ -1139,7 +1187,7 @@ public:
      * @param[in]  aTimeSyncPeriod  The time sync period.
      *
      */
-    void SetTimeSyncPeriod(uint16_t aTimeSyncPeriod) { mTimeSyncPeriod = HostSwap16(aTimeSyncPeriod); }
+    void SetTimeSyncPeriod(uint16_t aTimeSyncPeriod) { mTimeSyncPeriod = BigEndian::HostSwap16(aTimeSyncPeriod); }
 
     /**
      * Returns the XTAL accuracy threshold.
@@ -1147,7 +1195,7 @@ public:
      * @returns The XTAL accuracy threshold.
      *
      */
-    uint16_t GetXtalThreshold(void) const { return HostSwap16(mXtalThreshold); }
+    uint16_t GetXtalThreshold(void) const { return BigEndian::HostSwap16(mXtalThreshold); }
 
     /**
      * Sets the XTAL accuracy threshold.
@@ -1155,7 +1203,7 @@ public:
      * @param[in]  aXTALThreshold  The XTAL accuracy threshold.
      *
      */
-    void SetXtalThreshold(uint16_t aXtalThreshold) { mXtalThreshold = HostSwap16(aXtalThreshold); }
+    void SetXtalThreshold(uint16_t aXtalThreshold) { mXtalThreshold = BigEndian::HostSwap16(aXtalThreshold); }
 
 private:
     uint16_t mTimeSyncPeriod;
@@ -1163,73 +1211,6 @@ private:
 } OT_TOOL_PACKED_END;
 
 #endif // OPENTHREAD_CONFIG_TIME_SYNC_ENABLE
-
-#if OPENTHREAD_CONFIG_MAC_CSL_RECEIVER_ENABLE || (OPENTHREAD_FTD && OPENTHREAD_CONFIG_MAC_CSL_TRANSMITTER_ENABLE)
-/**
- * Implements CSL Channel TLV generation and parsing.
- *
- */
-OT_TOOL_PACKED_BEGIN
-class CslChannelTlv : public Tlv, public TlvInfo<Tlv::kCslChannel>
-{
-public:
-    /**
-     * Initializes the TLV.
-     *
-     */
-    void Init(void)
-    {
-        SetType(kCslChannel);
-        SetLength(sizeof(*this) - sizeof(Tlv));
-    }
-
-    /**
-     * Indicates whether or not the TLV appears to be well-formed.
-     *
-     * @retval TRUE   If the TLV appears to be well-formed.
-     * @retval FALSE  If the TLV does not appear to be well-formed.
-     *
-     */
-    bool IsValid(void) const { return GetLength() >= sizeof(*this) - sizeof(Tlv); }
-
-    /**
-     * Returns the Channel Page value.
-     *
-     * @returns The Channel Page value.
-     *
-     */
-    uint8_t GetChannelPage(void) const { return mChannelPage; }
-
-    /**
-     * Sets the Channel Page value.
-     *
-     * @param[in]  aChannelPage  The Channel Page value.
-     *
-     */
-    void SetChannelPage(uint8_t aChannelPage) { mChannelPage = aChannelPage; }
-
-    /**
-     * Returns the Channel value.
-     *
-     * @returns The Channel value.
-     *
-     */
-    uint16_t GetChannel(void) const { return HostSwap16(mChannel); }
-
-    /**
-     * Sets the Channel value.
-     *
-     * @param[in]  aChannel  The Channel value.
-     *
-     */
-    void SetChannel(uint16_t aChannel) { mChannel = HostSwap16(aChannel); }
-
-private:
-    uint8_t  mChannelPage;
-    uint16_t mChannel;
-} OT_TOOL_PACKED_END;
-
-#endif // OPENTHREAD_CONFIG_MAC_CSL_RECEIVER_ENABLE || (OPENTHREAD_FTD && OPENTHREAD_CONFIG_MAC_CSL_TRANSMITTER_ENABLE)
 
 #if OPENTHREAD_CONFIG_MAC_CSL_RECEIVER_ENABLE || OPENTHREAD_CONFIG_MAC_CSL_TRANSMITTER_ENABLE
 /**

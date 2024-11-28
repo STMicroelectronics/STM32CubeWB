@@ -42,7 +42,7 @@
 <li>stm32wb1x_BLE_HCI_AdvScan_fw.bin
 <ul>
 <li>To be used for advertising and scanning through HCI interface</li>
-<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/120678">Declaration ID D042213 / QDID 160726</a></li>
+<li>BT SIG Certification listing : <a href="https://qualification.bluetooth.com/ListingDetails/228923">Declaration ID Q306500</a></li>
 <li>HCI Layer only mode, layers supported : Link Layer, HCI</li>
 </ul></li>
 <li>stm32wb1x_BLE_LLD_fw.bin
@@ -52,7 +52,7 @@
 </ul></li>
 <li>stm32wb1x_BLE_Stack_full_fw.bin
 <ul>
-<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/120676">Declaration ID D042164 / QDID 160724</a></li>
+<li>BT SIG Certification listing : <a href="https://qualification.bluetooth.com/ListingDetails/228923">Declaration ID Q306500</a></li>
 <li>Full BLE Stack, layers supported : Link Layer, HCI, L2CAP, ATT, SM, GAP and GATT database
 <ul>
 <li>Following features are kept (based on Basic stack library compared to previous deliveries):
@@ -77,9 +77,7 @@
 </ul></li>
 <li>stm32wb1x_BLE_Stack_full_extended_fw.bin
 <ul>
-<li>BT SIG Certification listing (1) : <a href="https://launchstudio.bluetooth.com/ListingDetails/146231">Declaration ID D060553 / QDID 182505</a></li>
-<li>BT SIG Certification listing (2) : <a href="https://launchstudio.bluetooth.com/ListingDetails/170086">Declaration ID D063069 / QDID 201968</a></li>
-<li>BT SIG Certification listing (3) : <a href="https://launchstudio.bluetooth.com/ListingDetails/186628">Declaration ID D063070 / QDID 216169</a></li>
+<li>BT SIG Certification listing : <a href="https://qualification.bluetooth.com/ListingDetails/228923">Declaration ID Q306500</a></li>
 <li>Full BLE Stack extended, layers supported : Link Layer, HCI, L2CAP, ATT, SM, GAP and GATT database
 <ul>
 <li>Following features are kept:
@@ -103,7 +101,7 @@
 </ul></li>
 <li>stm32wb1x_BLE_Stack_light_fw.bin
 <ul>
-<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/120676">Declaration ID D042164 / QDID 160724</a></li>
+<li>BT SIG Certification listing : <a href="https://qualification.bluetooth.com/ListingDetails/228923">Declaration ID Q306500</a></li>
 <li>Full BLE Stack, layers supported : Link Layer, HCI, L2CAP, ATT, SM, GAP and GATT database</li>
 <li>Wireless Ble stack Light configuration – Slave Only
 <ul>
@@ -131,13 +129,12 @@
 </ul></li>
 <li>stm32wb1x_BLE_HCILayer_fw.bin
 <ul>
-<li>BT SIG Certification listing : <a href="https://launchstudio.bluetooth.com/ListingDetails/120678">Declaration ID D042213 / QDID 160726</a></li>
+<li>BT SIG Certification listing : <a href="https://qualification.bluetooth.com/ListingDetails/228923">Declaration ID Q306500</a></li>
 <li>HCI Layer only mode, layers supported : Link Layer, HCI with Direct Test Mode</li>
 </ul></li>
 <li>stm32wb1x_BLE_HCILayer_extended_fw.bin
 <ul>
-<li>BT SIG Certification listing (1) : <a href="https://launchstudio.bluetooth.com/ListingDetails/146231">Declaration ID D060553 / QDID 182505</a></li>
-<li>BT SIG Certification listing (2) : <a href="https://launchstudio.bluetooth.com/ListingDetails/170086">Declaration ID D063069 / QDID 201968</a></li>
+<li>BT SIG Certification listing : <a href="https://qualification.bluetooth.com/ListingDetails/228923">Declaration ID Q306500</a></li>
 <li>HCI Layer only mode extended, layers supported : Link Layer, HCI with Direct Test Mode</li>
 <li>BLE Extended advertising (under application SHCI_C2_BLE_INIT_OPTIONS_EXT_ADV flag selection with following limitations on currently supported configurations as (max sets number, max advertising data length) equal to [(1,1650),(2,828),(3,414)] such as both parameters are compliant with allocated Total memory computed with BLE_EXT_ADV_BUFFER_SIZE based on Max Extended advertising configuration.</li>
 </ul></li>
@@ -254,9 +251,86 @@
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section19" checked aria-hidden="true"> <label for="collapse-section19" aria-hidden="false">V1.20.0 / 03-June-2024</label>
+<input type="checkbox" id="collapse-section20" checked aria-hidden="true"> <label for="collapse-section20" aria-hidden="false">V1.21.0 / 30-Oct-2024</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
+<p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
+<ul>
+<li>BLE:
+<ul>
+<li>ID 175680 : The BLE stack r….</li>
+</ul></li>
+</ul>
+<p><strong>Wireless Coprocessor Binary Table</strong>: Provides Install address for the targeted binary to be used in flash procedure “STEP 5” via USB or via SWD/JTAG.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Wireless Coprocessor Binary</th>
+<th>stm32wb1x(320K)</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb1x_BLE_HCILayer_extended_fw.bin</td>
+<td>0x0802D000</td>
+<td>V1.21.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb1x_BLE_HCILayer_fw.bin</td>
+<td>0x08033000</td>
+<td>V1.21.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb1x_BLE_HCI_AdvScan_fw.bin</td>
+<td>0x0803D000</td>
+<td>V1.21.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb1x_BLE_LLD_fw.bin</td>
+<td>0x0803F800</td>
+<td>V1.18.0<span class="icon-st-unchanged"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb1x_BLE_Stack_full_extended_fw.bin</td>
+<td>0x08018800</td>
+<td>V1.21.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb1x_BLE_Stack_full_fw.bin</td>
+<td>0x08022000</td>
+<td>V1.21.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb1x_BLE_Stack_light_fw.bin</td>
+<td>0x08029000</td>
+<td>V1.21.0<span class="icon-st-update"></span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Firmware Safeboot Binary Table</strong>: Provides Install address for the targeted binary to be used in flash procedure “STEP 4” via USB or via SWD/JTAG.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Wireless Coprocessor Binary</th>
+<th>stm32wb1x(320K)</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb1x_Safeboot_fw.bin</td>
+<td>0x080<strong>44</strong>000</td>
+<td>V2.0.0<span class="icon-st-unchanged"></span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section19" aria-hidden="true"> <label for="collapse-section19" aria-hidden="false">V1.20.0 / 03-June-2024</label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -337,7 +411,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section18" aria-hidden="true"> <label for="collapse-section18" aria-hidden="false">V1.19.1 / 5-Apr-2024</label>
 <div>
-<h2 id="main-changes-1">Main Changes</h2>
+<h2 id="main-changes-2">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:</li>
@@ -411,7 +485,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section17" aria-hidden="true"> <label for="collapse-section17" aria-hidden="false">V1.19.0 / 7-Feb-2024</label>
 <div>
-<h2 id="main-changes-2">Main Changes</h2>
+<h2 id="main-changes-3">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -493,7 +567,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section16" aria-hidden="true"> <label for="collapse-section16" aria-hidden="false">V1.18.0 / 30-Oct-2023</label>
 <div>
-<h2 id="main-changes-3">Main Changes</h2>
+<h2 id="main-changes-4">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -582,7 +656,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section15" aria-hidden="true"> <label for="collapse-section15" aria-hidden="false">V1.17.3 / 8-Sep-2023</label>
 <div>
-<h2 id="main-changes-4">Main Changes</h2>
+<h2 id="main-changes-5">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -659,7 +733,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section14" aria-hidden="true"> <label for="collapse-section14" aria-hidden="false">V1.17.2 / 7-Aug-2023</label>
 <div>
-<h2 id="main-changes-5">Main Changes</h2>
+<h2 id="main-changes-6">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -736,7 +810,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section13" aria-hidden="true"> <label for="collapse-section13" aria-hidden="false">V1.17.1 / 23-Jun-2023</label>
 <div>
-<h2 id="main-changes-6">Main Changes</h2>
+<h2 id="main-changes-7">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -818,7 +892,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section12" aria-hidden="true"> <label for="collapse-section12" aria-hidden="false">V1.17.0 / 24-May-2023</label>
 <div>
-<h2 id="main-changes-7">Main Changes</h2>
+<h2 id="main-changes-8">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -913,7 +987,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section11" aria-hidden="true"> <label for="collapse-section11" aria-hidden="false">V1.16.0 / 18-Jan-2023</label>
 <div>
-<h2 id="main-changes-8">Main Changes</h2>
+<h2 id="main-changes-9">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE :
@@ -1004,7 +1078,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section10" aria-hidden="true"> <label for="collapse-section10" aria-hidden="false">V1.15.0 / 20-Oct-2022</label>
 <div>
-<h2 id="main-changes-9">Main Changes</h2>
+<h2 id="main-changes-10">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE :
@@ -1092,7 +1166,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section9" aria-hidden="true"> <label for="collapse-section9" aria-hidden="false">V1.14.1 / 29-June-2022</label>
 <div>
-<h2 id="main-changes-10">Main Changes</h2>
+<h2 id="main-changes-11">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -1175,7 +1249,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section8" aria-hidden="true"> <label for="collapse-section8" aria-hidden="false">V1.14.0 / 06-June-2022</label>
 <div>
-<h2 id="main-changes-11">Main Changes</h2>
+<h2 id="main-changes-12">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -1267,7 +1341,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section7" aria-hidden="true"> <label for="collapse-section7" aria-hidden="false">V1.13.3 / 9-Mar-2022</label>
 <div>
-<h2 id="main-changes-12">Main Changes</h2>
+<h2 id="main-changes-13">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -1355,7 +1429,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section6" aria-hidden="true"> <label for="collapse-section6" aria-hidden="false">V1.13.2 / 25-Jan-2022</label>
 <div>
-<h2 id="main-changes-13">Main Changes</h2>
+<h2 id="main-changes-14">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -1443,7 +1517,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section5" aria-hidden="true"> <label for="collapse-section5" aria-hidden="false">V1.13.0 / 03-Nov-2021</label>
 <div>
-<h2 id="main-changes-14">Main Changes</h2>
+<h2 id="main-changes-15">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -1552,7 +1626,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" aria-hidden="false">V1.12.1 / 12-July-2021</label>
 <div>
-<h2 id="main-changes-15">Main Changes</h2>
+<h2 id="main-changes-16">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -1614,7 +1688,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section3" aria-hidden="true"> <label for="collapse-section3" aria-hidden="false">V1.12.0 / 17-June-2021</label>
 <div>
-<h2 id="main-changes-16">Main Changes</h2>
+<h2 id="main-changes-17">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -1694,7 +1768,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" aria-hidden="false">V1.11.1 / 23-March-2021</label>
 <div>
-<h2 id="main-changes-17">Main Changes</h2>
+<h2 id="main-changes-18">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE :
@@ -1756,7 +1830,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="false">V1.11.0 / 12-February-2021</label>
 <div>
-<h2 id="main-changes-18">Main Changes</h2>
+<h2 id="main-changes-19">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>Initial version of the binaries.</li>

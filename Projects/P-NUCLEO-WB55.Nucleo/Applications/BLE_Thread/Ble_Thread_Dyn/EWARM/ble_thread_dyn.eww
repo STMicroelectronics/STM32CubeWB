@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workspace>
     <project>
-        <path>$WS_DIR$\ble_thread_dyn.ewp</path>
+        <path>$WS_DIR$\Ble_Thread_Dyn.ewp</path>
     </project>
     <batchBuild />
 </workspace>

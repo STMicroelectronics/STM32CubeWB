@@ -275,15 +275,16 @@ uint32_t otThreadGetKeySequenceCounter(otInstance *aInstance)
 
 void otThreadSetKeySequenceCounter(otInstance *aInstance, uint32_t aKeySequenceCounter)
 {
-    AsCoreType(aInstance).Get<KeyManager>().SetCurrentKeySequence(aKeySequenceCounter);
+    AsCoreType(aInstance).Get<KeyManager>().SetCurrentKeySequence(
+        aKeySequenceCounter, KeyManager::kForceUpdate | KeyManager::kGuardTimerUnchanged);
 }
 
-uint32_t otThreadGetKeySwitchGuardTime(otInstance *aInstance)
+uint16_t otThreadGetKeySwitchGuardTime(otInstance *aInstance)
 {
     return AsCoreType(aInstance).Get<KeyManager>().GetKeySwitchGuardTime();
 }
 
-void otThreadSetKeySwitchGuardTime(otInstance *aInstance, uint32_t aKeySwitchGuardTime)
+void otThreadSetKeySwitchGuardTime(otInstance *aInstance, uint16_t aKeySwitchGuardTime)
 {
     AsCoreType(aInstance).Get<KeyManager>().SetKeySwitchGuardTime(aKeySwitchGuardTime);
 }
@@ -395,7 +396,18 @@ otError otThreadSetEnabled(otInstance *aInstance, bool aEnabled)
 
 uint16_t otThreadGetVersion(void) { return kThreadVersion; }
 
-bool otThreadIsSingleton(otInstance *aInstance) { return AsCoreType(aInstance).Get<Mle::MleRouter>().IsSingleton(); }
+bool otThreadIsSingleton(otInstance *aInstance)
+{
+    bool isSingleton = false;
+
+#if OPENTHREAD_FTD
+    isSingleton = AsCoreType(aInstance).Get<Mle::MleRouter>().IsSingleton();
+#else
+    OT_UNUSED_VARIABLE(aInstance);
+#endif
+
+    return isSingleton;
+}
 
 otError otThreadDiscover(otInstance              *aInstance,
                          uint32_t                 aScanChannels,
@@ -429,6 +441,26 @@ const otIpCounters *otThreadGetIp6Counters(otInstance *aInstance)
 }
 
 void otThreadResetIp6Counters(otInstance *aInstance) { AsCoreType(aInstance).Get<MeshForwarder>().ResetCounters(); }
+
+#if OPENTHREAD_CONFIG_TX_QUEUE_STATISTICS_ENABLE
+const uint32_t *otThreadGetTimeInQueueHistogram(otInstance *aInstance, uint16_t *aNumBins, uint32_t *aBinInterval)
+{
+    AssertPointerIsNotNull(aNumBins);
+    AssertPointerIsNotNull(aBinInterval);
+
+    return AsCoreType(aInstance).Get<MeshForwarder>().GetTimeInQueueHistogram(*aNumBins, *aBinInterval);
+}
+
+uint32_t otThreadGetMaxTimeInQueue(otInstance *aInstance)
+{
+    return AsCoreType(aInstance).Get<MeshForwarder>().GetMaxTimeInQueue();
+}
+
+void otThreadResetTimeInQueueStat(otInstance *aInstance)
+{
+    return AsCoreType(aInstance).Get<MeshForwarder>().ResetTimeInQueueStat();
+}
+#endif
 
 const otMleCounters *otThreadGetMleCounters(otInstance *aInstance)
 {

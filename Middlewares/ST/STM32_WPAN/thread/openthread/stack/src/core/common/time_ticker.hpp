@@ -36,10 +36,9 @@
 
 #include "openthread-core-config.h"
 
-#include <limits.h>
-
 #include "common/locator.hpp"
 #include "common/non_copyable.hpp"
+#include "common/numeric_limits.hpp"
 #include "common/time.hpp"
 #include "common/timer.hpp"
 
@@ -73,6 +72,7 @@ public:
         kMlrManager,             ///< `MlrManager`
         kNetworkDataNotifier,    ///< `NetworkData::Notifier`
         kIp6Mpl,                 ///< `Ip6::Mpl`
+        kBbrLocal,               ///< `BackboneRouter::Local`
 
         kNumReceivers, ///< Number of receivers.
     };
@@ -123,7 +123,7 @@ private:
     uint32_t    mReceivers;
     TickerTimer mTimer;
 
-    static_assert(kNumReceivers < sizeof(mReceivers) * CHAR_BIT, "Too many `Receiver`s - does not fit in a bit mask");
+    static_assert(kNumReceivers < BitSizeOf(mReceivers), "Too many `Receiver`s - does not fit in a bit mask");
 };
 
 } // namespace ot

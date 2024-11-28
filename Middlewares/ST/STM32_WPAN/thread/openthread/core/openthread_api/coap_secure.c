@@ -29,15 +29,18 @@
 
 #include "thread.h"
 #include "coap_secure.h"
-#include "mbedtls/config.h"
+#include "mbedtls_config.h"
 
 #if OPENTHREAD_CONFIG_COAP_SECURE_API_ENABLE
 
 extern otCoapRequestHandler defaultCoapSecureRequestHandlerCb;
 extern otHandleCoapSecureClientConnect coapSecureClientConnectCb;
+extern otCoapSecureAutoStopCallback coapSecureAutoStopCb;
 
 otError otCoapSecureStart(otInstance *aInstance, uint16_t aPort)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -50,7 +53,43 @@ otError otCoapSecureStart(otInstance *aInstance, uint16_t aPort)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError) p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
+}
+
+otError otCoapSecureStartWithMaxConnAttempts(otInstance                  *aInstance,
+                                             uint16_t                     aPort,
+                                             uint16_t                     aMaxAttempts,
+                                             otCoapSecureAutoStopCallback aCallback,
+                                             void                        *aContext)
+{
+  otError rspData;
+  
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  coapSecureAutoStopCb = aCallback;
+
+  p_ot_req->ID = MSG_M4TOM0_OT_COAP_SECURE_START_WITH_MAX_CONN_ATTEMPS;
+
+  p_ot_req->Size=4;
+  p_ot_req->Data[0] = (uint32_t) aPort;
+  p_ot_req->Data[1] = (uint32_t) aMaxAttempts;
+  p_ot_req->Data[2] = (uint32_t) aCallback;
+  p_ot_req->Data[3] = (uint32_t) aContext;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 #ifdef MBEDTLS_KEY_EXCHANGE_ECDHE_ECDSA_ENABLED
@@ -74,7 +113,7 @@ void otCoapSecureSetCertificate(otInstance *   aInstance,
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 
 void otCoapSecureSetCaCertificateChain(otInstance *   aInstance,
@@ -93,7 +132,7 @@ void otCoapSecureSetCaCertificateChain(otInstance *   aInstance,
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 #endif // MBEDTLS_KEY_EXCHANGE_ECDHE_ECDSA_ENABLED
 
@@ -118,7 +157,7 @@ void otCoapSecureSetPsk(otInstance *   aInstance,
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 #endif // MBEDTLS_KEY_EXCHANGE_PSK_ENABLED
 
@@ -128,6 +167,8 @@ otError otCoapSecureGetPeerCertificateBase64(otInstance *   aInstance,
                                              size_t *       aCertLength,
                                              size_t         aCertBufferSize)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -142,7 +183,12 @@ otError otCoapSecureGetPeerCertificateBase64(otInstance *   aInstance,
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError) p_ot_req->Data[0];}
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
+}
 #endif // defined(MBEDTLS_BASE64_C) && defined(MBEDTLS_SSL_KEEP_PEER_CERTIFICATE)
 
 void otCoapSecureSetSslAuthMode(otInstance *aInstance, bool aVerifyPeerCertificate)
@@ -158,7 +204,7 @@ void otCoapSecureSetSslAuthMode(otInstance *aInstance, bool aVerifyPeerCertifica
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 
 otError otCoapSecureConnect(otInstance *                    aInstance,
@@ -166,6 +212,8 @@ otError otCoapSecureConnect(otInstance *                    aInstance,
                             otHandleCoapSecureClientConnect aHandler,
                             void *                          aContext)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -182,7 +230,11 @@ otError otCoapSecureConnect(otInstance *                    aInstance,
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError) p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 void otCoapSecureDisconnect(otInstance *aInstance)
@@ -197,11 +249,13 @@ void otCoapSecureDisconnect(otInstance *aInstance)
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 
 bool otCoapSecureIsConnected(otInstance *aInstance)
 {
+  bool rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -213,11 +267,17 @@ bool otCoapSecureIsConnected(otInstance *aInstance)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (bool) p_ot_req->Data[0];
+  rspData = (bool)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 bool otCoapSecureIsConnectionActive(otInstance *aInstance)
 {
+  bool rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -229,7 +289,33 @@ bool otCoapSecureIsConnectionActive(otInstance *aInstance)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (bool) p_ot_req->Data[0];
+  rspData = (bool)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
+}
+
+bool otCoapSecureIsClosed(otInstance *aInstance)
+{
+  bool rspData;
+  
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_COAP_SECURE_IS_CLOSED;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  rspData = (bool)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 void otCoapSecureStop(otInstance *aInstance)
@@ -244,7 +330,7 @@ void otCoapSecureStop(otInstance *aInstance)
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 
 #if OPENTHREAD_CONFIG_COAP_BLOCKWISE_TRANSFER_ENABLE
@@ -255,6 +341,8 @@ otError otCoapSecureSendRequestBlockWise(otInstance *                aInstance,
                                          otCoapBlockwiseTransmitHook aTransmitHook,
                                          otCoapBlockwiseReceiveHook  aReceiveHook)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -271,7 +359,12 @@ otError otCoapSecureSendRequestBlockWise(otInstance *                aInstance,
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError) p_ot_req->Data[0];}
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
+}
 #endif
 
 otError otCoapSecureSendRequest(otInstance *          aInstance,
@@ -279,6 +372,8 @@ otError otCoapSecureSendRequest(otInstance *          aInstance,
                                 otCoapResponseHandler aHandler,
                                 void *                aContext)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -293,7 +388,11 @@ otError otCoapSecureSendRequest(otInstance *          aInstance,
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError) p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 #if OPENTHREAD_CONFIG_COAP_BLOCKWISE_TRANSFER_ENABLE
@@ -310,7 +409,7 @@ void otCoapSecureAddBlockWiseResource(otInstance *aInstance, otCoapBlockwiseReso
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 
 void otCoapSecureRemoveBlockWiseResource(otInstance *aInstance, otCoapBlockwiseResource *aResource)
@@ -326,7 +425,7 @@ void otCoapSecureRemoveBlockWiseResource(otInstance *aInstance, otCoapBlockwiseR
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 #endif
 
@@ -343,7 +442,7 @@ void otCoapSecureAddResource(otInstance *aInstance, otCoapResource *aResource)
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 
 void otCoapSecureRemoveResource(otInstance *aInstance, otCoapResource *aResource)
@@ -359,7 +458,7 @@ void otCoapSecureRemoveResource(otInstance *aInstance, otCoapResource *aResource
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 
 void otCoapSecureSetClientConnectedCallback(otInstance *                    aInstance,
@@ -380,7 +479,7 @@ void otCoapSecureSetClientConnectedCallback(otInstance *                    aIns
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 
 void otCoapSecureSetDefaultHandler(otInstance *aInstance, otCoapRequestHandler aHandler, void *aContext)
@@ -399,7 +498,7 @@ void otCoapSecureSetDefaultHandler(otInstance *aInstance, otCoapRequestHandler a
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 
 #if OPENTHREAD_CONFIG_COAP_BLOCKWISE_TRANSFER_ENABLE
@@ -409,6 +508,8 @@ otError otCoapSecureSendResponseBlockWise(otInstance *                aInstance,
                                           void *                      aContext,
                                           otCoapBlockwiseTransmitHook aTransmitHook)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -424,12 +525,18 @@ otError otCoapSecureSendResponseBlockWise(otInstance *                aInstance,
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError) p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 #endif
 
 otError otCoapSecureSendResponse(otInstance *aInstance, otMessage *aMessage, const otMessageInfo *aMessageInfo)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -443,7 +550,11 @@ otError otCoapSecureSendResponse(otInstance *aInstance, otMessage *aMessage, con
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError) p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 #endif /* OPENTHREAD_CONFIG_COAP_SECURE_API_ENABLE */

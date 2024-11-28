@@ -429,7 +429,6 @@ void HAL_GPIO_EXTI_Callback( uint16_t GPIO_Pin )
       //APP_BLE_Key_Button3_Action();
       break;
 #endif
-
     default:
       break;
 

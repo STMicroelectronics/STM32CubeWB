@@ -35,9 +35,11 @@
 #ifndef SPINEL_SPINEL_INTERFACE_HPP_
 #define SPINEL_SPINEL_INTERFACE_HPP_
 
+#include "spinel-config.h"
+
 #include "lib/spinel/multi_frame_buffer.hpp"
+#include "lib/spinel/radio_spinel_metrics.h"
 #include "lib/spinel/spinel.h"
-#include "lib/url/url.hpp"
 
 namespace ot {
 namespace Spinel {
@@ -47,7 +49,7 @@ class SpinelInterface
 public:
     enum
     {
-        kMaxFrameSize = OPENTHREAD_CONFIG_PLATFORM_RADIO_SPINEL_RX_FRAME_BUFFER_SIZE, ///< Maximum buffer size.
+        kMaxFrameSize = OPENTHREAD_LIB_SPINEL_RX_FRAME_BUFFER_SIZE, ///< Maximum buffer size.
     };
 
     /**
@@ -66,14 +68,16 @@ public:
      *
      * @note This method should be called before reading and sending spinel frames to the interface.
      *
-     * @param[in]  aRadioUrl          RadioUrl parsed from radio url.
+     * @param[in] aCallback         Callback on frame received
+     * @param[in] aCallbackContext  Callback context
+     * @param[in] aFrameBuffer      A reference to a `RxFrameBuffer` object.
      *
-     * @retval OT_ERROR_NONE          The interface is initialized successfully
-     * @retval OT_ERROR_ALREADY       The interface is already initialized.
-     * @retval OT_ERROR_INVALID_ARGS  The UART device or executable cannot be found or failed to open/run.
+     * @retval OT_ERROR_NONE       The interface is initialized successfully
+     * @retval OT_ERROR_ALREADY    The interface is already initialized.
+     * @retval OT_ERROR_FAILED     Failed to initialize the interface.
      *
      */
-    virtual otError Init(const Url::Url &aRadioUrl) = 0;
+    virtual otError Init(ReceiveFrameCallback aCallback, void *aCallbackContext, RxFrameBuffer &aFrameBuffer) = 0;
 
     /**
      * Deinitializes the interface to the RCP.
@@ -140,12 +144,27 @@ public:
     virtual otError HardwareReset(void) = 0;
 
     /**
+     * Returns the RCP interface metrics.
+     *
+     * @returns The RCP interface metrics.
+     *
+     */
+    virtual const otRcpInterfaceMetrics *GetRcpInterfaceMetrics(void) const = 0;
+
+    /**
      * Marks destructor virtual method.
      *
      */
     virtual ~SpinelInterface() = default;
 
 protected:
+    enum : uint8_t
+    {
+        kSpinelInterfaceTypeHdlc   = 1, ///< The type of Spinel HDLC interface.
+        kSpinelInterfaceTypeSpi    = 2, ///< The type of Spinel SPI interface.
+        kSpinelInterfaceTypeVendor = 3, ///< The type of Spinel Vendor interface.
+    };
+
     /**
      * Indicates whether or not the frame is the Spinel SPINEL_CMD_RESET frame.
      *
@@ -158,11 +177,39 @@ protected:
      */
     bool IsSpinelResetCommand(const uint8_t *aFrame, uint16_t aLength)
     {
-        static constexpr uint8_t kSpinelResetCommand[] = {SPINEL_HEADER_FLAG | SPINEL_HEADER_IID_0, SPINEL_CMD_RESET};
-        return (aLength >= sizeof(kSpinelResetCommand)) &&
-               (memcmp(aFrame, kSpinelResetCommand, sizeof(kSpinelResetCommand)) == 0);
+        const uint8_t kSpinelResetCommandLength = 2;
+        bool          resetCmd                  = false;
+
+        if (aLength >= kSpinelResetCommandLength)
+        {
+#ifndef OPENTHREAD_CONFIG_MULTIPAN_RCP_ENABLE
+            // Validate the iid.
+            if (!((aFrame[0] & SPINEL_HEADER_IID_MASK) == SPINEL_HEADER_IID_0))
+            {
+                goto exit;
+            }
+#endif
+
+            // Validate the header flag by masking out the iid bits as it is validated above.
+            if (!((aFrame[0] & ~SPINEL_HEADER_IID_MASK) == SPINEL_HEADER_FLAG))
+            {
+                goto exit;
+            }
+
+            // Validate the reset command.
+            if (!(aFrame[1] == SPINEL_CMD_RESET))
+            {
+                goto exit;
+            }
+
+            resetCmd = true;
+        }
+
+    exit:
+        return resetCmd;
     }
 };
+
 } // namespace Spinel
 } // namespace ot
 

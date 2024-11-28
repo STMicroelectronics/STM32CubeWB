@@ -37,7 +37,7 @@ available on the board by switching between all tests using User Button1 push-bu
 This example shows how to use turn on/off and toggle the LEDs.
 
 ### EEPROM ###
-This example shows how to Read/Write to the EEPROM.
+This example shows how to Read/Write to the EEPROM (make sure to close the SB14,SB16 and open SB13,SB15 on the board).
 
 ### TEMPERATURE ###
 This example shows how to use the STTS22H sensor to get temperature values.
@@ -52,7 +52,7 @@ Depending on IDE, to watch content of Terminal I/O note that
  - When resorting to EWARM IAR IDE:
    * Command Code is displayed on debugger as follows: View --> Terminal I/O
  - When resorting to MDK-ARM KEIL IDE:
-   * Command Code is displayed on debugger as follows: View --> Serial Viewer --> Debug (printf) Viewer
+   * Command Code is displayed on debugger through HyperTerminal or TeraTerm
  - When resorting to STM32CubeIDE:
    * Command Code is displayed on debugger as follows: Window--> Show View--> Console.
      In Debug configuration:
@@ -61,7 +61,7 @@ Depending on IDE, to watch content of Terminal I/O note that
 
 Results can be displayed on PC (through HyperTerminal or TeraTerm) by Virtual Com Port
 in enabling USE_VCP_CONNECTION compilation switch and with the proper configuration described
- in paragraph "Hardware and Software environment.
+ in paragraph "Hardware and Software environment (make sure to close the SB3,SB6 and open SB4,SB8 on the board).
 
 @note Care must be taken when using HAL_Delay(), this function provides accurate delay (in milliseconds)
       based on variable incremented in SysTick ISR. This implies that if HAL_Delay() is called from

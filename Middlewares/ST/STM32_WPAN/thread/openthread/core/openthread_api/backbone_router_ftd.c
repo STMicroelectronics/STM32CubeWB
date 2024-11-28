@@ -45,10 +45,14 @@ void otBackboneRouterSetEnabled(otInstance *aInstance, bool aEnabled)
   p_ot_req->Data[0] = (uint32_t) aEnabled;
 
   Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
 }
 
 otBackboneRouterState otBackboneRouterGetState(otInstance *aInstance)
 {
+  otBackboneRouterState rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -60,7 +64,11 @@ otBackboneRouterState otBackboneRouterGetState(otInstance *aInstance)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otBackboneRouterState)p_ot_req->Data[0];
+  rspData = (otBackboneRouterState)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 void otBackboneRouterGetConfig(otInstance *aInstance, otBackboneRouterConfig *aConfig)
@@ -75,10 +83,14 @@ void otBackboneRouterGetConfig(otInstance *aInstance, otBackboneRouterConfig *aC
   p_ot_req->Data[0] = (uint32_t) aConfig;
 
   Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
 }
 
 otError otBackboneRouterSetConfig(otInstance *aInstance, const otBackboneRouterConfig *aConfig)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -91,11 +103,17 @@ otError otBackboneRouterSetConfig(otInstance *aInstance, const otBackboneRouterC
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otBackboneRouterRegister(otInstance *aInstance)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -107,11 +125,17 @@ otError otBackboneRouterRegister(otInstance *aInstance)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 uint8_t otBackboneRouterGetRegistrationJitter(otInstance *aInstance)
 {
+  uint8_t rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -123,7 +147,11 @@ uint8_t otBackboneRouterGetRegistrationJitter(otInstance *aInstance)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (uint8_t)p_ot_req->Data[0];
+  rspData = (uint8_t)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 void otBackboneRouterSetRegistrationJitter(otInstance *aInstance, uint8_t aJitter)
@@ -138,10 +166,14 @@ void otBackboneRouterSetRegistrationJitter(otInstance *aInstance, uint8_t aJitte
   p_ot_req->Data[0] = (uint32_t) aJitter;
 
   Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
 }
 
 otError otBackboneRouterGetDomainPrefix(otInstance *aInstance, otBorderRouterConfig *aConfig)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -154,7 +186,11 @@ otError otBackboneRouterGetDomainPrefix(otInstance *aInstance, otBorderRouterCon
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 void otBackboneRouterSetDomainPrefixCallback(otInstance *                         aInstance,
@@ -173,6 +209,8 @@ void otBackboneRouterSetDomainPrefixCallback(otInstance *                       
   p_ot_req->Data[0] = (uint32_t) aContext;
 
   Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
 }
 
 #if OPENTHREAD_CONFIG_BACKBONE_ROUTER_DUA_NDPROXYING_ENABLE
@@ -194,12 +232,16 @@ void otBackboneRouterSetNdProxyCallback(otInstance *                    aInstanc
   p_ot_req->Data[0] = (uint32_t) aContext;
 
   Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
 }
 
 otError otBackboneRouterGetNdProxyInfo(otInstance *                 aInstance,
                                        const otIp6Address *         aDua,
                                        otBackboneRouterNdProxyInfo *aNdProxyInfo)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -213,7 +255,11 @@ otError otBackboneRouterGetNdProxyInfo(otInstance *                 aInstance,
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 #endif // OPENTHREAD_CONFIG_BACKBONE_ROUTER_DUA_NDPROXYING_ENABLE
 
@@ -237,12 +283,16 @@ void otBackboneRouterSetMulticastListenerCallback(otInstance *                  
   p_ot_req->Data[0] = (uint32_t) aContext;
 
   Ot_Cmd_TransferWithNotif();
+  
+  Post_OtCmdProcessing();
 }
 
 otError otBackboneRouterMulticastListenerGetNext(otInstance *                                   aInstance,
                                                  otBackboneRouterMulticastListenerIterator      *aIterator,
                                                  otBackboneRouterMulticastListenerInfo          *aListenerInfo)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -256,7 +306,11 @@ otError otBackboneRouterMulticastListenerGetNext(otInstance *                   
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 #endif
 
@@ -277,6 +331,8 @@ void otBackboneRouterConfigNextDuaRegistrationResponse(otInstance *             
   p_ot_req->Data[1] = (uint32_t) aStatus;
 
   Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
 }
 #endif
 
@@ -293,6 +349,8 @@ void otBackboneRouterConfigNextMulticastListenerRegistrationResponse(otInstance 
   p_ot_req->Data[0] = (uint32_t) aStatus;
 
   Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
 }
 
 void otBackboneRouterMulticastListenerClear(otInstance *aInstance)
@@ -306,10 +364,14 @@ void otBackboneRouterMulticastListenerClear(otInstance *aInstance)
   p_ot_req->Size=0;
 
   Ot_Cmd_TransferWithNotif();
+  
+  Post_OtCmdProcessing();
 }
 
 otError otBackboneRouterMulticastListenerAdd(otInstance *aInstance, const otIp6Address *aAddress, uint32_t aTimeout)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -323,7 +385,11 @@ otError otBackboneRouterMulticastListenerAdd(otInstance *aInstance, const otIp6A
   Ot_Cmd_TransferWithNotif();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 #endif // OPENTHREAD_CONFIG_BACKBONE_ROUTER_MULTICAST_ROUTING_ENABLE
 #endif // OPENTHREAD_CONFIG_REFERENCE_DEVICE_ENABLE

@@ -1276,6 +1276,18 @@ void Pre_OtCmdProcessing(void)
 }
 
 /**
+  * @brief  This function is called at the end of any ot commands sent to the M0
+  *         core. It is the counterpart of Pre_OtCmdProcessing() function, 
+  *         unlocking sending of new ot commands.
+  * @param  None
+  * @retval None
+  */
+void Post_OtCmdProcessing(void)
+{
+   tx_mutex_put(&MtxThreadId);
+}
+
+/**
   * @brief  This function waits for getting an acknowledgment from the M0.
   *
   * @param  None
@@ -1284,8 +1296,6 @@ void Pre_OtCmdProcessing(void)
 static void Wait_Getting_Ack_From_M0(void)
 {
   tx_semaphore_get(&TransferToM0Semaphore, TX_WAIT_FOREVER);
-  
-  tx_mutex_put(&MtxThreadId);
 }
 
 /**

@@ -70,6 +70,17 @@ typedef enum otMessagePriority
 } otMessagePriority;
 
 /**
+ * Defines the OpenThread message origins.
+ *
+ */
+typedef enum otMessageOrigin
+{
+    OT_MESSAGE_ORIGIN_THREAD_NETIF   = 0, ///< Message from Thread Netif.
+    OT_MESSAGE_ORIGIN_HOST_TRUSTED   = 1, ///< Message from a trusted source on host.
+    OT_MESSAGE_ORIGIN_HOST_UNTRUSTED = 2, ///< Message from an untrusted source on host.
+} otMessageOrigin;
+
+/**
  * Represents a message settings.
  *
  */
@@ -78,6 +89,27 @@ typedef struct otMessageSettings
     bool    mLinkSecurityEnabled; ///< TRUE if the message should be secured at Layer 2.
     uint8_t mPriority;            ///< Priority level (MUST be a `OT_MESSAGE_PRIORITY_*` from `otMessagePriority`).
 } otMessageSettings;
+
+/**
+ * Represents link-specific information for messages received from the Thread radio.
+ *
+ */
+typedef struct otThreadLinkInfo
+{
+    uint16_t mPanId;                   ///< Source PAN ID
+    uint8_t  mChannel;                 ///< 802.15.4 Channel
+    int8_t   mRss;                     ///< Received Signal Strength in dBm (averaged over fragments)
+    uint8_t  mLqi;                     ///< Average Link Quality Indicator (averaged over fragments)
+    bool     mLinkSecurity : 1;        ///< Indicates whether or not link security is enabled.
+    bool     mIsDstPanIdBroadcast : 1; ///< Indicates whether or not destination PAN ID is broadcast.
+
+    // Applicable/Required only when time sync feature (`OPENTHREAD_CONFIG_TIME_SYNC_ENABLE`) is enabled.
+    uint8_t mTimeSyncSeq;       ///< The time sync sequence.
+    int64_t mNetworkTimeOffset; ///< The time offset to the Thread network time, in microseconds.
+
+    // Applicable only when OPENTHREAD_CONFIG_MULTI_RADIO feature is enabled.
+    uint8_t mRadioType; ///< Radio link type.
+} otThreadLinkInfo;
 
 /**
  * Free an allocated message buffer.
@@ -181,6 +213,67 @@ void otMessageSetOffset(otMessage *aMessage, uint16_t aOffset);
 bool otMessageIsLinkSecurityEnabled(const otMessage *aMessage);
 
 /**
+ * Indicates whether or not the message is allowed to be looped back to host.
+ *
+ * @param[in]  aMessage  A pointer to a message buffer.
+ *
+ * @retval TRUE   If the message is allowed to be looped back to host.
+ * @retval FALSE  If the message is not allowed to be looped back to host.
+ *
+ */
+bool otMessageIsLoopbackToHostAllowed(const otMessage *aMessage);
+
+/**
+ * Sets whether or not the message is allowed to be looped back to host.
+ *
+ * @param[in]  aMessage              A pointer to a message buffer.
+ * @param[in]  aAllowLoopbackToHost  Whether to allow the message to be looped back to host.
+ *
+ */
+void otMessageSetLoopbackToHostAllowed(otMessage *aMessage, bool aAllowLoopbackToHost);
+
+/**
+ * Indicates whether the given message may be looped back in a case of a multicast destination address.
+ *
+ * If @p aMessage is used along with an `otMessageInfo`, the `mMulticastLoop` field from `otMessageInfo` structure
+ * takes precedence and will be used instead of the the value set on @p aMessage.
+ *
+ * This API is mainly intended for use along with `otIp6Send()` which expects an already prepared IPv6 message.
+ *
+ * @param[in]  aMessage A pointer to the message.
+ *
+ */
+bool otMessageIsMulticastLoopEnabled(otMessage *aMessage);
+
+/**
+ * Controls whether the given message may be looped back in a case of a multicast destination address.
+ *
+ * @param[in]  aMessage  A pointer to the message.
+ * @param[in]  aEnabled  The configuration value.
+ *
+ */
+void otMessageSetMulticastLoopEnabled(otMessage *aMessage, bool aEnabled);
+
+/**
+ * Gets the message origin.
+ *
+ * @param[in]  aMessage  A pointer to a message buffer.
+ *
+ * @returns The message origin.
+ *
+ */
+otMessageOrigin otMessageGetOrigin(const otMessage *aMessage);
+
+/**
+ * Sets the message origin.
+ *
+ * @param[in]  aMessage  A pointer to a message buffer.
+ * @param[in]  aOrigin   The message origin.
+ *
+ */
+void otMessageSetOrigin(otMessage *aMessage, otMessageOrigin aOrigin);
+
+/**
  * Sets/forces the message to be forwarded using direct transmission.
  * Default setting for a new message is `false`.
  *
@@ -194,10 +287,24 @@ void otMessageSetDirectTransmission(otMessage *aMessage, bool aEnabled);
 /**
  * Returns the average RSS (received signal strength) associated with the message.
  *
+ * @param[in]  aMessage  A pointer to a message buffer.
+ *
  * @returns The average RSS value (in dBm) or OT_RADIO_RSSI_INVALID if no average RSS is available.
  *
  */
 int8_t otMessageGetRss(const otMessage *aMessage);
+
+/**
+ * Retrieves the link-specific information for a message received over Thread radio.
+ *
+ * @param[in] aMessage    The message from which to retrieve `otThreadLinkInfo`.
+ * @pram[out] aLinkInfo   A pointer to an `otThreadLinkInfo` to populate.
+ *
+ * @retval OT_ERROR_NONE       Successfully retrieved the link info, @p `aLinkInfo` is updated.
+ * @retval OT_ERROR_NOT_FOUND  Message origin is not `OT_MESSAGE_ORIGIN_THREAD_NETIF`.
+ *
+ */
+otError otMessageGetThreadLinkInfo(const otMessage *aMessage, otThreadLinkInfo *aLinkInfo);
 
 /**
  * Append bytes to a message.

@@ -192,7 +192,21 @@ void APPD_Init( void )
 
 void APPD_EnableCPU2( void )
 {
-/* USER CODE BEGIN APPD_EnableCPU2 */
+  /* USER CODE BEGIN APPD_EnableCPU2 */
+   /**
+   *  When the application wants to disable the output of traces, it is not 
+   *  enough to just disable the UART. Indeed, CPU2 will still send its traces 
+   *  through IPCC to CPU1. By default, CPU2 enables the debug traces. The 
+   *  command below will indicate to CPU2 to disable its traces if 
+   *  CFG_DEBUG_TRACE is set to 0.
+   *  The result is a gain of performance for both CPUs and a reduction of power
+   *  consumption, especially in dense networks where there can be a massive
+   *  amount of data to print.
+   */  
+  APPD_TracesConfig.zigbee_config = CFG_DEBUG_TRACE;
+  APPD_TracesConfig.ble_config = CFG_DEBUG_TRACE;
+  
+
   SHCI_C2_DEBUG_Init_Cmd_Packet_t DebugCmdPacket =
   {
     {{0,0,0}},                            /**< Does not need to be initialized */

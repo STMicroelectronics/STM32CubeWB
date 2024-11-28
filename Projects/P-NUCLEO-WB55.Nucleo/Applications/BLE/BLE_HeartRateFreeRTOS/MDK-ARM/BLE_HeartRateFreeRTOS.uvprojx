@@ -353,7 +353,7 @@
             <NoWarn>0</NoWarn>
             <uSurpInc>0</uSurpInc>
             <useXO>0</useXO>
-            <ClangAsOpt>4</ClangAsOpt>
+            <ClangAsOpt>1</ClangAsOpt>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -813,11 +813,6 @@
               <FileName>stm32_lpm.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../Utilities/lpm/tiny_lpm/stm32_lpm.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32_seq.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../Utilities/sequencer/stm32_seq.c</FilePath>
             </File>
           </Files>
         </Group>

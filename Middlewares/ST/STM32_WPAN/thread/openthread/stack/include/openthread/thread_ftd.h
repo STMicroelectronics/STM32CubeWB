@@ -237,7 +237,7 @@ typedef struct otDeviceProperties
 /**
  * Get the current device properties.
  *
- * Requires `OPENTHREAD_CONFIG_THREAD_VERSION >= OT_THREAD_VERSION_1_3_1`.
+ * Requires `OPENTHREAD_CONFIG_MLE_DEVICE_PROPERTY_LEADER_WEIGHT_ENABLE`.
  *
  * @returns The device properties `otDeviceProperties`.
  *
@@ -247,7 +247,7 @@ const otDeviceProperties *otThreadGetDeviceProperties(otInstance *aInstance);
 /**
  * Set the device properties which are then used to determine and set the Leader Weight.
  *
- * Requires `OPENTHREAD_CONFIG_THREAD_VERSION >= OT_THREAD_VERSION_1_3_1`.
+ * Requires `OPENTHREAD_CONFIG_MLE_DEVICE_PROPERTY_LEADER_WEIGHT_ENABLE`.
  *
  * @param[in]  aInstance           A pointer to an OpenThread instance.
  * @param[in]  aDeviceProperties   The device properties.
@@ -368,14 +368,14 @@ uint32_t otThreadGetContextIdReuseDelay(otInstance *aInstance);
 void otThreadSetContextIdReuseDelay(otInstance *aInstance, uint32_t aDelay);
 
 /**
- * Get the NETWORK_ID_TIMEOUT parameter used in the Router role.
+ * Get the `NETWORK_ID_TIMEOUT` parameter.
  *
  * @note This API is reserved for testing and demo purposes only. Changing settings with
  * this API will render a production application non-compliant with the Thread Specification.
  *
  * @param[in]  aInstance A pointer to an OpenThread instance.
  *
- * @returns The NETWORK_ID_TIMEOUT value.
+ * @returns The `NETWORK_ID_TIMEOUT` value.
  *
  * @sa otThreadSetNetworkIdTimeout
  *
@@ -383,10 +383,13 @@ void otThreadSetContextIdReuseDelay(otInstance *aInstance, uint32_t aDelay);
 uint8_t otThreadGetNetworkIdTimeout(otInstance *aInstance);
 
 /**
- * Set the NETWORK_ID_TIMEOUT parameter used in the Leader role.
+ * Set the `NETWORK_ID_TIMEOUT` parameter.
+ *
+ * @note This API is reserved for testing and demo purposes only. Changing settings with
+ * this API will render a production application non-compliant with the Thread Specification.
  *
  * @param[in]  aInstance A pointer to an OpenThread instance.
- * @param[in]  aTimeout  The NETWORK_ID_TIMEOUT value.
+ * @param[in]  aTimeout  The `NETWORK_ID_TIMEOUT` value.
  *
  * @sa otThreadGetNetworkIdTimeout
  *
@@ -689,12 +692,12 @@ otPskcRef otThreadGetPskcRef(otInstance *aInstance);
 otError otThreadSetPskc(otInstance *aInstance, const otPskc *aPskc);
 
 /**
- * Set the Thread PSKc
+ * Set the Key Reference to the Thread PSKc
  *
  * Requires the build-time feature `OPENTHREAD_CONFIG_PLATFORM_KEY_REFERENCES_ENABLE` to be enabled.
  *
- * Will only succeed when Thread protocols are disabled.  A successful
- * call to this function will also invalidate the Active and Pending Operational Datasets in
+ * Will only succeed when Thread protocols are disabled.  Upon success,
+ * this will also invalidate the Active and Pending Operational Datasets in
  * non-volatile memory.
  *
  * @param[in]  aInstance   A pointer to an OpenThread instance.
@@ -849,6 +852,36 @@ void otThreadSetCcmEnabled(otInstance *aInstance, bool aEnabled);
 void otThreadSetThreadVersionCheckEnabled(otInstance *aInstance, bool aEnabled);
 
 /**
+ * Enables or disables the filter to drop TMF UDP messages from untrusted origin.
+ *
+ * TMF messages are only trusted when they originate from a trusted source, such as the Thread interface. In
+ * special cases, such as when a device uses platform UDP socket to send TMF messages, they will be dropped due
+ * to untrusted origin. This filter is enabled by default.
+ *
+ * When this filter is disabled, UDP messages sent to the TMF port that originate from untrusted origin (such as
+ * host, CLI or an external IPv6 node) will be allowed.
+ *
+ * @note This API requires `OPENTHREAD_CONFIG_REFERENCE_DEVICE_ENABLE` and is only used by Thread Test Harness
+ * to test network behavior by sending special TMF messages from the CLI on a POSIX host.
+ *
+ * @param[in]  aInstance  A pointer to an OpenThread instance.
+ * @param[in]  aEnabled   TRUE to enable filter, FALSE otherwise.
+ *
+ */
+void otThreadSetTmfOriginFilterEnabled(otInstance *aInstance, bool aEnabled);
+
+/**
+ * Indicates whether the filter that drops TMF UDP messages from untrusted origin is enabled or not.
+ *
+ * This is intended for testing only and available when `OPENTHREAD_CONFIG_REFERENCE_DEVICE_ENABLE` config is enabled.
+ *
+ * @retval TRUE   The filter is enabled.
+ * @retval FALSE  The filter is not enabled.
+ *
+ */
+bool otThreadIsTmfOriginFilterEnabled(otInstance *aInstance);
+
+/**
  * Gets the range of router IDs that are allowed to assign to nodes within the thread network.
  *
  * @note This API requires `OPENTHREAD_CONFIG_REFERENCE_DEVICE_ENABLE`, and is only used for test purpose. All the
@@ -882,6 +915,16 @@ void otThreadGetRouterIdRange(otInstance *aInstance, uint8_t *aMinRouterId, uint
 otError otThreadSetRouterIdRange(otInstance *aInstance, uint8_t aMinRouterId, uint8_t aMaxRouterId);
 
 /**
+ * Gets the current Interval Max value used by Advertisement trickle timer.
+ *
+ * This API requires `OPENTHREAD_CONFIG_REFERENCE_DEVICE_ENABLE`, and is intended for testing only.
+ *
+ * @returns The Interval Max of Advertisement trickle timer in milliseconds.
+ *
+ */
+uint32_t otThreadGetAdvertisementTrickleIntervalMax(otInstance *aInstance);
+
+/**
  * Indicates whether or not a Router ID is currently allocated.
  *
  * @param[in]  aInstance     A pointer to an OpenThread instance.
@@ -900,7 +943,7 @@ bool otThreadIsRouterIdAllocated(otInstance *aInstance, uint8_t aRouterId);
  * to get the value.
  *
  * @param[in]  aInstance       A pointer to an OpenThread instance.
- * @param[in]  aDesRloct16     The RLOC16 of destination.
+ * @param[in]  aDestRloc16     The RLOC16 of destination.
  * @param[out] aNextHopRloc16  A pointer to return RLOC16 of next hop, 0xfffe if no next hop.
  * @param[out] aPathCost       A pointer to return path cost towards destination.
  *

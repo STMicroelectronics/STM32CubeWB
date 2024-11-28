@@ -59,6 +59,7 @@ extern RTC_HandleTypeDef hrtc;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t EvtPool[POOL_SIZE];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t SystemCmdBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t SystemSpareEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
+extern uint8_t g_ot_notification_allowed;
 
 /* USER CODE BEGIN PV */
 
@@ -348,6 +349,10 @@ void UTIL_SEQ_Idle( void )
   */
 void UTIL_SEQ_EvtIdle( UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm )
 {
+	/* Check the notification condition */
+	if (g_ot_notification_allowed) {
+		UTIL_SEQ_Run(1U << CFG_TASK_NOTIFY_FROM_M0_TO_M4);
+	}	
   switch(evt_waited_bm)
   {
   case EVENT_ACK_FROM_M0_EVT:

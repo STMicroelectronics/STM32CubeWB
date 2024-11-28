@@ -62,6 +62,20 @@ extern "C" {
 void otPlatReset(otInstance *aInstance);
 
 /**
+ * Performs a hardware reset on the platform to launch bootloader mode, if supported.
+ *
+ * Used when `OPENTHREAD_CONFIG_PLATFORM_BOOTLOADER_MODE_ENABLE` is enabled.
+ *
+ * @param[in] aInstance  The OpenThread instance structure.
+ *
+ * @retval OT_ERROR_NONE         Reset to bootloader successfully.
+ * @retval OT_ERROR_BUSY         Failed due to another operation is ongoing.
+ * @retval OT_ERROR_NOT_CAPABLE  Not capable of resetting to bootloader.
+ *
+ */
+otError otPlatResetToBootloader(otInstance *aInstance);
+
+/**
  * Enumeration of possible reset reason codes.
  *
  * These are in the same order as the Spinel reset reason codes.
@@ -192,6 +206,16 @@ otError otPlatSetMcuPowerState(otInstance *aInstance, otPlatMcuPowerState aState
  *
  */
 otPlatMcuPowerState otPlatGetMcuPowerState(otInstance *aInstance);
+
+/**
+ * Logs a crash dump using OpenThread logging APIs
+ *
+ * @note This API is an optional logging platform API. It's up to the platform layer to implement it.
+ *
+ * @retval OT_ERROR_NONE            Crash dump was logged successfully
+ * @retval OT_ERROR_NOT_CAPABLE     Platform is not capable of logging a crash dump
+ */
+otError otPlatLogCrashDump(void);
 
 /**
  * @}

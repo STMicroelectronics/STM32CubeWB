@@ -96,6 +96,9 @@
 /* Define to 1 to enable Mle Link Metrics Subject */
 #define OPENTHREAD_CONFIG_MLE_LINK_METRICS_SUBJECT_ENABLE 1
 
+/* Define to 1 to support CSL feature */
+#define OPENTHREAD_CONFIG_MAC_CSL_RECEIVER_ENABLE 1
+
 /* Define to 1 if you want to enable microsecond backoff timer implemented in platform. */
 #define OPENTHREAD_CONFIG_PLATFORM_USEC_TIMER_ENABLE 1
 

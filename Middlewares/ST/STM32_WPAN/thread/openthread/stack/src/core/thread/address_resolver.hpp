@@ -199,7 +199,10 @@ public:
     /**
      * Looks up the RLOC16 for a given EID in the address cache.
      *
-     * @param[in]   aEid                A reference to the EID.
+     * When a cache entry is successfully looked up using this method, it will be marked as "cached and in-use".
+     * Specifically, a snooped entry (`kStateSnooped`) will be marked as cached (`kStateCached`).
+     *
+     * @param[in]   aEid   A reference to the EID to lookup.
      *
      * @returns The RLOC16 mapping to @p aEid or `Mac::kShortAddrInvalid` if it is not found in the address cache.
      *
@@ -242,8 +245,9 @@ public:
                           const Ip6::Address             *aDestination);
 
 private:
-    static constexpr uint16_t kCacheEntries                  = OPENTHREAD_CONFIG_TMF_ADDRESS_CACHE_ENTRIES;
-    static constexpr uint16_t kMaxNonEvictableSnoopedEntries = OPENTHREAD_CONFIG_TMF_ADDRESS_CACHE_MAX_SNOOP_ENTRIES;
+    static constexpr uint16_t kCacheEntries = OPENTHREAD_CONFIG_TMF_ADDRESS_CACHE_ENTRIES;
+    static constexpr uint16_t kMaxNonEvictableSnoopedEntries =
+        OT_MAX(1, OPENTHREAD_CONFIG_TMF_ADDRESS_CACHE_MAX_SNOOP_ENTRIES);
 
     // All time/delay values are in seconds
     static constexpr uint16_t kAddressQueryTimeout           = OPENTHREAD_CONFIG_TMF_ADDRESS_QUERY_TIMEOUT;

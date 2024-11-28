@@ -26,13 +26,14 @@
 #include "hw_conf.h"
 #include "stm32_seq.h"
 #include "stm_logging.h"
-#include "dbg_trace.h"
 #include "shci_tl.h"
 #include "stm32_lpm.h"
+#include "dbg_trace.h"
 #include "shci.h"
 #include "stm_list.h"
 #include "advanced_memory_manager.h"
 #include "stm32_mm.h"
+#include "vcp.h"
 
 /* Private includes -----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -81,14 +82,17 @@ typedef struct __attribute__((packed, aligned(4)))
 /* POOL_SIZE = 2(TL_PacketHeader_t) + 258 (3(TL_EVT_HDR_SIZE) + 255(Payload size)) */
 #define POOL_SIZE (CFG_TL_EVT_QUEUE_LENGTH * 4U * DIVC(( sizeof(TL_PacketHeader_t) + TL_EVENT_FRAME_SIZE ), 4U))
 #define POOL_TRACE_SIZE  CFG_AMM_VIRTUAL_APP_TRACE_BUFFER_SIZE + CFG_AMM_VIRTUAL_MEMORY_NUMBER * AMM_VIRTUAL_INFO_ELEMENT_SIZE
+
 /* USER CODE BEGIN PD */
 
 /* USER CODE END PD */
+
 /* Private macros ------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
 
 /* USER CODE END PM */
-/* Private variables -------------------------------------------------*/
+
+/* Private variables ---------------------------------------------------------*/
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t EvtPool[POOL_SIZE];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t SystemCmdBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t SystemSpareEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
@@ -113,6 +117,14 @@ static AMM_InitParameters_t ammInitConfig =
   .p_VirtualMemoryConfigList = vmConfig
 };
 
+#if (CFG_USB_INTERFACE_ENABLE != 0)
+#define C_SIZE_CMD_STRING       256U
+static uint8_t CommandString[C_SIZE_CMD_STRING];
+static uint8_t VcpTxBuffer[MAX_DBG_TRACE_MSG_SIZE]; /* Transmit buffer over USB */
+static uint8_t VcpRxBuffer[MAX_DBG_TRACE_MSG_SIZE]; /* Receive buffer over USB */
+EXTI_HandleTypeDef exti_handle;
+#endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
+
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -129,6 +141,10 @@ static void APPE_SysUserEvtRx( void * pPayload );
 static void APPE_SysEvtReadyProcessing( void );
 static void APPE_SysEvtError( SCHI_SystemErrCode_t ErrorCode);
 static void writeTrace(char * buffer, uint32_t size);
+
+#if (CFG_USB_INTERFACE_ENABLE != 0)
+static void CmdExecute(void);
+#endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 
 /* USER CODE BEGIN PFP */
 static void Led_Init( void );
@@ -170,7 +186,7 @@ void APPE_Init( void )
 /* USER CODE BEGIN APPE_Init_2 */
 
 /* USER CODE END APPE_Init_2 */
-  return;
+   return;
 }
 /* USER CODE BEGIN FD */
 
@@ -233,6 +249,7 @@ static void Init_Debug( void )
  */
 static void SystemPower_Config(void)
 {
+
   /**
    * Select HSI as system clock source after Wake Up from Stop mode
    */
@@ -517,7 +534,7 @@ void ProcessTrace(void)
 #if(CFG_DEBUG_TRACE != 0)
 void DbgOutputInit( void )
 {
-  HW_UART_Init(CFG_DEBUG_TRACE_UART);
+  VCP_Init( &VcpTxBuffer[0], &VcpRxBuffer[0] );
   return;
 }
 
@@ -530,11 +547,57 @@ void DbgOutputInit( void )
   */
 void DbgOutputTraces(  uint8_t *p_data, uint16_t size, void (*cb)(void) )
 {
-  HW_UART_Transmit_DMA(CFG_DEBUG_TRACE_UART, p_data, size, cb);
-
+  VCP_SendData ( p_data , size , cb );
   return;
 }
 #endif
+
+#if (CFG_USB_INTERFACE_ENABLE != 0)
+/**
+ * @brief  This function is called when thereare some data coming
+ *         from the Hyperterminal via the USB port
+ *         Data received over USB OUT endpoint are sent over CDC interface
+ *         through this function.
+ * @param  Buf: Buffer of data received
+ * @param  Len: Number of data received (in bytes)
+ */
+void VCP_DataReceived(uint8_t* Buf , uint32_t *Len)
+{
+  static uint32_t len_total = 0;
+
+  if(len_total < C_SIZE_CMD_STRING)
+  {
+    memcpy(&CommandString[len_total], Buf, *Len);
+    len_total += *Len;
+    
+    if(len_total >= 1)
+    {
+      if(CommandString[len_total-1] == '\r')
+      {
+        CmdExecute();
+        len_total = 0;
+      }
+    }
+  }
+}
+
+static void CmdExecute(void)
+{
+  /* Parse received */
+  if(strcmp((char const*)CommandString, "SW1\r") == 0)
+  {
+    APP_DBG("SW1 OK");
+    exti_handle.Line = BUTTON_SW1_EXTI_LINE;
+    HAL_EXTI_GenerateSWI(&exti_handle);
+  }
+  else
+  {
+    APP_DBG("NOT RECOGNIZED COMMAND : %s", CommandString);
+  }
+
+  memset(CommandString, 0, C_SIZE_CMD_STRING);
+}
+#endif /* (CFG_USB_INTERFACE_ENABLE != 0) */
 
 /* USER CODE BEGIN FD_WRAP_FUNCTIONS */
 static void writeTrace(char * buffer, uint32_t size)
@@ -554,6 +617,25 @@ static void writeTrace(char * buffer, uint32_t size)
       
       UTIL_SEQ_SetTask(1 <<CFG_TASK_TRACE, CFG_SCH_PRIO_1);
     }
+  }
+}
+
+/**
+  * @brief This function manage the Push button action
+  * @param  GPIO_Pin : GPIO pin which has been activated
+  * @retval None
+  */
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+  APP_DBG("*** HAL_GPIO_EXTI_Callback  GPIO_Pin = %d ****", GPIO_Pin);
+  switch(GPIO_Pin)
+  {
+    case BUTTON_SW1_PIN:
+        UTIL_SEQ_SetTask(TASK_COAP_MSG_BUTTON,CFG_SCH_PRIO_1);
+        break;
+
+     default:
+        break;
   }
 }
 /* USER CODE END FD_WRAP_FUNCTIONS */

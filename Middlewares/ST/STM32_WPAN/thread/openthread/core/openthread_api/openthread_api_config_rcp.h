@@ -40,7 +40,7 @@
 #define OPENTHREAD_CONFIG_COMMISSIONER_ENABLE 0
 
 /* Define to 1 to enable dtls support. */
-#define OPENTHREAD_CONFIG_DTLS_ENABLE 0
+#define OPENTHREAD_CONFIG_SECURE_TRANSPORT_ENABLE 0
 
 /* Define to 1 to enable the joiner role. */
 #define OPENTHREAD_CONFIG_JOINER_ENABLE 0

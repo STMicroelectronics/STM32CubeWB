@@ -50,6 +50,8 @@ otError otLinkMetricsQuery(otInstance *                aInstance,
                            otLinkMetricsReportCallback aCallback,
                            void *                      aCallbackContext)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -67,7 +69,11 @@ otError otLinkMetricsQuery(otInstance *                aInstance,
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otLinkMetricsConfigForwardTrackingSeries(otInstance *                      aInstance,
@@ -78,6 +84,8 @@ otError otLinkMetricsConfigForwardTrackingSeries(otInstance *                   
                                                  otLinkMetricsMgmtResponseCallback aCallback,
                                                  void *                            aCallbackContext)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -96,7 +104,11 @@ otError otLinkMetricsConfigForwardTrackingSeries(otInstance *                   
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 #if OPENTHREAD_CONFIG_MLE_LINK_METRICS_INITIATOR_ENABLE
@@ -109,6 +121,8 @@ otError otLinkMetricsConfigEnhAckProbing(otInstance *                           
                                          otLinkMetricsEnhAckProbingIeReportCallback aEnhAckCallback,
                                          void *                                     aEnhAckCallbackContext)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -128,7 +142,11 @@ otError otLinkMetricsConfigEnhAckProbing(otInstance *                           
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otLinkMetricsSendLinkProbe(otInstance *        aInstance,
@@ -136,6 +154,8 @@ otError otLinkMetricsSendLinkProbe(otInstance *        aInstance,
                                    uint8_t             aSeriesId,
                                    uint8_t             aLength)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -150,7 +170,11 @@ otError otLinkMetricsSendLinkProbe(otInstance *        aInstance,
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 #endif
 

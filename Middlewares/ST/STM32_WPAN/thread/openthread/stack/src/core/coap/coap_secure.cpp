@@ -28,13 +28,14 @@
 
 #include "coap_secure.hpp"
 
-#if OPENTHREAD_CONFIG_DTLS_ENABLE
+#if OPENTHREAD_CONFIG_SECURE_TRANSPORT_ENABLE
 
-#include "common/instance.hpp"
 #include "common/locator_getters.hpp"
 #include "common/log.hpp"
 #include "common/new.hpp"
-#include "meshcop/dtls.hpp"
+#include "instance/instance.hpp"
+#include "meshcop/secure_transport.hpp"
+
 #include "thread/thread_netif.hpp"
 
 /**
@@ -54,27 +55,40 @@ CoapSecure::CoapSecure(Instance &aInstance, bool aLayerTwoSecurity)
 {
 }
 
-Error CoapSecure::Start(uint16_t aPort)
+Error CoapSecure::Start(uint16_t aPort) { return Start(aPort, /* aMaxAttempts */ 0, nullptr, nullptr); }
+
+Error CoapSecure::Start(uint16_t aPort, uint16_t aMaxAttempts, AutoStopCallback aCallback, void *aContext)
 {
-    Error error = kErrorNone;
+    Error error;
 
-    mConnectedCallback.Clear();
-
-    SuccessOrExit(error = mDtls.Open(&CoapSecure::HandleDtlsReceive, &CoapSecure::HandleDtlsConnected, this));
-    SuccessOrExit(error = mDtls.Bind(aPort));
+    SuccessOrExit(error = Open(aMaxAttempts, aCallback, aContext));
+    error = mDtls.Bind(aPort);
 
 exit:
     return error;
 }
 
-Error CoapSecure::Start(MeshCoP::Dtls::TransportCallback aCallback, void *aContext)
+Error CoapSecure::Start(MeshCoP::SecureTransport::TransportCallback aCallback, void *aContext)
 {
-    Error error = kErrorNone;
+    Error error;
 
+    SuccessOrExit(error = Open(/* aMaxAttemps */ 0, nullptr, nullptr));
+    error = mDtls.Bind(aCallback, aContext);
+
+exit:
+    return error;
+}
+
+Error CoapSecure::Open(uint16_t aMaxAttempts, AutoStopCallback aCallback, void *aContext)
+{
+    Error error = kErrorAlready;
+
+    SuccessOrExit(mDtls.SetMaxConnectionAttempts(aMaxAttempts, HandleDtlsAutoClose, this));
+    mAutoStopCallback.Set(aCallback, aContext);
     mConnectedCallback.Clear();
+    SuccessOrExit(mDtls.Open(HandleDtlsReceive, HandleDtlsConnected, this));
 
-    SuccessOrExit(error = mDtls.Open(&CoapSecure::HandleDtlsReceive, &CoapSecure::HandleDtlsConnected, this));
-    SuccessOrExit(error = mDtls.Bind(aCallback, aContext));
+    error = kErrorNone;
 
 exit:
     return error;
@@ -98,7 +112,7 @@ Error CoapSecure::Connect(const Ip6::SockAddr &aSockAddr, ConnectedCallback aCal
 void CoapSecure::SetPsk(const MeshCoP::JoinerPskd &aPskd)
 {
     static_assert(static_cast<uint16_t>(MeshCoP::JoinerPskd::kMaxLength) <=
-                      static_cast<uint16_t>(MeshCoP::Dtls::kPskMaxLength),
+                      static_cast<uint16_t>(MeshCoP::SecureTransport::kPskMaxLength),
                   "The maximum length of DTLS PSK is smaller than joiner PSKd");
 
     SuccessOrAssert(mDtls.SetPsk(reinterpret_cast<const uint8_t *>(aPskd.GetAsCString()), aPskd.GetLength()));
@@ -171,6 +185,17 @@ void CoapSecure::HandleDtlsConnected(void *aContext, bool aConnected)
 
 void CoapSecure::HandleDtlsConnected(bool aConnected) { mConnectedCallback.InvokeIfSet(aConnected); }
 
+void CoapSecure::HandleDtlsAutoClose(void *aContext)
+{
+    return static_cast<CoapSecure *>(aContext)->HandleDtlsAutoClose();
+}
+
+void CoapSecure::HandleDtlsAutoClose(void)
+{
+    Stop();
+    mAutoStopCallback.InvokeIfSet();
+}
+
 void CoapSecure::HandleDtlsReceive(void *aContext, uint8_t *aBuf, uint16_t aLength)
 {
     return static_cast<CoapSecure *>(aContext)->HandleDtlsReceive(aBuf, aLength);
@@ -224,4 +249,4 @@ exit:
 } // namespace Coap
 } // namespace ot
 
-#endif // OPENTHREAD_CONFIG_DTLS_ENABLE
+#endif // OPENTHREAD_CONFIG_SECURE_TRANSPORT_ENABLE

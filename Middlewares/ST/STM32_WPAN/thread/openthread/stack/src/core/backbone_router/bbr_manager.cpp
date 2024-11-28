@@ -37,11 +37,12 @@
 
 #include "common/as_core_type.hpp"
 #include "common/code_utils.hpp"
-#include "common/instance.hpp"
 #include "common/locator_getters.hpp"
 #include "common/log.hpp"
 #include "common/num_utils.hpp"
+#include "common/numeric_limits.hpp"
 #include "common/random.hpp"
+#include "instance/instance.hpp"
 #include "thread/mle_types.hpp"
 #include "thread/thread_netif.hpp"
 #include "thread/thread_tlvs.hpp"
@@ -176,11 +177,10 @@ void Manager::HandleMulticastListenerRegistration(const Coap::Message &aMessage,
 
     if (Tlv::Find<ThreadCommissionerSessionIdTlv>(aMessage, commissionerSessionId) == kErrorNone)
     {
-        const MeshCoP::CommissionerSessionIdTlv *commissionerSessionIdTlv = As<MeshCoP::CommissionerSessionIdTlv>(
-            Get<NetworkData::Leader>().GetCommissioningDataSubTlv(MeshCoP::Tlv::kCommissionerSessionId));
+        uint16_t localSessionId;
 
-        VerifyOrExit(commissionerSessionIdTlv != nullptr &&
-                         commissionerSessionIdTlv->GetCommissionerSessionId() == commissionerSessionId,
+        VerifyOrExit((Get<NetworkData::Leader>().FindCommissioningSessionId(localSessionId) == kErrorNone) &&
+                         (localSessionId == commissionerSessionId),
                      status = ThreadStatusTlv::kMlrGeneralFailure);
 
         hasCommissionerSessionIdTlv = true;
@@ -203,7 +203,7 @@ void Manager::HandleMulticastListenerRegistration(const Coap::Message &aMessage,
     }
     else
     {
-        VerifyOrExit(timeout < UINT32_MAX, status = ThreadStatusTlv::kMlrNoPersistent);
+        VerifyOrExit(timeout < NumericLimits<uint32_t>::kMax, status = ThreadStatusTlv::kMlrNoPersistent);
 
         if (timeout != 0)
         {

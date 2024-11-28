@@ -169,6 +169,8 @@ TSL_Params_T TSL_Params =
 /* USER CODE BEGIN Global variables */
 
 /* USER CODE END Global variables */
+  static uint32_t IdxBank = 0;
+  static uint32_t ConfigDone = 0;
 
 __IO TSL_tTick_ms_T ECSLastTick; /* Hold the last time value for ECS */
 
@@ -179,6 +181,8 @@ __IO TSL_tTick_ms_T ECSLastTick; /* Hold the last time value for ECS */
   */
 void tsl_user_Init(void)
 {
+  IdxBank = 0;
+  ConfigDone = 0;
   TSL_obj_GroupInit(&MyObjGroup); /* Init Objects */
 
   TSL_Init(MyBanks); /* Init acquisition module */
@@ -193,19 +197,17 @@ void tsl_user_Init(void)
   */
 tsl_user_status_t tsl_user_Exec(void)
 {
-  static uint32_t idx_bank = 0;
-  static uint32_t config_done = 0;
   tsl_user_status_t status = TSL_USER_STATUS_BUSY;
 
   /* Configure and start bank acquisition */
-  if (!config_done)
+  if (!ConfigDone)
   {
 /* USER CODE BEGIN not config_done start*/
 
 /* USER CODE END not config_done start*/
-    TSL_acq_BankConfig(idx_bank);
+    TSL_acq_BankConfig(IdxBank);
     TSL_acq_BankStartAcq();
-    config_done = 1;
+    ConfigDone = 1;
 /* USER CODE BEGIN not config_done */
 
 /* USER CODE END not config_done */
@@ -218,10 +220,10 @@ tsl_user_status_t tsl_user_Exec(void)
 
 /* USER CODE END end of acquisition start*/
     STMSTUDIO_LOCK;
-    TSL_acq_BankGetResult(idx_bank, 0, 0);
+    TSL_acq_BankGetResult(IdxBank, 0, 0);
     STMSTUDIO_UNLOCK;
-    idx_bank++; /* Next bank */
-    config_done = 0;
+    IdxBank++; /* Next bank */
+    ConfigDone = 0;
 /* USER CODE BEGIN end of acquisition */
 
 /* USER CODE END end of acquisition */
@@ -230,14 +232,14 @@ tsl_user_status_t tsl_user_Exec(void)
   /* Process objects, DxS and ECS
      Check if all banks have been acquired
   */
-  if (idx_bank > TSLPRM_TOTAL_BANKS-1)
+  if (IdxBank > TSLPRM_TOTAL_BANKS-1)
   {
 /* USER CODE BEGIN before reset*/
 
 /* USER CODE END before reset*/
     /* Reset flags for next banks acquisition */
-    idx_bank = 0;
-    config_done = 0;
+    IdxBank = 0;
+    ConfigDone = 0;
 
     /* Process Objects */
     TSL_obj_GroupProcess(&MyObjGroup);

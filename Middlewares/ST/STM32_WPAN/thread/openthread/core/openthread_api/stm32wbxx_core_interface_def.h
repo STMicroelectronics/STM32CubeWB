@@ -70,16 +70,6 @@ typedef struct  {
   STUdpHandlerContextType   mSpecificContext; /* Contains context and handler */
 } STUdpReceiverType;
 
-//typedef struct  {
-//  void * mContext;
-//  otTcpEstablished      mEstablishedCallback;
-//  otTcpSendDone         mSendDoneCallback;
-//  otTcpBytesAcked       mBytesAckedCallback;
-//  otTcpSendReady        mSendReadyCallback;
-//  otTcpReceiveAvailable mReceiveAvailableCallback;
-//  otTcpDisconnected     mDisconnectedCallback;
-//} STTcpEndpointHandlerContextType;
-
 typedef struct  {
   void * mContext;
   otTcpEstablished      mEstablishedCallback;
@@ -905,7 +895,7 @@ typedef enum
   MSG_M4TOM0_PHY_TX_START,
   MSG_M4TOM0_PHY_RX_START,
   MSG_M4TOM0_PHY_RX_STOP,
-  
+
   MSG_M4TOM0_OT_GET_PROMISCUOUS,
   MSG_M4TOM0_OT_ENTROPY_GET,
   MSG_M4TOM0_OT_ALARM_MILLI_START_AT,
@@ -936,6 +926,24 @@ typedef enum
   /* PHY suite*/
   MSG_M4TOM0_PHY_CONTINUOUS_TX_START,
   MSG_M4TOM0_PHY_CONTINUOUS_TX_STOP,
+  
+  /* Matter DAC Crypto */
+  MSG_M4TOM0_OT_CKS_DAC_PRIVATE_KEY_SET,
+  MSG_M4TOM0_OT_CKS_DAC_SIGNATURE,
+  MSG_M4TOM0_OT_CKS_DAC_RESERVED_VALUE,
+  MSG_M4TOM0_OT_CKS_DAC_RESERVED_VALUE_2,
+  
+  MSG_M4TOM0_OT_THREAD_GET_VENDOR_APP_URL,
+  MSG_M4TOM0_OT_THREAD_SET_TMF_ORIGIN_FILTER_ENABLED,
+  MSG_M4TOM0_OT_THREAD_IS_TMF_ORIGIN_FILTER_ENABLED,
+  MSG_M4TOM0_OT_COAP_SECURE_START_WITH_MAX_CONN_ATTEMPS,
+  MSG_M4TOM0_OT_COAP_SECURE_IS_CLOSED,
+  MSG_M4TOM0_OT_MESH_DIAG_QUERY_CHILD_TABLE,
+  MSG_M4TOM0_OT_MESH_DIAG_QUERY_CHILDREN_IP6_ADDRS,
+  MSG_M4TOM0_OT_MESH_DIAG_QUERY_ROUTER_NEIGHBOR_TABLE,
+  MSG_M4TOM0_OT_THREAD_GET_ADVERTISEMENT_TRICKLE_INTERVAL_MAX,
+  MSG_M4TOM0_OT_NET_DATA_GET_COMMISSIONING_DATA_SET,
+  MSG_M4TOM0_OT_LOGGING_GENERATE_NEXT_HEX_DUMP_LINE,
 } MsgId_M4toM0_Enum_t;
 
 /* List of messages sent by the M0 to the M4 */
@@ -1017,6 +1025,10 @@ typedef enum
   MSG_M0TOM4_TCP_ACCEPT_DONE_CALLBACK,
   MSG_M0TOM4_TCP_FORWARD_PROGRESS_CALLBACK,
   MSG_M0TOM4_MESH_DIAG_DISCOVER_CALLBACK,
+  MSG_M0TOM4_MESH_DIAG_QUERY_CHILD_TABLE_CALLBACK,
+  MSG_M0TOM4_MESH_DIAG_CHILD_IP6_ADDRS_CALLBACK,
+  MSG_M0TOM4_MESH_DIAG_QUERY_NEIGHBOR_TABLE_CALLBACK,
+  MSG_M0TOM4_COAP_SECURE_AUTO_STOP,
 } MsgId_M0toM4_Enum_t;
 
 /* List of modes available for UART configuration */

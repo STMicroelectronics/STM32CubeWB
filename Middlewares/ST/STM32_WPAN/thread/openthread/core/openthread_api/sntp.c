@@ -38,6 +38,8 @@ otError otSntpClientQuery(otInstance *          aInstance,
                           otSntpResponseHandler aHandler,
                           void *                aContext)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -53,7 +55,11 @@ otError otSntpClientQuery(otInstance *          aInstance,
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 void otSntpClientSetUnixEra(otInstance *aInstance, uint32_t aUnixEra)
@@ -69,8 +75,7 @@ void otSntpClientSetUnixEra(otInstance *aInstance, uint32_t aUnixEra)
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return p_ot_req->Data[0];
+  Post_OtCmdProcessing();
 }
 
 #endif /* OPENTHREAD_CONFIG_SNTP_CLIENT_ENABLE */

@@ -42,6 +42,8 @@ otError otJoinerStart(otInstance *     aInstance,
     otJoinerCallback aCallback,
     void *           aContext)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   otJoinerCb = aCallback;
   /* prepare buffer */
@@ -61,7 +63,11 @@ otError otJoinerStart(otInstance *     aInstance,
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 void otJoinerStop(otInstance *aInstance)
@@ -76,11 +82,13 @@ void otJoinerStop(otInstance *aInstance)
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 
 otJoinerState otJoinerGetState(otInstance *aInstance)
 {
+  otJoinerState rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -92,11 +100,17 @@ otJoinerState otJoinerGetState(otInstance *aInstance)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otJoinerState)p_ot_req->Data[0];
+  rspData = (otJoinerState)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 const otExtAddress *otJoinerGetId(otInstance *aInstance)
 {
+  const otExtAddress * rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -108,11 +122,17 @@ const otExtAddress *otJoinerGetId(otInstance *aInstance)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otExtAddress*)p_ot_req->Data[0];
+  rspData = (const otExtAddress *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otJoinerSetDiscerner(otInstance *aInstance, otJoinerDiscerner *aDiscerner)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -125,11 +145,17 @@ otError otJoinerSetDiscerner(otInstance *aInstance, otJoinerDiscerner *aDiscerne
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 const otJoinerDiscerner *otJoinerGetDiscerner(otInstance *aInstance)
 {
+  const otJoinerDiscerner * rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -141,11 +167,17 @@ const otJoinerDiscerner *otJoinerGetDiscerner(otInstance *aInstance)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otJoinerDiscerner*)p_ot_req->Data[0];
+  rspData = (const otJoinerDiscerner *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 const char *otJoinerStateToString(otJoinerState aState)
 {
+  const char * rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -158,7 +190,11 @@ const char *otJoinerStateToString(otJoinerState aState)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (char *)p_ot_req->Data[0];
+  rspData = (const char *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 #endif // OPENTHREAD_CONFIG_JOINER_ENABLE

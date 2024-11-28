@@ -628,6 +628,34 @@ ZbStartupFindBindStart(struct ZigBeeT *zb, void (*callback)(enum ZbStatusCodeT s
 }
 
 enum ZbStatusCodeT
+ZbStartupFindBindStartEndpoint(struct ZigBeeT *zb, uint8_t endpoint,
+    void (*callback)(enum ZbStatusCodeT status, void *arg), void *arg)
+{
+    Zigbee_Cmd_Request_t *ipcc_req;
+    struct zb_ipc_m4_cb_info_t *info;
+    enum ZbStatusCodeT status;
+
+    info = zb_ipc_m4_cb_info_alloc((void *)callback, arg);
+    if (info == NULL) {
+        return ZB_STATUS_ALLOC_FAIL;
+    }
+    Pre_ZigbeeCmdProcessing();
+    ipcc_req = ZIGBEE_Get_OTCmdPayloadBuffer();
+    ipcc_req->ID = MSG_M4TOM0_STARTUP_FINDBIND_EP;
+    ipcc_req->Size = 2;
+    ipcc_req->Data[0] = (uint32_t)endpoint;
+    ipcc_req->Data[1] = (uint32_t)info;
+    ZIGBEE_CmdTransferWithNotif();
+    status = (enum ZbStatusCodeT)zb_ipc_m4_get_retval();
+    Post_ZigbeeCmdProcessing();
+    if (status != ZB_STATUS_SUCCESS) {
+        zb_ipc_m4_cb_info_free(info);
+    }
+    return status;
+    /* Followed up in MSG_M0TOM4_STARTUP_FINDBIND_EP_CB handler */
+}
+
+enum ZbStatusCodeT
 ZbStartupTouchlinkTargetStop(struct ZigBeeT *zb)
 {
     Zigbee_Cmd_Request_t *ipcc_req;
@@ -637,8 +665,7 @@ ZbStartupTouchlinkTargetStop(struct ZigBeeT *zb)
     ipcc_req = ZIGBEE_Get_OTCmdPayloadBuffer();
     ipcc_req->ID = MSG_M4TOM0_STARTUP_TOUCHLINK_TARGET_STOP;
     ipcc_req->Size = 0;
-    ZIGBEE_CmdTransfer();
-
+    ZIGBEE_CmdTransferWithNotif();
     status = (enum ZbStatusCodeT)zb_ipc_m4_get_retval();
     Post_ZigbeeCmdProcessing();
     return status;
@@ -3004,6 +3031,39 @@ ZbZclKeWithDevice(struct ZigBeeT *zb, uint64_t partnerAddr, bool aps_req_key,
 }
 
 /******************************************************************************
+ * APS Fragmentation Drops (needed for DUT)
+ ******************************************************************************
+ */
+bool
+ZbApsFragDropTxAdd(struct ZigBeeT *zb, uint8_t blockNum)
+{
+    Zigbee_Cmd_Request_t *ipcc_req;
+    int rc;
+
+    Pre_ZigbeeCmdProcessing();
+    ipcc_req = ZIGBEE_Get_OTCmdPayloadBuffer();
+    ipcc_req->ID = MSG_M4TOM0_APS_FRAG_DROP_ADD;
+    ipcc_req->Size = 1;
+    ipcc_req->Data[0] = (uint32_t)blockNum;
+    ZIGBEE_CmdTransfer();
+    rc = (int)zb_ipc_m4_get_retval();
+    Post_ZigbeeCmdProcessing();
+    return rc;
+}
+
+void
+ZbApsFragDropTxClear(struct ZigBeeT *zb)
+{
+    Zigbee_Cmd_Request_t *ipcc_req;
+
+    Pre_ZigbeeCmdProcessing();
+    ipcc_req = ZIGBEE_Get_OTCmdPayloadBuffer();
+    ipcc_req->ID = MSG_M4TOM0_APS_FRAG_DROP_CLEAR;
+    ipcc_req->Size = 0;
+    ZIGBEE_CmdTransfer();
+}
+
+/******************************************************************************
  * AES & Hashing
  ******************************************************************************
  */
@@ -3631,6 +3691,17 @@ Zigbee_CallBackProcessing(void)
             break;
 
         case MSG_M0TOM4_STARTUP_FINDBIND_CB:
+            assert(p_notification->Size == 2);
+            info = (struct zb_ipc_m4_cb_info_t *)p_notification->Data[1];
+            if ((info != NULL) && (info->callback != NULL)) {
+                void (*callback)(enum ZbStatusCodeT status, void *arg);
+
+                callback = (void (*)(enum ZbStatusCodeT status, void *arg))info->callback;
+                callback((enum ZbStatusCodeT)p_notification->Data[0], info->arg);
+            }
+            break;
+
+        case MSG_M0TOM4_STARTUP_FINDBIND_EP_CB:
             assert(p_notification->Size == 2);
             info = (struct zb_ipc_m4_cb_info_t *)p_notification->Data[1];
             if ((info != NULL) && (info->callback != NULL)) {

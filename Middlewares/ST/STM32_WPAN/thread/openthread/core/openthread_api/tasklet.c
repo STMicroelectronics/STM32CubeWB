@@ -38,11 +38,13 @@ void otTaskletsProcess(otInstance *aInstance)
 
     Ot_Cmd_Transfer();
 
-    p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+    Post_OtCmdProcessing();
 }
 
 bool otTaskletsArePending(otInstance *aInstance)
 {
+	bool rspData;
+	
     Pre_OtCmdProcessing();
     /* prepare buffer */
     Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -54,5 +56,9 @@ bool otTaskletsArePending(otInstance *aInstance)
     Ot_Cmd_Transfer();
 
     p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-    return (bool)p_ot_req->Data[0];
+    rspData = (bool)p_ot_req->Data[0];
+  
+	Post_OtCmdProcessing();
+  
+	return rspData;
 }

@@ -35,7 +35,18 @@
 #ifndef CONFIG_IP6_H_
 #define CONFIG_IP6_H_
 
+/**
+ * @addtogroup config-ip6
+ *
+ * @brief
+ *   This module includes configuration variables for the IP6 service.
+ *
+ * @{
+ *
+ */
+
 #include "config/border_routing.h"
+#include "config/misc.h"
 
 /**
  * @def OPENTHREAD_CONFIG_IP6_MAX_EXT_UCAST_ADDRS
@@ -130,6 +141,20 @@
 #endif
 
 /**
+ * @def OPENTHREAD_CONFIG_IP6_SLAAC_DEPRECATION_INTERVAL
+ *
+ * Specifies the deprecating time of SLAAC addresses in seconds.
+ *
+ * Applicable only if OPENTHREAD_CONFIG_IP6_SLAAC_ENABLE is enabled.
+ *
+ * Deprecating interval is used once an on-mesh prefix is removed from Network Data before removing the SLAAC address.
+ *
+ */
+#ifndef OPENTHREAD_CONFIG_IP6_SLAAC_DEPRECATION_INTERVAL
+#define OPENTHREAD_CONFIG_IP6_SLAAC_DEPRECATION_INTERVAL 300
+#endif
+
+/**
  * @def OPENTHREAD_CONFIG_MPL_SEED_SET_ENTRIES
  *
  * The number of MPL Seed Set entries for duplicate detection.
@@ -178,8 +203,8 @@
  * Define as 1 to enable support for TLS over TCP.
  *
  */
-#if OPENTHREAD_CONFIG_TCP_ENABLE && !defined(OPENTHREAD_CONFIG_TLS_ENABLE)
-#define OPENTHREAD_CONFIG_TLS_ENABLE 1
+#ifndef OPENTHREAD_CONFIG_TLS_ENABLE
+#define OPENTHREAD_CONFIG_TLS_ENABLE (OPENTHREAD_CONFIG_TCP_ENABLE || OPENTHREAD_CONFIG_BLE_TCAT_ENABLE)
 #endif
 
 /**
@@ -201,5 +226,20 @@
 #ifndef OPENTHREAD_CONFIG_IP6_BR_COUNTERS_ENABLE
 #define OPENTHREAD_CONFIG_IP6_BR_COUNTERS_ENABLE OPENTHREAD_CONFIG_BORDER_ROUTING_ENABLE
 #endif
+
+/**
+ * @def OPENTHREAD_CONFIG_IP6_RESTRICT_FORWARDING_LARGER_SCOPE_MCAST_WITH_LOCAL_SRC
+ *
+ * Define as 1 to restrict multicast forwarding to larger scope from local sources.
+ *
+ */
+#ifndef OPENTHREAD_CONFIG_IP6_RESTRICT_FORWARDING_LARGER_SCOPE_MCAST_WITH_LOCAL_SRC
+#define OPENTHREAD_CONFIG_IP6_RESTRICT_FORWARDING_LARGER_SCOPE_MCAST_WITH_LOCAL_SRC 0
+#endif
+
+/**
+ * @}
+ *
+ */
 
 #endif // CONFIG_IP6_H_

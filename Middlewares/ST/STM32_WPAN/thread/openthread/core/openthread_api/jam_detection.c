@@ -34,6 +34,8 @@ extern otJamDetectionCallback otJamDetectionCallbackCb;
 #if OPENTHREAD_CONFIG_JAM_DETECTION_ENABLE
 otError otJamDetectionSetRssiThreshold(otInstance *aInstance, int8_t aRssiThreshold)
 {
+	otError rspData;
+	
     Pre_OtCmdProcessing();
     /* prepare buffer */
     Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -46,11 +48,17 @@ otError otJamDetectionSetRssiThreshold(otInstance *aInstance, int8_t aRssiThresh
     Ot_Cmd_Transfer();
 
     p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-    return (otError)p_ot_req->Data[0];
+    rspData = (otError)p_ot_req->Data[0];
+  
+	Post_OtCmdProcessing();
+  
+	return rspData;
 }
 
 int8_t otJamDetectionGetRssiThreshold(otInstance *aInstance)
 {
+	int8_t rspData;
+	
     Pre_OtCmdProcessing();
     /* prepare buffer */
     Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -62,11 +70,17 @@ int8_t otJamDetectionGetRssiThreshold(otInstance *aInstance)
     Ot_Cmd_Transfer();
 
     p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-    return (int8_t)p_ot_req->Data[0];
+    rspData = (int8_t)p_ot_req->Data[0];
+  
+	Post_OtCmdProcessing();
+  
+	return rspData;
 }
 
 otError otJamDetectionSetWindow(otInstance *aInstance, uint8_t aWindow)
 {
+	otError rspData;
+	
     Pre_OtCmdProcessing();
     /* prepare buffer */
     Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -79,11 +93,17 @@ otError otJamDetectionSetWindow(otInstance *aInstance, uint8_t aWindow)
     Ot_Cmd_Transfer();
 
     p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-    return (otError)p_ot_req->Data[0];
+    rspData = (otError)p_ot_req->Data[0];
+  
+	Post_OtCmdProcessing();
+  
+	return rspData;
 }
 
 uint8_t otJamDetectionGetWindow(otInstance *aInstance)
 {
+	uint8_t rspData;
+	
     Pre_OtCmdProcessing();
     /* prepare buffer */
     Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -95,11 +115,17 @@ uint8_t otJamDetectionGetWindow(otInstance *aInstance)
     Ot_Cmd_Transfer();
 
     p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-    return (int8_t)p_ot_req->Data[0];
+    rspData = (uint8_t)p_ot_req->Data[0];
+  
+	Post_OtCmdProcessing();
+  
+	return rspData;
 }
 
 otError otJamDetectionSetBusyPeriod(otInstance *aInstance, uint8_t aBusyPeriod)
 {
+	otError rspData;
+	
     Pre_OtCmdProcessing();
     /* prepare buffer */
     Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -112,11 +138,17 @@ otError otJamDetectionSetBusyPeriod(otInstance *aInstance, uint8_t aBusyPeriod)
     Ot_Cmd_Transfer();
 
     p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-    return (otError)p_ot_req->Data[0];
+    rspData = (otError)p_ot_req->Data[0];
+  
+	Post_OtCmdProcessing();
+  
+	return rspData;
 }
 
 uint8_t otJamDetectionGetBusyPeriod(otInstance *aInstance)
 {
+	uint8_t rspData;
+	
     Pre_OtCmdProcessing();
     /* prepare buffer */
     Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -128,11 +160,17 @@ uint8_t otJamDetectionGetBusyPeriod(otInstance *aInstance)
     Ot_Cmd_Transfer();
 
     p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-    return (int8_t)p_ot_req->Data[0];
+    rspData = (uint8_t)p_ot_req->Data[0];
+  
+	Post_OtCmdProcessing();
+  
+	return rspData;
 }
 
 otError otJamDetectionStart(otInstance *aInstance, otJamDetectionCallback aCallback, void *aContext)
 {
+	otError rspData;
+	
     Pre_OtCmdProcessing();
     /* Save Callback to global variable */
     otJamDetectionCallbackCb = aCallback;
@@ -148,11 +186,17 @@ otError otJamDetectionStart(otInstance *aInstance, otJamDetectionCallback aCallb
     Ot_Cmd_Transfer();
 
     p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-    return (otError)p_ot_req->Data[0];
+    rspData = (otError)p_ot_req->Data[0];
+  
+	Post_OtCmdProcessing();
+  
+	return rspData;
 }
 
 otError otJamDetectionStop(otInstance *aInstance)
 {
+	otError rspData;
+	
     Pre_OtCmdProcessing();
     /* prepare buffer */
     Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -164,11 +208,17 @@ otError otJamDetectionStop(otInstance *aInstance)
     Ot_Cmd_Transfer();
 
     p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-    return (otError)p_ot_req->Data[0];
+    rspData = (otError)p_ot_req->Data[0];
+  
+	Post_OtCmdProcessing();
+  
+	return rspData;
 }
 
 bool otJamDetectionIsEnabled(otInstance *aInstance)
 {
+	bool rspData;
+	
     Pre_OtCmdProcessing();
     /* prepare buffer */
     Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -180,11 +230,17 @@ bool otJamDetectionIsEnabled(otInstance *aInstance)
     Ot_Cmd_Transfer();
 
     p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-    return (bool)p_ot_req->Data[0];
+    rspData = (bool)p_ot_req->Data[0];
+  
+	Post_OtCmdProcessing();
+  
+	return rspData;
 }
 
 bool otJamDetectionGetState(otInstance *aInstance)
 {
+	bool rspData;
+	
     Pre_OtCmdProcessing();
     /* prepare buffer */
     Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -196,11 +252,17 @@ bool otJamDetectionGetState(otInstance *aInstance)
     Ot_Cmd_Transfer();
 
     p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-    return (bool)p_ot_req->Data[0];
+    rspData = (bool)p_ot_req->Data[0];
+  
+	Post_OtCmdProcessing();
+  
+	return rspData;
 }
 
 uint64_t otJamDetectionGetHistoryBitmap(otInstance *aInstance)
 {
+	uint64_t rspData;
+	
     Pre_OtCmdProcessing();
     /* prepare buffer */
     Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -212,8 +274,11 @@ uint64_t otJamDetectionGetHistoryBitmap(otInstance *aInstance)
     Ot_Cmd_Transfer();
 
     p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-
     /* 64bit word is returned with two 32bits words (MSB are at offset 1 and LSB are offset 0) */
-    return (uint64_t)((p_ot_req->Data[1] << 32) | p_ot_req->Data[0]);
+    rsp_data = (uint64_t)((p_ot_req->Data[1] << 32) | p_ot_req->Data[0]);
+	
+	Post_OtCmdProcessing();
+	
+	return rspData;
 }
 #endif /* OPENTHREAD_CONFIG_JAM_DETECTION_ENABLE */

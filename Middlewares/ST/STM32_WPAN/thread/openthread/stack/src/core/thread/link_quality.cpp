@@ -36,9 +36,10 @@
 #include <stdio.h>
 
 #include "common/code_utils.hpp"
-#include "common/instance.hpp"
 #include "common/locator_getters.hpp"
 #include "common/num_utils.hpp"
+#include "common/numeric_limits.hpp"
+#include "instance/instance.hpp"
 
 namespace ot {
 
@@ -116,16 +117,20 @@ exit:
 
 void LqiAverager::Add(uint8_t aLqi)
 {
-    uint8_t count;
+    uint8_t  count;
+    uint16_t newAverage;
 
-    if (mCount < UINT8_MAX)
+    if (mCount < NumericLimits<uint8_t>::kMax)
     {
         mCount++;
     }
 
     count = Min(static_cast<uint8_t>(1 << kCoeffBitShift), mCount);
 
-    mAverage = static_cast<uint8_t>(((mAverage * (count - 1)) + aLqi) / count);
+    newAverage = mAverage;
+    newAverage = (newAverage * (count - 1) + aLqi) / count;
+
+    mAverage = static_cast<uint8_t>(newAverage);
 }
 
 void LinkQualityInfo::Clear(void)

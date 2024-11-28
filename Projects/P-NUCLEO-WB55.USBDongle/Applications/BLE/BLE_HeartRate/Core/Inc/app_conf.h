@@ -678,8 +678,8 @@ typedef enum
   CFG_SCH_PRIO_0,
   /* USER CODE BEGIN CFG_SCH_Prio_Id_t */
   CFG_SCH_PRIO_1,
-  CFG_PRIO_NBR,
   /* USER CODE END CFG_SCH_Prio_Id_t */
+  CFG_SCH_PRIO_NBR
 } CFG_SCH_Prio_Id_t;
 
 /**

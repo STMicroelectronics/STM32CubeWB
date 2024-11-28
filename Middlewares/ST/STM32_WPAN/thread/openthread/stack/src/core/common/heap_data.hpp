@@ -170,6 +170,29 @@ public:
     void CopyBytesTo(uint8_t *aBuffer) const { return mData.CopyBytesTo(aBuffer); }
 
     /**
+     * Compares the `Data` content with the bytes from a given buffer.
+     *
+     * @param[in] aBuffer   A pointer to a buffer to compare with the data.
+     * @param[in] aLength   The length of @p aBuffer.
+     *
+     * @retval TRUE   The `Data` content matches the bytes in @p aBuffer.
+     * @retval FALSE  The `Data` content does not match the byes in @p aBuffer.
+     *
+     */
+    bool Matches(const uint8_t *aBuffer, uint16_t aLength) const;
+
+    /**
+     * Overloads operator `==` to compare the `Data` content with the content from another one.
+     *
+     * @param[in] aOtherData   The other `Data` to compare with.
+     *
+     * @retval TRUE   The two `Data` instances have matching content (same length and same bytes).
+     * @retval FALSE  The two `Data` instances do not have matching content.
+     *
+     */
+    bool operator==(const Data &aOtherData) const { return mData == aOtherData.mData; }
+
+    /**
      * Frees any buffer allocated by the `Heap::Data`.
      *
      * The `Heap::Data` destructor will automatically call `Free()`. This method allows caller to free the buffer

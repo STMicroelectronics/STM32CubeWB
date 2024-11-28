@@ -66,6 +66,7 @@
 #define HAL_UART_MODULE_ENABLED
 /* #define HAL_USART_MODULE_ENABLED */
 /* #define HAL_WWDG_MODULE_ENABLED */
+#define HAL_EXTI_MODULE_ENABLED
 
 #define USE_HAL_ADC_REGISTER_CALLBACKS    0
 #define USE_HAL_COMP_REGISTER_CALLBACKS   0
@@ -325,6 +326,10 @@
 #ifdef HAL_WWDG_MODULE_ENABLED
  #include "stm32wbxx_hal_wwdg.h"
 #endif /* HAL_WWDG_MODULE_ENABLED */
+
+#ifdef HAL_EXTI_MODULE_ENABLED
+  #include "stm32wbxx_hal_exti.h"
+#endif /* HAL_EXTI_MODULE_ENABLED */
 
 /* Exported macro ------------------------------------------------------------*/
 #ifdef  USE_FULL_ASSERT

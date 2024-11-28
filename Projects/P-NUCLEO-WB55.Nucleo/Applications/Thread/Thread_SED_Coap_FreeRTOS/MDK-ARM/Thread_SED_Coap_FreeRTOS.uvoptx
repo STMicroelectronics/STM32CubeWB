@@ -1452,7 +1452,7 @@
 
   <Group>
     <GroupName>Middlewares/Third_party/FreeRTOS/Source/portable/IAR/ARM_CM4F</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -1505,18 +1505,6 @@
       <bDave2>0</bDave2>
       <PathWithFileName>../../../../../../Utilities/lpm/tiny_lpm/stm32_lpm.c</PathWithFileName>
       <FilenameWithoutPath>stm32_lpm.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>17</GroupNumber>
-      <FileNumber>101</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>../../../../../../Utilities/sequencer/stm32_seq.c</PathWithFileName>
-      <FilenameWithoutPath>stm32_seq.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

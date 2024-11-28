@@ -39,7 +39,7 @@
 /*  FUNCTION                                               RELEASE        */
 /*                                                                        */
 /*    _txm_module_manager_thread_create                   PORTABLE C      */
-/*                                                           6.2.1        */
+/*                                                           6.3.0        */
 /*  AUTHOR                                                                */
 /*                                                                        */
 /*    Scott Larson, Microsoft Corporation                                 */
@@ -94,6 +94,12 @@
 /*  03-08-2023      Scott Larson            Check module stack for        */
 /*                                            overlap,                    */
 /*                                            resulting in version 6.2.1  */
+/*  10-31-2023      Xiuwen Cai, Yajun xia   Modified comment(s),          */
+/*                                            added option for random     */
+/*                                            number stack filling,       */
+/*                                            fixed the kernel stack      */
+/*                                            allocation issue,           */
+/*                                            resulting in version 6.3.0  */
 /*                                                                        */
 /**************************************************************************/
 UINT  _txm_module_manager_thread_create(TX_THREAD *thread_ptr, CHAR *name_ptr,
@@ -272,6 +278,17 @@ ULONG                   i;
     }
 
 #ifndef TX_DISABLE_STACK_FILLING
+#if defined(TX_ENABLE_RANDOM_NUMBER_STACK_FILLING) && defined(TX_ENABLE_STACK_CHECKING)
+
+    /* Initialize the stack fill value to a 8-bit random value.  */
+    thread_ptr -> tx_thread_stack_fill_value = ((ULONG) TX_RAND()) & 0xFFUL;
+
+    /* Duplicate the random value in each of the 4 bytes of the stack fill value.  */
+    thread_ptr -> tx_thread_stack_fill_value = thread_ptr -> tx_thread_stack_fill_value |
+                    (thread_ptr -> tx_thread_stack_fill_value << 8) |
+                    (thread_ptr -> tx_thread_stack_fill_value << 16) |
+                    (thread_ptr -> tx_thread_stack_fill_value << 24);
+#endif
 
     /* Set the thread stack to a pattern prior to creating the initial
        stack frame.  This pattern is used by the stack checking routines
@@ -312,9 +329,8 @@ ULONG                   i;
     /* Initialize thread control block to all zeros.  */
     TX_MEMSET(thread_ptr, 0, sizeof(TX_THREAD));
 
-#if TXM_MODULE_MEMORY_PROTECTION
-    /* If this is a memory protected module, allocate a kernel stack.  */
-    if((module_instance -> txm_module_instance_property_flags) & TXM_MODULE_MEMORY_PROTECTION)
+    /* If the thread runs on user mode, allocate the kernel stack for syscall.  */
+    if((module_instance -> txm_module_instance_property_flags) & TXM_MODULE_USER_MODE)
     {
         ULONG status;
 
@@ -339,6 +355,7 @@ ULONG                   i;
         thread_ptr -> tx_thread_module_kernel_stack_size = TXM_MODULE_KERNEL_STACK_SIZE;
     }
 
+#if TXM_MODULE_MEMORY_PROTECTION
     /* Place the stack parameters into the thread's control block.  */
     thread_ptr -> tx_thread_module_stack_start =  stack_start;
     thread_ptr -> tx_thread_module_stack_size =   stack_size;

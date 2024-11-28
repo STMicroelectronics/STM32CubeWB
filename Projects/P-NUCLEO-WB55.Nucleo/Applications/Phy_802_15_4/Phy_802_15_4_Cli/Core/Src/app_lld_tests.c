@@ -80,6 +80,8 @@ static void m0CmdStopRequired(uint32_t stopRequired);
 
 /* USER CODE END PFP */
 
+/* Global variables -----------------------------------------------*/
+
 /* Private variables -----------------------------------------------*/
 typedef enum 
 {
@@ -522,7 +524,7 @@ static void uartRxBufferProcess( void )
         uartTxLlAdd("\r\n");
         /* add a \0 to indicate end of command to M0 and to have it in command history (needed to use strlen()) */
         currentCommand[currentCommandPos++] = 0;
-        
+     	
         /* Copy the current command in history buffer before to send it to M0 */
         memcpy(commandHistory[commandHistoryIdxSav],currentCommand,currentCommandPos);
         commandHistoryIdxSav = (commandHistoryIdxSav+1) % CLI_CMD_HISTORY_LENGTH;
@@ -530,6 +532,7 @@ static void uartRxBufferProcess( void )
         
         /* UART task scheduling to send it to M0 */
         UTIL_SEQ_SetTask(1U << CFG_TASK_SEND_CLI_TO_M0, CFG_SCH_PRIO_0);
+        
       }
     }
     else {

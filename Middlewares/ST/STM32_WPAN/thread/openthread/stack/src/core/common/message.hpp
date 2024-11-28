@@ -200,23 +200,25 @@ protected:
         uint16_t     mPanId;       // PAN ID (used for MLE Discover Request and Response).
         uint8_t      mChannel;     // The message channel (used for MLE Announce).
         RssAverager  mRssAverager; // The averager maintaining the received signal strength (RSS) average.
-#if OPENTHREAD_CONFIG_MLE_LINK_METRICS_SUBJECT_ENABLE
-        LqiAverager mLqiAverager; // The averager maintaining the Link quality indicator (LQI) average.
-#endif
+        LqiAverager  mLqiAverager; // The averager maintaining the Link quality indicator (LQI) average.
 #if OPENTHREAD_FTD
         ChildMask mChildMask; // ChildMask to indicate which sleepy children need to receive this.
 #endif
 
-        uint8_t mType : 3;             // The message type.
-        uint8_t mSubType : 4;          // The message sub type.
-        bool    mDirectTx : 1;         // Whether a direct transmission is required.
-        bool    mLinkSecurity : 1;     // Whether link security is enabled.
-        uint8_t mPriority : 2;         // The message priority level (higher value is higher priority).
-        bool    mInPriorityQ : 1;      // Whether the message is queued in normal or priority queue.
-        bool    mTxSuccess : 1;        // Whether the direct tx of the message was successful.
-        bool    mDoNotEvict : 1;       // Whether this message may be evicted.
-        bool    mMulticastLoop : 1;    // Whether this multicast message may be looped back.
-        bool    mResolvingAddress : 1; // Whether the message is pending an address query resolution.
+        uint8_t mType : 3;                // The message type.
+        uint8_t mSubType : 4;             // The message sub type.
+        bool    mDirectTx : 1;            // Whether a direct transmission is required.
+        bool    mLinkSecurity : 1;        // Whether link security is enabled.
+        uint8_t mPriority : 2;            // The message priority level (higher value is higher priority).
+        bool    mInPriorityQ : 1;         // Whether the message is queued in normal or priority queue.
+        bool    mTxSuccess : 1;           // Whether the direct tx of the message was successful.
+        bool    mDoNotEvict : 1;          // Whether this message may be evicted.
+        bool    mMulticastLoop : 1;       // Whether this multicast message may be looped back.
+        bool    mResolvingAddress : 1;    // Whether the message is pending an address query resolution.
+        bool    mAllowLookbackToHost : 1; // Whether the message is allowed to be looped back to host.
+        bool    mIsDstPanIdBroadcast : 1; // IWhether the dest PAN ID is broadcast.
+        uint8_t mOrigin : 2;
+        // The origin of the message.
 #if OPENTHREAD_CONFIG_MULTI_RADIO
         uint8_t mRadioType : 2;      // The radio link type the message was received on, or should be sent on.
         bool    mIsRadioTypeSet : 1; // Whether the radio type is set.
@@ -284,7 +286,8 @@ public:
         kTypeSupervision  = 2, ///< A child supervision frame.
         kTypeMacEmptyData = 3, ///< An empty MAC data frame.
         kTypeIp4          = 4, ///< A full uncompressed IPv4 packet, for NAT64.
-        kTypeOther        = 5, ///< Other (data) message.
+        kTypeBle          = 5, ///< A BLE payload message.
+        kTypeOther        = 6, ///< Other (data) message.
     };
 
     /**
@@ -347,6 +350,17 @@ public:
          *
          */
         kCopyToUse,
+    };
+
+    /**
+     * Represents an IPv6 message origin.
+     *
+     */
+    enum Origin : uint8_t
+    {
+        kOriginThreadNetif   = OT_MESSAGE_ORIGIN_THREAD_NETIF,   // Message from Thread Netif.
+        kOriginHostTrusted   = OT_MESSAGE_ORIGIN_HOST_TRUSTED,   // Message from a trusted source on host.
+        kOriginHostUntrusted = OT_MESSAGE_ORIGIN_HOST_UNTRUSTED, // Message from an untrusted source on host.
     };
 
     /**
@@ -651,6 +665,17 @@ public:
      *
      */
     Error InsertHeader(uint16_t aOffset, uint16_t aLength);
+
+    /**
+     * Removes footer bytes from the end of the message.
+     *
+     * The caller should ensure the message contains the bytes to be removed, otherwise as many bytes as available
+     * will be removed.
+     *
+     * @param[in] aLength   Number of footer bytes to remove from end of the `Message`.
+     *
+     */
+    void RemoveFooter(uint16_t aLength);
 
     /**
      * Appends bytes to the end of the message.
@@ -1001,11 +1026,15 @@ public:
     void SetMeshDest(uint16_t aMeshDest) { GetMetadata().mMeshDest = aMeshDest; }
 
     /**
-     * Returns the IEEE 802.15.4 Destination PAN ID.
+     * Returns the IEEE 802.15.4 Source or Destination PAN ID.
      *
-     * @note Only use this when sending MLE Discover Request or Response messages.
+     * For a message received over the Thread radio, specifies the Source PAN ID when present in MAC header, otherwise
+     * specifies the Destination PAN ID.
      *
-     * @returns The IEEE 802.15.4 Destination PAN ID.
+     * For a message to be sent over the Thread radio, this is set and used for MLE Discover Request or Response
+     * messages.
+     *
+     * @returns The IEEE 802.15.4 PAN ID.
      *
      */
     uint16_t GetPanId(void) const { return GetMetadata().mPanId; }
@@ -1019,6 +1048,17 @@ public:
      *
      */
     void SetPanId(uint16_t aPanId) { GetMetadata().mPanId = aPanId; }
+
+    /**
+     * Indicates whether the Destination PAN ID is broadcast.
+     *
+     * This is applicable for messages received over Thread radio.
+     *
+     * @retval TRUE   The Destination PAN ID is broadcast.
+     * @retval FALSE  The Destination PAN ID is not broadcast.
+     *
+     */
+    bool IsDstPanIdBroadcast(void) const { return GetMetadata().mIsDstPanIdBroadcast; }
 
     /**
      * Returns the IEEE 802.15.4 Channel to use for transmission.
@@ -1136,6 +1176,69 @@ public:
     void SetResolvingAddress(bool aResolvingAddress) { GetMetadata().mResolvingAddress = aResolvingAddress; }
 
     /**
+     * Indicates whether the message is allowed to be looped back to host.
+     *
+     * @retval TRUE   If the message is allowed to be looped back to host.
+     * @retval FALSE  If the message is not allowed to be looped back to host.
+     *
+     */
+    bool IsLoopbackToHostAllowed(void) const { return GetMetadata().mAllowLookbackToHost; }
+
+    /**
+     * Sets whether or not allow the message to be looped back to host.
+     *
+     * @param[in] aAllowLoopbackToHost  Whether or not allow the message to be looped back to host.
+     *
+     */
+    void SetLoopbackToHostAllowed(bool aAllowLoopbackToHost)
+    {
+        GetMetadata().mAllowLookbackToHost = aAllowLoopbackToHost;
+    }
+
+    /**
+     * Gets the message origin.
+     *
+     * @returns An enum representing the origin of the message.
+     *
+     */
+    Origin GetOrigin(void) const { return static_cast<Origin>(GetMetadata().mOrigin); }
+
+    /**
+     * Sets the message origin.
+     *
+     * @param[in]  aOrigin  An enum representing the origin of the message.
+     *
+     */
+    void SetOrigin(Origin aOrigin) { GetMetadata().mOrigin = aOrigin; }
+
+    /**
+     * Indicates whether or not the message origin is Thread Netif.
+     *
+     * @retval TRUE   If the message origin is Thread Netif.
+     * @retval FALSE  If the message origin is not Thread Netif.
+     *
+     */
+    bool IsOriginThreadNetif(void) const { return GetOrigin() == kOriginThreadNetif; }
+
+    /**
+     * Indicates whether or not the message origin is a trusted source on host.
+     *
+     * @retval TRUE   If the message origin is a trusted source on host.
+     * @retval FALSE  If the message origin is not a trusted source on host.
+     *
+     */
+    bool IsOriginHostTrusted(void) const { return GetOrigin() == kOriginHostTrusted; }
+
+    /**
+     * Indicates whether or not the message origin is an untrusted source on host.
+     *
+     * @retval TRUE   If the message origin is an untrusted source on host.
+     * @retval FALSE  If the message origin is not an untrusted source on host.
+     *
+     */
+    bool IsOriginHostUntrusted(void) const { return GetOrigin() == kOriginHostUntrusted; }
+
+    /**
      * Indicates whether or not link security is enabled for the message.
      *
      * @retval TRUE   If link security is enabled.
@@ -1178,7 +1281,6 @@ public:
      */
     const RssAverager &GetRssAverager(void) const { return GetMetadata().mRssAverager; }
 
-#if OPENTHREAD_CONFIG_MLE_LINK_METRICS_SUBJECT_ENABLE
     /**
      * Updates the average LQI (Link Quality Indicator) associated with the message.
      *
@@ -1205,7 +1307,25 @@ public:
      *
      */
     uint8_t GetPsduCount(void) const { return GetMetadata().mLqiAverager.GetCount(); }
-#endif
+
+    /**
+     * Returns a const reference to LqiAverager of the message.
+     *
+     * @returns A const reference to the LqiAverager of the message.
+     *
+     */
+    const LqiAverager &GetLqiAverager(void) const { return GetMetadata().mLqiAverager; }
+
+    /**
+     * Retrieves `ThreadLinkInfo` from the message if received over Thread radio with origin `kOriginThreadNetif`.
+     *
+     * @pram[out] aLinkInfo     A reference to a `ThreadLinkInfo` to populate.
+     *
+     * @retval kErrorNone       Successfully retrieved the link info, @p `aLinkInfo` is updated.
+     * @retval kErrorNotFound   Message origin is not `kOriginThreadNetif`.
+     *
+     */
+    Error GetLinkInfo(ThreadLinkInfo &aLinkInfo) const;
 
     /**
      * Sets the message's link info properties (PAN ID, link security, RSS) from a given `ThreadLinkInfo`.
@@ -1213,7 +1333,7 @@ public:
      * @param[in] aLinkInfo   The `ThreadLinkInfo` instance from which to set message's related properties.
      *
      */
-    void SetLinkInfo(const ThreadLinkInfo &aLinkInfo);
+    void UpdateLinkInfoFrom(const ThreadLinkInfo &aLinkInfo);
 
     /**
      * Returns a pointer to the message queue (if any) where this message is queued.
@@ -1411,6 +1531,9 @@ private:
     bool IsInAQueue(void) const { return (GetMetadata().mQueue != nullptr); }
     void SetMessageQueue(MessageQueue *aMessageQueue);
     void SetPriorityQueue(PriorityQueue *aPriorityQueue);
+
+    void SetRssAverager(const RssAverager &aRssAverager) { GetMetadata().mRssAverager = aRssAverager; }
+    void SetLqiAverager(const LqiAverager &aLqiAverager) { GetMetadata().mLqiAverager = aLqiAverager; }
 
     Message       *&Next(void) { return GetMetadata().mNext; }
     Message *const &Next(void) const { return GetMetadata().mNext; }
@@ -1797,6 +1920,8 @@ DefineCoreType(otMessageBuffer, Buffer);
 DefineCoreType(otMessageSettings, Message::Settings);
 DefineCoreType(otMessage, Message);
 DefineCoreType(otMessageQueue, MessageQueue);
+
+DefineMapEnum(otMessageOrigin, Message::Origin);
 
 } // namespace ot
 

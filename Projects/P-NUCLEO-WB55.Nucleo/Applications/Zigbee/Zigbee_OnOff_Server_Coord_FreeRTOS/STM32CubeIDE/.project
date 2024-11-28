@@ -191,11 +191,6 @@
 			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/Third_Party/FreeRTOS/Source/timers.c</locationURI>
 		</link>
 		<link>
-			<name>Utilities/sequencer/stm32_seq.c</name>
-			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/Utilities/sequencer/stm32_seq.c</locationURI>
-		</link>
-		<link>
 			<name>Application/User/Core/app_entry.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/app_entry.c</locationURI>

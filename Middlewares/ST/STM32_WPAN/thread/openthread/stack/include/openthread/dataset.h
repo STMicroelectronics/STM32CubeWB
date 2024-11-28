@@ -201,18 +201,18 @@ typedef uint32_t otChannelMask;
  */
 typedef struct otOperationalDatasetComponents
 {
-    bool mIsActiveTimestampPresent : 1;  ///< TRUE if Active Timestamp is present, FALSE otherwise.
-    bool mIsPendingTimestampPresent : 1; ///< TRUE if Pending Timestamp is present, FALSE otherwise.
-    bool mIsNetworkKeyPresent : 1;       ///< TRUE if Network Key is present, FALSE otherwise.
-    bool mIsNetworkNamePresent : 1;      ///< TRUE if Network Name is present, FALSE otherwise.
-    bool mIsExtendedPanIdPresent : 1;    ///< TRUE if Extended PAN ID is present, FALSE otherwise.
-    bool mIsMeshLocalPrefixPresent : 1;  ///< TRUE if Mesh Local Prefix is present, FALSE otherwise.
-    bool mIsDelayPresent : 1;            ///< TRUE if Delay Timer is present, FALSE otherwise.
-    bool mIsPanIdPresent : 1;            ///< TRUE if PAN ID is present, FALSE otherwise.
-    bool mIsChannelPresent : 1;          ///< TRUE if Channel is present, FALSE otherwise.
-    bool mIsPskcPresent : 1;             ///< TRUE if PSKc is present, FALSE otherwise.
-    bool mIsSecurityPolicyPresent : 1;   ///< TRUE if Security Policy is present, FALSE otherwise.
-    bool mIsChannelMaskPresent : 1;      ///< TRUE if Channel Mask is present, FALSE otherwise.
+    bool mIsActiveTimestampPresent;  ///< TRUE if Active Timestamp is present, FALSE otherwise.
+    bool mIsPendingTimestampPresent; ///< TRUE if Pending Timestamp is present, FALSE otherwise.
+    bool mIsNetworkKeyPresent;       ///< TRUE if Network Key is present, FALSE otherwise.
+    bool mIsNetworkNamePresent;      ///< TRUE if Network Name is present, FALSE otherwise.
+    bool mIsExtendedPanIdPresent;    ///< TRUE if Extended PAN ID is present, FALSE otherwise.
+    bool mIsMeshLocalPrefixPresent;  ///< TRUE if Mesh Local Prefix is present, FALSE otherwise.
+    bool mIsDelayPresent;            ///< TRUE if Delay Timer is present, FALSE otherwise.
+    bool mIsPanIdPresent;            ///< TRUE if PAN ID is present, FALSE otherwise.
+    bool mIsChannelPresent;          ///< TRUE if Channel is present, FALSE otherwise.
+    bool mIsPskcPresent;             ///< TRUE if PSKc is present, FALSE otherwise.
+    bool mIsSecurityPolicyPresent;   ///< TRUE if Security Policy is present, FALSE otherwise.
+    bool mIsChannelMaskPresent;      ///< TRUE if Channel Mask is present, FALSE otherwise.
 } otOperationalDatasetComponents;
 
 /**
@@ -380,12 +380,15 @@ otError otDatasetGetActiveTlvs(otInstance *aInstance, otOperationalDatasetTlvs *
  * its Parent. Note that a router-capable device will not transition to the Router or Leader roles until it has a
  * complete Active Dataset.
  *
+ * This function consistently returns `OT_ERROR_NONE` and can effectively be treated as having a `void` return type.
+ * Previously, other errors (e.g., `OT_ERROR_NOT_IMPLEMENTED`) were allowed for legacy reasons. However, as
+ * non-volatile storage is now mandatory for Thread operation, any failure to save the dataset will trigger an
+ * assertion. The `otError` return type is retained for backward compatibility.
+ *
  * @param[in]  aInstance A pointer to an OpenThread instance.
  * @param[in]  aDataset  A pointer to the Active Operational Dataset.
  *
- * @retval OT_ERROR_NONE             Successfully set the Active Operational Dataset.
- * @retval OT_ERROR_NO_BUFS          Insufficient buffer space to set the Active Operational Dataset.
- * @retval OT_ERROR_NOT_IMPLEMENTED  The platform does not implement settings functionality.
+ * @retval OT_ERROR_NONE    Successfully set the Active Operational Dataset.
  *
  */
 otError otDatasetSetActive(otInstance *aInstance, const otOperationalDataset *aDataset);
@@ -409,9 +412,8 @@ otError otDatasetSetActive(otInstance *aInstance, const otOperationalDataset *aD
  * @param[in]  aInstance A pointer to an OpenThread instance.
  * @param[in]  aDataset  A pointer to the Active Operational Dataset.
  *
- * @retval OT_ERROR_NONE             Successfully set the Active Operational Dataset.
- * @retval OT_ERROR_NO_BUFS          Insufficient buffer space to set the Active Operational Dataset.
- * @retval OT_ERROR_NOT_IMPLEMENTED  The platform does not implement settings functionality.
+ * @retval OT_ERROR_NONE          Successfully set the Active Operational Dataset.
+ * @retval OT_ERROR_INVALID_ARGS  The @p aDataset is invalid. It is too long or contains incorrect TLV formatting.
  *
  */
 otError otDatasetSetActiveTlvs(otInstance *aInstance, const otOperationalDatasetTlvs *aDataset);
@@ -443,12 +445,15 @@ otError otDatasetGetPendingTlvs(otInstance *aInstance, otOperationalDatasetTlvs 
 /**
  * Sets the Pending Operational Dataset.
  *
+ * This function consistently returns `OT_ERROR_NONE` and can effectively be treated as having a `void` return type.
+ * Previously, other errors (e.g., `OT_ERROR_NOT_IMPLEMENTED`) were allowed for legacy reasons. However, as
+ * non-volatile storage is now mandatory for Thread operation, any failure to save the dataset will trigger an
+ * assertion. The `otError` return type is retained for backward compatibility.
+ *
  * @param[in]  aInstance A pointer to an OpenThread instance.
  * @param[in]  aDataset  A pointer to the Pending Operational Dataset.
  *
- * @retval OT_ERROR_NONE             Successfully set the Pending Operational Dataset.
- * @retval OT_ERROR_NO_BUFS          Insufficient buffer space to set the Pending Operational Dataset.
- * @retval OT_ERROR_NOT_IMPLEMENTED  The platform does not implement settings functionality.
+ * @retval OT_ERROR_NONE    Successfully set the Pending Operational Dataset.
  *
  */
 otError otDatasetSetPending(otInstance *aInstance, const otOperationalDataset *aDataset);
@@ -459,9 +464,8 @@ otError otDatasetSetPending(otInstance *aInstance, const otOperationalDataset *a
  * @param[in]  aInstance A pointer to an OpenThread instance.
  * @param[in]  aDataset  A pointer to the Pending Operational Dataset.
  *
- * @retval OT_ERROR_NONE             Successfully set the Pending Operational Dataset.
- * @retval OT_ERROR_NO_BUFS          Insufficient buffer space to set the Pending Operational Dataset.
- * @retval OT_ERROR_NOT_IMPLEMENTED  The platform does not implement settings functionality.
+ * @retval OT_ERROR_NONE          Successfully set the Pending Operational Dataset.
+ * @retval OT_ERROR_INVALID_ARGS  The @p aDataset is invalid. It is too long or contains incorrect TLV formatting.
  *
  */
 otError otDatasetSetPendingTlvs(otInstance *aInstance, const otOperationalDatasetTlvs *aDataset);
@@ -589,7 +593,7 @@ otError otNetworkNameFromString(otNetworkName *aNetworkName, const char *aNameSt
  * @param[out] aDataset      A pointer to where the dataset will be placed.
  *
  * @retval OT_ERROR_NONE          Successfully set @p aDataset from @p aDatasetTlvs.
- * @retval OT_ERROR_INVALID_ARGS  @p aDatasetTlvs is invalid.
+ * @retval OT_ERROR_INVALID_ARGS  @p aDatasetTlvs's length is longer than `OT_OPERATIONAL_DATASET_MAX_LENGTH`.
  *
  */
 otError otDatasetParseTlvs(const otOperationalDatasetTlvs *aDatasetTlvs, otOperationalDataset *aDataset);
@@ -600,11 +604,8 @@ otError otDatasetParseTlvs(const otOperationalDatasetTlvs *aDatasetTlvs, otOpera
  * @param[in]  aDataset      An Operational dataset to convert to TLVs.
  * @param[out] aDatasetTlvs  A pointer to dataset TLVs to return the result.
  *
- * @retval OT_ERROR_NONE          Successfully converted @p aDataset and updated @p aDatasetTlvs.
- * @retval OT_ERROR_INVALID_ARGS  @p aDataset is invalid, does not contain active or pending timestamps.
- *
  */
-otError otDatasetConvertToTlvs(const otOperationalDataset *aDataset, otOperationalDatasetTlvs *aDatasetTlvs);
+void otDatasetConvertToTlvs(const otOperationalDataset *aDataset, otOperationalDatasetTlvs *aDatasetTlvs);
 
 /**
  * Updates a given Operational Dataset.

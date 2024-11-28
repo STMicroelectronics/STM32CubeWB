@@ -35,6 +35,16 @@
 #ifndef CONFIG_MAC_H_
 #define CONFIG_MAC_H_
 
+/**
+ * @addtogroup config-mac
+ *
+ * @brief
+ *   This module includes configuration variables for MAC.
+ *
+ * @{
+ *
+ */
+
 #include "config/time_sync.h"
 
 /**
@@ -396,6 +406,16 @@
 #endif
 
 /**
+ * @def OPENTHREAD_CONFIG_MAC_SOFTWARE_RX_ON_WHEN_IDLE_ENABLE
+ *
+ * Define to 1 to enable software rx off when idle switching.
+ *
+ */
+#ifndef OPENTHREAD_CONFIG_MAC_SOFTWARE_RX_ON_WHEN_IDLE_ENABLE
+#define OPENTHREAD_CONFIG_MAC_SOFTWARE_RX_ON_WHEN_IDLE_ENABLE 0
+#endif
+
+/**
  * @def OPENTHREAD_CONFIG_MAC_CSL_TRANSMITTER_ENABLE
  *
  * Define to 1 to enable csl transmitter logic.
@@ -423,6 +443,28 @@
  */
 #ifndef OPENTHREAD_CONFIG_MAC_CSL_AUTO_SYNC_ENABLE
 #define OPENTHREAD_CONFIG_MAC_CSL_AUTO_SYNC_ENABLE OPENTHREAD_CONFIG_MAC_CSL_RECEIVER_ENABLE
+#endif
+
+/**
+ * @def OPENTHREAD_CONFIG_MAC_CSL_RECEIVER_LOCAL_TIME_SYNC
+ *
+ * This setting configures the usage of local time rather than radio time for calculating the
+ * elapsed time since last CSL synchronization event in order to schedule the duration of the
+ * CSL receive window.
+ *
+ * This is done at expense of too short or too long receive windows depending on the drift
+ * between the two clocks within the CSL timeout period. In order to compensate for a too
+ * short receive window, CSL uncertainty can be increased.
+ *
+ * This setting can be useful for platforms in which is important to reduce the number of
+ * radio API calls, for instance when they are costly. One typical situation is a multicore
+ * chip architecture in which different instances of current time are being kept in host and
+ * radio cores. In this case, accessing the radio core current time API requires serialization
+ * and it is more costly than just accessing local host time.
+ *
+ */
+#ifndef OPENTHREAD_CONFIG_MAC_CSL_RECEIVER_LOCAL_TIME_SYNC
+#define OPENTHREAD_CONFIG_MAC_CSL_RECEIVER_LOCAL_TIME_SYNC 0
 #endif
 
 /**
@@ -554,5 +596,10 @@
 #ifndef OPENTHREAD_CONFIG_MAC_DATA_POLL_TIMEOUT
 #define OPENTHREAD_CONFIG_MAC_DATA_POLL_TIMEOUT 100
 #endif
+
+/**
+ * @}
+ *
+ */
 
 #endif // CONFIG_MAC_H_

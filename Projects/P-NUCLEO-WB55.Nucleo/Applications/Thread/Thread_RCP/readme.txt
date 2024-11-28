@@ -22,7 +22,16 @@
 
 This application is used to demonstrate the OpenThread Border router feature using an STM32WB device.
 To play with the demo, you need a Raspberry Pi 3B (RPi) to perform the link with Ethernet network.
-The full setup and the associated documentations can be requested to ST on demand.
+
+Connect the Nucleo board to the Raspberry Pi (Host) using the ST-Link USB connector (CN15).
+The default baud rate is set to 460800. If needed, change the value in MX_USART1_UART_Init().
+If user wants to connect a FTDI cable instead of the ST-Link to exchange data with the Host, 
+in app_conf.h, invert the values of CFG_DEBUG_TRACE_UART and CFG_CLI_UART. 
+In that case, baud rate can also be changed in MX_LPUART1_UART_Init().
+
+Refer to https://wiki.st.com/stm32mcu/wiki/Connectivity:STM32WB_OpenThread_Border_Router_Application 
+for more details
+
 
 @par Keywords
 

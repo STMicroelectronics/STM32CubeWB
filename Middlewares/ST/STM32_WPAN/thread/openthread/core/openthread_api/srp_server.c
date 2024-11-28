@@ -36,6 +36,8 @@ extern otSrpServerServiceUpdateHandler otSrpServerServiceUpdateHandlerCb;
 
 const char *otSrpServerGetDomain(otInstance *aInstance)
 {
+  const char * rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -47,11 +49,17 @@ const char *otSrpServerGetDomain(otInstance *aInstance)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (char*)p_ot_req->Data[0];
+  rspData = (const char *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otSrpServerSetDomain(otInstance *aInstance, const char *aDomain)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -64,11 +72,17 @@ otError otSrpServerSetDomain(otInstance *aInstance, const char *aDomain)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otSrpServerState otSrpServerGetState(otInstance *aInstance)
 {
+  otSrpServerState rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -80,11 +94,17 @@ otSrpServerState otSrpServerGetState(otInstance *aInstance)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otSrpServerState)p_ot_req->Data[0];
+  rspData = (otSrpServerState)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 uint16_t otSrpServerGetPort(otInstance *aInstance)
 {
+  uint16_t rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -96,11 +116,17 @@ uint16_t otSrpServerGetPort(otInstance *aInstance)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (uint16_t)p_ot_req->Data[0];
+  rspData = (uint16_t)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otSrpServerAddressMode otSrpServerGetAddressMode(otInstance *aInstance)
 {
+  otSrpServerAddressMode rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -112,11 +138,17 @@ otSrpServerAddressMode otSrpServerGetAddressMode(otInstance *aInstance)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otSrpServerAddressMode)p_ot_req->Data[0];
+  rspData = (otSrpServerAddressMode)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otSrpServerSetAddressMode(otInstance *aInstance, otSrpServerAddressMode aMode)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -129,11 +161,17 @@ otError otSrpServerSetAddressMode(otInstance *aInstance, otSrpServerAddressMode 
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 uint8_t otSrpServerGetAnycastModeSequenceNumber(otInstance *aInstance)
 {
+  uint8_t rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -145,11 +183,17 @@ uint8_t otSrpServerGetAnycastModeSequenceNumber(otInstance *aInstance)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (uint8_t)p_ot_req->Data[0];
+  rspData = (uint8_t)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otSrpServerSetAnycastModeSequenceNumber(otInstance *aInstance, uint8_t aSequenceNumber)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -162,7 +206,11 @@ otError otSrpServerSetAnycastModeSequenceNumber(otInstance *aInstance, uint8_t a
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 void otSrpServerSetEnabled(otInstance *aInstance, bool aEnabled)
@@ -178,7 +226,7 @@ void otSrpServerSetEnabled(otInstance *aInstance, bool aEnabled)
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 
 void otSrpServerGetTtlConfig(otInstance *aInstance, otSrpServerTtlConfig *aTtlConfig)
@@ -193,10 +241,14 @@ void otSrpServerGetTtlConfig(otInstance *aInstance, otSrpServerTtlConfig *aTtlCo
   p_ot_req->Data[0] = (uint32_t) aTtlConfig;
 
   Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
 }
 
 otError otSrpServerSetTtlConfig(otInstance *aInstance, const otSrpServerTtlConfig *aTtlConfig)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -209,7 +261,11 @@ otError otSrpServerSetTtlConfig(otInstance *aInstance, const otSrpServerTtlConfi
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 void otSrpServerGetLeaseConfig(otInstance *aInstance, otSrpServerLeaseConfig *aLeaseConfig)
@@ -225,11 +281,13 @@ void otSrpServerGetLeaseConfig(otInstance *aInstance, otSrpServerLeaseConfig *aL
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 
 otError otSrpServerSetLeaseConfig(otInstance *aInstance, const otSrpServerLeaseConfig *aLeaseConfig)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -242,7 +300,11 @@ otError otSrpServerSetLeaseConfig(otInstance *aInstance, const otSrpServerLeaseC
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 void otSrpServerSetServiceUpdateHandler(otInstance *                    aInstance,
@@ -263,7 +325,7 @@ void otSrpServerSetServiceUpdateHandler(otInstance *                    aInstanc
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 
 void otSrpServerHandleServiceUpdateResult(otInstance *aInstance, otSrpServerServiceUpdateId aId, otError aError)
@@ -280,11 +342,13 @@ void otSrpServerHandleServiceUpdateResult(otInstance *aInstance, otSrpServerServ
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 
 const otSrpServerHost *otSrpServerGetNextHost(otInstance *aInstance, const otSrpServerHost *aHost)
 {
+  const otSrpServerHost * rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -297,11 +361,17 @@ const otSrpServerHost *otSrpServerGetNextHost(otInstance *aInstance, const otSrp
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otSrpServerHost*)p_ot_req->Data[0];
+  rspData = (const otSrpServerHost *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 const otSrpServerResponseCounters *otSrpServerGetResponseCounters(otInstance *aInstance)
 {
+  const otSrpServerResponseCounters * rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -313,11 +383,17 @@ const otSrpServerResponseCounters *otSrpServerGetResponseCounters(otInstance *aI
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otSrpServerResponseCounters*)p_ot_req->Data[0];
+  rspData = (const otSrpServerResponseCounters *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 bool otSrpServerHostIsDeleted(const otSrpServerHost *aHost)
 {
+  bool rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -330,11 +406,17 @@ bool otSrpServerHostIsDeleted(const otSrpServerHost *aHost)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (bool)p_ot_req->Data[0];
+  rspData = (bool)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 const char *otSrpServerHostGetFullName(const otSrpServerHost *aHost)
 {
+  const char * rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -347,11 +429,17 @@ const char *otSrpServerHostGetFullName(const otSrpServerHost *aHost)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (char*)p_ot_req->Data[0];
+  rspData = (const char *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 const otIp6Address *otSrpServerHostGetAddresses(const otSrpServerHost *aHost, uint8_t *aAddressesNum)
 {
+  const otIp6Address * rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -365,7 +453,11 @@ const otIp6Address *otSrpServerHostGetAddresses(const otSrpServerHost *aHost, ui
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otIp6Address*)p_ot_req->Data[0];
+  rspData = (const otIp6Address *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 void otSrpServerHostGetLeaseInfo(const otSrpServerHost *aHost, otSrpServerLeaseInfo *aLeaseInfo)
@@ -381,11 +473,15 @@ void otSrpServerHostGetLeaseInfo(const otSrpServerHost *aHost, otSrpServerLeaseI
   p_ot_req->Data[1] = (uint32_t) aLeaseInfo;
 
   Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
 }
 
 const otSrpServerService *otSrpServerHostGetNextService(const otSrpServerHost *   aHost,
                                                         const otSrpServerService *aService)
 {
+  const otSrpServerService * rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -399,36 +495,18 @@ const otSrpServerService *otSrpServerHostGetNextService(const otSrpServerHost * 
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otSrpServerService*)p_ot_req->Data[0];
-}
 
-const otSrpServerService *otSrpServerHostFindNextService(const otSrpServerHost *   aHost,
-                                                         const otSrpServerService *aPrevService,
-                                                         otSrpServerServiceFlags   aFlags,
-                                                         const char *              aServiceName,
-                                                         const char *              aInstanceName)
-{
-  Pre_OtCmdProcessing();
-  /* prepare buffer */
-  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
-
-  p_ot_req->ID = MSG_M4TOM0_OT_SRP_SERVER_HOST_FIND_NEXT_SERVICE;
-
-  p_ot_req->Size=5;
-  p_ot_req->Data[0] = (uint32_t) aHost;
-  p_ot_req->Data[1] = (uint32_t) aPrevService;
-  p_ot_req->Data[2] = (uint32_t) aFlags;
-  p_ot_req->Data[3] = (uint32_t) aServiceName;
-  p_ot_req->Data[4] = (uint32_t) aInstanceName;
-
-  Ot_Cmd_Transfer();
-
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otSrpServerService*)p_ot_req->Data[0];
+  rspData = (const otSrpServerService *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 bool otSrpServerServiceIsDeleted(const otSrpServerService *aService)
 {
+  bool rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -441,45 +519,17 @@ bool otSrpServerServiceIsDeleted(const otSrpServerService *aService)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (bool)p_ot_req->Data[0];
-}
-
-bool otSrpServerServiceIsSubType(const otSrpServerService *aService)
-{
-  Pre_OtCmdProcessing();
-  /* prepare buffer */
-  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
-
-  p_ot_req->ID = MSG_M4TOM0_OT_SRP_SERVER_SERVICE_IS_SUB_TYPE;
-
-  p_ot_req->Size=1;
-  p_ot_req->Data[0] = (uint32_t) aService;
-
-  Ot_Cmd_Transfer();
-
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (bool)p_ot_req->Data[0];
-}
-
-const char *otSrpServerServiceGetFullName(const otSrpServerService *aService)
-{
-  Pre_OtCmdProcessing();
-  /* prepare buffer */
-  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
-
-  p_ot_req->ID = MSG_M4TOM0_OT_SRP_SERVER_SERVICE_GET_FULL_NAME;
-
-  p_ot_req->Size=1;
-  p_ot_req->Data[0] = (uint32_t) aService;
-
-  Ot_Cmd_Transfer();
-
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (char*)p_ot_req->Data[0];
+  rspData = (bool)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 const char *otSrpServerServiceGetInstanceName(const otSrpServerService *aService)
 {
+  const char * rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -492,11 +542,17 @@ const char *otSrpServerServiceGetInstanceName(const otSrpServerService *aService
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (char*)p_ot_req->Data[0];
+  rspData = (const char *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 const char *otSrpServerServiceGetServiceName(const otSrpServerService *aService)
 {
+  const char * rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -509,30 +565,17 @@ const char *otSrpServerServiceGetServiceName(const otSrpServerService *aService)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (char*)p_ot_req->Data[0];
-}
-
-otError otSrpServerServiceGetServiceSubTypeLabel(const otSrpServerService *aService, char *aLabel, uint8_t aMaxSize)
-{
-  Pre_OtCmdProcessing();
-  /* prepare buffer */
-  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
-
-  p_ot_req->ID = MSG_M4TOM0_OT_SRP_SERVER_SERVICE_GET_SERVICE_SUB_TYPE_LABEL;
-
-  p_ot_req->Size=3;
-  p_ot_req->Data[0] = (uint32_t) aService;
-  p_ot_req->Data[1] = (uint32_t) aLabel;
-  p_ot_req->Data[2] = (uint32_t) aMaxSize;
-
-  Ot_Cmd_Transfer();
-
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (const char *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 uint16_t otSrpServerServiceGetPort(const otSrpServerService *aService)
 {
+  uint16_t rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -545,11 +588,17 @@ uint16_t otSrpServerServiceGetPort(const otSrpServerService *aService)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (uint16_t)p_ot_req->Data[0];
+  rspData = (uint16_t)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 uint16_t otSrpServerServiceGetWeight(const otSrpServerService *aService)
 {
+  uint16_t rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -562,11 +611,17 @@ uint16_t otSrpServerServiceGetWeight(const otSrpServerService *aService)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (uint16_t)p_ot_req->Data[0];
+  rspData = (uint16_t)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 uint16_t otSrpServerServiceGetPriority(const otSrpServerService *aService)
 {
+  uint16_t rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -579,11 +634,17 @@ uint16_t otSrpServerServiceGetPriority(const otSrpServerService *aService)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (uint16_t)p_ot_req->Data[0];
+  rspData = (uint16_t)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 uint32_t otSrpServerServiceGetTtl(const otSrpServerService *aService)
 {
+  uint32_t rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -596,11 +657,17 @@ uint32_t otSrpServerServiceGetTtl(const otSrpServerService *aService)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (uint32_t)p_ot_req->Data[0];
+  rspData = (uint32_t)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 const uint8_t *otSrpServerServiceGetTxtData(const otSrpServerService *aService, uint16_t *aDataLength)
 {
+  const uint8_t * rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -614,11 +681,17 @@ const uint8_t *otSrpServerServiceGetTxtData(const otSrpServerService *aService, 
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (uint8_t*)p_ot_req->Data[0];
+  rspData = (const uint8_t *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 const otSrpServerHost *otSrpServerServiceGetHost(const otSrpServerService *aService)
 {
+  const otSrpServerHost * rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -631,7 +704,11 @@ const otSrpServerHost *otSrpServerServiceGetHost(const otSrpServerService *aServ
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otSrpServerHost*)p_ot_req->Data[0];
+  rspData = (const otSrpServerHost *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 void otSrpServerServiceGetLeaseInfo(const otSrpServerService *aService, otSrpServerLeaseInfo *aLeaseInfo)
@@ -647,6 +724,8 @@ void otSrpServerServiceGetLeaseInfo(const otSrpServerService *aService, otSrpSer
   p_ot_req->Data[1] = (uint32_t) aLeaseInfo;
 
   Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
 }
 
 void otSrpServerSetAutoEnableMode(otInstance *aInstance, bool aEnabled)
@@ -661,10 +740,14 @@ void otSrpServerSetAutoEnableMode(otInstance *aInstance, bool aEnabled)
   p_ot_req->Data[0] = (uint32_t) aEnabled;
 
   Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
 }
 
 bool otSrpServerIsAutoEnableMode(otInstance *aInstance)
 {
+  bool rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -676,7 +759,11 @@ bool otSrpServerIsAutoEnableMode(otInstance *aInstance)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (bool)p_ot_req->Data[0];
+  rspData = (bool)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 #endif // OPENTHREAD_CONFIG_SRP_SERVER_ENABLE

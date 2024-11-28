@@ -598,6 +598,11 @@
 			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/cli/cli_joiner.cpp</locationURI>
 		</link>
 		<link>
+			<name>Middlewares/STM32_WPAN/thread/openthread/stack/src/cli/cli_link_metrics.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/cli/cli_link_metrics.cpp</locationURI>
+		</link>
+		<link>
 			<name>Middlewares/STM32_WPAN/thread/openthread/stack/src/cli/cli_mac_filter.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/cli/cli_mac_filter.cpp</locationURI>
@@ -608,9 +613,9 @@
 			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/cli/cli_network_data.cpp</locationURI>
 		</link>
 		<link>
-			<name>Middlewares/STM32_WPAN/thread/openthread/stack/src/cli/cli_output.cpp</name>
+			<name>Middlewares/STM32_WPAN/thread/openthread/stack/src/cli/cli_ping.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/cli/cli_output.cpp</locationURI>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/cli/cli_ping.cpp</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/STM32_WPAN/thread/openthread/stack/src/cli/cli_srp_client.cpp</name>
@@ -633,6 +638,11 @@
 			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/cli/cli_udp.cpp</locationURI>
 		</link>
 		<link>
+			<name>Middlewares/STM32_WPAN/thread/openthread/stack/src/cli/cli_utils.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/cli/cli_utils.cpp</locationURI>
+		</link>
+		<link>
 			<name>Middlewares/STM32_WPAN/thread/openthread/stack/examples/apps/cli/cli_uart.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/stack/examples/apps/cli/cli_uart.cpp</locationURI>
@@ -641,11 +651,6 @@
 			<name>Middlewares/STM32_WPAN/thread/openthread/stack/src/core/common/binary_search.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/core/common/binary_search.cpp</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/STM32_WPAN/thread/openthread/stack/src/core/common/instance.cpp</name>
-			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/core/common/instance.cpp</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/STM32_WPAN/thread/openthread/stack/src/core/common/string.cpp</name>
@@ -671,6 +676,11 @@
 			<name>Middlewares/STM32_WPAN/thread/openthread/stack/src/core/crypto/mbedtls.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/core/crypto/mbedtls.cpp</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_WPAN/thread/openthread/stack/src/core/instance/instance.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/core/instance/instance.cpp</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/STM32_WPAN/thread/openthread/stack/src/core/meshcop/dataset.cpp</name>
@@ -726,6 +736,11 @@
 			<name>Middlewares/STM32_WPAN/thread/openthread/stack/src/third_party/mbedtls/repo/library/bignum.c</name>
 			<type>1</type>
 			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/library/bignum.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_WPAN/thread/openthread/stack/src/third_party/mbedtls/repo/library/bignum_core.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/library/bignum_core.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/STM32_WPAN/thread/openthread/stack/src/third_party/mbedtls/repo/library/ccm.c</name>
@@ -808,6 +823,11 @@
 			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/library/pk.c</locationURI>
 		</link>
 		<link>
+			<name>Middlewares/STM32_WPAN/thread/openthread/stack/src/third_party/mbedtls/repo/library/pk_ecc.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/library/pk_ecc.c</locationURI>
+		</link>
+		<link>
 			<name>Middlewares/STM32_WPAN/thread/openthread/stack/src/third_party/mbedtls/repo/library/pk_wrap.c</name>
 			<type>1</type>
 			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/library/pk_wrap.c</locationURI>
@@ -838,9 +858,9 @@
 			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/library/ssl_ciphersuites.c</locationURI>
 		</link>
 		<link>
-			<name>Middlewares/STM32_WPAN/thread/openthread/stack/src/third_party/mbedtls/repo/library/ssl_cli.c</name>
+			<name>Middlewares/STM32_WPAN/thread/openthread/stack/src/third_party/mbedtls/repo/library/ssl_client.c</name>
 			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/library/ssl_cli.c</locationURI>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/library/ssl_client.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/STM32_WPAN/thread/openthread/stack/src/third_party/mbedtls/repo/library/ssl_msg.c</name>
@@ -848,14 +868,19 @@
 			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/library/ssl_msg.c</locationURI>
 		</link>
 		<link>
-			<name>Middlewares/STM32_WPAN/thread/openthread/stack/src/third_party/mbedtls/repo/library/ssl_srv.c</name>
-			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/library/ssl_srv.c</locationURI>
-		</link>
-		<link>
 			<name>Middlewares/STM32_WPAN/thread/openthread/stack/src/third_party/mbedtls/repo/library/ssl_tls.c</name>
 			<type>1</type>
 			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/library/ssl_tls.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_WPAN/thread/openthread/stack/src/third_party/mbedtls/repo/library/ssl_tls12_client.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/library/ssl_tls12_client.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_WPAN/thread/openthread/stack/src/third_party/mbedtls/repo/library/ssl_tls12_server.c</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/library/ssl_tls12_server.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/STM32_WPAN/thread/openthread/stack/src/third_party/mbedtls/repo/library/x509.c</name>

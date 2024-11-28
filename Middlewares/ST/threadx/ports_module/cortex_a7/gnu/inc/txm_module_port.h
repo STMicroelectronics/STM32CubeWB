@@ -26,7 +26,7 @@
 /*  APPLICATION INTERFACE DEFINITION                       RELEASE        */ 
 /*                                                                        */ 
 /*    txm_module_port.h                               Cortex-A7/MMU/GNU   */ 
-/*                                                           6.2.1        */
+/*                                                           6.3.0        */
 /*  AUTHOR                                                                */
 /*                                                                        */
 /*    Scott Larson, Microsoft Corporation                                 */
@@ -41,6 +41,9 @@
 /*    DATE              NAME                      DESCRIPTION             */
 /*                                                                        */
 /*  03-08-2023      Scott Larson            Initial Version 6.2.1         */
+/*  10-31-2023      Yajun Xia               Updated comments,             */
+/*                                            Added thumb mode support,   */
+/*                                            resulting in version 6.3.0  */
 /*                                                                        */
 /**************************************************************************/
 
@@ -106,7 +109,7 @@ The following extensions must also be defined in tx_port.h:
 
 /* Define the properties for this particular module port.  */
 #ifdef TXM_MODULE_MEMORY_PROTECTION_ENABLED
-#define TXM_MODULE_MEMORY_PROTECTION            0x00000001
+#define TXM_MODULE_MEMORY_PROTECTION            0x00000002
 #else
 #define TXM_MODULE_MEMORY_PROTECTION            0x00000000
 #endif
@@ -115,7 +118,7 @@ The following extensions must also be defined in tx_port.h:
 
 /* Define the supported options for this module.   */
 
-#define TXM_MODULE_MANAGER_SUPPORTED_OPTIONS    (TXM_MODULE_MEMORY_PROTECTION)
+#define TXM_MODULE_MANAGER_SUPPORTED_OPTIONS    (TXM_MODULE_USER_MODE | TXM_MODULE_MEMORY_PROTECTION)
 #define TXM_MODULE_MANAGER_REQUIRED_OPTIONS     0
 
 
@@ -407,7 +410,7 @@ UINT  _txm_module_manager_inside_data_check(ULONG pointer);
 
 #define TXM_MODULE_MANAGER_VERSION_ID   \
 CHAR                            _txm_module_manager_version_id[] =  \
-                                    "Copyright (c) Microsoft Corporation. All rights reserved.  *  ThreadX Module Cortex-A7/MMU/GNU Version 6.2.1 *";
+                                    "Copyright (c) Microsoft Corporation. All rights reserved.  *  ThreadX Module Cortex-A7/MMU/GNU Version 6.4.0 *";
 
 #endif
 

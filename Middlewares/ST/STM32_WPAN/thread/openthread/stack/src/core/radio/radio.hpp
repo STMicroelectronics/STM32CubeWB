@@ -37,11 +37,12 @@
 #include "openthread-core-config.h"
 
 #include <openthread/radio_stats.h>
+#include <openthread/platform/crypto.h>
 #include <openthread/platform/radio.h>
 
-#include <openthread/platform/crypto.h>
 #include "common/locator.hpp"
 #include "common/non_copyable.hpp"
+#include "common/numeric_limits.hpp"
 #include "common/time.hpp"
 #include "mac/mac_frame.hpp"
 
@@ -136,32 +137,32 @@ public:
     static constexpr uint32_t kSymbolTime      = OT_RADIO_SYMBOL_TIME;
     static constexpr uint8_t  kSymbolsPerOctet = OT_RADIO_SYMBOLS_PER_OCTET;
     static constexpr uint32_t kPhyUsPerByte    = kSymbolsPerOctet * kSymbolTime;
+    static constexpr uint8_t  kChannelPage0    = OT_RADIO_CHANNEL_PAGE_0;
+    static constexpr uint8_t  kChannelPage2    = OT_RADIO_CHANNEL_PAGE_2;
 #if (OPENTHREAD_CONFIG_RADIO_2P4GHZ_OQPSK_SUPPORT && OPENTHREAD_CONFIG_RADIO_915MHZ_OQPSK_SUPPORT)
     static constexpr uint16_t kNumChannelPages = 2;
     static constexpr uint32_t kSupportedChannels =
         OT_RADIO_915MHZ_OQPSK_CHANNEL_MASK | OT_RADIO_2P4GHZ_OQPSK_CHANNEL_MASK;
-    static constexpr uint8_t  kChannelMin            = OT_RADIO_915MHZ_OQPSK_CHANNEL_MIN;
-    static constexpr uint8_t  kChannelMax            = OT_RADIO_2P4GHZ_OQPSK_CHANNEL_MAX;
-    static constexpr uint32_t kSupportedChannelPages = OT_RADIO_CHANNEL_PAGE_0_MASK | OT_RADIO_CHANNEL_PAGE_2_MASK;
+    static constexpr uint8_t kChannelMin = OT_RADIO_915MHZ_OQPSK_CHANNEL_MIN;
+    static constexpr uint8_t kChannelMax = OT_RADIO_2P4GHZ_OQPSK_CHANNEL_MAX;
 #elif OPENTHREAD_CONFIG_RADIO_915MHZ_OQPSK_SUPPORT
-    static constexpr uint16_t kNumChannelPages       = 1;
-    static constexpr uint32_t kSupportedChannels     = OT_RADIO_915MHZ_OQPSK_CHANNEL_MASK;
-    static constexpr uint8_t  kChannelMin            = OT_RADIO_915MHZ_OQPSK_CHANNEL_MIN;
-    static constexpr uint8_t  kChannelMax            = OT_RADIO_915MHZ_OQPSK_CHANNEL_MAX;
-    static constexpr uint32_t kSupportedChannelPages = OT_RADIO_CHANNEL_PAGE_2_MASK;
+    static constexpr uint16_t kNumChannelPages   = 1;
+    static constexpr uint32_t kSupportedChannels = OT_RADIO_915MHZ_OQPSK_CHANNEL_MASK;
+    static constexpr uint8_t  kChannelMin        = OT_RADIO_915MHZ_OQPSK_CHANNEL_MIN;
+    static constexpr uint8_t  kChannelMax        = OT_RADIO_915MHZ_OQPSK_CHANNEL_MAX;
 #elif OPENTHREAD_CONFIG_RADIO_2P4GHZ_OQPSK_SUPPORT
-    static constexpr uint16_t kNumChannelPages       = 1;
-    static constexpr uint32_t kSupportedChannels     = OT_RADIO_2P4GHZ_OQPSK_CHANNEL_MASK;
-    static constexpr uint8_t  kChannelMin            = OT_RADIO_2P4GHZ_OQPSK_CHANNEL_MIN;
-    static constexpr uint8_t  kChannelMax            = OT_RADIO_2P4GHZ_OQPSK_CHANNEL_MAX;
-    static constexpr uint32_t kSupportedChannelPages = OT_RADIO_CHANNEL_PAGE_0_MASK;
+    static constexpr uint16_t kNumChannelPages   = 1;
+    static constexpr uint32_t kSupportedChannels = OT_RADIO_2P4GHZ_OQPSK_CHANNEL_MASK;
+    static constexpr uint8_t  kChannelMin        = OT_RADIO_2P4GHZ_OQPSK_CHANNEL_MIN;
+    static constexpr uint8_t  kChannelMax        = OT_RADIO_2P4GHZ_OQPSK_CHANNEL_MAX;
 #elif OPENTHREAD_CONFIG_PLATFORM_RADIO_PROPRIETARY_SUPPORT
-    static constexpr uint16_t kNumChannelPages       = 1;
-    static constexpr uint32_t kSupportedChannels     = OPENTHREAD_CONFIG_PLATFORM_RADIO_PROPRIETARY_CHANNEL_MASK;
-    static constexpr uint8_t  kChannelMin            = OPENTHREAD_CONFIG_PLATFORM_RADIO_PROPRIETARY_CHANNEL_MIN;
-    static constexpr uint8_t  kChannelMax            = OPENTHREAD_CONFIG_PLATFORM_RADIO_PROPRIETARY_CHANNEL_MAX;
-    static constexpr uint32_t kSupportedChannelPages = (1 << OPENTHREAD_CONFIG_PLATFORM_RADIO_PROPRIETARY_CHANNEL_PAGE);
+    static constexpr uint16_t kNumChannelPages   = 1;
+    static constexpr uint32_t kSupportedChannels = OPENTHREAD_CONFIG_PLATFORM_RADIO_PROPRIETARY_CHANNEL_MASK;
+    static constexpr uint8_t  kChannelMin        = OPENTHREAD_CONFIG_PLATFORM_RADIO_PROPRIETARY_CHANNEL_MIN;
+    static constexpr uint8_t  kChannelMax        = OPENTHREAD_CONFIG_PLATFORM_RADIO_PROPRIETARY_CHANNEL_MAX;
 #endif
+
+    static const uint8_t kSupportedChannelPages[kNumChannelPages];
 
     static constexpr int8_t kInvalidRssi = OT_RADIO_RSSI_INVALID; ///< Invalid RSSI value.
 
@@ -435,6 +436,14 @@ public:
     void SetPromiscuous(bool aEnable);
 
     /**
+     * Indicates whether radio should stay in Receive or Sleep during idle periods.
+     *
+     * @param[in]  aEnable   TRUE to keep radio in Receive, FALSE to put to Sleep during idle periods.
+     *
+     */
+    void SetRxOnWhenIdle(bool aEnable);
+
+    /**
      * Returns the current state of the radio.
      *
      * Is not required by OpenThread. It may be used for debugging and/or application-specific purposes.
@@ -515,7 +524,8 @@ public:
      */
     Error ReceiveAt(uint8_t aChannel, uint32_t aStart, uint32_t aDuration);
 
-    /** Enables CSL sampling in radio.
+    /**
+     * Enables CSL sampling in radio.
      *
      * @param[in]  aCslPeriod    CSL period, 0 for disabling CSL.
      * @param[in]  aShortAddr    The short source address of CSL receiver's peer.
@@ -529,6 +539,16 @@ public:
      *
      */
     Error EnableCsl(uint32_t aCslPeriod, otShortAddress aShortAddr, const otExtAddress *aExtAddr);
+
+    /**
+     * Resets CSL receiver in radio.
+     *
+     * @retval  kErrorNotImplemented Radio driver doesn't support CSL.
+     * @retval  kErrorFailed         Other platform specific errors.
+     * @retval  kErrorNone           Successfully disabled CSL.
+     *
+     */
+    Error ResetCsl(void);
 #endif // OPENTHREAD_CONFIG_MAC_CSL_RECEIVER_ENABLE
 
 #if OPENTHREAD_CONFIG_MAC_CSL_RECEIVER_ENABLE || OPENTHREAD_CONFIG_MAC_CSL_TRANSMITTER_ENABLE
@@ -733,6 +753,93 @@ public:
                 ((kChannelMin == aCslChannel) || ((kChannelMin < aCslChannel) && (aCslChannel <= kChannelMax))));
     }
 
+    /**
+     * Sets the region code.
+     *
+     * The radio region format is the 2-bytes ascii representation of the ISO 3166 alpha-2 code.
+     *
+     * @param[in]  aRegionCode  The radio region code. The `aRegionCode >> 8` is first ascii char
+     *                          and the `aRegionCode & 0xff` is the second ascii char.
+     *
+     * @retval  kErrorFailed          Other platform specific errors.
+     * @retval  kErrorNone            Successfully set region code.
+     * @retval  kErrorNotImplemented  The feature is not implemented.
+     *
+     */
+    Error SetRegion(uint16_t aRegionCode) { return otPlatRadioSetRegion(GetInstancePtr(), aRegionCode); }
+
+    /**
+     * Get the region code.
+     *
+     * The radio region format is the 2-bytes ascii representation of the ISO 3166 alpha-2 code.
+     *
+     * @param[out] aRegionCode  The radio region code. The `aRegionCode >> 8` is first ascii char
+     *                          and the `aRegionCode & 0xff` is the second ascii char.
+     *
+     * @retval  kErrorFailed          Other platform specific errors.
+     * @retval  kErrorNone            Successfully set region code.
+     * @retval  kErrorNotImplemented  The feature is not implemented.
+     *
+     */
+    Error GetRegion(uint16_t &aRegionCode) const { return otPlatRadioGetRegion(GetInstancePtr(), &aRegionCode); }
+
+    /**
+     * Indicates whether a given channel page is supported based on the current configurations.
+     *
+     * @param[in] aChannelPage The channel page to check.
+     *
+     * @retval TRUE    The @p aChannelPage is supported by radio.
+     * @retval FALASE  The @p aChannelPage is not supported by radio.
+     *
+     */
+    static constexpr bool SupportsChannelPage(uint8_t aChannelPage)
+    {
+#if OPENTHREAD_CONFIG_RADIO_2P4GHZ_OQPSK_SUPPORT && OPENTHREAD_CONFIG_RADIO_915MHZ_OQPSK_SUPPORT
+        return (aChannelPage == kChannelPage0) || (aChannelPage == kChannelPage2);
+#elif OPENTHREAD_CONFIG_RADIO_2P4GHZ_OQPSK_SUPPORT
+        return (aChannelPage == kChannelPage0);
+#elif OPENTHREAD_CONFIG_RADIO_915MHZ_OQPSK_SUPPORT
+        return (aChannelPage == kChannelPage2);
+#elif OPENTHREAD_CONFIG_PLATFORM_RADIO_PROPRIETARY_SUPPORT
+        return (aChannelPage == OPENTHREAD_CONFIG_PLATFORM_RADIO_PROPRIETARY_CHANNEL_PAGE);
+#endif
+    }
+
+    /**
+     * Returns the channel mask for a given channel page if supported by the radio.
+     *
+     * @param[in] aChannelPage   The channel page.
+     *
+     * @returns The channel mask for @p aChannelPage if page is supported by the radio, otherwise zero.
+     *
+     */
+    static uint32_t ChannelMaskForPage(uint8_t aChannelPage)
+    {
+        uint32_t mask = 0;
+
+#if OPENTHREAD_CONFIG_RADIO_2P4GHZ_OQPSK_SUPPORT
+        if (aChannelPage == kChannelPage0)
+        {
+            mask = OT_RADIO_2P4GHZ_OQPSK_CHANNEL_MASK;
+        }
+#endif
+
+#if OPENTHREAD_CONFIG_RADIO_915MHZ_OQPSK_SUPPORT
+        if (aChannelPage == kChannelPage1)
+        {
+            mask = OT_RADIO_915MHZ_OQPSK_CHANNEL_MASK;
+        }
+#endif
+
+#if OPENTHREAD_CONFIG_PLATFORM_RADIO_PROPRIETARY_SUPPORT
+        if (aChannelPage == OPENTHREAD_CONFIG_PLATFORM_RADIO_PROPRIETARY_CHANNEL_PAGE)
+        {
+            mask = OPENTHREAD_CONFIG_PLATFORM_RADIO_PROPRIETARY_CHANNEL_MASK;
+        }
+#endif
+        return mask;
+    }
+
 private:
     otInstance *GetInstancePtr(void) const { return reinterpret_cast<otInstance *>(&InstanceLocator::GetInstance()); }
 
@@ -803,6 +910,8 @@ inline bool Radio::GetPromiscuous(void) { return otPlatRadioGetPromiscuous(GetIn
 
 inline void Radio::SetPromiscuous(bool aEnable) { otPlatRadioSetPromiscuous(GetInstancePtr(), aEnable); }
 
+inline void Radio::SetRxOnWhenIdle(bool aEnable) { otPlatRadioSetRxOnWhenIdle(GetInstancePtr(), aEnable); }
+
 inline otRadioState Radio::GetState(void) { return otPlatRadioGetState(GetInstancePtr()); }
 
 inline Error Radio::Enable(void)
@@ -861,6 +970,8 @@ inline Error Radio::EnableCsl(uint32_t aCslPeriod, otShortAddress aShortAddr, co
 {
     return otPlatRadioEnableCsl(GetInstancePtr(), aCslPeriod, aShortAddr, aExtAddr);
 }
+
+inline Error Radio::ResetCsl(void) { return otPlatRadioResetCsl(GetInstancePtr()); }
 #endif
 
 #if OPENTHREAD_CONFIG_MAC_CSL_RECEIVER_ENABLE || OPENTHREAD_CONFIG_MAC_CSL_TRANSMITTER_ENABLE
@@ -944,6 +1055,8 @@ inline bool Radio::GetPromiscuous(void) { return false; }
 
 inline void Radio::SetPromiscuous(bool) {}
 
+inline void Radio::SetRxOnWhenIdle(bool) {}
+
 inline otRadioState Radio::GetState(void) { return OT_RADIO_STATE_DISABLED; }
 
 inline Error Radio::Enable(void) { return kErrorNone; }
@@ -965,12 +1078,14 @@ inline Error Radio::EnableCsl(uint32_t, otShortAddress aShortAddr, const otExtAd
 {
     return kErrorNotImplemented;
 }
+
+inline Error Radio::ResetCsl(void) { return kErrorNotImplemented; }
 #endif
 
 #if OPENTHREAD_CONFIG_MAC_CSL_RECEIVER_ENABLE || OPENTHREAD_CONFIG_MAC_CSL_TRANSMITTER_ENABLE
-inline uint8_t Radio::GetCslAccuracy(void) { return UINT8_MAX; }
+inline uint8_t Radio::GetCslAccuracy(void) { return NumericLimits<uint8_t>::kMax; }
 
-inline uint8_t Radio::GetCslUncertainty(void) { return UINT8_MAX; }
+inline uint8_t Radio::GetCslUncertainty(void) { return NumericLimits<uint8_t>::kMax; }
 #endif
 
 inline Mac::TxFrame &Radio::GetTransmitBuffer(void)

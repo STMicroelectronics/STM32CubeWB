@@ -28,6 +28,7 @@ extern "C" {
 
 #include "cmsis_compiler.h"
 #include "string.h"
+#include "app_conf.h"
 
 /******************************************************************************
  * common
@@ -55,7 +56,7 @@ extern "C" {
 #define UTIL_SEQ_ENTER_CRITICAL_SECTION( )      UTILS_ENTER_CRITICAL_SECTION( )
 #define UTIL_SEQ_EXIT_CRITICAL_SECTION( )       UTILS_EXIT_CRITICAL_SECTION( )
 #define UTIL_SEQ_CONF_TASK_NBR                  (32)
-#define UTIL_SEQ_CONF_PRIO_NBR                  (2)
+#define UTIL_SEQ_CONF_PRIO_NBR                   CFG_SCH_PRIO_NBR
 #define UTIL_SEQ_MEMSET8( dest, value, size )   UTILS_MEMSET8( dest, value, size )
 
 #ifdef __cplusplus

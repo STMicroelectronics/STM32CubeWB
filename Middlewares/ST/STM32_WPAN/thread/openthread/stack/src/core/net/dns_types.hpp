@@ -59,9 +59,6 @@ namespace ot {
  */
 namespace Dns {
 
-using ot::Encoding::BigEndian::HostSwap16;
-using ot::Encoding::BigEndian::HostSwap32;
-
 /**
  * @addtogroup core-dns
  *
@@ -92,7 +89,7 @@ public:
      * @returns The Message ID value.
      *
      */
-    uint16_t GetMessageId(void) const { return HostSwap16(mMessageId); }
+    uint16_t GetMessageId(void) const { return BigEndian::HostSwap16(mMessageId); }
 
     /**
      * Sets the Message ID.
@@ -100,7 +97,7 @@ public:
      * @param[in]  aMessageId The Message ID value.
      *
      */
-    void SetMessageId(uint16_t aMessageId) { mMessageId = HostSwap16(aMessageId); }
+    void SetMessageId(uint16_t aMessageId) { mMessageId = BigEndian::HostSwap16(aMessageId); }
 
     /**
      * Sets the Message ID to a crypto-secure randomly generated number.
@@ -331,7 +328,7 @@ public:
      * @returns The number of entries in question section.
      *
      */
-    uint16_t GetQuestionCount(void) const { return HostSwap16(mQdCount); }
+    uint16_t GetQuestionCount(void) const { return BigEndian::HostSwap16(mQdCount); }
 
     /**
      * Sets the number of entries in question section.
@@ -339,7 +336,7 @@ public:
      * @param[in]  aCount The number of entries in question section.
      *
      */
-    void SetQuestionCount(uint16_t aCount) { mQdCount = HostSwap16(aCount); }
+    void SetQuestionCount(uint16_t aCount) { mQdCount = BigEndian::HostSwap16(aCount); }
 
     /**
      * Returns the number of entries in answer section.
@@ -347,7 +344,7 @@ public:
      * @returns The number of entries in answer section.
      *
      */
-    uint16_t GetAnswerCount(void) const { return HostSwap16(mAnCount); }
+    uint16_t GetAnswerCount(void) const { return BigEndian::HostSwap16(mAnCount); }
 
     /**
      * Sets the number of entries in answer section.
@@ -355,7 +352,7 @@ public:
      * @param[in]  aCount The number of entries in answer section.
      *
      */
-    void SetAnswerCount(uint16_t aCount) { mAnCount = HostSwap16(aCount); }
+    void SetAnswerCount(uint16_t aCount) { mAnCount = BigEndian::HostSwap16(aCount); }
 
     /**
      * Returns the number of entries in authority records section.
@@ -363,7 +360,7 @@ public:
      * @returns The number of entries in authority records section.
      *
      */
-    uint16_t GetAuthorityRecordCount(void) const { return HostSwap16(mNsCount); }
+    uint16_t GetAuthorityRecordCount(void) const { return BigEndian::HostSwap16(mNsCount); }
 
     /**
      * Sets the number of entries in authority records section.
@@ -371,7 +368,7 @@ public:
      * @param[in]  aCount The number of entries in authority records section.
      *
      */
-    void SetAuthorityRecordCount(uint16_t aCount) { mNsCount = HostSwap16(aCount); }
+    void SetAuthorityRecordCount(uint16_t aCount) { mNsCount = BigEndian::HostSwap16(aCount); }
 
     /**
      * Returns the number of entries in additional records section.
@@ -379,7 +376,7 @@ public:
      * @returns The number of entries in additional records section.
      *
      */
-    uint16_t GetAdditionalRecordCount(void) const { return HostSwap16(mArCount); }
+    uint16_t GetAdditionalRecordCount(void) const { return BigEndian::HostSwap16(mArCount); }
 
     /**
      * Sets the number of entries in additional records section.
@@ -387,7 +384,7 @@ public:
      * @param[in]  aCount The number of entries in additional records section.
      *
      */
-    void SetAdditionalRecordCount(uint16_t aCount) { mArCount = HostSwap16(aCount); }
+    void SetAdditionalRecordCount(uint16_t aCount) { mArCount = BigEndian::HostSwap16(aCount); }
 
 private:
     // Protocol Constants (RFC 1035).
@@ -514,7 +511,23 @@ public:
      */
     static constexpr uint8_t kMaxLabelLength = kMaxLabelSize - 1;
 
+    /**
+     * Dot character separating labels in a name.
+     *
+     */
     static constexpr char kLabelSeparatorChar = '.';
+
+    /**
+     * Represents a string buffer (with `kMaxNameSize`) intended to hold a DNS name.
+     *
+     */
+    typedef char Buffer[kMaxNameSize];
+
+    /**
+     * Represents a string buffer (with `kMaxLabelSize`) intended to hold a DNS label.
+     *
+     */
+    typedef char LabelBuffer[kMaxLabelSize];
 
     /**
      * Represents the name type.
@@ -650,6 +663,32 @@ public:
     }
 
     /**
+     * Matches the `Name` with a given set of labels and domain name.
+     *
+     * This method allows the caller to specify name components separately, enabling scenarios like comparing "service
+     * instance name" with separate instance label (which can include dot character), service type, and domain strings.
+     *
+     * @p aFirstLabel can be `nullptr` if not needed. But if non-null, it is treated as a single label and can itself
+     * include dot `.` character.
+     *
+     * The @p aLabels MUST NOT be `nullptr` and MUST follow  "<label1>.<label2>.<label3>", i.e., a sequence of one or
+     * more labels separated by dot '.' char, and it MUST NOT end with dot `.`.
+     *
+     * @p aDomain MUST NOT be `nullptr` and MUST have at least one label and MUST always end with a dot `.` character.
+     *
+     * If the above conditions are not satisfied, the behavior of this method is undefined.
+     *
+     * @param[in] aFirstLabel     A first label to check. Can be `nullptr`.
+     * @param[in] aLabels         A string of dot separated labels, MUST NOT end with dot.
+     * @param[in] aDomain         Domain name. MUST end with dot.
+     *
+     * @retval TRUE   The name matches the given components.
+     * @retval FALSE  The name does not match the given components.
+     *
+     */
+    bool Matches(const char *aFirstLabel, const char *aLabels, const char *aDomain) const;
+
+    /**
      * Encodes and appends the name to a message.
      *
      * If the name is empty (not specified), then root "." is appended to @p aMessage. If the name is from a C string
@@ -687,26 +726,6 @@ public:
     static Error AppendLabel(const char *aLabel, Message &aMessage);
 
     /**
-     * Encodes and appends a single name label of specified length to a message.
-     *
-     * The @p aLabel is assumed to contain a single name label of given @p aLength.  @p aLabel must not contain
-     * '\0' characters within the length @p aLength. Unlike `AppendMultipleLabels()` which parses the label string
-     * and treats it as sequence of multiple (dot-separated) labels, this method always appends @p aLabel as a single
-     * whole label. This allows the label string to even contain dot '.' character, which, for example, is useful for
-     * "Service Instance Names" where <Instance> portion is a user-friendly name and can contain dot characters.
-     *
-     * @param[in] aLabel         The label string to append. MUST NOT be `nullptr`.
-     * @param[in] aLength        The length of the label to append.
-     * @param[in] aMessage       The message to append to.
-     *
-     * @retval kErrorNone         Successfully encoded and appended the name label to @p aMessage.
-     * @retval kErrorInvalidArgs  @p aLabel is not valid (e.g., label length is not within valid range).
-     * @retval kErrorNoBufs       Insufficient available buffers to grow the message.
-     *
-     */
-    static Error AppendLabel(const char *aLabel, uint8_t aLength, Message &aMessage);
-
-    /**
      * Encodes and appends a sequence of name labels to a given message.
      *
      * The @p aLabels must follow  "<label1>.<label2>.<label3>", i.e., a sequence of labels separated by dot '.' char.
@@ -727,33 +746,6 @@ public:
      *
      */
     static Error AppendMultipleLabels(const char *aLabels, Message &aMessage);
-
-    /**
-     * Encodes and appends a sequence of name labels within the specified length to a given message.
-     * Stops appending labels if @p aLength characters are read or '\0' is found before @p aLength
-     * characters.
-     *
-     * Is useful for appending a number of labels of the name instead of appending all labels.
-     *
-     * The @p aLabels must follow  "<label1>.<label2>.<label3>", i.e., a sequence of labels separated by dot '.' char.
-     * E.g., "_http._tcp", "_http._tcp." (same as previous one), "host-1.test".
-     *
-     * Validates that the @p aLabels is a valid name format, i.e., no empty label, and labels are
-     * `kMaxLabelLength` (63) characters or less.
-     *
-     * @note This method NEVER adds a label terminator (empty label) to the message, even in the case where @p aLabels
-     * ends with a dot character, e.g., "host-1.test." is treated same as "host-1.test".
-     *
-     * @param[in]  aLabels            A name label string. Can be `nullptr` (then treated as "").
-     * @param[in]  aLength            The max length of the name labels to encode.
-     * @param[in]  aMessage           The message to which to append the encoded name.
-     *
-     * @retval kErrorNone         Successfully encoded and appended the name label(s) to @p aMessage.
-     * @retval kErrorInvalidArgs  Name label @p aLabels is not valid.
-     * @retval kErrorNoBufs       Insufficient available buffers to grow the message.
-     *
-     */
-    static Error AppendMultipleLabels(const char *aLabels, uint8_t aLength, Message &aMessage);
 
     /**
      * Appends a name label terminator to a message.
@@ -872,6 +864,35 @@ public:
     static Error ReadName(const Message &aMessage, uint16_t &aOffset, char *aNameBuffer, uint16_t aNameBufferSize);
 
     /**
+     * Reads a full name from a message.
+     *
+     * On successful read, the read name follows  "<label1>.<label2>.<label3>.", i.e., a sequence of labels separated by
+     * dot '.' character. The read name will ALWAYS end with a dot.
+     *
+     * Verifies that the labels after the first label in message do not contain any dot character. If they do,
+     * returns `kErrorParse`.
+     *
+     * @tparam kNameBufferSize         Size of the string buffer array.
+     *
+     * @param[in]     aMessage         The message to read the name from. `aMessage.GetOffset()` MUST point to
+     *                                 the start of DNS header (this is used to handle compressed names).
+     * @param[in,out] aOffset          On input, the offset in @p aMessage pointing to the start of the name field.
+     *                                 On exit (when parsed successfully), @p aOffset is updated to point to the byte
+     *                                 after the end of name field.
+     * @param[out]    aNameBuffer      Reference to a name string buffer to output the read name.
+     *
+     * @retval kErrorNone         Successfully read the name, @p aNameBuffer and @p Offset are updated.
+     * @retval kErrorParse        Name could not be parsed (invalid format).
+     * @retval kErrorNoBufs       Name could not fit in @p aNameBuffer.
+     *
+     */
+    template <uint16_t kNameBufferSize>
+    static Error ReadName(const Message &aMessage, uint16_t &aOffset, char (&aNameBuffer)[kNameBufferSize])
+    {
+        return ReadName(aMessage, aOffset, aNameBuffer, kNameBufferSize);
+    }
+
+    /**
      * Compares a single name label from a message with a given label string.
      *
      * Can be used to compare labels one by one. It checks whether the label read from @p aMessage matches
@@ -894,6 +915,29 @@ public:
      *
      */
     static Error CompareLabel(const Message &aMessage, uint16_t &aOffset, const char *aLabel);
+
+    /**
+     * Parses and compares multiple name labels from a message.
+     *
+     * Can be used to read and compare a group of labels from an encoded DNS name in a message with possibly more
+     * labels remaining to read.
+     *
+     * The @p aLabels must follow  "<label1>.<label2>.<label3>", i.e., a sequence of labels separated by dot '.' char.
+     *
+     * @param[in]     aMessage        The message to read the labels from to compare. `aMessage.GetOffset()` MUST point
+     *                                to the start of DNS header (this is used to handle compressed names).
+     * @param[in,out] aOffset         On input, the offset in @p aMessage pointing to the start of the labels to read.
+     *                                On exit and only when all labels are successfully read and match @p aLabels,
+     *                                @p aOffset is updated to point to the start of the next label.
+     * @param[in]     aLabels         A pointer to a null terminated string containing the labels to compare with.
+     *
+     * @retval kErrorNone          The labels from @p aMessage matches @p aLabels. @p aOffset is updated.
+     * @retval kErrorNotFound      The labels from @p aMessage does not match @p aLabel (note that @p aOffset is not
+     *                             updated in this case).
+     * @retval kErrorParse         Name could not be parsed (invalid format).
+     *
+     */
+    static Error CompareMultipleLabels(const Message &aMessage, uint16_t &aOffset, const char *aLabels);
 
     /**
      * Parses and compares a full name from a message with a given name.
@@ -978,6 +1022,77 @@ public:
     static Error CompareName(const Message &aMessage, uint16_t &aOffset, const Name &aName);
 
     /**
+     * Extracts label(s) from a name by checking that it contains a given suffix name (e.g., suffix name can be
+     * a domain name) and removing it.
+     *
+     * Both @p aName and @p aSuffixName MUST follow the same style regarding inclusion of trailing dot ('.'). Otherwise
+     * `kErrorParse` is returned.
+     *
+     * The @p aLabels buffer may be the same as @p aName for in-place label extraction. In this case, the
+     * implementation avoids unnecessary character copies.
+     *
+     * @param[in]   aName           The name to extract labels from.
+     * @param[in]   aSuffixName     The suffix name (e.g., can be domain name).
+     * @param[out]  aLabels         Pointer to buffer to copy the extracted labels.
+     * @param[in]   aLabelsSize     Size of @p aLabels buffer.
+     *
+     * @retval kErrorNone     Successfully extracted the labels, @p aLabels is updated.
+     * @retval kErrorParse    @p aName does not contain @p aSuffixName.
+     * @retval kErrorNoBufs   Could not fit the labels in @p aLabelsSize.
+     *
+     */
+    static Error ExtractLabels(const char *aName, const char *aSuffixName, char *aLabels, uint16_t aLabelsSize);
+
+    /**
+     * Extracts label(s) from a name by checking that it contains a given suffix name (e.g., suffix name can be
+     * a domain name) and removing it.
+     *
+     * Both @p aName and @p aSuffixName MUST follow the same style regarding inclusion of trailing dot ('.'). Otherwise
+     * `kErrorParse` is returned.
+     *
+     * The @p aLabels buffer may be the same as @p aName for in-place label extraction. In this case, the
+     * implementation avoids unnecessary character copies.
+     *
+     * @tparam      kLabelsBufferSize   Size of the buffer string.
+     *
+     * @param[in]   aName           The name to extract labels from.
+     * @param[in]   aSuffixName     The suffix name (e.g., can be domain name).
+     * @param[out]  aLabelsBuffer   A buffer to copy the extracted labels.
+     *
+     * @retval kErrorNone     Successfully extracted the labels, @p aLabels is updated.
+     * @retval kErrorParse    @p aName does not contain @p aSuffixName.
+     * @retval kErrorNoBufs   Could not fit the labels in @p aLabels.
+     *
+     */
+    template <uint16_t kLabelsBufferSize>
+    static Error ExtractLabels(const char *aName, const char *aSuffixName, char (&aLabels)[kLabelsBufferSize])
+    {
+        return ExtractLabels(aName, aSuffixName, aLabels, kLabelsBufferSize);
+    }
+
+    /**
+     * Strips a given suffix name (e.g., a domain name) from a given DNS name string, updating it in place.
+     *
+     * First checks that @p Name ends with the given @p aSuffixName, otherwise `kErrorParse` is returned.
+     *
+     * Both @p aName and @p aSuffixName MUST follow the same style regarding inclusion of trailing dot ('.'). Otherwise
+     * `kErrorParse` is returned.
+     *
+     * @tparam kNameBufferSize     The size of name buffer.
+     *
+     * @param[in]  aName           The name buffer to strip the @p aSuffixName from.
+     * @param[in]  aSuffixName     The suffix name (e.g., can be domain name).
+     *
+     * @retval kErrorNone          Successfully stripped the suffix name from @p aName.
+     * @retval kErrorParse         @p aName does not contain @p aSuffixName.
+     *
+     */
+    template <uint16_t kNameBufferSize> static Error StripName(char (&aName)[kNameBufferSize], const char *aSuffixName)
+    {
+        return ExtractLabels(aName, aSuffixName, aName, kNameBufferSize);
+    }
+
+    /**
      * Tests if a DNS name is a sub-domain of a given domain.
      *
      * Both @p aName and @p aDomain can end without dot ('.').
@@ -1030,6 +1145,7 @@ private:
             : mMessage(aMessage)
             , mNextLabelOffset(aLabelOffset)
             , mNameEndOffset(kUnsetNameEndOffset)
+            , mMinLabelOffset(aLabelOffset)
         {
         }
 
@@ -1047,6 +1163,7 @@ private:
         uint8_t        mLabelLength;      // Length of current label (number of chars).
         uint16_t       mNextLabelOffset;  // Offset in `mMessage` to the start of the next label.
         uint16_t       mNameEndOffset;    // Offset in `mMessage` to the byte after the end of domain name field.
+        uint16_t       mMinLabelOffset;   // Offset in `mMessage` to the start of the earliest parsed label.
     };
 
     Name(const char *aString, const Message *aMessage, uint16_t aOffset)
@@ -1055,6 +1172,9 @@ private:
         , mOffset(aOffset)
     {
     }
+
+    static bool  CompareAndSkipLabels(const char *&aNamePtr, const char *aLabels, char aExpectedNextChar);
+    static Error AppendLabel(const char *aLabel, uint8_t aLength, Message &aMessage);
 
     const char    *mString;  // String containing the name or `nullptr` if name is not from string.
     const Message *mMessage; // Message containing the encoded name, or `nullptr` if `Name` is not from message.
@@ -1083,6 +1203,14 @@ public:
     static constexpr uint8_t kMaxKeyLength = OT_DNS_TXT_KEY_MAX_LENGTH;
 
     /**
+     * Maximum length of TXT key string supported by `Iterator`.
+     *
+     * This is selected to be longer than recommended `kMaxKeyLength` to handle cases where longer keys are used.
+     *
+     */
+    static constexpr uint8_t kMaxIterKeyLength = OT_DNS_TXT_KEY_ITER_MAX_LENGTH;
+
+    /**
      * Represents an iterator for TXT record entries (key/value pairs).
      *
      */
@@ -1109,9 +1237,9 @@ public:
          * The `Iterator` instance MUST be initialized using `Init()` before calling this method and the TXT data
          * buffer used to initialize the iterator MUST persist and remain unchanged.
          *
-         * If the parsed key string length is smaller than or equal to `kMaxKeyLength` (recommended max key length)
-         * the key string is returned in `mKey` in @p aEntry. But if the key is longer, then `mKey` is set to NULL and
-         * the entire encoded TXT entry is returned in `mValue` and `mValueLength`.
+         * If the parsed key string length is smaller than or equal to `kMaxIterKeyLength` the key string is returned
+         * in `mKey` in @p aEntry. But if the key is longer, then `mKey` is set to `nullptr` the entire encoded TXT
+         * entry is returned in `mValue` and `mValueLength`.
          *
          * @param[out] aEntry          A reference to a `TxtEntry` to output the parsed/read entry.
          *
@@ -1238,6 +1366,7 @@ public:
     static constexpr uint16_t kTypeAaaa  = 28;  ///< IPv6 address record.
     static constexpr uint16_t kTypeSrv   = 33;  ///< SRV locator record.
     static constexpr uint16_t kTypeOpt   = 41;  ///< Option record.
+    static constexpr uint16_t kTypeNsec  = 47;  ///< NSEC record.
     static constexpr uint16_t kTypeAny   = 255; ///< ANY record.
 
     // Resource Record Class Codes.
@@ -1271,7 +1400,7 @@ public:
      */
     bool Matches(uint16_t aType, uint16_t aClass = kClassInternet) const
     {
-        return (mType == HostSwap16(aType)) && (mClass == HostSwap16(aClass));
+        return (mType == BigEndian::HostSwap16(aType)) && (mClass == BigEndian::HostSwap16(aClass));
     }
 
     /**
@@ -1280,7 +1409,7 @@ public:
      * @returns The type of the resource record.
      *
      */
-    uint16_t GetType(void) const { return HostSwap16(mType); }
+    uint16_t GetType(void) const { return BigEndian::HostSwap16(mType); }
 
     /**
      * Sets the type of the resource record.
@@ -1288,7 +1417,7 @@ public:
      * @param[in]  aType The type of the resource record.
      *
      */
-    void SetType(uint16_t aType) { mType = HostSwap16(aType); }
+    void SetType(uint16_t aType) { mType = BigEndian::HostSwap16(aType); }
 
     /**
      * Returns the class of the resource record.
@@ -1296,7 +1425,7 @@ public:
      * @returns The class of the resource record.
      *
      */
-    uint16_t GetClass(void) const { return HostSwap16(mClass); }
+    uint16_t GetClass(void) const { return BigEndian::HostSwap16(mClass); }
 
     /**
      * Sets the class of the resource record.
@@ -1304,7 +1433,7 @@ public:
      * @param[in]  aClass The class of the resource record.
      *
      */
-    void SetClass(uint16_t aClass) { mClass = HostSwap16(aClass); }
+    void SetClass(uint16_t aClass) { mClass = BigEndian::HostSwap16(aClass); }
 
     /**
      * Returns the time to live field of the resource record.
@@ -1312,7 +1441,7 @@ public:
      * @returns The time to live field of the resource record.
      *
      */
-    uint32_t GetTtl(void) const { return HostSwap32(mTtl); }
+    uint32_t GetTtl(void) const { return BigEndian::HostSwap32(mTtl); }
 
     /**
      * Sets the time to live field of the resource record.
@@ -1320,7 +1449,7 @@ public:
      * @param[in]  aTtl The time to live field of the resource record.
      *
      */
-    void SetTtl(uint32_t aTtl) { mTtl = HostSwap32(aTtl); }
+    void SetTtl(uint32_t aTtl) { mTtl = BigEndian::HostSwap32(aTtl); }
 
     /**
      * Returns the length of the resource record data.
@@ -1328,7 +1457,7 @@ public:
      * @returns The length of the resource record data.
      *
      */
-    uint16_t GetLength(void) const { return HostSwap16(mLength); }
+    uint16_t GetLength(void) const { return BigEndian::HostSwap16(mLength); }
 
     /**
      * Sets the length of the resource record data.
@@ -1336,7 +1465,7 @@ public:
      * @param[in]  aLength The length of the resource record data.
      *
      */
-    void SetLength(uint16_t aLength) { mLength = HostSwap16(aLength); }
+    void SetLength(uint16_t aLength) { mLength = BigEndian::HostSwap16(aLength); }
 
     /**
      * Returns the size of (number of bytes) in resource record and its data RDATA section (excluding the
@@ -1681,6 +1810,36 @@ public:
                       char          *aNameBuffer,
                       uint16_t       aNameBufferSize) const;
 
+    /**
+     * Parses and reads the PTR name from a message.
+     *
+     * This is a template variation of the previous method with name and label buffer sizes as template parameters.
+     *
+     * @tparam kLabelBufferSize          The size of label buffer.
+     * @tparam kNameBufferSize           The size of name buffer.
+     *
+     * @param[in]      aMessage          The message to read from. `aMessage.GetOffset()` MUST point to the start of
+     *                                   DNS header.
+     * @param[in,out]  aOffset           On input, the offset in @p aMessage to the start of PTR name field.
+     *                                   On exit, when successfully read, @p aOffset is updated to point to the byte
+     *                                   after the entire PTR record (skipping over the record).
+     * @param[out]     aLabelBuffer      A char array buffer to output the first label as a null-terminated C string.
+     * @param[out]     aNameBuffer       A char array to output the rest of name (after first label).
+     *
+     * @retval kErrorNone    The PTR name was read successfully. @p aOffset, @aLabelBuffer and @aNameBuffer are updated.
+     * @retval kErrorParse   The PTR record in @p aMessage could not be parsed (invalid format).
+     * @retval kErrorNoBufs  Either label or name could not fit in the related given buffers.
+     *
+     */
+    template <uint16_t kLabelBufferSize, uint16_t kNameBufferSize>
+    Error ReadPtrName(const Message &aMessage,
+                      uint16_t      &aOffset,
+                      char (&aLabelBuffer)[kLabelBufferSize],
+                      char (&aNameBuffer)[kNameBufferSize]) const
+    {
+        return ReadPtrName(aMessage, aOffset, aLabelBuffer, kLabelBufferSize, aNameBuffer, kNameBufferSize);
+    }
+
 } OT_TOOL_PACKED_END;
 
 /**
@@ -1817,7 +1976,7 @@ public:
      * @returns The priority value.
      *
      */
-    uint16_t GetPriority(void) const { return HostSwap16(mPriority); }
+    uint16_t GetPriority(void) const { return BigEndian::HostSwap16(mPriority); }
 
     /**
      * Sets the SRV record's priority value.
@@ -1825,7 +1984,7 @@ public:
      * @param[in]  aPriority  The priority value.
      *
      */
-    void SetPriority(uint16_t aPriority) { mPriority = HostSwap16(aPriority); }
+    void SetPriority(uint16_t aPriority) { mPriority = BigEndian::HostSwap16(aPriority); }
 
     /**
      * Returns the SRV record's weight value.
@@ -1833,7 +1992,7 @@ public:
      * @returns The weight value.
      *
      */
-    uint16_t GetWeight(void) const { return HostSwap16(mWeight); }
+    uint16_t GetWeight(void) const { return BigEndian::HostSwap16(mWeight); }
 
     /**
      * Sets the SRV record's weight value.
@@ -1841,7 +2000,7 @@ public:
      * @param[in]  aWeight  The weight value.
      *
      */
-    void SetWeight(uint16_t aWeight) { mWeight = HostSwap16(aWeight); }
+    void SetWeight(uint16_t aWeight) { mWeight = BigEndian::HostSwap16(aWeight); }
 
     /**
      * Returns the SRV record's port number on the target host for this service.
@@ -1849,7 +2008,7 @@ public:
      * @returns The port number.
      *
      */
-    uint16_t GetPort(void) const { return HostSwap16(mPort); }
+    uint16_t GetPort(void) const { return BigEndian::HostSwap16(mPort); }
 
     /**
      * Sets the SRV record's port number on the target host for this service.
@@ -1857,7 +2016,7 @@ public:
      * @param[in]  aPort  The port number.
      *
      */
-    void SetPort(uint16_t aPort) { mPort = HostSwap16(aPort); }
+    void SetPort(uint16_t aPort) { mPort = BigEndian::HostSwap16(aPort); }
 
     /**
      * Parses and reads the SRV target host name from a message.
@@ -1887,6 +2046,32 @@ public:
         return ResourceRecord::ReadName(aMessage, aOffset, /* aStartOffset */ aOffset - sizeof(SrvRecord), aNameBuffer,
                                         aNameBufferSize,
                                         /* aSkipRecord */ true);
+    }
+
+    /**
+     * Parses and reads the SRV target host name from a message.
+     *
+     * Also verifies that the SRV record is well-formed (e.g., the record data length `GetLength()` matches
+     * the SRV encoded name).
+     *
+     * @tparam         kNameBufferSize  Size of the name buffer.
+     *
+     * @param[in]      aMessage         The message to read from. `aMessage.GetOffset()` MUST point to the start of
+     *                                  DNS header.
+     * @param[in,out]  aOffset          On input, the offset in @p aMessage to start of target host name field.
+     *                                  On exit when successfully read, @p aOffset is updated to point to the byte
+     *                                  after the entire SRV record (skipping over the record).
+     * @param[out]     aNameBuffer      A char array to output the read name as a null-terminated C string
+     *
+     * @retval kErrorNone            The host name was read successfully. @p aOffset and @p aNameBuffer are updated.
+     * @retval kErrorParse           The SRV record in @p aMessage could not be parsed (invalid format).
+     * @retval kErrorNoBufs          Name could not fit in @p aNameBuffer.
+     *
+     */
+    template <uint16_t kNameBufferSize>
+    Error ReadTargetHostName(const Message &aMessage, uint16_t &aOffset, char (&aNameBuffer)[kNameBufferSize]) const
+    {
+        return ReadTargetHostName(aMessage, aOffset, aNameBuffer, kNameBufferSize);
     }
 
 private:
@@ -2100,12 +2285,20 @@ public:
     bool IsValid(void) const;
 
     /**
-     * Returns the ECDSA P-256 public kek.
+     * Returns the ECDSA P-256 public key.
      *
      * @returns  A reference to the public key.
      *
      */
     const Crypto::Ecdsa::P256::PublicKey &GetKey(void) const { return mKey; }
+
+    /**
+     * Sets the ECDSA P-256 public key.
+     *
+     * @param[in] aKey  The public key.
+     *
+     */
+    void SetKey(const Crypto::Ecdsa::P256::PublicKey &aKey) { mKey = aKey; }
 
 private:
     Crypto::Ecdsa::P256::PublicKey mKey;
@@ -2149,7 +2342,7 @@ public:
      * @returns The type-covered value.
      *
      */
-    uint16_t GetTypeCovered(void) const { return HostSwap16(mTypeCovered); }
+    uint16_t GetTypeCovered(void) const { return BigEndian::HostSwap16(mTypeCovered); }
 
     /**
      * Sets the SIG record's type-covered value.
@@ -2157,7 +2350,7 @@ public:
      * @param[in]  aTypeCovered  The type-covered value.
      *
      */
-    void SetTypeCovered(uint8_t aTypeCovered) { mTypeCovered = HostSwap16(aTypeCovered); }
+    void SetTypeCovered(uint8_t aTypeCovered) { mTypeCovered = BigEndian::HostSwap16(aTypeCovered); }
 
     /**
      * Returns the SIG record's algorithm value.
@@ -2199,7 +2392,7 @@ public:
      * @returns The original TTL value.
      *
      */
-    uint32_t GetOriginalTtl(void) const { return HostSwap32(mOriginalTtl); }
+    uint32_t GetOriginalTtl(void) const { return BigEndian::HostSwap32(mOriginalTtl); }
 
     /**
      * Sets the SIG record's original TTL value.
@@ -2207,7 +2400,7 @@ public:
      * @param[in]  aOriginalTtl  The original TTL value.
      *
      */
-    void SetOriginalTtl(uint32_t aOriginalTtl) { mOriginalTtl = HostSwap32(aOriginalTtl); }
+    void SetOriginalTtl(uint32_t aOriginalTtl) { mOriginalTtl = BigEndian::HostSwap32(aOriginalTtl); }
 
     /**
      * Returns the SIG record's expiration time value.
@@ -2215,7 +2408,7 @@ public:
      * @returns The expiration time value (seconds since Jan 1, 1970).
      *
      */
-    uint32_t GetExpiration(void) const { return HostSwap32(mExpiration); }
+    uint32_t GetExpiration(void) const { return BigEndian::HostSwap32(mExpiration); }
 
     /**
      * Sets the SIG record's expiration time value.
@@ -2223,7 +2416,7 @@ public:
      * @param[in]  aExpiration  The expiration time value (seconds since Jan 1, 1970).
      *
      */
-    void SetExpiration(uint32_t aExpiration) { mExpiration = HostSwap32(aExpiration); }
+    void SetExpiration(uint32_t aExpiration) { mExpiration = BigEndian::HostSwap32(aExpiration); }
 
     /**
      * Returns the SIG record's inception time value.
@@ -2231,7 +2424,7 @@ public:
      * @returns The inception time value (seconds since Jan 1, 1970).
      *
      */
-    uint32_t GetInception(void) const { return HostSwap32(mInception); }
+    uint32_t GetInception(void) const { return BigEndian::HostSwap32(mInception); }
 
     /**
      * Sets the SIG record's inception time value.
@@ -2239,7 +2432,7 @@ public:
      * @param[in]  aInception  The inception time value (seconds since Jan 1, 1970).
      *
      */
-    void SetInception(uint32_t aInception) { mInception = HostSwap32(aInception); }
+    void SetInception(uint32_t aInception) { mInception = BigEndian::HostSwap32(aInception); }
 
     /**
      * Returns the SIG record's key tag value.
@@ -2247,7 +2440,7 @@ public:
      * @returns The key tag value.
      *
      */
-    uint16_t GetKeyTag(void) const { return HostSwap16(mKeyTag); }
+    uint16_t GetKeyTag(void) const { return BigEndian::HostSwap16(mKeyTag); }
 
     /**
      * Sets the SIG record's key tag value.
@@ -2255,7 +2448,7 @@ public:
      * @param[in]  aKeyTag  The key tag value.
      *
      */
-    void SetKeyTag(uint16_t aKeyTag) { mKeyTag = HostSwap16(aKeyTag); }
+    void SetKeyTag(uint16_t aKeyTag) { mKeyTag = BigEndian::HostSwap16(aKeyTag); }
 
     /**
      * Returns a pointer to the start of the record data fields.
@@ -2440,7 +2633,7 @@ public:
      * @returns The option code value.
      *
      */
-    uint16_t GetOptionCode(void) const { return HostSwap16(mOptionCode); }
+    uint16_t GetOptionCode(void) const { return BigEndian::HostSwap16(mOptionCode); }
 
     /**
      * Sets the option code value.
@@ -2448,7 +2641,7 @@ public:
      * @param[in]  aOptionCode  The option code value.
      *
      */
-    void SetOptionCode(uint16_t aOptionCode) { mOptionCode = HostSwap16(aOptionCode); }
+    void SetOptionCode(uint16_t aOptionCode) { mOptionCode = BigEndian::HostSwap16(aOptionCode); }
 
     /**
      * Returns the option length value.
@@ -2456,7 +2649,7 @@ public:
      * @returns The option length (size of option data in bytes).
      *
      */
-    uint16_t GetOptionLength(void) const { return HostSwap16(mOptionLength); }
+    uint16_t GetOptionLength(void) const { return BigEndian::HostSwap16(mOptionLength); }
 
     /**
      * Sets the option length value.
@@ -2464,7 +2657,7 @@ public:
      * @param[in]  aOptionLength  The option length (size of option data in bytes).
      *
      */
-    void SetOptionLength(uint16_t aOptionLength) { mOptionLength = HostSwap16(aOptionLength); }
+    void SetOptionLength(uint16_t aOptionLength) { mOptionLength = BigEndian::HostSwap16(aOptionLength); }
 
     /**
      * Returns the size of (number of bytes) in the Option and its data.
@@ -2537,7 +2730,7 @@ public:
      * @returns The lease interval value (in seconds).
      *
      */
-    uint32_t GetLeaseInterval(void) const { return HostSwap32(mLeaseInterval); }
+    uint32_t GetLeaseInterval(void) const { return BigEndian::HostSwap32(mLeaseInterval); }
 
     /**
      * Returns the Update Lease OPT record's key lease interval value.
@@ -2549,7 +2742,7 @@ public:
      */
     uint32_t GetKeyLeaseInterval(void) const
     {
-        return IsShortVariant() ? GetLeaseInterval() : HostSwap32(mKeyLeaseInterval);
+        return IsShortVariant() ? GetLeaseInterval() : BigEndian::HostSwap32(mKeyLeaseInterval);
     }
 
     /**
@@ -2573,11 +2766,112 @@ private:
     static constexpr uint16_t kShortLength = sizeof(uint32_t);                    // lease only.
     static constexpr uint16_t kLongLength  = sizeof(uint32_t) + sizeof(uint32_t); // lease and key lease values
 
-    void SetLeaseInterval(uint32_t aLeaseInterval) { mLeaseInterval = HostSwap32(aLeaseInterval); }
-    void SetKeyLeaseInterval(uint32_t aKeyLeaseInterval) { mKeyLeaseInterval = HostSwap32(aKeyLeaseInterval); }
+    void SetLeaseInterval(uint32_t aLeaseInterval) { mLeaseInterval = BigEndian::HostSwap32(aLeaseInterval); }
+    void SetKeyLeaseInterval(uint32_t aKeyLeaseInterval)
+    {
+        mKeyLeaseInterval = BigEndian::HostSwap32(aKeyLeaseInterval);
+    }
 
     uint32_t mLeaseInterval;
     uint32_t mKeyLeaseInterval;
+} OT_TOOL_PACKED_END;
+
+/**
+ * Implements body format of NSEC record (RFC 3845) for use with mDNS.
+ *
+ */
+OT_TOOL_PACKED_BEGIN
+class NsecRecord : public ResourceRecord
+{
+public:
+    static constexpr uint16_t kType = kTypeNsec; ///< The NSEC record type.
+
+    /**
+     * Represents NSEC Type Bit Map field (RFC 3845 - section 2.1.2)
+     *
+     */
+    OT_TOOL_PACKED_BEGIN
+    class TypeBitMap : public Clearable<TypeBitMap>
+    {
+    public:
+        static constexpr uint8_t kMinSize = 2; ///< Minimum size of a valid `TypeBitMap` (with zero length).
+
+        static constexpr uint8_t kMaxLength = 32; ///< Maximum BitmapLength value.
+
+        /**
+         * Gets the Window Block Number
+         *
+         * @returns The Window Block Number.
+         *
+         */
+        uint8_t GetBlockNumber(void) const { return mBlockNumber; }
+
+        /**
+         * Sets the Window Block Number
+         *
+         * @param[in] aBlockNumber The Window Block Number.
+         *
+         */
+        void SetBlockNumber(uint8_t aBlockNumber) { mBlockNumber = aBlockNumber; }
+
+        /**
+         * Gets the Bitmap length
+         *
+         * @returns The Bitmap length
+         *
+         */
+        uint8_t GetBitmapLength(void) { return mBitmapLength; }
+
+        /**
+         * Gets the total size (number of bytes) of the `TypeBitMap` field.
+         *
+         * @returns The size of the `TypeBitMap`
+         *
+         */
+        uint16_t GetSize(void) const { return (sizeof(mBlockNumber) + sizeof(mBitmapLength) + mBitmapLength); }
+
+        /**
+         * Adds a resource record type to the Bitmap.
+         *
+         * As the types are added to the Bitmap the Bitmap length gets updated accordingly.
+         *
+         * The type space is split into 256 window blocks, each representing the low-order 8 bits of the 16-bit type
+         * value. If @p aType does not match the currently set Window Block Number, no action is performed.
+         *
+         * @param[in] aType   The resource record type to add.
+         *
+         */
+        void AddType(uint16_t aType);
+
+        /**
+         * Indicates whether a given resource record type is present in the Bitmap.
+         *
+         * If @p aType does not match the currently set Window Block Number, this method returns `false`..
+         *
+         * @param[in] aType   The resource record type to check.
+         *
+         * @retval TRUE   The @p aType is present in the Bitmap.
+         * @retval FALSE  The @p aType is not present in the Bitmap.
+         *
+         */
+        bool ContainsType(uint16_t aType) const;
+
+    private:
+        uint8_t mBlockNumber;
+        uint8_t mBitmapLength;
+        uint8_t mBitmaps[kMaxLength];
+    } OT_TOOL_PACKED_END;
+
+    /**
+     * Initializes the NSEC Resource Record by setting its type and class.
+     *
+     * Other record fields (TTL, length remain unchanged/uninitialized.
+     *
+     * @param[in] aClass  The class of the resource record (default is `kClassInternet`).
+     *
+     */
+    void Init(uint16_t aClass = kClassInternet) { ResourceRecord::Init(kTypeNsec, aClass); }
+
 } OT_TOOL_PACKED_END;
 
 /**
@@ -2610,7 +2904,7 @@ public:
      * @returns The type of the question.
      *
      */
-    uint16_t GetType(void) const { return HostSwap16(mType); }
+    uint16_t GetType(void) const { return BigEndian::HostSwap16(mType); }
 
     /**
      * Sets the type of the question.
@@ -2618,7 +2912,7 @@ public:
      * @param[in]  aType The type of the question.
      *
      */
-    void SetType(uint16_t aType) { mType = HostSwap16(aType); }
+    void SetType(uint16_t aType) { mType = BigEndian::HostSwap16(aType); }
 
     /**
      * Returns the class of the question.
@@ -2626,7 +2920,7 @@ public:
      * @returns The class of the question.
      *
      */
-    uint16_t GetClass(void) const { return HostSwap16(mClass); }
+    uint16_t GetClass(void) const { return BigEndian::HostSwap16(mClass); }
 
     /**
      * Sets the class of the question.
@@ -2634,7 +2928,7 @@ public:
      * @param[in]  aClass The class of the question.
      *
      */
-    void SetClass(uint16_t aClass) { mClass = HostSwap16(aClass); }
+    void SetClass(uint16_t aClass) { mClass = BigEndian::HostSwap16(aClass); }
 
 private:
     uint16_t mType;  // The type of the data in question section.

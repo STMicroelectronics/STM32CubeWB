@@ -67,6 +67,16 @@ enum StringMatchMode : uint8_t
     kStringCaseInsensitiveMatch, ///< Case insensitive match (uppercase and lowercase characters are treated as equal).
 };
 
+/**
+ * Represents string encoding check when copying string.
+ *
+ */
+enum StringEncodingCheck : uint8_t
+{
+    kStringNoEncodingCheck,   ///< Do not check the string encoding.
+    kStringCheckUtf8Encoding, ///< Validate that string follows UTF-8 encoding.
+};
+
 static constexpr char kNullChar = '\0'; ///< null character.
 
 /**
@@ -75,8 +85,8 @@ static constexpr char kNullChar = '\0'; ///< null character.
  * @param[in] aString      A pointer to the string.
  * @param[in] aMaxLength   The maximum length in bytes.
  *
- * @returns The number of characters that precede the terminating null character or @p aMaxLength, whichever is
- *          smaller.
+ * @returns The number of characters that precede the terminating null character or @p aMaxLength,
+ *          whichever is smaller. `0` if @p aString is `nullptr`.
  *
  */
 uint16_t StringLength(const char *aString, uint16_t aMaxLength);
@@ -157,6 +167,43 @@ bool StringEndsWith(const char *aString, const char *aSubString, StringMatchMode
 bool StringMatch(const char *aFirstString, const char *aSecondString, StringMatchMode aMode = kStringExactMatch);
 
 /**
+ * Copies a string into a given target buffer with a given size if it fits.
+ *
+ * @param[out] aTargetBuffer  A pointer to the target buffer to copy into.
+ * @param[out] aTargetSize    The size (number of characters) in @p aTargetBuffer array.
+ * @param[in]  aSource        A pointer to null-terminated string to copy from. Can be `nullptr` which treated as "".
+ * @param[in]  aEncodingCheck Specifies the encoding format check (e.g., UTF-8) to perform.
+ *
+ * @retval kErrorNone         The @p aSource fits in the given buffer. @p aTargetBuffer is updated.
+ * @retval kErrorInvalidArgs  The @p aSource does not fit in the given buffer.
+ * @retval kErrorParse        The @p aSource does not follow the encoding format specified by @p aEncodingCheck.
+ *
+ */
+Error StringCopy(char *TargetBuffer, uint16_t aTargetSize, const char *aSource, StringEncodingCheck aEncodingCheck);
+
+/**
+ * Copies a string into a given target buffer with a given size if it fits.
+ *
+ * @tparam kSize  The size of buffer.
+ *
+ * @param[out] aTargetBuffer  A reference to the target buffer array to copy into.
+ * @param[in]  aSource        A pointer to null-terminated string to copy from. Can be `nullptr` which treated as "".
+ * @param[in]  aEncodingCheck Specifies the encoding format check (e.g., UTF-8) to perform.
+ *
+ * @retval kErrorNone         The @p aSource fits in the given buffer. @p aTargetBuffer is updated.
+ * @retval kErrorInvalidArgs  The @p aSource does not fit in the given buffer.
+ * @retval kErrorParse        The @p aSource does not follow the encoding format specified by @p aEncodingCheck.
+ *
+ */
+template <uint16_t kSize>
+Error StringCopy(char (&aTargetBuffer)[kSize],
+                 const char         *aSource,
+                 StringEncodingCheck aEncodingCheck = kStringNoEncodingCheck)
+{
+    return StringCopy(aTargetBuffer, kSize, aSource, aEncodingCheck);
+}
+
+/**
  * Parses a decimal number from a string as `uint8_t` and skips over the parsed characters.
  *
  * If the string does not start with a digit, `kErrorParse` is returned.
@@ -234,6 +281,63 @@ char ToLowercase(char aChar);
  *
  */
 char ToUppercase(char aChar);
+
+/**
+ * Checks whether a given character is an uppercase letter ('A'-'Z').
+ *
+ * @param[in] aChar   The character to check.
+ *
+ * @retval TRUE    @p aChar is an uppercase letter.
+ * @retval FALSE   @p aChar is not an uppercase letter.
+ *
+ */
+bool IsUppercase(char aChar);
+
+/**
+ * Checks whether a given character is a lowercase letter ('a'-'z').
+ *
+ * @param[in] aChar   The character to check.
+ *
+ * @retval TRUE    @p aChar is a lowercase letter.
+ * @retval FALSE   @p aChar is not a lowercase letter.
+ *
+ */
+bool IsLowercase(char aChar);
+
+/**
+ * Checks whether a given character is a digit character ('0'-'9').
+ *
+ * @param[in] aChar   The character to check.
+ *
+ * @retval TRUE    @p aChar is a digit character.
+ * @retval FALSE   @p aChar is not a digit character.
+ *
+ */
+bool IsDigit(char aChar);
+
+/**
+ * Parse a given digit character to its numeric value.
+ *
+ * @param[in]  aDigitChar   The digit character to parse.
+ * @param[out] aValue       A reference to return the parsed value on success.
+ *
+ * @retval kErrorNone            Successfully parsed the digit, @p aValue is updated.
+ * @retval kErrorInvalidArgs     @p aDigitChar is not a valid digit character.
+ *
+ */
+Error ParseDigit(char aDigitChar, uint8_t &aValue);
+
+/**
+ * Parse a given hex digit character ('0'-'9', 'A'-'F', or 'a'-'f') to its numeric value.
+ *
+ * @param[in]  aHexChar     The hex digit character to parse.
+ * @param[out] aValue       A reference to return the parsed value on success.
+ *
+ * @retval kErrorNone            Successfully parsed the digit, @p aValue is updated.
+ * @retval kErrorInvalidArgs     @p aHexChar is not a valid hex digit character.
+ *
+ */
+Error ParseHexDigit(char aHexChar, uint8_t &aValue);
 
 /**
  * Coverts a boolean to "yes" or "no" string.
@@ -375,6 +479,15 @@ public:
      *
      */
     StringWriter &AppendHexBytes(const uint8_t *aBytes, uint16_t aLength);
+
+    /**
+     * Appends a given character a given number of times.
+     *
+     * @param[in] aChar    The character to append.
+     * @param[in] aCount   Number of times to append @p aChar.
+     *
+     */
+    StringWriter &AppendCharMultipleTimes(char aChar, uint16_t aCount);
 
     /**
      * Converts all uppercase letter characters in the string to lowercase.

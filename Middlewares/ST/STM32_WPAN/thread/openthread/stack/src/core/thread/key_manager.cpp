@@ -35,12 +35,12 @@
 
 #include "common/code_utils.hpp"
 #include "common/encoding.hpp"
-#include "common/instance.hpp"
 #include "common/locator_getters.hpp"
 #include "common/log.hpp"
 #include "common/timer.hpp"
 #include "crypto/hkdf_sha256.hpp"
 #include "crypto/storage.hpp"
+#include "instance/instance.hpp"
 #include "thread/mle_router.hpp"
 #include "thread/thread_netif.hpp"
 
@@ -59,6 +59,9 @@ const uint8_t KeyManager::kHkdfExtractSaltString[] = {'T', 'h', 'r', 'e', 'a', '
 const uint8_t KeyManager::kTrelInfoString[] = {'T', 'h', 'r', 'e', 'a', 'd', 'O', 'v', 'e',
                                                'r', 'I', 'n', 'f', 'r', 'a', 'K', 'e', 'y'};
 #endif
+
+//---------------------------------------------------------------------------------------------------------------------
+// SecurityPolicy
 
 void SecurityPolicy::SetToDefault(void)
 {
@@ -163,6 +166,9 @@ exit:
     return;
 }
 
+//---------------------------------------------------------------------------------------------------------------------
+// KeyManager
+
 KeyManager::KeyManager(Instance &aInstance)
     : InstanceLocator(aInstance)
     , mKeySequence(0)
@@ -171,7 +177,7 @@ KeyManager::KeyManager(Instance &aInstance)
     , mStoredMleFrameCounter(0)
     , mHoursSinceKeyRotation(0)
     , mKeySwitchGuardTime(kDefaultKeySwitchGuardTime)
-    , mKeySwitchGuardEnabled(false)
+    , mKeySwitchGuardTimer(0)
     , mKeyRotationTimer(aInstance)
     , mKekFrameCounter(0)
     , mIsPskcSet(false)
@@ -198,8 +204,8 @@ KeyManager::KeyManager(Instance &aInstance)
 
 void KeyManager::Start(void)
 {
-    mKeySwitchGuardEnabled = false;
-    StartKeyRotationTimer();
+    mKeySwitchGuardTimer = 0;
+    ResetKeyRotationTimer();
 }
 
 void KeyManager::Stop(void) { mKeyRotationTimer.Stop(); }
@@ -298,7 +304,7 @@ void KeyManager::ComputeKeys(uint32_t aKeySequence, HashKeys &aHashKeys) const
 
     hmac.Start(cryptoKey);
 
-    Encoding::BigEndian::WriteUint32(aKeySequence, keySequenceBytes);
+    BigEndian::WriteUint32(aKeySequence, keySequenceBytes);
     hmac.Update(keySequenceBytes);
     hmac.Update(kThreadString);
 
@@ -318,7 +324,7 @@ void KeyManager::ComputeTrelKey(uint32_t aKeySequence, Mac::Key &aKey) const
     cryptoKey.Set(mNetworkKey.m8, NetworkKey::kSize);
 #endif
 
-    Encoding::BigEndian::WriteUint32(aKeySequence, salt);
+    BigEndian::WriteUint32(aKeySequence, salt);
     memcpy(salt + sizeof(uint32_t), kHkdfExtractSaltString, sizeof(kHkdfExtractSaltString));
 
     hkdf.Extract(salt, sizeof(salt), cryptoKey);
@@ -362,20 +368,13 @@ void KeyManager::UpdateKeyMaterial(void)
 #endif
 }
 
-void KeyManager::SetCurrentKeySequence(uint32_t aKeySequence)
+void KeyManager::SetCurrentKeySequence(uint32_t aKeySequence, KeySeqUpdateFlags aFlags)
 {
     VerifyOrExit(aKeySequence != mKeySequence, Get<Notifier>().SignalIfFirst(kEventThreadKeySeqCounterChanged));
 
-    if ((aKeySequence == (mKeySequence + 1)) && mKeyRotationTimer.IsRunning())
+    if (aFlags & kApplySwitchGuard)
     {
-        if (mKeySwitchGuardEnabled)
-        {
-            // Check if the guard timer has expired if key rotation is requested.
-            VerifyOrExit(mHoursSinceKeyRotation >= mKeySwitchGuardTime);
-            StartKeyRotationTimer();
-        }
-
-        mKeySwitchGuardEnabled = true;
+        VerifyOrExit(mKeySwitchGuardTimer == 0);
     }
 
     mKeySequence = aKeySequence;
@@ -383,6 +382,13 @@ void KeyManager::SetCurrentKeySequence(uint32_t aKeySequence)
 
     SetAllMacFrameCounters(0, /* aSetIfLarger */ false);
     mMleFrameCounter = 0;
+
+    ResetKeyRotationTimer();
+
+    if (aFlags & kResetGuardTimer)
+    {
+        mKeySwitchGuardTimer = mKeySwitchGuardTime;
+    }
 
     Get<Notifier>().Signal(kEventThreadKeySeqCounterChanged);
 
@@ -476,47 +482,64 @@ void KeyManager::SetKek(const Kek &aKek)
 
 void KeyManager::SetSecurityPolicy(const SecurityPolicy &aSecurityPolicy)
 {
-    if (aSecurityPolicy.mRotationTime < SecurityPolicy::kMinKeyRotationTime)
+    SecurityPolicy newPolicy = aSecurityPolicy;
+
+    if (newPolicy.mRotationTime < SecurityPolicy::kMinKeyRotationTime)
     {
-        LogNote("Key Rotation Time too small: %d", aSecurityPolicy.mRotationTime);
-        ExitNow();
+        newPolicy.mRotationTime = SecurityPolicy::kMinKeyRotationTime;
+        LogNote("Key Rotation Time in SecurityPolicy is set to min allowed value of %u", newPolicy.mRotationTime);
     }
 
-    IgnoreError(Get<Notifier>().Update(mSecurityPolicy, aSecurityPolicy, kEventSecurityPolicyChanged));
+    if (newPolicy.mRotationTime != mSecurityPolicy.mRotationTime)
+    {
+        uint32_t newGuardTime = newPolicy.mRotationTime;
 
-exit:
-    return;
+        // Calculations are done using a `uint32_t` variable to prevent
+        // potential overflow.
+
+        newGuardTime *= kKeySwitchGuardTimePercentage;
+        newGuardTime /= 100;
+
+        mKeySwitchGuardTime = static_cast<uint16_t>(newGuardTime);
+    }
+
+    IgnoreError(Get<Notifier>().Update(mSecurityPolicy, newPolicy, kEventSecurityPolicyChanged));
+
+    CheckForKeyRotation();
 }
 
-void KeyManager::StartKeyRotationTimer(void)
+void KeyManager::ResetKeyRotationTimer(void)
 {
     mHoursSinceKeyRotation = 0;
-    mKeyRotationTimer.Start(kOneHourIntervalInMsec);
+    mKeyRotationTimer.Start(Time::kOneHourInMsec);
 }
 
 void KeyManager::HandleKeyRotationTimer(void)
 {
+    mKeyRotationTimer.Start(Time::kOneHourInMsec);
+
     mHoursSinceKeyRotation++;
 
-    // Order of operations below is important. We should restart the timer (from
-    // last fire time for one hour interval) before potentially calling
-    // `SetCurrentKeySequence()`. `SetCurrentKeySequence()` uses the fact that
-    // timer is running to decide to check for the guard time and to reset the
-    // rotation timer (and the `mHoursSinceKeyRotation`) if it updates the key
-    // sequence.
+    if (mKeySwitchGuardTimer > 0)
+    {
+        mKeySwitchGuardTimer--;
+    }
 
-    mKeyRotationTimer.StartAt(mKeyRotationTimer.GetFireTime(), kOneHourIntervalInMsec);
+    CheckForKeyRotation();
+}
 
+void KeyManager::CheckForKeyRotation(void)
+{
     if (mHoursSinceKeyRotation >= mSecurityPolicy.mRotationTime)
     {
-        SetCurrentKeySequence(mKeySequence + 1);
+        SetCurrentKeySequence(mKeySequence + 1, kForceUpdate | kResetGuardTimer);
     }
 }
 
 void KeyManager::GetNetworkKey(NetworkKey &aNetworkKey) const
 {
 #if OPENTHREAD_CONFIG_PLATFORM_KEY_REFERENCES_ENABLE
-    if (Crypto::Storage::IsKeyRefValid(mNetworkKeyRef))
+    if (Crypto::Storage::HasKey(mNetworkKeyRef))
     {
         size_t keyLen;
 
@@ -535,7 +558,7 @@ void KeyManager::GetNetworkKey(NetworkKey &aNetworkKey) const
 void KeyManager::GetPskc(Pskc &aPskc) const
 {
 #if OPENTHREAD_CONFIG_PLATFORM_KEY_REFERENCES_ENABLE
-    if (Crypto::Storage::IsKeyRefValid(mPskcRef))
+    if (Crypto::Storage::HasKey(mPskcRef))
     {
         size_t keyLen;
 

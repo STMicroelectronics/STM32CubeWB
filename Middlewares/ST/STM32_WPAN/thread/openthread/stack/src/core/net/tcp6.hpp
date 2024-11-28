@@ -553,7 +553,7 @@ public:
          * @returns The TCP Source Port.
          *
          */
-        uint16_t GetSourcePort(void) const { return HostSwap16(mSource); }
+        uint16_t GetSourcePort(void) const { return BigEndian::HostSwap16(mSource); }
 
         /**
          * Returns the TCP Destination Port.
@@ -561,7 +561,7 @@ public:
          * @returns The TCP Destination Port.
          *
          */
-        uint16_t GetDestinationPort(void) const { return HostSwap16(mDestination); }
+        uint16_t GetDestinationPort(void) const { return BigEndian::HostSwap16(mDestination); }
 
         /**
          * Returns the TCP Sequence Number.
@@ -569,7 +569,7 @@ public:
          * @returns The TCP Sequence Number.
          *
          */
-        uint32_t GetSequenceNumber(void) const { return HostSwap32(mSequenceNumber); }
+        uint32_t GetSequenceNumber(void) const { return BigEndian::HostSwap32(mSequenceNumber); }
 
         /**
          * Returns the TCP Acknowledgment Sequence Number.
@@ -577,7 +577,7 @@ public:
          * @returns The TCP Acknowledgment Sequence Number.
          *
          */
-        uint32_t GetAcknowledgmentNumber(void) const { return HostSwap32(mAckNumber); }
+        uint32_t GetAcknowledgmentNumber(void) const { return BigEndian::HostSwap32(mAckNumber); }
 
         /**
          * Returns the TCP Flags.
@@ -585,7 +585,7 @@ public:
          * @returns The TCP Flags.
          *
          */
-        uint16_t GetFlags(void) const { return HostSwap16(mFlags); }
+        uint16_t GetFlags(void) const { return BigEndian::HostSwap16(mFlags); }
 
         /**
          * Returns the TCP Window.
@@ -593,7 +593,7 @@ public:
          * @returns The TCP Window.
          *
          */
-        uint16_t GetWindow(void) const { return HostSwap16(mWindow); }
+        uint16_t GetWindow(void) const { return BigEndian::HostSwap16(mWindow); }
 
         /**
          * Returns the TCP Checksum.
@@ -601,7 +601,7 @@ public:
          * @returns The TCP Checksum.
          *
          */
-        uint16_t GetChecksum(void) const { return HostSwap16(mChecksum); }
+        uint16_t GetChecksum(void) const { return BigEndian::HostSwap16(mChecksum); }
 
         /**
          * Returns the TCP Urgent Pointer.
@@ -609,7 +609,7 @@ public:
          * @returns The TCP Urgent Pointer.
          *
          */
-        uint16_t GetUrgentPointer(void) const { return HostSwap16(mUrgentPointer); }
+        uint16_t GetUrgentPointer(void) const { return BigEndian::HostSwap16(mUrgentPointer); }
 
     private:
         uint16_t mSource;

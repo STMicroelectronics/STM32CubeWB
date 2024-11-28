@@ -39,7 +39,7 @@
 
 #include "border_router/routing_manager.hpp"
 #include "common/debug.hpp"
-#include "common/instance.hpp"
+#include "instance/instance.hpp"
 #include "net/ip4_types.hpp"
 #include "net/ip6_headers.hpp"
 #include "net/nat64_translator.hpp"
@@ -138,6 +138,16 @@ bool otIp4IsAddressEqual(const otIp4Address *aFirst, const otIp4Address *aSecond
 void otIp4ExtractFromIp6Address(uint8_t aPrefixLength, const otIp6Address *aIp6Address, otIp4Address *aIp4Address)
 {
     AsCoreType(aIp4Address).ExtractFromIp6Address(aPrefixLength, AsCoreType(aIp6Address));
+}
+
+otError otIp4FromIp4MappedIp6Address(const otIp6Address *aIp6Address, otIp4Address *aIp4Address)
+{
+    return AsCoreType(aIp4Address).ExtractFromIp4MappedIp6Address(AsCoreType(aIp6Address));
+}
+
+void otIp4ToIp4MappedIp6Address(const otIp4Address *aIp4Address, otIp6Address *aIp6Address)
+{
+    AsCoreType(aIp6Address).SetToIp4Mapped(AsCoreType(aIp4Address));
 }
 
 otError otIp4AddressFromString(const char *aString, otIp4Address *aAddress)

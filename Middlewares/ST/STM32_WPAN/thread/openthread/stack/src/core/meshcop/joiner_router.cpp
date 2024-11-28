@@ -40,9 +40,9 @@
 #include "common/as_core_type.hpp"
 #include "common/code_utils.hpp"
 #include "common/encoding.hpp"
-#include "common/instance.hpp"
 #include "common/locator_getters.hpp"
 #include "common/log.hpp"
+#include "instance/instance.hpp"
 #include "meshcop/meshcop.hpp"
 #include "meshcop/meshcop_tlvs.hpp"
 #include "thread/mle.hpp"
@@ -75,7 +75,7 @@ void JoinerRouter::Start(void)
 {
     VerifyOrExit(Get<Mle::MleRouter>().IsFullThreadDevice());
 
-    if (Get<NetworkData::Leader>().IsJoiningEnabled())
+    if (Get<NetworkData::Leader>().IsJoiningAllowed())
     {
         uint16_t port = GetJoinerUdpPort();
 
@@ -99,20 +99,24 @@ exit:
     return;
 }
 
-uint16_t JoinerRouter::GetJoinerUdpPort(void)
+uint16_t JoinerRouter::GetJoinerUdpPort(void) const
 {
-    uint16_t                rval = OPENTHREAD_CONFIG_JOINER_UDP_PORT;
-    const JoinerUdpPortTlv *joinerUdpPort;
+    uint16_t port;
 
-    VerifyOrExit(!mIsJoinerPortConfigured, rval = mJoinerUdpPort);
+    if (mIsJoinerPortConfigured)
+    {
+        ExitNow(port = mJoinerUdpPort);
+    }
 
-    joinerUdpPort = As<JoinerUdpPortTlv>(Get<NetworkData::Leader>().GetCommissioningDataSubTlv(Tlv::kJoinerUdpPort));
-    VerifyOrExit(joinerUdpPort != nullptr);
+    if (Get<NetworkData::Leader>().FindJoinerUdpPort(port) == kErrorNone)
+    {
+        ExitNow();
+    }
 
-    rval = joinerUdpPort->GetUdpPort();
+    port = kDefaultJoinerUdpPort;
 
 exit:
-    return rval;
+    return port;
 }
 
 void JoinerRouter::SetJoinerUdpPort(uint16_t aJoinerUdpPort)
@@ -137,7 +141,7 @@ void JoinerRouter::HandleUdpReceive(Message &aMessage, const Ip6::MessageInfo &a
 
     LogInfo("JoinerRouter::HandleUdpReceive");
 
-    SuccessOrExit(error = GetBorderAgentRloc(Get<ThreadNetif>(), borderAgentRloc));
+    SuccessOrExit(error = Get<NetworkData::Leader>().FindBorderAgentRloc(borderAgentRloc));
 
     message = Get<Tmf::Agent>().NewPriorityNonConfirmablePostMessage(kUriRelayRx);
     VerifyOrExit(message != nullptr, error = kErrorNoBufs);
@@ -228,7 +232,7 @@ void JoinerRouter::DelaySendingJoinerEntrust(const Ip6::MessageInfo &aMessageInf
 
 exit:
     FreeMessageOnError(message, error);
-    LogError("schedule joiner entrust", error);
+    LogWarnOnError(error, "schedule joiner entrust");
 }
 
 void JoinerRouter::HandleTimer(void) { SendDelayedJoinerEntrust(); }
@@ -286,71 +290,28 @@ exit:
 
 Coap::Message *JoinerRouter::PrepareJoinerEntrustMessage(void)
 {
-    Error          error;
+    static const Tlv::Type kTlvTypes[] = {
+        Tlv::kNetworkKey,      Tlv::kMeshLocalPrefix, Tlv::kExtendedPanId, Tlv::kNetworkName,
+        Tlv::kActiveTimestamp, Tlv::kChannelMask,     Tlv::kPskc,          Tlv::kSecurityPolicy,
+    };
+
+    Error          error   = kErrorNone;
     Coap::Message *message = nullptr;
     Dataset        dataset;
-    NetworkNameTlv networkName;
-    const Tlv     *tlv;
-    NetworkKey     networkKey;
 
     message = Get<Tmf::Agent>().NewPriorityConfirmablePostMessage(kUriJoinerEntrust);
     VerifyOrExit(message != nullptr, error = kErrorNoBufs);
 
     message->SetSubType(Message::kSubTypeJoinerEntrust);
 
-    Get<KeyManager>().GetNetworkKey(networkKey);
-    SuccessOrExit(error = Tlv::Append<NetworkKeyTlv>(*message, networkKey));
-    SuccessOrExit(error = Tlv::Append<MeshLocalPrefixTlv>(*message, Get<Mle::MleRouter>().GetMeshLocalPrefix()));
-    SuccessOrExit(error = Tlv::Append<ExtendedPanIdTlv>(*message, Get<ExtendedPanIdManager>().GetExtPanId()));
+    SuccessOrExit(error = Get<ActiveDatasetManager>().Read(dataset));
 
-    networkName.Init();
-    networkName.SetNetworkName(Get<NetworkNameManager>().GetNetworkName().GetAsData());
-    SuccessOrExit(error = networkName.AppendTo(*message));
-
-    IgnoreError(Get<ActiveDatasetManager>().Read(dataset));
-
-    if ((tlv = dataset.GetTlv<ActiveTimestampTlv>()) != nullptr)
+    for (Tlv::Type tlvType : kTlvTypes)
     {
+        const Tlv *tlv = dataset.FindTlv(tlvType);
+
+        VerifyOrExit(tlv != nullptr, error = kErrorInvalidState);
         SuccessOrExit(error = tlv->AppendTo(*message));
-    }
-    else
-    {
-        ActiveTimestampTlv activeTimestamp;
-        activeTimestamp.Init();
-        SuccessOrExit(error = activeTimestamp.AppendTo(*message));
-    }
-
-    if ((tlv = dataset.GetTlv<ChannelMaskTlv>()) != nullptr)
-    {
-        SuccessOrExit(error = tlv->AppendTo(*message));
-    }
-    else
-    {
-        ChannelMaskBaseTlv channelMask;
-        channelMask.Init();
-        SuccessOrExit(error = channelMask.AppendTo(*message));
-    }
-
-    if ((tlv = dataset.GetTlv<PskcTlv>()) != nullptr)
-    {
-        SuccessOrExit(error = tlv->AppendTo(*message));
-    }
-    else
-    {
-        PskcTlv pskc;
-        pskc.Init();
-        SuccessOrExit(error = pskc.AppendTo(*message));
-    }
-
-    if ((tlv = dataset.GetTlv<SecurityPolicyTlv>()) != nullptr)
-    {
-        SuccessOrExit(error = tlv->AppendTo(*message));
-    }
-    else
-    {
-        SecurityPolicyTlv securityPolicy;
-        securityPolicy.Init();
-        SuccessOrExit(error = securityPolicy.AppendTo(*message));
     }
 
     SuccessOrExit(error = Tlv::Append<NetworkKeySequenceTlv>(*message, Get<KeyManager>().GetCurrentKeySequence()));

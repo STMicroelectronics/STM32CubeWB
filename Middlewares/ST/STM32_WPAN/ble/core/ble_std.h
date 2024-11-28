@@ -246,6 +246,7 @@
 #define BLE_CORE_5_2                                   11
 #define BLE_CORE_5_3                                   12
 #define BLE_CORE_5_4                                   13
+#define BLE_CORE_6_0                                   14
 
 /* AD types for advertising data and scan response data
  */

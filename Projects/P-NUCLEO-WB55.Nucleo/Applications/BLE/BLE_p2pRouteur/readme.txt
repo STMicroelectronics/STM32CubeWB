@@ -121,8 +121,8 @@ In order to make the program work, follow the next steps:
  - For example, BLE_p2pRouteur can be generated and downloaded in a Nucleo board, BLE_p2pServer(s) in USB Dongle boards.
  - Server 1 to 6 are defined in app_conf.h file, setting the good #define P2P_SERVERx (1 <= x <= 6).
  - Switch on ST BLE Router and the first ST BLE Server board.
- - The smartphone application discovers and connects to the P2P_router, using the ST BLE Starnet application.
-   https://wiki.st.com/stm32mcu/wiki/Connectivity:BLE_smartphone_applications#ST_BLE_StarNet
+ - The smartphone application discovers and connects to the P2P_router, using the ST BLE Toolbox application.
+   https://wiki.st.com/stm32mcu/wiki/Connectivity:BLE_smartphone_applications#ST_BLE_Toolbox
  - 1 - Green led of BLE_p2pServer should blink (server advertises) until BLE_p2pRouteur is connected.
  - 2 - To connect BLE_p2pRouteur to BLE_p2pServer, just press SW1 of the BLE_p2pRouteur, the blue led is turned on.
  - 3 - As soon as the blue led turns off (about 5 seconds), the connection is done and services/characteristics found.

@@ -346,6 +346,35 @@ static void APPE_SysEvtReadyProcessing( void )
   APP_DBG("4- Configure OpenThread (Channel, PANID, IPv6 stack, ...) and Start it...");
   APP_THREAD_Init_Dyn_2();
 
+  /**
+   *  When the application wants to disable the output of traces, it is not 
+   *  enough to just disable the UART. Indeed, CPU2 will still send its traces 
+   *  through IPCC to CPU1. By default, CPU2 enables the debug traces. The 
+   *  command below will indicate to CPU2 to disable its traces if 
+   *  CFG_DEBUG_TRACE is set to 0.
+   *  The result is a gain of performance for both CPUs and a reduction of power
+   *  consumption, especially in dense networks where there can be a massive
+   *  amount of data to print.
+   */
+  SHCI_C2_DEBUG_TracesConfig_t APPD_TracesConfig;
+  /* Set to 1 to enable Thread traces, 0 to disable */
+  APPD_TracesConfig.thread_config = CFG_DEBUG_TRACE;
+  /* Set to 1 to enable BLE traces, 0 to disable */
+  APPD_TracesConfig.ble_config = CFG_DEBUG_TRACE;
+  
+  SHCI_C2_DEBUG_Init_Cmd_Packet_t DebugCmdPacket =
+  {
+    {{0,0,0}},
+    {(uint8_t *)NULL,
+    (uint8_t *)&APPD_TracesConfig,
+    (uint8_t *)NULL,
+    0,
+    0,
+    0}
+  };
+  
+  SHCI_C2_DEBUG_Init(&DebugCmdPacket);
+
 #if ( CFG_LPM_SUPPORTED == 1)
   /* Thread stack is initialized, low power mode can be enabled */
   UTIL_LPM_SetOffMode(1U << CFG_LPM_APP, UTIL_LPM_ENABLE);

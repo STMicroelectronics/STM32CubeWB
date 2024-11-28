@@ -35,8 +35,6 @@
 
 #include <stdint.h>
 
-#include "common/encoding.hpp"
-
 namespace ot {
 namespace Spinel {
 
@@ -195,10 +193,7 @@ public:
      * @param[in] aAcceptLen    The accept length in bytes.
      *
      */
-    void SetHeaderAcceptLen(uint16_t aAcceptLen)
-    {
-        Encoding::LittleEndian::WriteUint16(aAcceptLen, mBuffer + kIndexAcceptLen);
-    }
+    void SetHeaderAcceptLen(uint16_t aAcceptLen) { LittleEndian::WriteUint16(aAcceptLen, mBuffer + kIndexAcceptLen); }
 
     /**
      * Gets the "accept len" field in the SPI frame header.
@@ -206,7 +201,7 @@ public:
      * @returns  The accept length in bytes.
      *
      */
-    uint16_t GetHeaderAcceptLen(void) const { return Encoding::LittleEndian::ReadUint16(mBuffer + kIndexAcceptLen); }
+    uint16_t GetHeaderAcceptLen(void) const { return LittleEndian::ReadUint16(mBuffer + kIndexAcceptLen); }
 
     /**
      * Sets the "data len" field in the SPI frame header.
@@ -216,7 +211,7 @@ public:
      * @param[in] aDataLen    The data length in bytes.
      *
      */
-    void SetHeaderDataLen(uint16_t aDataLen) { Encoding::LittleEndian::WriteUint16(aDataLen, mBuffer + kIndexDataLen); }
+    void SetHeaderDataLen(uint16_t aDataLen) { LittleEndian::WriteUint16(aDataLen, mBuffer + kIndexDataLen); }
 
     /**
      * Gets the "data len" field in the SPI frame header.
@@ -224,7 +219,7 @@ public:
      * @returns  The data length in bytes.
      *
      */
-    uint16_t GetHeaderDataLen(void) const { return Encoding::LittleEndian::ReadUint16(mBuffer + kIndexDataLen); }
+    uint16_t GetHeaderDataLen(void) const { return LittleEndian::ReadUint16(mBuffer + kIndexDataLen); }
 
 private:
     enum
@@ -236,6 +231,20 @@ private:
         kFlagReset       = (1 << 7), // Flag byte RESET bit.
         kFlagPattern     = 0x02,     // Flag byte PATTERN bits.
         kFlagPatternMask = 0x03,     // Flag byte PATTERN mask.
+    };
+
+    class LittleEndian
+    {
+    public:
+        static uint16_t ReadUint16(const uint8_t *aBuffer)
+        {
+            return static_cast<uint16_t>((aBuffer[0] << 8) | aBuffer[1]);
+        }
+        static void WriteUint16(uint16_t aValue, uint8_t *aBuffer)
+        {
+            aBuffer[0] = (aValue >> 8) & 0xff;
+            aBuffer[1] = (aValue >> 0) & 0xff;
+        }
     };
 
     uint8_t *mBuffer;

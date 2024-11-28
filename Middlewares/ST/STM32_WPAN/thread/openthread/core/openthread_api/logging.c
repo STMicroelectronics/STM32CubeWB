@@ -31,6 +31,8 @@
 
 otLogLevel otLoggingGetLevel(void)
 {
+  otLogLevel rspData;
+  
   Pre_OtCmdProcessing();
 
   /* prepare buffer */
@@ -43,12 +45,18 @@ otLogLevel otLoggingGetLevel(void)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otLogLevel)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 #if OPENTHREAD_CONFIG_LOG_LEVEL_DYNAMIC_ENABLE
 otError otLoggingSetLevel(otLogLevel aLogLevel)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
 
   /* prepare buffer */
@@ -62,9 +70,37 @@ otError otLoggingSetLevel(otLogLevel aLogLevel)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 #endif
+
+otError otLogGenerateNextHexDumpLine(otLogHexDumpInfo *aInfo)
+{
+  otError rspData;
+  
+  Pre_OtCmdProcessing();
+
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_LOGGING_GENERATE_NEXT_HEX_DUMP_LINE;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t)aInfo;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
+}
 
 void otDumpCritPlat(const char *aText, const void *aData, uint16_t aDataLength)
 {
@@ -81,6 +117,8 @@ void otDumpCritPlat(const char *aText, const void *aData, uint16_t aDataLength)
   p_ot_req->Data[2] = (uint32_t)aDataLength;
 
   Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
 }
 
 void otDumpWarnPlat(const char *aText, const void *aData, uint16_t aDataLength)
@@ -98,6 +136,8 @@ void otDumpWarnPlat(const char *aText, const void *aData, uint16_t aDataLength)
   p_ot_req->Data[2] = (uint32_t)aDataLength;
 
   Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
 }
 
 void otDumpNotePlat(const char *aText, const void *aData, uint16_t aDataLength)
@@ -115,6 +155,8 @@ void otDumpNotePlat(const char *aText, const void *aData, uint16_t aDataLength)
   p_ot_req->Data[2] = (uint32_t)aDataLength;
 
   Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
 }
 
 void otDumpInfoPlat(const char *aText, const void *aData, uint16_t aDataLength)
@@ -132,6 +174,8 @@ void otDumpInfoPlat(const char *aText, const void *aData, uint16_t aDataLength)
   p_ot_req->Data[2] = (uint32_t)aDataLength;
 
   Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
 }
 
 void otDumpDebgPlat(const char *aText, const void *aData, uint16_t aDataLength)
@@ -149,4 +193,6 @@ void otDumpDebgPlat(const char *aText, const void *aData, uint16_t aDataLength)
   p_ot_req->Data[2] = (uint32_t)aDataLength;
 
   Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
 }

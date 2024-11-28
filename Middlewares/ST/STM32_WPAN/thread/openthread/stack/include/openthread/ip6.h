@@ -52,12 +52,13 @@ extern "C" {
  *
  */
 
-#define OT_IP6_PREFIX_SIZE 8                           ///< Size of an IPv6 prefix (bytes)
-#define OT_IP6_PREFIX_BITSIZE (OT_IP6_PREFIX_SIZE * 8) ///< Size of an IPv6 prefix (bits)
-#define OT_IP6_IID_SIZE 8                              ///< Size of an IPv6 Interface Identifier (bytes)
-#define OT_IP6_ADDRESS_SIZE 16                         ///< Size of an IPv6 address (bytes)
-#define OT_IP6_HEADER_SIZE 40                          ///< Size of an IPv6 header (bytes)
-#define OT_IP6_HEADER_PROTO_OFFSET 6                   ///< Offset of the proto field in the IPv6 header (bytes)
+#define OT_IP6_PREFIX_SIZE 8                             ///< Size of an IPv6 prefix (bytes)
+#define OT_IP6_PREFIX_BITSIZE (OT_IP6_PREFIX_SIZE * 8)   ///< Size of an IPv6 prefix (bits)
+#define OT_IP6_IID_SIZE 8                                ///< Size of an IPv6 Interface Identifier (bytes)
+#define OT_IP6_ADDRESS_SIZE 16                           ///< Size of an IPv6 address (bytes)
+#define OT_IP6_ADDRESS_BITSIZE (OT_IP6_ADDRESS_SIZE * 8) ///< Size of an IPv6 address (bits)
+#define OT_IP6_HEADER_SIZE 40                            ///< Size of an IPv6 header (bytes)
+#define OT_IP6_HEADER_PROTO_OFFSET 6                     ///< Offset of the proto field in the IPv6 header (bytes)
 
 /**
  * @struct otIp6InterfaceIdentifier
@@ -144,6 +145,8 @@ struct otIp6Address
 typedef struct otIp6Address otIp6Address;
 
 /**
+ * @struct otIp6Prefix
+ *
  * Represents an IPv6 prefix.
  *
  */
@@ -178,15 +181,17 @@ enum
  */
 typedef struct otNetifAddress
 {
-    otIp6Address           mAddress;                ///< The IPv6 unicast address.
-    uint8_t                mPrefixLength;           ///< The Prefix length (in bits).
-    uint8_t                mAddressOrigin;          ///< The IPv6 address origin.
-    bool                   mPreferred : 1;          ///< TRUE if the address is preferred, FALSE otherwise.
-    bool                   mValid : 1;              ///< TRUE if the address is valid, FALSE otherwise.
-    bool                   mScopeOverrideValid : 1; ///< TRUE if the mScopeOverride value is valid, FALSE otherwise.
-    unsigned int           mScopeOverride : 4;      ///< The IPv6 scope of this address.
-    bool                   mRloc : 1;               ///< TRUE if the address is an RLOC, FALSE otherwise.
-    struct otNetifAddress *mNext;                   ///< A pointer to the next network interface address.
+    otIp6Address mAddress;                ///< The IPv6 unicast address.
+    uint8_t      mPrefixLength;           ///< The Prefix length (in bits).
+    uint8_t      mAddressOrigin;          ///< The IPv6 address origin.
+    bool         mPreferred : 1;          ///< TRUE if the address is preferred, FALSE otherwise.
+    bool         mValid : 1;              ///< TRUE if the address is valid, FALSE otherwise.
+    bool         mScopeOverrideValid : 1; ///< TRUE if the mScopeOverride value is valid, FALSE otherwise.
+    unsigned int mScopeOverride : 4;      ///< The IPv6 scope of this address.
+    bool         mRloc : 1;               ///< TRUE if the address is an RLOC, FALSE otherwise.
+    bool         mMeshLocal : 1;          ///< TRUE if the address is mesh-local, FALSE otherwise.
+    bool         mSrpRegistered : 1;      ///< Used by OT core only (indicates whether registered by SRP Client).
+    const struct otNetifAddress *mNext;   ///< A pointer to the next network interface address.
 } otNetifAddress;
 
 /**
@@ -231,7 +236,6 @@ typedef struct otMessageInfo
     otIp6Address mPeerAddr; ///< The peer IPv6 address.
     uint16_t     mSockPort; ///< The local transport-layer port.
     uint16_t     mPeerPort; ///< The peer transport-layer port.
-    const void  *mLinkInfo; ///< A pointer to link-specific information.
     uint8_t      mHopLimit; ///< The IPv6 Hop Limit value. Only applies if `mAllowZeroHopLimit` is FALSE.
                             ///< If `0`, IPv6 Hop Limit is default value `OPENTHREAD_CONFIG_IP6_HOP_LIMIT_DEFAULT`.
                             ///< Otherwise, specifies the IPv6 Hop Limit.
@@ -296,6 +300,7 @@ bool otIp6IsEnabled(otInstance *aInstance);
  * @retval OT_ERROR_NONE          Successfully added (or updated) the Network Interface Address.
  * @retval OT_ERROR_INVALID_ARGS  The IP Address indicated by @p aAddress is an internal address.
  * @retval OT_ERROR_NO_BUFS       The Network Interface is already storing the maximum allowed external addresses.
+ *
  */
 otError otIp6AddUnicastAddress(otInstance *aInstance, const otNetifAddress *aAddress);
 
@@ -308,6 +313,7 @@ otError otIp6AddUnicastAddress(otInstance *aInstance, const otNetifAddress *aAdd
  * @retval OT_ERROR_NONE          Successfully removed the Network Interface Address.
  * @retval OT_ERROR_INVALID_ARGS  The IP Address indicated by @p aAddress is an internal address.
  * @retval OT_ERROR_NOT_FOUND     The IP Address indicated by @p aAddress was not found.
+ *
  */
 otError otIp6RemoveUnicastAddress(otInstance *aInstance, const otIp6Address *aAddress);
 
@@ -317,8 +323,21 @@ otError otIp6RemoveUnicastAddress(otInstance *aInstance, const otIp6Address *aAd
  * @param[in]  aInstance A pointer to an OpenThread instance.
  *
  * @returns A pointer to the first Network Interface Address.
+ *
  */
 const otNetifAddress *otIp6GetUnicastAddresses(otInstance *aInstance);
+
+/**
+ * Indicates whether or not a unicast IPv6 address is assigned to the Thread interface.
+ *
+ * @param[in]  aInstance A pointer to an OpenThread instance.
+ * @param[in]  aAddress  A pointer to the unicast address.
+ *
+ * @retval TRUE   If @p aAddress is assigned to the Thread interface.
+ * @retval FALSE  If @p aAddress is not assigned to the Thread interface.
+ *
+ */
+bool otIp6HasUnicastAddress(otInstance *aInstance, const otIp6Address *aAddress);
 
 /**
  * Subscribes the Thread interface to a Network Interface Multicast Address.
@@ -450,8 +469,6 @@ typedef void (*otIp6ReceiveCallback)(otMessage *aMessage, void *aContext);
 void otIp6SetReceiveCallback(otInstance *aInstance, otIp6ReceiveCallback aCallback, void *aCallbackContext);
 
 /**
- * @struct otIp6AddressInfo
- *
  * Represents IPv6 address information.
  *
  */
@@ -461,6 +478,7 @@ typedef struct otIp6AddressInfo
     uint8_t             mPrefixLength;  ///< The prefix length of mAddress if it is a unicast address.
     uint8_t             mScope : 4;     ///< The scope of this address.
     bool                mPreferred : 1; ///< Whether this is a preferred address.
+    bool                mMeshLocal : 1; ///< Whether this is a mesh-local unicast/anycast address.
 } otIp6AddressInfo;
 
 /**
@@ -527,6 +545,8 @@ void otIp6SetReceiveFilterEnabled(otInstance *aInstance, bool aEnabled);
  * @retval OT_ERROR_NO_ROUTE                No route to host.
  * @retval OT_ERROR_INVALID_SOURCE_ADDRESS  Source address is invalid, e.g. an anycast address or a multicast address.
  * @retval OT_ERROR_PARSE                   Encountered a malformed header when processing the message.
+ * @retval OT_ERROR_INVALID_ARGS            The message's metadata is invalid, e.g. the message uses
+ *                                          `OT_MESSAGE_ORIGIN_THREAD_NETIF` as the origin.
  *
  */
 otError otIp6Send(otInstance *aInstance, otMessage *aMessage);
@@ -847,7 +867,7 @@ otError otIp6RegisterMulticastListeners(otInstance                             *
 /**
  * Sets the Mesh Local IID (for test purpose).
  *
- * `OPENTHREAD_CONFIG_REFERENCE_DEVICE_ENABLE` must be enabled.
+ * Requires `OPENTHREAD_CONFIG_REFERENCE_DEVICE_ENABLE`.
  *
  * @param[in]   aInstance   A pointer to an OpenThread instance.
  * @param[in]   aIid        A pointer to the Mesh Local IID to set.
@@ -888,6 +908,8 @@ typedef struct otBorderRoutingCounters
     otPacketsAndBytes mInboundMulticast;  ///< The counters for inbound multicast.
     otPacketsAndBytes mOutboundUnicast;   ///< The counters for outbound unicast.
     otPacketsAndBytes mOutboundMulticast; ///< The counters for outbound multicast.
+    otPacketsAndBytes mInboundInternet;   ///< The counters for inbound Internet when DHCPv6 PD enabled.
+    otPacketsAndBytes mOutboundInternet;  ///< The counters for outbound Internet when DHCPv6 PD enabled.
     uint32_t          mRaRx;              ///< The number of received RA packets.
     uint32_t          mRaTxSuccess;       ///< The number of RA packets successfully transmitted.
     uint32_t          mRaTxFailure;       ///< The number of RA packets failed to transmit.

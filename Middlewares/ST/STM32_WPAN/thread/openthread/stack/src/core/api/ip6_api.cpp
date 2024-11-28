@@ -75,6 +75,11 @@ const otNetifAddress *otIp6GetUnicastAddresses(otInstance *aInstance)
     return AsCoreType(aInstance).Get<ThreadNetif>().GetUnicastAddresses().GetHead();
 }
 
+bool otIp6HasUnicastAddress(otInstance *aInstance, const otIp6Address *aAddress)
+{
+    return AsCoreType(aInstance).Get<ThreadNetif>().HasUnicastAddress(AsCoreType(aAddress));
+}
+
 otError otIp6AddUnicastAddress(otInstance *aInstance, const otNetifAddress *aAddress)
 {
     return AsCoreType(aInstance).Get<ThreadNetif>().AddExternalUnicastAddress(AsCoreType(aAddress));
@@ -132,8 +137,14 @@ void otIp6SetReceiveFilterEnabled(otInstance *aInstance, bool aEnabled)
 
 otError otIp6Send(otInstance *aInstance, otMessage *aMessage)
 {
-    return AsCoreType(aInstance).Get<Ip6::Ip6>().SendRaw(AsCoreType(aMessage),
-                                                         OPENTHREAD_CONFIG_IP6_ALLOW_LOOP_BACK_HOST_DATAGRAMS);
+    otError error;
+
+    VerifyOrExit(!AsCoreType(aMessage).IsOriginThreadNetif(), error = kErrorInvalidArgs);
+
+    error = AsCoreType(aInstance).Get<Ip6::Ip6>().SendRaw(OwnedPtr<Message>(AsCoreTypePtr(aMessage)));
+
+exit:
+    return error;
 }
 
 otMessage *otIp6NewMessage(otInstance *aInstance, const otMessageSettings *aSettings)
@@ -238,8 +249,8 @@ otError otIp6RegisterMulticastListeners(otInstance                             *
                                         otIp6RegisterMulticastListenersCallback aCallback,
                                         void                                   *aContext)
 {
-    return AsCoreType(aInstance).Get<MlrManager>().RegisterMulticastListeners(aAddresses, aAddressNum, aTimeout,
-                                                                              aCallback, aContext);
+    return AsCoreType(aInstance).Get<MlrManager>().RegisterMulticastListeners(AsCoreTypePtr(aAddresses), aAddressNum,
+                                                                              aTimeout, aCallback, aContext);
 }
 #endif
 

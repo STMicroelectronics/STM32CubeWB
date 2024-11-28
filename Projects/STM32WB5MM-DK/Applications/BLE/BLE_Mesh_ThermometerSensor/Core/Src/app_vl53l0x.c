@@ -31,7 +31,7 @@
 extern I2C_HandleTypeDef hbus_i2c3;
 
 /* Proximity */ 
-VL53L0X_Dev_t Dev =
+VL53L0X_Dev_t UserDev =
 {
   .I2cHandle = &hbus_i2c3,
   .I2cDevAddr = PROXIMITY_I2C_ADDRESS
@@ -52,16 +52,16 @@ void VL53L0X_PROXIMITY_Init(void)
   
   memset(&VL53L0X_DeviceInfo, 0, sizeof(VL53L0X_DeviceInfo_t));
   
-  if (VL53L0X_ERROR_NONE == VL53L0X_GetDeviceInfo(&Dev, &VL53L0X_DeviceInfo))
+  if (VL53L0X_ERROR_NONE == VL53L0X_GetDeviceInfo(&UserDev, &VL53L0X_DeviceInfo))
   {  
-    if (VL53L0X_ERROR_NONE == VL53L0X_RdWord(&Dev, VL53L0X_REG_IDENTIFICATION_MODEL_ID, (uint16_t *) &vl53l0x_id))
+    if (VL53L0X_ERROR_NONE == VL53L0X_RdWord(&UserDev, VL53L0X_REG_IDENTIFICATION_MODEL_ID, (uint16_t *) &vl53l0x_id))
     {
       if (vl53l0x_id == VL53L0X_ID)
       {
-        if (VL53L0X_ERROR_NONE == VL53L0X_DataInit(&Dev))
+        if (VL53L0X_ERROR_NONE == VL53L0X_DataInit(&UserDev))
         {
-          Dev.Present = 1;
-          SetupSingleShot(Dev);
+          UserDev.Present = 1;
+          SetupSingleShot(&UserDev);
         }
         else
         { 
@@ -119,7 +119,7 @@ uint16_t VL53L0X_PROXIMITY_GetDistance(void)
 {
   VL53L0X_RangingMeasurementData_t RangingMeasurementData;
   
-  VL53L0X_PerformSingleRangingMeasurement(&Dev, &RangingMeasurementData);
+  VL53L0X_PerformSingleRangingMeasurement(&UserDev, &RangingMeasurementData);
   
   return RangingMeasurementData.RangeMilliMeter;  
 }

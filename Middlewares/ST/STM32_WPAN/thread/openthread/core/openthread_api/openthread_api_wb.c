@@ -111,6 +111,7 @@ STCoapResponseContextType* mySTCoapResponseContext;
 /* COAP SECURE */
 otCoapRequestHandler defaultCoapSecureRequestHandlerCb = NULL;
 otHandleCoapSecureClientConnect coapSecureClientConnectCb = NULL;
+otCoapSecureAutoStopCallback coapSecureAutoStopCb = NULL;
 
 STCoapSecureSpecificContextType* mySTCoapSecureContext;
 otHandleCoapSecureClientConnect l_coapSecureClientConnectCb;
@@ -141,6 +142,9 @@ otDnsServiceCallback otDnsServiceCb = NULL;
 #if OPENTHREAD_CONFIG_MESH_DIAG_ENABLE && OPENTHREAD_FTD
 /* MESH DIAG */
 otMeshDiagDiscoverCallback otMeshDiagDiscoverCb = NULL;
+otMeshDiagQueryChildTableCallback otMeshDiagQueryChildTableCb = NULL;
+otMeshDiagChildIp6AddrsCallback otMeshDiagChildIp6AddrsCb = NULL; 
+otMeshDiagQueryRouterNeighborTableCallback otMeshDiagQueryRouterNeighborTableCb = NULL;
 #endif /* OPENTHREAD_CONFIG_MESH_DIAG_ENABLE && OPENTHREAD_FTD */
 
 #if OPENTHREAD_CONFIG_DNSSD_SERVER_ENABLE
@@ -190,15 +194,13 @@ otPingSenderStatisticsCallback otPingSenderStatisticsCb = NULL;
 #if OPENTHREAD_CONFIG_TCP_ENABLE
 STTcpEndpointHandlerContextType* mySTTcpEndpointHandlerContext = NULL;
 STTcpListenerHandlerContextType* mySTTcpListenerHandlerContext = NULL;
-//otTcpBytesAcked otTcpBytesAckedCb = NULL;
 otTcpDisconnected otTcpDisconnectedCb = NULL;
 otTcpEstablished otTcpEstablishedCb = NULL;
 otTcpReceiveAvailable otTcpReceiveAvailableCb = NULL;
 otTcpSendDone otTcpSendDoneCb = NULL;
-//otTcpSendReady otTcpSendReadyCb = NULL;
+otTcpForwardProgress otTcpForwardProgressCb = NULL;
 otTcpAcceptReady otTcpAcceptReadyCb = NULL;
 otTcpAcceptDone otTcpAcceptDoneCb = NULL;
-otTcpForwardProgress  mForwardProgressCallback = NULL;
 #endif // OPENTHREAD_CONFIG_TCP_ENABLE
 
 
@@ -252,7 +254,7 @@ HAL_StatusTypeDef OpenThread_CallBack_Processing(void)
     if (otLinkMetricsMgmtResponseCb1 != NULL)
     {
       otLinkMetricsMgmtResponseCb1((const otIp6Address *) p_notification->Data[0],
-          (uint8_t) p_notification->Data[1],
+          (otLinkMetricsStatus) p_notification->Data[1],
           (void *) p_notification->Data[2]);
     }
     break;
@@ -260,7 +262,7 @@ HAL_StatusTypeDef OpenThread_CallBack_Processing(void)
     if (otLinkMetricsMgmtResponseCb != NULL)
     {
       otLinkMetricsMgmtResponseCb((const otIp6Address *) p_notification->Data[0],
-          (uint8_t) p_notification->Data[1],
+          (otLinkMetricsStatus) p_notification->Data[1],
           (void *) p_notification->Data[2]);
     }
     break;
@@ -278,7 +280,7 @@ HAL_StatusTypeDef OpenThread_CallBack_Processing(void)
     {
       otLinkMetricsReportCb((const otIp6Address *) p_notification->Data[0],
           (const otLinkMetricsValues *) p_notification->Data[1],
-          (uint8_t) p_notification->Data[2],
+          (otLinkMetricsStatus) p_notification->Data[2],
           (void *) p_notification->Data[3]);
     }
     break;
@@ -501,6 +503,12 @@ HAL_StatusTypeDef OpenThread_CallBack_Processing(void)
     {
       coapSecureClientConnectCb((bool) p_notification->Data[0],
           (void *) p_notification->Data[1]);
+    }
+    break;
+  case MSG_M0TOM4_COAP_SECURE_AUTO_STOP:
+    if (coapSecureClientConnectCb != NULL)
+    {
+      coapSecureAutoStopCb((void *) p_notification->Data[0]);
     }
     break;
   case MSG_M0TOM4_COAP_SECURE_DEFAULT_REQUEST_HANDLER:
@@ -728,17 +736,6 @@ HAL_StatusTypeDef OpenThread_CallBack_Processing(void)
     break;
 #endif /* OPENTHREAD_CONFIG_PING_SENDER_ENABLE */
 #if OPENTHREAD_CONFIG_TCP_ENABLE
-//  case MSG_M0TOM4_TCP_BYTES_ACKED_CALLBACK:
-//    mySTTcpEndpointHandlerContext = (STTcpEndpointHandlerContextType*) ((otTcpEndpoint *)p_notification->Data[0])->mContext;
-//
-//    otTcpBytesAckedCb = mySTTcpEndpointHandlerContext->mBytesAckedCallback;
-//
-//    if (otTcpBytesAckedCb != NULL)
-//    {
-//      otTcpBytesAckedCb((otTcpEndpoint *) p_notification->Data[0],
-//          (size_t) p_notification->Data[1]);
-//    }
-//    break;
   case MSG_M0TOM4_TCP_DISCONNECTED_CALLBACK:
     mySTTcpEndpointHandlerContext = (STTcpEndpointHandlerContextType*) ((otTcpEndpoint *)p_notification->Data[0])->mContext;
 
@@ -747,7 +744,7 @@ HAL_StatusTypeDef OpenThread_CallBack_Processing(void)
     if (otTcpDisconnectedCb != NULL)
     {
       otTcpDisconnectedCb((otTcpEndpoint *) p_notification->Data[0],
-          (otTcpDisconnectedReason) p_notification->Data[1]);
+                          (otTcpDisconnectedReason) p_notification->Data[1]);
     }
     break;
   case MSG_M0TOM4_TCP_ESTABLISHED_CALLBACK:
@@ -768,9 +765,9 @@ HAL_StatusTypeDef OpenThread_CallBack_Processing(void)
     if (otTcpReceiveAvailableCb != NULL)
     {
       otTcpReceiveAvailableCb((otTcpEndpoint *) p_notification->Data[0],
-          (size_t) p_notification->Data[1],
-          (bool) p_notification->Data[2],
-          (size_t) p_notification->Data[3]);
+                              (size_t) p_notification->Data[1],
+                              (bool) p_notification->Data[2],
+                              (size_t) p_notification->Data[3]);
     }
     break;
   case MSG_M0TOM4_TCP_SEND_DONE_CALLBACK:
@@ -781,29 +778,19 @@ HAL_StatusTypeDef OpenThread_CallBack_Processing(void)
     if (otTcpSendDoneCb != NULL)
     {
       otTcpSendDoneCb((otTcpEndpoint *) p_notification->Data[0],
-          (otLinkedBuffer *) p_notification->Data[1]);
+                      (otLinkedBuffer *) p_notification->Data[1]);
     }
     break;
-//  case MSG_M0TOM4_TCP_SEND_READY_CALLBACK:
-//    mySTTcpEndpointHandlerContext = (STTcpEndpointHandlerContextType*) ((otTcpEndpoint *)p_notification->Data[0])->mContext;
-//
-//    otTcpSendReadyCb = mySTTcpEndpointHandlerContext->mSendReadyCallback;
-//
-//    if (otTcpSendReadyCb != NULL)
-//    {
-//      otTcpSendReadyCb((otTcpEndpoint *) p_notification->Data[0]);
-//    }
-//    break;
   case MSG_M0TOM4_TCP_FORWARD_PROGRESS_CALLBACK:
     mySTTcpEndpointHandlerContext = (STTcpEndpointHandlerContextType*) ((otTcpEndpoint *)p_notification->Data[0])->mContext;
 
-    mForwardProgressCallback = mySTTcpEndpointHandlerContext->mForwardProgressCallback;
+    otTcpForwardProgressCb = mySTTcpEndpointHandlerContext->mForwardProgressCallback;
 
-    if (mForwardProgressCallback != NULL)
+    if (otTcpForwardProgressCb != NULL)
     {
-      mForwardProgressCallback((otTcpEndpoint *)p_notification->Data[0],
-          (size_t) p_notification->Data[1],
-          (size_t) p_notification->Data[2]);
+      otTcpForwardProgressCb((otTcpEndpoint *)p_notification->Data[0],
+                             (size_t) p_notification->Data[1],
+                             (size_t) p_notification->Data[2]);
     }
     break;
   case MSG_M0TOM4_TCP_ACCEPT_READY_CALLBACK:
@@ -814,8 +801,8 @@ HAL_StatusTypeDef OpenThread_CallBack_Processing(void)
     if (otTcpAcceptReadyCb != NULL)
     {
       p_notification->Data[0] = otTcpAcceptReadyCb((otTcpListener *) p_notification->Data[0],
-          (const otSockAddr *) p_notification->Data[1],
-          (otTcpEndpoint **) p_notification->Data[2]);
+                                                   (const otSockAddr *) p_notification->Data[1],
+                                                   (otTcpEndpoint **) p_notification->Data[2]);
     }
     break;
   case MSG_M0TOM4_TCP_ACCEPT_DONE_CALLBACK:
@@ -826,8 +813,8 @@ HAL_StatusTypeDef OpenThread_CallBack_Processing(void)
     if (otTcpAcceptDoneCb != NULL)
     {
       otTcpAcceptDoneCb((otTcpListener *) p_notification->Data[0],
-          (otTcpEndpoint *) p_notification->Data[1],
-          (const otSockAddr *) p_notification->Data[2]);
+                        (otTcpEndpoint *) p_notification->Data[1],
+                        (const otSockAddr *) p_notification->Data[2]);
     }
     break;
 #endif /* OPENTHREAD_CONFIG_TCP_ENABLE */
@@ -838,6 +825,31 @@ HAL_StatusTypeDef OpenThread_CallBack_Processing(void)
       otMeshDiagDiscoverCb((otError) p_notification->Data[0],
           (otMeshDiagRouterInfo *) p_notification->Data[1],
           (void *) p_notification->Data[2]);
+    }
+    break;
+  case MSG_M0TOM4_MESH_DIAG_QUERY_CHILD_TABLE_CALLBACK:
+    if (otMeshDiagQueryChildTableCb != NULL)
+    {
+      otMeshDiagQueryChildTableCb((otError) p_notification->Data[0],
+                                  (otMeshDiagChildEntry *) p_notification->Data[1],
+                                  (void *) p_notification->Data[2]);
+    }
+    break;
+  case MSG_M0TOM4_MESH_DIAG_CHILD_IP6_ADDRS_CALLBACK:
+    if (otMeshDiagChildIp6AddrsCb != NULL)
+    {
+      otMeshDiagChildIp6AddrsCb((otError) p_notification->Data[0],
+                                (uint16_t) p_notification->Data[1],
+                                (otMeshDiagIp6AddrIterator *) p_notification->Data[2],
+                                (void *) p_notification->Data[3]);
+    }
+    break;
+  case MSG_M0TOM4_MESH_DIAG_QUERY_NEIGHBOR_TABLE_CALLBACK:
+    if (otMeshDiagQueryRouterNeighborTableCb != NULL)
+    {
+      otMeshDiagQueryRouterNeighborTableCb((otError) p_notification->Data[0],
+                                           (otMeshDiagRouterNeighborEntry *) p_notification->Data[1],
+                                           (void *) p_notification->Data[2]);
     }
     break;
 #endif /* OPENTHREAD_CONFIG_MESH_DIAG_ENABLE && OPENTHREAD_FTD */

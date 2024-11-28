@@ -42,7 +42,7 @@
 
 #include <openthread/coap_secure.h>
 
-#include "cli/cli_output.hpp"
+#include "cli/cli_utils.hpp"
 
 #ifndef CLI_COAP_SECURE_USE_COAP_DEFAULT_HANDLER
 #define CLI_COAP_SECURE_USE_COAP_DEFAULT_HANDLER 0
@@ -55,11 +55,9 @@ namespace Cli {
  * Implements the CLI CoAP Secure server and client.
  *
  */
-class CoapSecure : private Output
+class CoapSecure : private Utils
 {
 public:
-    typedef Utils::CmdLineParser::Arg Arg;
-
     /**
      * Constructor
      *
@@ -84,13 +82,10 @@ public:
     otError Process(Arg aArgs[]);
 
 private:
-    enum
-    {
-        kMaxUriLength   = 32,
-        kMaxBufferSize  = 16,
-        kPskMaxLength   = 32,
-        kPskIdMaxLength = 32
-    };
+    static constexpr uint16_t kMaxUriLength   = 32;
+    static constexpr uint16_t kMaxBufferSize  = 16;
+    static constexpr uint8_t  kPskMaxLength   = 32;
+    static constexpr uint8_t  kPskIdMaxLength = 32;
 
     using Command = CommandEntry<CoapSecure>;
 
@@ -106,6 +101,7 @@ private:
     template <CommandId kCommandId> otError Process(Arg aArgs[]);
 
     otError ProcessRequest(Arg aArgs[], otCoapCode aCoapCode);
+    otError ProcessIsRequest(Arg aArgs[], bool (*IsChecker)(otInstance *));
 
     void Stop(void);
 

@@ -39,9 +39,11 @@
 #include "common/code_utils.hpp"
 #include "common/debug.hpp"
 #include "common/encoding.hpp"
-#include "common/instance.hpp"
 #include "common/locator_getters.hpp"
 #include "common/log.hpp"
+#include "common/numeric_limits.hpp"
+#include "common/random.hpp"
+#include "instance/instance.hpp"
 #include "mac/mac.hpp"
 #include "net/netif.hpp"
 #include "thread/mesh_forwarder.hpp"
@@ -59,6 +61,7 @@ namespace NetworkDiagnostic {
 const char Server::kVendorName[]      = OPENTHREAD_CONFIG_NET_DIAG_VENDOR_NAME;
 const char Server::kVendorModel[]     = OPENTHREAD_CONFIG_NET_DIAG_VENDOR_MODEL;
 const char Server::kVendorSwVersion[] = OPENTHREAD_CONFIG_NET_DIAG_VENDOR_SW_VERSION;
+const char Server::kVendorAppUrl[]    = OPENTHREAD_CONFIG_NET_DIAG_VENDOR_APP_URL;
 
 //---------------------------------------------------------------------------------------------------------------------
 // Server
@@ -69,11 +72,13 @@ Server::Server(Instance &aInstance)
     static_assert(sizeof(kVendorName) <= sizeof(VendorNameTlv::StringType), "VENDOR_NAME is too long");
     static_assert(sizeof(kVendorModel) <= sizeof(VendorModelTlv::StringType), "VENDOR_MODEL is too long");
     static_assert(sizeof(kVendorSwVersion) <= sizeof(VendorSwVersionTlv::StringType), "VENDOR_SW_VERSION is too long");
+    static_assert(sizeof(kVendorAppUrl) <= sizeof(VendorAppUrlTlv::StringType), "VENDOR_APP_URL is too long");
 
 #if OPENTHREAD_CONFIG_NET_DIAG_VENDOR_INFO_SET_API_ENABLE
     memcpy(mVendorName, kVendorName, sizeof(kVendorName));
     memcpy(mVendorModel, kVendorModel, sizeof(kVendorModel));
     memcpy(mVendorSwVersion, kVendorSwVersion, sizeof(kVendorSwVersion));
+    memcpy(mVendorAppUrl, kVendorAppUrl, sizeof(kVendorAppUrl));
 #endif
 }
 
@@ -81,39 +86,25 @@ Server::Server(Instance &aInstance)
 
 Error Server::SetVendorName(const char *aVendorName)
 {
-    return SetVendorString(mVendorName, sizeof(mVendorName), aVendorName);
+    return StringCopy(mVendorName, aVendorName, kStringCheckUtf8Encoding);
 }
 
 Error Server::SetVendorModel(const char *aVendorModel)
 {
-    return SetVendorString(mVendorModel, sizeof(mVendorModel), aVendorModel);
+    return StringCopy(mVendorModel, aVendorModel, kStringCheckUtf8Encoding);
 }
 
 Error Server::SetVendorSwVersion(const char *aVendorSwVersion)
 {
-    return SetVendorString(mVendorSwVersion, sizeof(mVendorSwVersion), aVendorSwVersion);
+    return StringCopy(mVendorSwVersion, aVendorSwVersion, kStringCheckUtf8Encoding);
 }
 
-Error Server::SetVendorString(char *aDestString, uint16_t kMaxSize, const char *aSrcString)
+Error Server::SetVendorAppUrl(const char *aVendorAppUrl)
 {
-    Error    error = kErrorInvalidArgs;
-    uint16_t length;
-
-    VerifyOrExit(aSrcString != nullptr);
-
-    length = StringLength(aSrcString, kMaxSize);
-    VerifyOrExit(length < kMaxSize);
-
-    VerifyOrExit(IsValidUtf8String(aSrcString));
-
-    memcpy(aDestString, aSrcString, length + 1);
-    error = kErrorNone;
-
-exit:
-    return error;
+    return StringCopy(mVendorAppUrl, aVendorAppUrl, kStringCheckUtf8Encoding);
 }
 
-#endif // OPENTHREAD_CONFIG_NET_DIAG_VENDOR_INFO_SET_API_ENABLE
+#endif
 
 void Server::PrepareMessageInfoForDest(const Ip6::Address &aDestination, Tmf::MessageInfo &aMessageInfo) const
 {
@@ -229,7 +220,7 @@ Error Server::AppendMacCounters(Message &aMessage)
     MacCountersTlv       tlv;
     const otMacCounters &counters = Get<Mac::Mac>().GetCounters();
 
-    memset(&tlv, 0, sizeof(tlv));
+    ClearAllBytes(tlv);
 
     tlv.Init();
     tlv.SetIfInUnknownProtos(counters.mRxOther);
@@ -284,6 +275,15 @@ Error Server::AppendDiagTlv(uint8_t aTlvType, Message &aMessage)
         error = Tlv::Append<ModeTlv>(aMessage, Get<Mle::MleRouter>().GetDeviceMode().Get());
         break;
 
+    case Tlv::kEui64:
+    {
+        Mac::ExtAddress eui64;
+
+        Get<Radio>().GetIeeeEui64(eui64);
+        error = Tlv::Append<Eui64Tlv>(aMessage, eui64);
+        break;
+    }
+
     case Tlv::kVersion:
         error = Tlv::Append<VersionTlv>(aMessage, kThreadVersion);
         break;
@@ -316,6 +316,15 @@ Error Server::AppendDiagTlv(uint8_t aTlvType, Message &aMessage)
         error = AppendMacCounters(aMessage);
         break;
 
+    case Tlv::kMleCounters:
+    {
+        MleCountersTlv tlv;
+
+        tlv.Init(Get<Mle::Mle>().GetCounters());
+        error = tlv.AppendTo(aMessage);
+        break;
+    }
+
     case Tlv::kVendorName:
         error = Tlv::Append<VendorNameTlv>(aMessage, GetVendorName());
         break;
@@ -326,6 +335,10 @@ Error Server::AppendDiagTlv(uint8_t aTlvType, Message &aMessage)
 
     case Tlv::kVendorSwVersion:
         error = Tlv::Append<VendorSwVersionTlv>(aMessage, GetVendorSwVersion());
+        break;
+
+    case Tlv::kVendorAppUrl:
+        error = Tlv::Append<VendorAppUrlTlv>(aMessage, GetVendorAppUrl());
         break;
 
     case Tlv::kThreadStackVersion:
@@ -339,12 +352,9 @@ Error Server::AppendDiagTlv(uint8_t aTlvType, Message &aMessage)
 
         tlv.Init();
 
-        for (uint8_t page = 0; page < sizeof(Radio::kSupportedChannelPages) * CHAR_BIT; page++)
+        for (uint8_t page : Radio::kSupportedChannelPages)
         {
-            if (Radio::kSupportedChannelPages & (1 << page))
-            {
-                tlv.GetChannelPages()[length++] = page;
-            }
+            tlv.GetChannelPages()[length++] = page;
         }
 
         tlv.SetLength(length);
@@ -401,11 +411,7 @@ exit:
 template <>
 void Server::HandleTmf<kUriDiagnosticGetQuery>(Coap::Message &aMessage, const Ip6::MessageInfo &aMessageInfo)
 {
-    Error            error    = kErrorNone;
-    Coap::Message   *response = nullptr;
-    Tmf::MessageInfo responseInfo(GetInstance());
-
-    VerifyOrExit(aMessage.IsPostRequest(), error = kErrorDrop);
+    VerifyOrExit(aMessage.IsPostRequest());
 
     LogInfo("Received %s from %s", UriToString<kUriDiagnosticGetQuery>(),
             aMessageInfo.GetPeerAddr().ToString().AsCString());
@@ -416,17 +422,376 @@ void Server::HandleTmf<kUriDiagnosticGetQuery>(Coap::Message &aMessage, const Ip
         IgnoreError(Get<Tmf::Agent>().SendEmptyAck(aMessage, aMessageInfo));
     }
 
-    response = Get<Tmf::Agent>().NewConfirmablePostMessage(kUriDiagnosticGetAnswer);
-    VerifyOrExit(response != nullptr, error = kErrorNoBufs);
-
-    SuccessOrExit(error = AppendRequestedTlvs(aMessage, *response));
-
-    PrepareMessageInfoForDest(aMessageInfo.GetPeerAddr(), responseInfo);
-    SuccessOrExit(error = Get<Tmf::Agent>().SendMessage(*response, responseInfo));
+#if OPENTHREAD_MTD
+    SendAnswer(aMessageInfo.GetPeerAddr(), aMessage);
+#elif OPENTHREAD_FTD
+    PrepareAndSendAnswers(aMessageInfo.GetPeerAddr(), aMessage);
+#endif
 
 exit:
-    FreeMessageOnError(response, error);
+    return;
 }
+
+#if OPENTHREAD_MTD
+
+void Server::SendAnswer(const Ip6::Address &aDestination, const Message &aRequest)
+{
+    Error            error  = kErrorNone;
+    Coap::Message   *answer = nullptr;
+    Tmf::MessageInfo messageInfo(GetInstance());
+    AnswerTlv        answerTlv;
+    uint16_t         queryId;
+
+    answer = Get<Tmf::Agent>().NewConfirmablePostMessage(kUriDiagnosticGetAnswer);
+    VerifyOrExit(answer != nullptr, error = kErrorNoBufs);
+
+    IgnoreError(answer->SetPriority(aRequest.GetPriority()));
+
+    if (Tlv::Find<QueryIdTlv>(aRequest, queryId) == kErrorNone)
+    {
+        SuccessOrExit(error = Tlv::Append<QueryIdTlv>(*answer, queryId));
+    }
+
+    SuccessOrExit(error = AppendRequestedTlvs(aRequest, *answer));
+
+    answerTlv.Init(0, /* aIsLast */ true);
+    SuccessOrExit(answer->Append(answerTlv));
+
+    PrepareMessageInfoForDest(aDestination, messageInfo);
+
+    error = Get<Tmf::Agent>().SendMessage(*answer, messageInfo);
+
+exit:
+    FreeMessageOnError(answer, error);
+}
+
+#endif // OPENTHREAD_MTD
+
+#if OPENTHREAD_FTD
+
+Error Server::AllocateAnswer(Coap::Message *&aAnswer, AnswerInfo &aInfo)
+{
+    // Allocate an `Answer` message, adds it in `mAnswerQueue`,
+    // update the `aInfo.mFirstAnswer` if it is the first allocated
+    // messages, and appends `QueryIdTlv` to the message (if needed).
+
+    Error error = kErrorNone;
+
+    aAnswer = Get<Tmf::Agent>().NewConfirmablePostMessage(kUriDiagnosticGetAnswer);
+    VerifyOrExit(aAnswer != nullptr, error = kErrorNoBufs);
+    IgnoreError(aAnswer->SetPriority(aInfo.mPriority));
+
+    mAnswerQueue.Enqueue(*aAnswer);
+
+    if (aInfo.mFirstAnswer == nullptr)
+    {
+        aInfo.mFirstAnswer = aAnswer;
+    }
+
+    if (aInfo.mHasQueryId)
+    {
+        SuccessOrExit(error = Tlv::Append<QueryIdTlv>(*aAnswer, aInfo.mQueryId));
+    }
+
+exit:
+    return error;
+}
+
+bool Server::IsLastAnswer(const Coap::Message &aAnswer) const
+{
+    // Indicates whether `aAnswer` is the last one associated with
+    // the same query.
+
+    bool      isLast = true;
+    AnswerTlv answerTlv;
+
+    // If there is no Answer TLV, we assume it is the last answer.
+
+    SuccessOrExit(Tlv::FindTlv(aAnswer, answerTlv));
+    isLast = answerTlv.IsLast();
+
+exit:
+    return isLast;
+}
+
+void Server::FreeAllRelatedAnswers(Coap::Message &aFirstAnswer)
+{
+    // This method dequeues and frees all answer messages related to
+    // same query as `aFirstAnswer`. Note that related answers are
+    // enqueued in order.
+
+    Coap::Message *answer = &aFirstAnswer;
+
+    while (answer != nullptr)
+    {
+        Coap::Message *next = IsLastAnswer(*answer) ? nullptr : answer->GetNextCoapMessage();
+
+        mAnswerQueue.DequeueAndFree(*answer);
+        answer = next;
+    }
+}
+
+void Server::PrepareAndSendAnswers(const Ip6::Address &aDestination, const Message &aRequest)
+{
+    Coap::Message *answer;
+    Error          error;
+    AnswerInfo     info;
+    uint16_t       offset;
+    uint16_t       length;
+    uint16_t       endOffset;
+    AnswerTlv      answerTlv;
+
+    if (Tlv::Find<QueryIdTlv>(aRequest, info.mQueryId) == kErrorNone)
+    {
+        info.mHasQueryId = true;
+    }
+
+    info.mPriority = aRequest.GetPriority();
+
+    SuccessOrExit(error = AllocateAnswer(answer, info));
+
+    SuccessOrExit(error = Tlv::FindTlvValueOffset(aRequest, Tlv::kTypeList, offset, length));
+    endOffset = offset + length;
+
+    for (; offset < endOffset; offset++)
+    {
+        uint8_t tlvType;
+
+        SuccessOrExit(error = aRequest.Read(offset, tlvType));
+
+        switch (tlvType)
+        {
+        case ChildTlv::kType:
+            SuccessOrExit(error = AppendChildTableAsChildTlvs(answer, info));
+            break;
+        case ChildIp6AddressListTlv::kType:
+            SuccessOrExit(error = AppendChildTableIp6AddressList(answer, info));
+            break;
+        case RouterNeighborTlv::kType:
+            SuccessOrExit(error = AppendRouterNeighborTlvs(answer, info));
+            break;
+        default:
+            SuccessOrExit(error = AppendDiagTlv(tlvType, *answer));
+            break;
+        }
+
+        SuccessOrExit(error = CheckAnswerLength(answer, info));
+    }
+
+    answerTlv.Init(info.mAnswerIndex, /* aIsLast */ true);
+    SuccessOrExit(error = answer->Append(answerTlv));
+
+    SendNextAnswer(*info.mFirstAnswer, aDestination);
+
+exit:
+    if ((error != kErrorNone) && (info.mFirstAnswer != nullptr))
+    {
+        FreeAllRelatedAnswers(*info.mFirstAnswer);
+    }
+}
+
+Error Server::CheckAnswerLength(Coap::Message *&aAnswer, AnswerInfo &aInfo)
+{
+    // This method checks the length of the `aAnswer` message and if it
+    // is above the threshold, it enqueues the message for transmission
+    // after appending an Answer TLV with the current index to the
+    // message. In this case, it will also allocate a new answer
+    // message.
+
+    Error     error = kErrorNone;
+    AnswerTlv answerTlv;
+
+    VerifyOrExit(aAnswer->GetLength() >= kAnswerMessageLengthThreshold);
+
+    answerTlv.Init(aInfo.mAnswerIndex++, /* aIsLast */ false);
+    SuccessOrExit(error = aAnswer->Append(answerTlv));
+
+    error = AllocateAnswer(aAnswer, aInfo);
+
+exit:
+    return error;
+}
+
+void Server::SendNextAnswer(Coap::Message &aAnswer, const Ip6::Address &aDestination)
+{
+    // This method send the given next `aAnswer` associated with
+    // a query to the  `aDestination`.
+
+    Error            error      = kErrorNone;
+    Coap::Message   *nextAnswer = IsLastAnswer(aAnswer) ? nullptr : aAnswer.GetNextCoapMessage();
+    Tmf::MessageInfo messageInfo(GetInstance());
+
+    mAnswerQueue.Dequeue(aAnswer);
+
+    PrepareMessageInfoForDest(aDestination, messageInfo);
+
+    // When sending the message, we pass `nextAnswer` as `aContext`
+    // to be used when invoking callback `HandleAnswerResponse()`.
+
+    error = Get<Tmf::Agent>().SendMessage(aAnswer, messageInfo, HandleAnswerResponse, nextAnswer);
+
+    if (error != kErrorNone)
+    {
+        // If the `SendMessage()` fails, we `Free` the dequeued
+        // `aAnswer` and all the related next answers in the queue.
+
+        aAnswer.Free();
+
+        if (nextAnswer != nullptr)
+        {
+            FreeAllRelatedAnswers(*nextAnswer);
+        }
+    }
+}
+
+void Server::HandleAnswerResponse(void *aContext, otMessage *aMessage, const otMessageInfo *aMessageInfo, Error aResult)
+{
+    Coap::Message *nextAnswer = static_cast<Coap::Message *>(aContext);
+
+    VerifyOrExit(nextAnswer != nullptr);
+
+    nextAnswer->Get<Server>().HandleAnswerResponse(*nextAnswer, AsCoapMessagePtr(aMessage), AsCoreTypePtr(aMessageInfo),
+                                                   aResult);
+
+exit:
+    return;
+}
+
+void Server::HandleAnswerResponse(Coap::Message          &aNextAnswer,
+                                  Coap::Message          *aResponse,
+                                  const Ip6::MessageInfo *aMessageInfo,
+                                  Error                   aResult)
+{
+    Error error = aResult;
+
+    SuccessOrExit(error);
+    VerifyOrExit(aResponse != nullptr && aMessageInfo != nullptr, error = kErrorDrop);
+    VerifyOrExit(aResponse->GetCode() == Coap::kCodeChanged, error = kErrorDrop);
+
+    SendNextAnswer(aNextAnswer, aMessageInfo->GetPeerAddr());
+
+exit:
+    if (error != kErrorNone)
+    {
+        FreeAllRelatedAnswers(aNextAnswer);
+    }
+}
+
+Error Server::AppendChildTableAsChildTlvs(Coap::Message *&aAnswer, AnswerInfo &aInfo)
+{
+    Error    error = kErrorNone;
+    ChildTlv childTlv;
+
+    for (Child &child : Get<ChildTable>().Iterate(Child::kInStateValid))
+    {
+        childTlv.InitFrom(child);
+
+        SuccessOrExit(error = childTlv.AppendTo(*aAnswer));
+        SuccessOrExit(error = CheckAnswerLength(aAnswer, aInfo));
+    }
+
+    // Add empty TLV to indicate end of the list
+
+    childTlv.InitAsEmpty();
+    SuccessOrExit(error = childTlv.AppendTo(*aAnswer));
+
+exit:
+    return error;
+}
+
+Error Server::AppendRouterNeighborTlvs(Coap::Message *&aAnswer, AnswerInfo &aInfo)
+{
+    Error             error = kErrorNone;
+    RouterNeighborTlv neighborTlv;
+
+    for (Router &router : Get<RouterTable>())
+    {
+        if (!router.IsStateValid())
+        {
+            continue;
+        }
+
+        neighborTlv.InitFrom(router);
+
+        SuccessOrExit(error = neighborTlv.AppendTo(*aAnswer));
+        SuccessOrExit(error = CheckAnswerLength(aAnswer, aInfo));
+    }
+
+    // Add empty TLV to indicate end of the list
+
+    neighborTlv.InitAsEmpty();
+    SuccessOrExit(error = neighborTlv.AppendTo(*aAnswer));
+
+exit:
+    return error;
+}
+
+Error Server::AppendChildTableIp6AddressList(Coap::Message *&aAnswer, AnswerInfo &aInfo)
+{
+    Error error = kErrorNone;
+    Tlv   tlv;
+
+    for (const Child &child : Get<ChildTable>().Iterate(Child::kInStateValid))
+    {
+        SuccessOrExit(error = AppendChildIp6AddressListTlv(*aAnswer, child));
+        SuccessOrExit(error = CheckAnswerLength(aAnswer, aInfo));
+    }
+
+    // Add empty TLV to indicate end of the list
+
+    tlv.SetType(Tlv::kChildIp6AddressList);
+    tlv.SetLength(0);
+    SuccessOrExit(error = aAnswer->Append(tlv));
+
+exit:
+    return error;
+}
+
+Error Server::AppendChildIp6AddressListTlv(Coap::Message &aAnswer, const Child &aChild)
+{
+    Error                       error      = kErrorNone;
+    uint16_t                    numIp6Addr = 0;
+    ChildIp6AddressListTlvValue tlvValue;
+
+    for (const Ip6::Address &address : aChild.IterateIp6Addresses())
+    {
+        OT_UNUSED_VARIABLE(address);
+        numIp6Addr++;
+    }
+
+    VerifyOrExit(numIp6Addr > 0);
+
+    if ((numIp6Addr * sizeof(Ip6::Address) + sizeof(ChildIp6AddressListTlvValue)) <= Tlv::kBaseTlvMaxLength)
+    {
+        Tlv tlv;
+
+        tlv.SetType(Tlv::kChildIp6AddressList);
+        tlv.SetLength(static_cast<uint8_t>(numIp6Addr * sizeof(Ip6::Address) + sizeof(ChildIp6AddressListTlvValue)));
+        SuccessOrExit(error = aAnswer.Append(tlv));
+    }
+    else
+    {
+        ExtendedTlv extTlv;
+
+        extTlv.SetType(Tlv::kChildIp6AddressList);
+        extTlv.SetLength(numIp6Addr * sizeof(Ip6::Address) + sizeof(ChildIp6AddressListTlvValue));
+        SuccessOrExit(error = aAnswer.Append(extTlv));
+    }
+
+    tlvValue.SetRloc16(aChild.GetRloc16());
+
+    SuccessOrExit(error = aAnswer.Append(tlvValue));
+
+    for (const Ip6::Address &address : aChild.IterateIp6Addresses())
+    {
+        SuccessOrExit(error = aAnswer.Append(address));
+    }
+
+exit:
+    return error;
+}
+
+#endif // OPENTHREAD_FTD
 
 template <>
 void Server::HandleTmf<kUriDiagnosticGetRequest>(Coap::Message &aMessage, const Ip6::MessageInfo &aMessageInfo)
@@ -442,6 +807,7 @@ void Server::HandleTmf<kUriDiagnosticGetRequest>(Coap::Message &aMessage, const 
     response = Get<Tmf::Agent>().NewResponseMessage(aMessage);
     VerifyOrExit(response != nullptr, error = kErrorNoBufs);
 
+    IgnoreError(response->SetPriority(aMessage.GetPriority()));
     SuccessOrExit(error = AppendRequestedTlvs(aMessage, *response));
     SuccessOrExit(error = Get<Tmf::Agent>().SendMessage(*response, aMessageInfo));
 
@@ -476,6 +842,10 @@ template <> void Server::HandleTmf<kUriDiagnosticReset>(Coap::Message &aMessage,
             Get<Mac::Mac>().ResetCounters();
             break;
 
+        case Tlv::kMleCounters:
+            Get<Mle::Mle>().ResetCounters();
+            break;
+
         default:
             break;
         }
@@ -494,6 +864,7 @@ exit:
 
 Client::Client(Instance &aInstance)
     : InstanceLocator(aInstance)
+    , mQueryId(Random::NonCrypto::GetUint16())
 {
 }
 
@@ -507,11 +878,12 @@ Error Client::SendDiagnosticGet(const Ip6::Address &aDestination,
 
     if (aDestination.IsMulticast())
     {
-        error = SendCommand(kUriDiagnosticGetQuery, aDestination, aTlvTypes, aCount);
+        error = SendCommand(kUriDiagnosticGetQuery, Message::kPriorityNormal, aDestination, aTlvTypes, aCount);
     }
     else
     {
-        error = SendCommand(kUriDiagnosticGetRequest, aDestination, aTlvTypes, aCount, &HandleGetResponse, this);
+        error = SendCommand(kUriDiagnosticGetRequest, Message::kPriorityNormal, aDestination, aTlvTypes, aCount,
+                            &HandleGetResponse, this);
     }
 
     SuccessOrExit(error);
@@ -523,6 +895,7 @@ exit:
 }
 
 Error Client::SendCommand(Uri                   aUri,
+                          Message::Priority     aPriority,
                           const Ip6::Address   &aDestination,
                           const uint8_t         aTlvTypes[],
                           uint8_t               aCount,
@@ -549,10 +922,16 @@ Error Client::SendCommand(Uri                   aUri,
     }
 
     VerifyOrExit(message != nullptr, error = kErrorNoBufs);
+    IgnoreError(message->SetPriority(aPriority));
 
     if (aCount > 0)
     {
         SuccessOrExit(error = Tlv::Append<TypeListTlv>(*message, aTlvTypes, aCount));
+    }
+
+    if (aUri == kUriDiagnosticGetQuery)
+    {
+        SuccessOrExit(error = Tlv::Append<QueryIdTlv>(*message, ++mQueryId));
     }
 
     Get<Server>().PrepareMessageInfoForDest(aDestination, messageInfo);
@@ -589,7 +968,13 @@ void Client::HandleTmf<kUriDiagnosticGetAnswer>(Coap::Message &aMessage, const I
     LogInfo("Received %s from %s", ot::UriToString<kUriDiagnosticGetAnswer>(),
             aMessageInfo.GetPeerAddr().ToString().AsCString());
 
-    mGetCallback.InvokeIfSet(kErrorNone, &aMessage, &aMessageInfo);
+#if OPENTHREAD_CONFIG_MESH_DIAG_ENABLE && OPENTHREAD_FTD
+    // Let the `MeshDiag` process the message first.
+    if (!Get<Utils::MeshDiag>().HandleDiagnosticGetAnswer(aMessage, aMessageInfo))
+#endif
+    {
+        mGetCallback.InvokeIfSet(kErrorNone, &aMessage, &aMessageInfo);
+    }
 
     IgnoreError(Get<Tmf::Agent>().SendEmptyAck(aMessage, aMessageInfo));
 
@@ -599,7 +984,7 @@ exit:
 
 Error Client::SendDiagnosticReset(const Ip6::Address &aDestination, const uint8_t aTlvTypes[], uint8_t aCount)
 {
-    return SendCommand(kUriDiagnosticReset, aDestination, aTlvTypes, aCount);
+    return SendCommand(kUriDiagnosticReset, Message::kPriorityNormal, aDestination, aTlvTypes, aCount);
 }
 
 static void ParseRoute(const RouteTlv &aRouteTlv, otNetworkDiagRoute &aNetworkDiagRoute)
@@ -770,6 +1155,16 @@ Error Client::GetNextDiagTlv(const Coap::Message &aMessage, Iterator &aIterator,
             break;
         }
 
+        case Tlv::kMleCounters:
+        {
+            MleCountersTlv mleCoutersTlv;
+
+            SuccessOrExit(error = aMessage.Read(offset, mleCoutersTlv));
+            VerifyOrExit(mleCoutersTlv.IsValid(), error = kErrorParse);
+            mleCoutersTlv.Read(aTlvInfo.mData.mMleCounters);
+            break;
+        }
+
         case Tlv::kBatteryLevel:
             SuccessOrExit(error = Tlv::Read<BatteryLevelTlv>(aMessage, offset, aTlvInfo.mData.mBatteryLevel));
             break;
@@ -822,6 +1217,10 @@ Error Client::GetNextDiagTlv(const Coap::Message &aMessage, Iterator &aIterator,
             SuccessOrExit(error = Tlv::Read<MaxChildTimeoutTlv>(aMessage, offset, aTlvInfo.mData.mMaxChildTimeout));
             break;
 
+        case Tlv::kEui64:
+            SuccessOrExit(error = Tlv::Read<Eui64Tlv>(aMessage, offset, AsCoreType(&aTlvInfo.mData.mEui64)));
+            break;
+
         case Tlv::kVersion:
             SuccessOrExit(error = Tlv::Read<VersionTlv>(aMessage, offset, aTlvInfo.mData.mVersion));
             break;
@@ -836,6 +1235,10 @@ Error Client::GetNextDiagTlv(const Coap::Message &aMessage, Iterator &aIterator,
 
         case Tlv::kVendorSwVersion:
             SuccessOrExit(error = Tlv::Read<VendorSwVersionTlv>(aMessage, offset, aTlvInfo.mData.mVendorSwVersion));
+            break;
+
+        case Tlv::kVendorAppUrl:
+            SuccessOrExit(error = Tlv::Read<VendorAppUrlTlv>(aMessage, offset, aTlvInfo.mData.mVendorAppUrl));
             break;
 
         case Tlv::kThreadStackVersion:

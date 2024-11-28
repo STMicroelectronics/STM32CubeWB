@@ -44,8 +44,6 @@
 namespace ot {
 namespace Utils {
 
-using Encoding::BigEndian::HostSwap32;
-
 void PingSender::Config::SetUnspecifiedToDefault(void)
 {
     if (mSize == 0)
@@ -134,11 +132,12 @@ void PingSender::SendPing(void)
     messageInfo.SetPeerAddr(mConfig.GetDestination());
     messageInfo.mHopLimit          = mConfig.mHopLimit;
     messageInfo.mAllowZeroHopLimit = mConfig.mAllowZeroHopLimit;
+    messageInfo.mMulticastLoop     = mConfig.mMulticastLoop;
 
     message = Get<Ip6::Icmp>().NewMessage();
     VerifyOrExit(message != nullptr);
 
-    SuccessOrExit(message->Append(HostSwap32(now.GetValue())));
+    SuccessOrExit(message->Append(BigEndian::HostSwap32(now.GetValue())));
 
     if (mConfig.mSize > message->GetLength())
     {
@@ -202,7 +201,7 @@ void PingSender::HandleIcmpReceive(const Message           &aMessage,
     VerifyOrExit(aIcmpHeader.GetId() == mIdentifier);
 
     SuccessOrExit(aMessage.Read(aMessage.GetOffset(), timestamp));
-    timestamp = HostSwap32(timestamp);
+    timestamp = BigEndian::HostSwap32(timestamp);
 
     reply.mSenderAddress  = aMessageInfo.GetPeerAddr();
     reply.mRoundTripTime  = ClampToUint16(TimerMilli::GetNow() - TimeMilli(timestamp));

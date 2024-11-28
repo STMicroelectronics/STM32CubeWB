@@ -44,11 +44,13 @@ void otMessageFree(otMessage *aMessage)
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 
 uint16_t otMessageGetLength(const otMessage *aMessage)
 {
+  uint16_t rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -61,11 +63,17 @@ uint16_t otMessageGetLength(const otMessage *aMessage)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (uint16_t)p_ot_req->Data[0];
+  rspData = (uint16_t)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otMessageSetLength(otMessage *aMessage, uint16_t aLength)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -79,11 +87,17 @@ otError otMessageSetLength(otMessage *aMessage, uint16_t aLength)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 uint16_t otMessageGetOffset(const otMessage *aMessage)
 {
+  uint16_t rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -96,7 +110,11 @@ uint16_t otMessageGetOffset(const otMessage *aMessage)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (uint16_t)p_ot_req->Data[0];
+  rspData = (uint16_t)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 void otMessageSetOffset(otMessage *aMessage, uint16_t aOffset)
@@ -113,11 +131,13 @@ void otMessageSetOffset(otMessage *aMessage, uint16_t aOffset)
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 
 bool otMessageIsLinkSecurityEnabled(const otMessage *aMessage)
 {
+  bool rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -130,7 +150,11 @@ bool otMessageIsLinkSecurityEnabled(const otMessage *aMessage)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (bool)p_ot_req->Data[0];
+  rspData = (bool)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 void otMessageSetDirectTransmission(otMessage *aMessage, bool aEnabled)
@@ -147,11 +171,13 @@ void otMessageSetDirectTransmission(otMessage *aMessage, bool aEnabled)
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 
 int8_t otMessageGetRss(const otMessage *aMessage)
 {
+  int8_t rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -164,11 +190,17 @@ int8_t otMessageGetRss(const otMessage *aMessage)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (int8_t)p_ot_req->Data[0];
+  rspData = (int8_t)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otMessageAppend(otMessage *aMessage, const void *aBuf, uint16_t aLength)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -183,11 +215,17 @@ otError otMessageAppend(otMessage *aMessage, const void *aBuf, uint16_t aLength)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 uint16_t otMessageRead(const otMessage *aMessage, uint16_t aOffset, void *aBuf, uint16_t aLength)
 {
+  uint16_t rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -203,11 +241,17 @@ uint16_t otMessageRead(const otMessage *aMessage, uint16_t aOffset, void *aBuf, 
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (uint16_t)p_ot_req->Data[0];
+  rspData = (uint16_t)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 int otMessageWrite(otMessage *aMessage, uint16_t aOffset, const void *aBuf, uint16_t aLength)
 {
+  int rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -223,7 +267,11 @@ int otMessageWrite(otMessage *aMessage, uint16_t aOffset, const void *aBuf, uint
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (int)p_ot_req->Data[0];
+  rspData = (int)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 void otMessageQueueInit(otMessageQueue *aQueue)
@@ -239,7 +287,7 @@ void otMessageQueueInit(otMessageQueue *aQueue)
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 
 void otMessageQueueEnqueue(otMessageQueue *aQueue, otMessage *aMessage)
@@ -256,7 +304,7 @@ void otMessageQueueEnqueue(otMessageQueue *aQueue, otMessage *aMessage)
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 
 void otMessageQueueEnqueueAtHead(otMessageQueue *aQueue, otMessage *aMessage)
@@ -273,7 +321,7 @@ void otMessageQueueEnqueueAtHead(otMessageQueue *aQueue, otMessage *aMessage)
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 
 void otMessageQueueDequeue(otMessageQueue *aQueue, otMessage *aMessage)
@@ -290,11 +338,13 @@ void otMessageQueueDequeue(otMessageQueue *aQueue, otMessage *aMessage)
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 
 otMessage *otMessageQueueGetHead(otMessageQueue *aQueue)
 {
+  otMessage * rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -307,11 +357,17 @@ otMessage *otMessageQueueGetHead(otMessageQueue *aQueue)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otMessage *)p_ot_req->Data[0];
+  rspData = (otMessage *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otMessage *otMessageQueueGetNext(otMessageQueue *aQueue, const otMessage *aMessage)
 {
+  otMessage * rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -325,7 +381,11 @@ otMessage *otMessageQueueGetNext(otMessageQueue *aQueue, const otMessage *aMessa
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otMessage *)p_ot_req->Data[0];
+  rspData = (otMessage *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 void otMessageGetBufferInfo(otInstance *aInstance, otBufferInfo *aBufferInfo)
@@ -341,7 +401,7 @@ void otMessageGetBufferInfo(otInstance *aInstance, otBufferInfo *aBufferInfo)
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 
 #if OPENTHREAD_FTD || OPENTHREAD_MTD
@@ -357,6 +417,6 @@ void otMessageResetBufferInfo(otInstance *aInstance)
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer(); 
+  Post_OtCmdProcessing(); 
 }
 #endif // OPENTHREAD_FTD || OPENTHREAD_MTD

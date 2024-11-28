@@ -42,10 +42,10 @@
 #include "common/code_utils.hpp"
 #include "common/debug.hpp"
 #include "common/encoding.hpp"
-#include "common/instance.hpp"
 #include "common/locator_getters.hpp"
 #include "common/log.hpp"
 #include "common/string.hpp"
+#include "instance/instance.hpp"
 #include "meshcop/meshcop.hpp"
 #include "radio/radio.hpp"
 #include "thread/thread_netif.hpp"
@@ -68,7 +68,7 @@ Joiner::Joiner(Instance &aInstance)
 {
     SetIdFromIeeeEui64();
     mDiscerner.Clear();
-    memset(mJoinerRouters, 0, sizeof(mJoinerRouters));
+    ClearAllBytes(mJoinerRouters);
 }
 
 void Joiner::SetIdFromIeeeEui64(void)
@@ -185,7 +185,7 @@ exit:
         FreeJoinerFinalizeMessage();
     }
 
-    LogError("start joiner", error);
+    LogWarnOnError(error, "start joiner");
     return error;
 }
 
@@ -261,7 +261,7 @@ void Joiner::HandleDiscoverResult(Mle::DiscoverScanner::ScanResult *aResult)
 {
     VerifyOrExit(mState == kStateDiscover);
 
-    if (aResult != nullptr)
+    if (aResult != nullptr && aResult->mJoinerUdpPort > 0)
     {
         SaveDiscoveredJoinerRouter(*aResult);
     }
@@ -378,7 +378,7 @@ Error Joiner::Connect(JoinerRouter &aRouter)
     SetState(kStateConnect);
 
 exit:
-    LogError("start secure joiner connection", error);
+    LogWarnOnError(error, "start secure joiner connection");
     return error;
 }
 
@@ -528,12 +528,12 @@ template <> void Joiner::HandleTmf<kUriJoinerEntrust>(Coap::Message &aMessage, c
 
     datasetInfo.Clear();
 
-    SuccessOrExit(error = Tlv::Find<NetworkKeyTlv>(aMessage, datasetInfo.UpdateNetworkKey()));
+    SuccessOrExit(error = Tlv::Find<NetworkKeyTlv>(aMessage, datasetInfo.Update<Dataset::kNetworkKey>()));
 
-    datasetInfo.SetChannel(Get<Mac::Mac>().GetPanChannel());
-    datasetInfo.SetPanId(Get<Mac::Mac>().GetPanId());
+    datasetInfo.Set<Dataset::kChannel>(Get<Mac::Mac>().GetPanChannel());
+    datasetInfo.Set<Dataset::kPanId>(Get<Mac::Mac>().GetPanId());
 
-    IgnoreError(Get<ActiveDatasetManager>().Save(datasetInfo));
+    Get<ActiveDatasetManager>().SaveLocal(datasetInfo);
 
     LogInfo("Joiner successful!");
 
@@ -543,7 +543,7 @@ template <> void Joiner::HandleTmf<kUriJoinerEntrust>(Coap::Message &aMessage, c
     mTimer.Start(kConfigExtAddressDelay);
 
 exit:
-    LogError("process joiner entrust", error);
+    LogWarnOnError(error, "process joiner entrust");
 }
 
 void Joiner::SendJoinerEntrustResponse(const Coap::Message &aRequest, const Ip6::MessageInfo &aRequestInfo)

@@ -221,7 +221,7 @@ VL53L0X_Error VL53L0X_UpdateByte(VL53L0X_DEV Dev, uint8_t index, uint8_t AndData
  */
 VL53L0X_Error VL53L0X_PollingDelay(VL53L0X_DEV Dev); /* usually best implemented as a real function */
 
-void SetupSingleShot(VL53L0X_Dev_t Dev);
+void SetupSingleShot(VL53L0X_DEV Dev);
 
 #ifdef __cplusplus
 }

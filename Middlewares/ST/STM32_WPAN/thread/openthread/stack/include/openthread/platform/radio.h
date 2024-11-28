@@ -119,7 +119,7 @@ enum
  * The value is a bit-field indicating the capabilities supported by the radio. See `OT_RADIO_CAPS_*` definitions.
  *
  */
-typedef uint8_t otRadioCaps;
+typedef uint16_t otRadioCaps;
 
 /**
  * Defines constants that are used to indicate different radio capabilities. See `otRadioCaps`.
@@ -136,6 +136,7 @@ enum
     OT_RADIO_CAPS_TRANSMIT_SEC     = 1 << 5, ///< Radio supports tx security.
     OT_RADIO_CAPS_TRANSMIT_TIMING  = 1 << 6, ///< Radio supports tx at specific time.
     OT_RADIO_CAPS_RECEIVE_TIMING   = 1 << 7, ///< Radio supports rx at specific time.
+    OT_RADIO_CAPS_RX_ON_WHEN_IDLE  = 1 << 8, ///< Radio supports RxOnWhenIdle handling.
 };
 
 #define OT_PANID_BROADCAST 0xffff ///< IEEE 802.15.4 Broadcast PAN ID
@@ -270,10 +271,26 @@ typedef struct otRadioFrame
          */
         struct
         {
-            const otMacKeyMaterial *mAesKey;  ///< The key material used for AES-CCM frame security.
-            otRadioIeInfo          *mIeInfo;  ///< The pointer to the Header IE(s) related information.
-            uint32_t                mTxDelay; ///< The delay time for this transmission (based on `mTxDelayBaseTime`).
-            uint32_t                mTxDelayBaseTime; ///< The base time for the transmission delay.
+            const otMacKeyMaterial *mAesKey; ///< The key material used for AES-CCM frame security.
+            otRadioIeInfo          *mIeInfo; ///< The pointer to the Header IE(s) related information.
+
+            /**
+             * The base time in microseconds for scheduled transmissions
+             * relative to the local radio clock, see `otPlatRadioGetNow` and
+             * `mTxDelay`.
+             */
+            uint32_t mTxDelayBaseTime;
+
+            /**
+             * The delay time in microseconds for this transmission referenced
+             * to `mTxDelayBaseTime`.
+             *
+             * Note: `mTxDelayBaseTime` + `mTxDelay` SHALL point to the point in
+             * time when the end of the SFD will be present at the local
+             * antenna, relative to the local radio clock.
+             */
+            uint32_t mTxDelay;
+
             uint8_t mMaxCsmaBackoffs; ///< Maximum number of backoffs attempts before declaring CCA failure.
             uint8_t mMaxFrameRetries; ///< Maximum number of retries allowed after a transmission failure.
 
@@ -332,10 +349,8 @@ typedef struct otRadioFrame
         struct
         {
             /**
-             * The timestamp when the frame was received in microseconds.
-             *
-             * The value SHALL be the time when the SFD was received.
-             *
+             * The time of the local radio clock in microseconds when the end of
+             * the SFD was present at the local antenna.
              */
             uint64_t mTimestamp;
 
@@ -608,6 +623,42 @@ bool otPlatRadioGetPromiscuous(otInstance *aInstance);
 void otPlatRadioSetPromiscuous(otInstance *aInstance, bool aEnable);
 
 /**
+ * Sets the rx-on-when-idle state to the radio platform.
+ *
+ * There are a few situations that the radio can enter sleep state if the device is in rx-off-when-idle state but
+ * it's hard and costly for the SubMac to identify these situations and instruct the radio to enter sleep:
+ *
+ * - Finalization of a regular frame reception task, provided that:
+ *   - The frame is received without errors and passes the filtering and it's not an spurious ACK.
+ *   - ACK is not requested or transmission of ACK is not possible due to internal conditions.
+ * - Finalization of a frame transmission or transmission of an ACK frame, when ACK is not requested in the transmitted
+ *   frame.
+ * - Finalization of the reception operation of a requested ACK due to:
+ *   - ACK timeout expiration.
+ *   - Reception of an invalid ACK or not an ACK frame.
+ *   - Reception of the proper ACK, unless the transmitted frame was a Data Request Command and the frame pending bit
+ *     on the received ACK is set to true. In this case the radio platform implementation SHOULD keep the receiver on
+ *     until a determined timeout which triggers an idle period start.`OPENTHREAD_CONFIG_MAC_DATA_POLL_TIMEOUT` can be
+ *     taken as a reference for this.
+ * - Finalization of a stand alone CCA task.
+ * - Finalization of a CCA operation with busy result during CSMA/CA procedure.
+ * - Finalization of an Energy Detection task.
+ * - Finalization of a radio reception window scheduled with `otPlatRadioReceiveAt`.
+ *
+ * If a platform supports `OT_RADIO_CAPS_RX_ON_WHEN_IDLE` it must also support `OT_RADIO_CAPS_CSMA_BACKOFF` and handle
+ * idle periods after CCA as described above.
+ *
+ * Upon the transition of the "RxOnWhenIdle" flag from TRUE to FALSE, the radio platform should enter sleep mode.
+ * If the radio is currently in receive mode, it should enter sleep mode immediately. Otherwise, it should enter sleep
+ * mode after the current operation is completed.
+ *
+ * @param[in]  aInstance    The OpenThread instance structure.
+ * @param[in]  aEnable      TRUE to keep radio in Receive state, FALSE to put to Sleep state during idle periods.
+ *
+ */
+void otPlatRadioSetRxOnWhenIdle(otInstance *aInstance, bool aEnable);
+
+/**
  * Update MAC keys and key index
  *
  * Is used when radio provides OT_RADIO_CAPS_TRANSMIT_SEC capability.
@@ -652,14 +703,25 @@ void otPlatRadioSetMacFrameCounter(otInstance *aInstance, uint32_t aMacFrameCoun
 void otPlatRadioSetMacFrameCounterIfLarger(otInstance *aInstance, uint32_t aMacFrameCounter);
 
 /**
- * Get the current estimated time (in microseconds) of the radio chip.
+ * Get the current time in microseconds referenced to a continuous monotonic
+ * local radio clock (64 bits width).
  *
- * This microsecond timer must be a free-running timer. The timer must continue to advance with microsecond precision
- * even when the radio is in the sleep state.
+ * The radio clock SHALL NOT wrap during the device's uptime. Implementations
+ * SHALL therefore identify and compensate for internal counter overflows. The
+ * clock does not have a defined epoch and it SHALL NOT introduce any continuous
+ * or discontinuous adjustments (e.g. leap seconds). Implementations SHALL
+ * compensate for any sleep times of the device.
+ *
+ * Implementations MAY choose to discipline the radio clock and compensate for
+ * sleep times by any means (e.g. by combining a high precision/low power RTC
+ * with a high resolution counter) as long as the exposed combined clock
+ * provides continuous monotonic microsecond resolution ticks within the
+ * accuracy limits announced by @ref otPlatRadioGetCslAccuracy.
  *
  * @param[in]   aInstance    A pointer to an OpenThread instance.
  *
- * @returns The current time in microseconds. UINT64_MAX when platform does not support or radio time is not ready.
+ * @returns The current time in microseconds. UINT64_MAX when platform does not
+ * support or radio time is not ready.
  *
  */
 uint64_t otPlatRadioGetNow(otInstance *aInstance);
@@ -764,8 +826,17 @@ otError otPlatRadioReceive(otInstance *aInstance, uint8_t aChannel);
  * Schedule a radio reception window at a specific time and duration.
  *
  * @param[in]  aChannel   The radio channel on which to receive.
- * @param[in]  aStart     The receive window start time, in microseconds.
- * @param[in]  aDuration  The receive window duration, in microseconds
+ * @param[in]  aStart     The receive window start time relative to the local
+ *                        radio clock, see `otPlatRadioGetNow`. The radio
+ *                        receiver SHALL be on and ready to receive the first
+ *                        symbol of a frame's SHR at the window start time.
+ * @param[in]  aDuration  The receive window duration, in microseconds, as
+ *                        measured by the local radio clock. The radio SHOULD be
+ *                        turned off (or switched to TX mode if an ACK frame
+ *                        needs to be sent) after that duration unless it is
+ *                        still actively receiving a frame. In the latter case
+ *                        the radio SHALL be kept in reception mode until frame
+ *                        reception has either succeeded or failed.
  *
  * @retval OT_ERROR_NONE    Successfully scheduled receive window.
  * @retval OT_ERROR_FAILED  The receive window could not be scheduled.
@@ -1059,15 +1130,15 @@ otError otPlatRadioGetCoexMetrics(otInstance *aInstance, otRadioCoexMetrics *aCo
  * Enable or disable CSL receiver.
  *
  * @param[in]  aInstance     The OpenThread instance structure.
- * @param[in]  aCslPeriod    CSL period, 0 for disabling CSL.
+ * @param[in]  aCslPeriod    CSL period, 0 for disabling CSL. CSL period is in unit of 10 symbols.
  * @param[in]  aShortAddr    The short source address of CSL receiver's peer.
  * @param[in]  aExtAddr      The extended source address of CSL receiver's peer.
  *
  * @note Platforms should use CSL peer addresses to include CSL IE when generating enhanced acks.
  *
- * @retval  kErrorNotImplemented Radio driver doesn't support CSL.
- * @retval  kErrorFailed         Other platform specific errors.
- * @retval  kErrorNone           Successfully enabled or disabled CSL.
+ * @retval  OT_ERROR_NOT_IMPLEMENTED Radio driver doesn't support CSL.
+ * @retval  OT_ERROR_FAILED          Other platform specific errors.
+ * @retval  OT_ERROR_NONE            Successfully enabled or disabled CSL.
  *
  */
 otError otPlatRadioEnableCsl(otInstance         *aInstance,
@@ -1076,30 +1147,66 @@ otError otPlatRadioEnableCsl(otInstance         *aInstance,
                              const otExtAddress *aExtAddr);
 
 /**
+ * Reset CSL receiver in the platform.
+ *
+ * @note Defaults to `otPlatRadioEnableCsl(aInstance,0, Mac::kShortAddrInvalid, nullptr);`
+ *
+ * @param[in]  aInstance     The OpenThread instance structure.
+ *
+ * @retval  OT_ERROR_NOT_IMPLEMENTED Radio driver doesn't support CSL.
+ * @retval  OT_ERROR_FAILED          Other platform specific errors.
+ * @retval  OT_ERROR_NONE            Successfully disabled CSL.
+ *
+ */
+otError otPlatRadioResetCsl(otInstance *aInstance);
+
+/**
  * Update CSL sample time in radio driver.
  *
- * Sample time is stored in radio driver as a copy to calculate phase when sending ACK with CSL IE.
+ * Sample time is stored in radio driver as a copy to calculate phase when
+ * sending ACK with CSL IE. The CSL sample (window) of the CSL receiver extends
+ * before and after the sample time. The CSL sample time marks a timestamp in
+ * the CSL sample window when a frame should be received in "ideal conditions"
+ * if there would be no inaccuracy/clock-drift.
  *
  * @param[in]  aInstance         The OpenThread instance structure.
- * @param[in]  aCslSampleTime    The latest sample time.
- *
+ * @param[in]  aCslSampleTime    The next sample time, in microseconds. It is
+ *                               the time when the first symbol of the MHR of
+ *                               the frame is expected.
  */
 void otPlatRadioUpdateCslSampleTime(otInstance *aInstance, uint32_t aCslSampleTime);
 
 /**
- * Get the current accuracy, in units of ± ppm, of the clock used for scheduling CSL operations.
+ * Get the current estimated worst case accuracy (maximum ± deviation from the
+ * nominal frequency) of the local radio clock in units of PPM. This is the
+ * clock used to schedule CSL operations.
  *
- * @note Platforms may optimize this value based on operational conditions (i.e.: temperature).
+ * @note Implementations MAY estimate this value based on current operating
+ * conditions (e.g. temperature).
+ *
+ * In case the implementation does not estimate the current value but returns a
+ * fixed value, this value MUST be the worst-case accuracy over all possible
+ * foreseen operating conditions (temperature, pressure, etc) of the
+ * implementation.
  *
  * @param[in]   aInstance    A pointer to an OpenThread instance.
  *
- * @returns The current CSL rx/tx scheduling drift, in units of ± ppm.
+ * @returns The current CSL rx/tx scheduling drift, in PPM.
  *
  */
 uint8_t otPlatRadioGetCslAccuracy(otInstance *aInstance);
 
 /**
- * The fixed uncertainty of the Device for scheduling CSL Transmissions in units of 10 microseconds.
+ * The fixed uncertainty (i.e. random jitter) of the arrival time of CSL
+ * transmissions received by this device in units of 10 microseconds.
+ *
+ * This designates the worst case constant positive or negative deviation of
+ * the actual arrival time of a transmission from the transmission time
+ * calculated relative to the local radio clock independent of elapsed time. In
+ * addition to uncertainty accumulated over elapsed time, the CSL channel sample
+ * ("RX window") must be extended by twice this deviation such that an actual
+ * transmission is guaranteed to be detected by the local receiver in the
+ * presence of random arrival time jitter.
  *
  * @param[in]   aInstance    A pointer to an OpenThread instance.
  *
@@ -1130,7 +1237,8 @@ otError otPlatRadioSetChannelMaxTransmitPower(otInstance *aInstance, uint8_t aCh
  * ISO 3166 alpha-2 code.
  *
  * @param[in]  aInstance    The OpenThread instance structure.
- * @param[in]  aRegionCode  The radio region.
+ * @param[in]  aRegionCode  The radio region code. The `aRegionCode >> 8` is first ascii char
+ *                          and the `aRegionCode & 0xff` is the second ascii char.
  *
  * @retval  OT_ERROR_FAILED           Other platform specific errors.
  * @retval  OT_ERROR_NONE             Successfully set region code.

@@ -48,7 +48,7 @@ otError otMultiRadioGetNeighborInfo(otInstance *              aInstance,
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 
 #endif // OPENTHREAD_CONFIG_MULTI_RADIO

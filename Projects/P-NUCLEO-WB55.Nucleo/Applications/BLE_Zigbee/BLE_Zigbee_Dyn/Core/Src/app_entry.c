@@ -67,6 +67,7 @@ PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t EvtPool[POOL_SIZE];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t SystemCmdBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t	SystemSpareEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t	BleSpareEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255];
+extern uint8_t g_ot_notification_allowed;
 
 /* SELECT THE PROTOCOL THAT WILL START FIRST (BLE or ZIGBEE) */
 static SHCI_C2_CONCURRENT_Mode_Param_t ConcurrentMode = BLE_ENABLE;
@@ -310,13 +311,14 @@ static void APPE_SysEvtError( SCHI_SystemErrCode_t ErrorCode)
 static void APPE_SysEvtReadyProcessing( void )
 {
     /* Traces channel initialization */
-    APPD_EnableCPU2();
+    APPD_EnableCPU2();      
 
     APP_DBG("==> Start_BLE");   /* Start BLE first */
     APP_BLE_Init();
 
     APP_DBG("==> Start Zigbee stack & Networking");
     APP_ZIGBEE_Init();
+       
 
     switch (ZbStackType) { /* Check ZB stack type */
     case INFO_STACK_TYPE_ZIGBEE_FFD: /* Start ZB only */
@@ -334,6 +336,7 @@ static void APPE_SysEvtReadyProcessing( void )
       APP_DBG("FW Type : No ZB STACK type detected");
       break;
     }
+
 
 #if ( CFG_LPM_SUPPORTED == 1)
   /* ZB stack is initialized, low power mode will be enabled later (zb_interface.c) */
@@ -398,6 +401,10 @@ void UTIL_SEQ_Idle( void )
   */
 void UTIL_SEQ_EvtIdle( UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm )
 {
+	/* Check the notification condition */
+	if (g_ot_notification_allowed) {
+		UTIL_SEQ_Run(1U << CFG_TASK_NOTIFY_FROM_M0_TO_M4);
+	}	
   switch (evt_waited_bm) {
     case EVENT_ACK_FROM_M0_EVT:
       /* Run only the task CFG_TASK_REQUEST_FROM_M0_TO_M4 to process

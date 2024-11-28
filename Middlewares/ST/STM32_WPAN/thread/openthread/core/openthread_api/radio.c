@@ -51,6 +51,8 @@
  */
 otError otPlatRadioGetTransmitPower(otInstance *aInstance, int8_t *aPower)
 {
+   otError rspData;
+   
    Pre_OtCmdProcessing();
    /* prepare buffer */
    Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -63,7 +65,11 @@ otError otPlatRadioGetTransmitPower(otInstance *aInstance, int8_t *aPower)
    Ot_Cmd_Transfer();
 
    p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-   return (otError) p_ot_req->Data[0];
+   rspData = (otError)p_ot_req->Data[0];
+  
+   Post_OtCmdProcessing();
+  
+   return rspData;
 }
 
 /**
@@ -78,6 +84,8 @@ otError otPlatRadioGetTransmitPower(otInstance *aInstance, int8_t *aPower)
  */
 otError otPlatRadioSetTransmitPower(otInstance *aInstance, int8_t aPower)
 {
+    otError rspData;
+	
     Pre_OtCmdProcessing();
     /* prepare buffer */
     Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -90,6 +98,10 @@ otError otPlatRadioSetTransmitPower(otInstance *aInstance, int8_t aPower)
     Ot_Cmd_Transfer();
 
     p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-    return (otError) p_ot_req->Data[0];
+    rspData = (otError)p_ot_req->Data[0];
+  
+    Post_OtCmdProcessing();
+  
+    return rspData;
 }
 

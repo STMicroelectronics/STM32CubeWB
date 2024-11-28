@@ -41,9 +41,9 @@
 #include "common/array.hpp"
 #include "common/as_core_type.hpp"
 #include "common/encoding.hpp"
-#include "common/instance.hpp"
 #include "common/locator_getters.hpp"
 #include "common/string.hpp"
+#include "instance/instance.hpp"
 #include "meshcop/joiner.hpp"
 #include "meshcop/joiner_router.hpp"
 #include "meshcop/meshcop.hpp"
@@ -72,14 +72,10 @@ Commissioner::Commissioner(Instance &aInstance)
     , mPanIdQuery(aInstance)
     , mState(kStateDisabled)
 {
-    memset(reinterpret_cast<void *>(mJoiners), 0, sizeof(mJoiners));
+    ClearAllBytes(mJoiners);
 
-    mCommissionerAloc.Clear();
-    mCommissionerAloc.mPrefixLength       = 64;
-    mCommissionerAloc.mPreferred          = true;
-    mCommissionerAloc.mValid              = true;
-    mCommissionerAloc.mScopeOverride      = Ip6::Address::kRealmLocalScope;
-    mCommissionerAloc.mScopeOverrideValid = true;
+    mCommissionerAloc.InitAsThreadOriginMeshLocal();
+    mCommissionerAloc.mPreferred = true;
 
     IgnoreError(SetId("OpenThread Commissioner"));
 
@@ -273,8 +269,6 @@ void Commissioner::RemoveJoinerEntry(Commissioner::Joiner &aJoiner)
         mActiveJoiner = nullptr;
     }
 
-    UpdateJoinerExpirationTimer();
-
     SendCommissionerSet();
 
     LogJoinerEntry("Removed", joinerCopy);
@@ -308,9 +302,9 @@ exit:
     if ((error != kErrorNone) && (error != kErrorAlready))
     {
         Get<Tmf::SecureAgent>().Stop();
+        LogWarnOnError(error, "start commissioner");
     }
 
-    LogError("start commissioner", error);
     return error;
 }
 
@@ -349,27 +343,20 @@ Error Commissioner::Stop(ResignMode aResignMode)
 #endif
 
 exit:
-    LogError("stop commissioner", error);
+    if (error != kErrorAlready)
+    {
+        LogWarnOnError(error, "stop commissioner");
+    }
+
     return error;
 }
 
 Error Commissioner::SetId(const char *aId)
 {
-    Error   error = kErrorNone;
-    uint8_t len;
+    Error error = kErrorNone;
 
     VerifyOrExit(IsDisabled(), error = kErrorInvalidState);
-    VerifyOrExit(aId != nullptr);
-    VerifyOrExit(IsValidUtf8String(aId), error = kErrorInvalidArgs);
-
-    len = static_cast<uint8_t>(StringLength(aId, sizeof(mCommissionerId)));
-
-    // CommissionerIdTlv::SetCommissionerId trims the string to the maximum array size.
-    // Prevent this from happening returning an error.
-    VerifyOrExit(len < CommissionerIdTlv::kMaxLength, error = kErrorInvalidArgs);
-
-    memcpy(mCommissionerId, aId, len);
-    mCommissionerId[len] = '\0';
+    error = StringCopy(mCommissionerId, aId, kStringCheckUtf8Encoding);
 
 exit:
     return error;
@@ -409,8 +396,8 @@ exit:
 
 void Commissioner::SendCommissionerSet(void)
 {
-    Error   error = kErrorNone;
-    Dataset dataset;
+    Error                error = kErrorNone;
+    CommissioningDataset dataset;
 
     VerifyOrExit(mState == kStateActive, error = kErrorInvalidState);
 
@@ -422,7 +409,8 @@ void Commissioner::SendCommissionerSet(void)
     error = SendMgmtCommissionerSetRequest(dataset, nullptr, 0);
 
 exit:
-    LogError("send MGMT_COMMISSIONER_SET.req", error);
+    LogWarnOnError(error, "send MGMT_COMMISSIONER_SET.req");
+    OT_UNUSED_VARIABLE(error);
 }
 
 void Commissioner::ClearJoiners(void)
@@ -481,7 +469,7 @@ Error Commissioner::AddJoiner(const Mac::ExtAddress *aEui64,
 
     joiner->mExpirationTime = TimerMilli::GetNow() + Time::SecToMsec(aTimeout);
 
-    UpdateJoinerExpirationTimer();
+    mJoinerExpirationTimer.FireAtIfEarlier(joiner->mExpirationTime);
 
     SendCommissionerSet();
 
@@ -493,7 +481,7 @@ exit:
 
 void Commissioner::Joiner::CopyToJoinerInfo(otJoinerInfo &aJoiner) const
 {
-    memset(&aJoiner, 0, sizeof(aJoiner));
+    ClearAllBytes(aJoiner);
 
     switch (mType)
     {
@@ -577,7 +565,7 @@ void Commissioner::RemoveJoiner(Joiner &aJoiner, uint32_t aDelay)
         if (aJoiner.mExpirationTime > newExpirationTime)
         {
             aJoiner.mExpirationTime = newExpirationTime;
-            UpdateJoinerExpirationTimer();
+            mJoinerExpirationTimer.FireAtIfEarlier(newExpirationTime);
         }
     }
     else
@@ -588,26 +576,7 @@ void Commissioner::RemoveJoiner(Joiner &aJoiner, uint32_t aDelay)
 
 Error Commissioner::SetProvisioningUrl(const char *aProvisioningUrl)
 {
-    Error   error = kErrorNone;
-    uint8_t len;
-
-    if (aProvisioningUrl == nullptr)
-    {
-        mProvisioningUrl[0] = '\0';
-        ExitNow();
-    }
-
-    VerifyOrExit(IsValidUtf8String(aProvisioningUrl), error = kErrorInvalidArgs);
-
-    len = static_cast<uint8_t>(StringLength(aProvisioningUrl, sizeof(mProvisioningUrl)));
-
-    VerifyOrExit(len < sizeof(mProvisioningUrl), error = kErrorInvalidArgs);
-
-    memcpy(mProvisioningUrl, aProvisioningUrl, len);
-    mProvisioningUrl[len] = '\0';
-
-exit:
-    return error;
+    return StringCopy(mProvisioningUrl, aProvisioningUrl, kStringCheckUtf8Encoding);
 }
 
 void Commissioner::HandleTimer(void)
@@ -629,7 +598,7 @@ void Commissioner::HandleTimer(void)
 
 void Commissioner::HandleJoinerExpirationTimer(void)
 {
-    TimeMilli now = TimerMilli::GetNow();
+    NextFireTime nextTime;
 
     for (Joiner &joiner : mJoiners)
     {
@@ -638,39 +607,18 @@ void Commissioner::HandleJoinerExpirationTimer(void)
             continue;
         }
 
-        if (joiner.mExpirationTime <= now)
+        if (joiner.mExpirationTime <= nextTime.GetNow())
         {
             LogDebg("removing joiner due to timeout or successfully joined");
             RemoveJoinerEntry(joiner);
         }
-    }
-
-    UpdateJoinerExpirationTimer();
-}
-
-void Commissioner::UpdateJoinerExpirationTimer(void)
-{
-    TimeMilli now  = TimerMilli::GetNow();
-    TimeMilli next = now.GetDistantFuture();
-
-    for (Joiner &joiner : mJoiners)
-    {
-        if (joiner.mType == Joiner::kTypeUnused)
+        else
         {
-            continue;
+            nextTime.UpdateIfEarlier(joiner.mExpirationTime);
         }
-
-        next = Min(next, Max(now, joiner.mExpirationTime));
     }
 
-    if (next < now.GetDistantFuture())
-    {
-        mJoinerExpirationTimer.FireAt(next);
-    }
-    else
-    {
-        mJoinerExpirationTimer.Stop();
-    }
+    mJoinerExpirationTimer.FireAtIfEarlier(nextTime);
 }
 
 Error Commissioner::SendMgmtCommissionerGetRequest(const uint8_t *aTlvs, uint8_t aLength)
@@ -724,7 +672,9 @@ exit:
     return;
 }
 
-Error Commissioner::SendMgmtCommissionerSetRequest(const Dataset &aDataset, const uint8_t *aTlvs, uint8_t aLength)
+Error Commissioner::SendMgmtCommissionerSetRequest(const CommissioningDataset &aDataset,
+                                                   const uint8_t              *aTlvs,
+                                                   uint8_t                     aLength)
 {
     Error            error = kErrorNone;
     Coap::Message   *message;
@@ -786,29 +736,33 @@ void Commissioner::HandleMgmtCommissionerSetResponse(Coap::Message          *aMe
 {
     OT_UNUSED_VARIABLE(aMessageInfo);
 
-    VerifyOrExit(aResult == kErrorNone && aMessage->GetCode() == Coap::kCodeChanged);
-    LogInfo("Received %s response", UriToString<kUriCommissionerSet>());
+    Error   error;
+    uint8_t state;
 
+    SuccessOrExit(error = aResult);
+    VerifyOrExit(aMessage->GetCode() == Coap::kCodeChanged && Tlv::Find<StateTlv>(*aMessage, state) == kErrorNone &&
+                     state != StateTlv::kPending,
+                 error = kErrorParse);
+
+    OT_UNUSED_VARIABLE(error);
 exit:
-    return;
+    LogInfo("Received %s response: %s", UriToString<kUriCommissionerSet>(),
+            error == kErrorNone ? StateTlv::StateToString(static_cast<StateTlv::State>(state)) : ErrorToString(error));
 }
 
 Error Commissioner::SendPetition(void)
 {
-    Error             error   = kErrorNone;
-    Coap::Message    *message = nullptr;
-    Tmf::MessageInfo  messageInfo(GetInstance());
-    CommissionerIdTlv commissionerIdTlv;
+    Error            error   = kErrorNone;
+    Coap::Message   *message = nullptr;
+    Tmf::MessageInfo messageInfo(GetInstance());
 
     mTransmitAttempts++;
 
     message = Get<Tmf::Agent>().NewPriorityConfirmablePostMessage(kUriLeaderPetition);
     VerifyOrExit(message != nullptr, error = kErrorNoBufs);
 
-    commissionerIdTlv.Init();
-    commissionerIdTlv.SetCommissionerId(mCommissionerId);
+    SuccessOrExit(error = Tlv::Append<CommissionerIdTlv>(*message, mCommissionerId));
 
-    SuccessOrExit(error = commissionerIdTlv.AppendTo(*message));
     SuccessOrExit(error = messageInfo.SetSockAddrToRlocPeerAddrToLeaderAloc());
     SuccessOrExit(
         error = Get<Tmf::Agent>().SendMessage(*message, messageInfo, Commissioner::HandleLeaderPetitionResponse, this));
@@ -904,7 +858,7 @@ void Commissioner::SendKeepAlive(uint16_t aSessionId)
 
 exit:
     FreeMessageOnError(message, error);
-    LogError("send keep alive", error);
+    LogWarnOnError(error, "send keep alive");
 }
 
 void Commissioner::HandleLeaderKeepAliveResponse(void                *aContext,
@@ -1165,18 +1119,6 @@ Error Commissioner::SendRelayTransmit(Message &aMessage, const Ip6::MessageInfo 
 exit:
     FreeMessageOnError(message, error);
     return error;
-}
-
-void Commissioner::ApplyMeshLocalPrefix(void)
-{
-    VerifyOrExit(mState == kStateActive);
-
-    Get<ThreadNetif>().RemoveUnicastAddress(mCommissionerAloc);
-    mCommissionerAloc.GetAddress().SetPrefix(Get<Mle::MleRouter>().GetMeshLocalPrefix());
-    Get<ThreadNetif>().AddUnicastAddress(mCommissionerAloc);
-
-exit:
-    return;
 }
 
 // LCOV_EXCL_START

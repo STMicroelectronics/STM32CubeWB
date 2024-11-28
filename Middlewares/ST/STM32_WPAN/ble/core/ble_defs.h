@@ -157,8 +157,8 @@
 
 /* Adv. lengths
  */
-#define MAX_ADV_DATA_LEN                              31U
-#define BD_ADDR_SIZE                                   6U
+#define MAX_ADV_DATA_LEN                              31
+#define BD_ADDR_SIZE                                   6
 
 /* Privacy flag values
  */
@@ -379,8 +379,8 @@
 
 /* Encryption key size
  */
-#define MIN_ENCRY_KEY_SIZE                          7U
-#define MAX_ENCRY_KEY_SIZE                         16U
+#define MIN_ENCRY_KEY_SIZE                          7
+#define MAX_ENCRY_KEY_SIZE                         16
 
 /* Format
  */
@@ -461,6 +461,10 @@
 #define CONFIG_DATA_SMP_MODE_OFFSET                0xB0U
 #define CONFIG_DATA_LL_SCAN_CHAN_MAP_OFFSET        0xC0U
 #define CONFIG_DATA_LL_BG_SCAN_MODE_OFFSET         0xC1U
+#define CONFIG_DATA_LL_RSSI_GOLDEN_RANGE_OFFSET    0xC2U
+#define CONFIG_DATA_LL_RPA_MODE_OFFSET             0xC3U
+#define CONFIG_DATA_LL_RX_ACL_CTRL_OFFSET          0xC4U
+#define CONFIG_DATA_LL_MAX_DATA_EXT_OFFSET         0xD1U
 
 /* Length for configuration values (see ACI_HAL_WRITE_CONFIG_DATA)
  */
@@ -473,6 +477,10 @@
 #define CONFIG_DATA_SMP_MODE_LEN                    1
 #define CONFIG_DATA_LL_SCAN_CHAN_MAP_LEN            1
 #define CONFIG_DATA_LL_BG_SCAN_MODE_LEN             1
+#define CONFIG_DATA_LL_RSSI_GOLDEN_RANGE_LEN        2
+#define CONFIG_DATA_LL_RPA_MODE_LEN                 1
+#define CONFIG_DATA_LL_RX_ACL_CTRL_LEN              2
+#define CONFIG_DATA_LL_MAX_DATA_EXT_LEN             8
 
 /* ------------------------------------------------------------------------- */
 

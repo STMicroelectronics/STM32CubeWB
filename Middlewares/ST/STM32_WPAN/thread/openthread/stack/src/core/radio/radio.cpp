@@ -36,12 +36,24 @@
 
 namespace ot {
 
+const uint8_t Radio::kSupportedChannelPages[kNumChannelPages] = {
+#if OPENTHREAD_CONFIG_RADIO_2P4GHZ_OQPSK_SUPPORT
+    kChannelPage0,
+#endif
+#if OPENTHREAD_CONFIG_RADIO_915MHZ_OQPSK_SUPPORT
+    kChannelPage2,
+#endif
+#if OPENTHREAD_CONFIG_PLATFORM_RADIO_PROPRIETARY_SUPPORT
+    OPENTHREAD_CONFIG_PLATFORM_RADIO_PROPRIETARY_CHANNEL_PAGE,
+#endif
+};
+
 #if OPENTHREAD_RADIO
 void Radio::Init(void)
 {
 #if OPENTHREAD_CONFIG_RADIO_LINK_IEEE_802_15_4_ENABLE
 #if OPENTHREAD_CONFIG_MAC_CSL_RECEIVER_ENABLE
-    SuccessOrAssert(EnableCsl(0, Mac::kShortAddrInvalid, nullptr));
+    SuccessOrAssert(ResetCsl());
 #endif
 
     EnableSrcMatch(false);
@@ -61,6 +73,7 @@ void Radio::Init(void)
     SetMacFrameCounter(0);
 
     SetPromiscuous(false);
+    SetRxOnWhenIdle(true);
 #endif // OPENTHREAD_CONFIG_RADIO_LINK_IEEE_802_15_4_ENABLE
 }
 #endif // OPENTHREAD_RADIO

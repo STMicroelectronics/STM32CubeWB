@@ -14,7 +14,10 @@
 | STM32_USB_Device_Library        | STMicroelectronics                 | SLA0044                                   |
 | STM32_TouchSensing_Library      | STMicroelectronics                 | SLA0044                                   |
 | STM32_Audio_PDM                 | STMicroelectronics                 | SLA0047                                   |
-| STM32_WPAN                      | STMicroelectronics                 | SLA0044                                   |
+| STM32_WPAN                      | STMicroelectronics, Amazon.com Inc.|                                           |
+|                                 | The OpenThread Authors,            |                                           |
+|                                 | Exegin Technologies Limited,       |                                           |
+|                                 | Dr Brian Gladman                   | SLA0044                                   |
 | Azure RTOS ThreadX              | Microsoft Corporation              | Microsoft Software License for Azure RTOS |
 | STM32 Projects                  | STMicroelectronics                 | SLA0044                                   |
 | STM32 Utilities                 | STMicroelectronics                 | BSD-3-Clause                              |

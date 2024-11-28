@@ -33,6 +33,8 @@
 
 otError otRandomCryptoFillBuffer(uint8_t *aBuffer, uint16_t aSize)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -46,5 +48,9 @@ otError otRandomCryptoFillBuffer(uint8_t *aBuffer, uint16_t aSize)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }

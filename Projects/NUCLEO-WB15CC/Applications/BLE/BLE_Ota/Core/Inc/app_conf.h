@@ -683,7 +683,8 @@ typedef enum
 typedef enum
 {
     CFG_SCH_PRIO_0,
-    CFG_PRIO_NBR,
+    CFG_SCH_PRIO_NBR
+,
 } CFG_SCH_Prio_Id_t;
 
 /**

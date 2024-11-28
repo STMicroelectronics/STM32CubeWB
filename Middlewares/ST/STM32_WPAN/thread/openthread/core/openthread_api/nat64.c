@@ -45,6 +45,8 @@ void otNat64GetCounters(otInstance *aInstance, otNat64ProtocolCounters *aCounter
   p_ot_req->Data[0] = (uint32_t) aCounters;
 
   Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
 }
 #endif
 
@@ -60,6 +62,8 @@ void otNat64GetErrorCounters(otInstance *aInstance, otNat64ErrorCounters *aCount
   p_ot_req->Data[0] = (uint32_t) aCounters;
 
   Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
 }
 
 void otNat64InitAddressMappingIterator(otInstance *aInstance, otNat64AddressMappingIterator *aIterator)
@@ -74,6 +78,8 @@ void otNat64InitAddressMappingIterator(otInstance *aInstance, otNat64AddressMapp
   p_ot_req->Data[0] = (uint32_t) aIterator;
 
   Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
 }
 
 #if OPENTHREAD_CONFIG_NAT64_TRANSLATOR_ENABLE
@@ -81,6 +87,8 @@ otError otNat64GetNextAddressMapping(otInstance                    *aInstance,
                                      otNat64AddressMappingIterator *aIterator,
                                      otNat64AddressMapping         *aMapping)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -94,11 +102,17 @@ otError otNat64GetNextAddressMapping(otInstance                    *aInstance,
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otNat64State otNat64GetTranslatorState(otInstance *aInstance)
 {
+  otNat64State rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -110,13 +124,19 @@ otNat64State otNat64GetTranslatorState(otInstance *aInstance)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otNat64State)p_ot_req->Data[0];
+  rspData = (otNat64State)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 
 }
 #endif
 
 otNat64State otNat64GetPrefixManagerState(otInstance *aInstance)
 {
+  otNat64State rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -128,7 +148,11 @@ otNat64State otNat64GetPrefixManagerState(otInstance *aInstance)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otNat64State)p_ot_req->Data[0];
+  rspData = (otNat64State)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 #if (OPENTHREAD_CONFIG_NAT64_TRANSLATOR_ENABLE || OPENTHREAD_CONFIG_NAT64_BORDER_ROUTING_ENABLE )
@@ -144,12 +168,16 @@ void otNat64SetEnabled(otInstance *aInstance, bool aEnable)
   p_ot_req->Data[0] = (uint32_t) aEnable;
 
   Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
 }
 #endif
 
 #if OPENTHREAD_CONFIG_NAT64_TRANSLATOR_ENABLE
 otMessage *otIp4NewMessage(otInstance *aInstance, const otMessageSettings *aSettings)
 {
+  otMessage * rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -162,12 +190,18 @@ otMessage *otIp4NewMessage(otInstance *aInstance, const otMessageSettings *aSett
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otMessage *)p_ot_req->Data[0];
+  rspData = (otMessage *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 #endif
 
 otError otNat64SetIp4Cidr(otInstance *aInstance, const otIp4Cidr *aCidr)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -180,11 +214,17 @@ otError otNat64SetIp4Cidr(otInstance *aInstance, const otIp4Cidr *aCidr)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otNat64Send(otInstance *aInstance, otMessage *aMessage)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -197,7 +237,11 @@ otError otNat64Send(otInstance *aInstance, otMessage *aMessage)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 #if OPENTHREAD_CONFIG_NAT64_TRANSLATOR_ENABLE
@@ -215,10 +259,14 @@ void otNat64SetReceiveIp4Callback(otInstance *aInstance, otNat64ReceiveIp4Callba
   p_ot_req->Data[0] = (uint32_t) aContext;
 
   Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
 }
 
 otError otNat64GetCidr(otInstance *aInstance, otIp4Cidr *aCidr)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -231,12 +279,18 @@ otError otNat64GetCidr(otInstance *aInstance, otIp4Cidr *aCidr)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 #endif
 
 bool otIp4IsAddressEqual(const otIp4Address *aFirst, const otIp4Address *aSecond)
 {
+  bool rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -250,7 +304,11 @@ bool otIp4IsAddressEqual(const otIp4Address *aFirst, const otIp4Address *aSecond
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (bool)p_ot_req->Data[0];
+  rspData = (bool)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 void otIp4ExtractFromIp6Address(uint8_t aPrefixLength, const otIp6Address *aIp6Address, otIp4Address *aIp4Address)
@@ -267,6 +325,8 @@ void otIp4ExtractFromIp6Address(uint8_t aPrefixLength, const otIp6Address *aIp6A
   p_ot_req->Data[2] = (uint32_t) aIp4Address;
 
   Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
 }
 
 void otIp4AddressToString(const otIp4Address *aAddress, char *aBuffer, uint16_t aSize)
@@ -283,6 +343,8 @@ void otIp4AddressToString(const otIp4Address *aAddress, char *aBuffer, uint16_t 
   p_ot_req->Data[2] = (uint32_t) aSize;
 
   Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
 }
 
 void otIp4CidrToString(const otIp4Cidr *aCidr, char *aBuffer, uint16_t aSize)
@@ -299,10 +361,14 @@ void otIp4CidrToString(const otIp4Cidr *aCidr, char *aBuffer, uint16_t aSize)
   p_ot_req->Data[2] = (uint32_t) aSize;
 
   Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
 }
 
 otError otIp4AddressFromString(const char *aString, otIp4Address *aAddress)
-{  
+{   
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -316,11 +382,17 @@ otError otIp4AddressFromString(const char *aString, otIp4Address *aAddress)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otNat64SynthesizeIp6Address(otInstance *aInstance, const otIp4Address *aIp4Address, otIp6Address *aIp6Address)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -334,5 +406,9 @@ otError otNat64SynthesizeIp6Address(otInstance *aInstance, const otIp4Address *a
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }

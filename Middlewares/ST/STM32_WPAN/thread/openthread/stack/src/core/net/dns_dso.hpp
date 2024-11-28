@@ -60,9 +60,6 @@ struct otPlatDsoConnection
 namespace ot {
 namespace Dns {
 
-using ot::Encoding::BigEndian::HostSwap16;
-using ot::Encoding::BigEndian::HostSwap32;
-
 extern "C" otPlatDsoConnection *otPlatDsoAccept(otInstance *aInstance, const otSockAddr *aPeerSockAddr);
 
 extern "C" void otPlatDsoHandleConnected(otPlatDsoConnection *aConnection);
@@ -149,8 +146,8 @@ public:
          */
         void Init(Type aType, uint16_t aLength)
         {
-            mType   = HostSwap16(aType);
-            mLength = HostSwap16(aLength);
+            mType   = BigEndian::HostSwap16(aType);
+            mLength = BigEndian::HostSwap16(aLength);
         }
 
         /**
@@ -159,7 +156,7 @@ public:
          * @returns The TLV type.
          *
          */
-        Type GetType(void) const { return HostSwap16(mType); }
+        Type GetType(void) const { return BigEndian::HostSwap16(mType); }
 
         /**
          * Gets the TLV length.
@@ -167,7 +164,7 @@ public:
          * @returns The TLV length (in bytes).
          *
          */
-        uint16_t GetLength(void) const { return HostSwap16(mLength); }
+        uint16_t GetLength(void) const { return BigEndian::HostSwap16(mLength); }
 
         /**
          * Returns the total size of the TLV (including the type and length fields).
@@ -718,13 +715,13 @@ public:
         public:
             static constexpr uint8_t kMaxPendingRequests = OPENTHREAD_CONFIG_DNS_DSO_MAX_PENDING_REQUESTS;
 
-            void      Clear(void) { mRequests.Clear(); }
-            bool      IsEmpty(void) const { return mRequests.IsEmpty(); }
-            bool      Contains(MessageId aMessageId, Tlv::Type &aPrimaryTlvType) const;
-            Error     Add(MessageId aMessageId, Tlv::Type aPrimaryTlvType, TimeMilli aResponseTimeout);
-            void      Remove(MessageId aMessageId);
-            bool      HasAnyTimedOut(TimeMilli aNow) const;
-            TimeMilli GetNextFireTime(TimeMilli aNow) const;
+            void  Clear(void) { mRequests.Clear(); }
+            bool  IsEmpty(void) const { return mRequests.IsEmpty(); }
+            bool  Contains(MessageId aMessageId, Tlv::Type &aPrimaryTlvType) const;
+            Error Add(MessageId aMessageId, Tlv::Type aPrimaryTlvType, TimeMilli aResponseTimeout);
+            void  Remove(MessageId aMessageId);
+            bool  HasAnyTimedOut(TimeMilli aNow) const;
+            void  UpdateNextFireTime(NextFireTime &aNextTime) const;
 
         private:
             struct Entry
@@ -808,11 +805,11 @@ public:
         void  SendErrorResponse(const Dns::Header &aHeader, Dns::Header::Response aResponseCode);
         Error AppendPadding(Message &aMessage);
 
-        void      AdjustInactivityTimeout(uint32_t aNewTimeout);
-        uint32_t  CalculateServerInactivityWaitTime(void) const;
-        void      ResetTimeouts(bool aIsKeepAliveMessage);
-        TimeMilli GetNextFireTime(TimeMilli aNow) const;
-        void      HandleTimer(TimeMilli aNow, TimeMilli &aNextTime);
+        void     AdjustInactivityTimeout(uint32_t aNewTimeout);
+        uint32_t CalculateServerInactivityWaitTime(void) const;
+        void     ResetTimeouts(bool aIsKeepAliveMessage);
+        void     UpdateNextFireTime(NextFireTime &aNextTime) const;
+        void     HandleTimer(NextFireTime &aNextTime);
 
         bool Matches(const Ip6::SockAddr &aPeerSockAddr) const { return mPeerSockAddr == aPeerSockAddr; }
 
@@ -911,11 +908,11 @@ private:
 
         bool IsValid(void) const { return GetSize() >= sizeof(*this); }
 
-        uint32_t GetInactivityTimeout(void) const { return HostSwap32(mInactivityTimeout); }
-        void     SetInactivityTimeout(uint32_t aTimeout) { mInactivityTimeout = HostSwap32(aTimeout); }
+        uint32_t GetInactivityTimeout(void) const { return BigEndian::HostSwap32(mInactivityTimeout); }
+        void     SetInactivityTimeout(uint32_t aTimeout) { mInactivityTimeout = BigEndian::HostSwap32(aTimeout); }
 
-        uint32_t GetKeepAliveInterval(void) const { return HostSwap32(mKeepAliveInterval); }
-        void     SetKeepAliveInterval(uint32_t aInterval) { mKeepAliveInterval = HostSwap32(aInterval); }
+        uint32_t GetKeepAliveInterval(void) const { return BigEndian::HostSwap32(mKeepAliveInterval); }
+        void     SetKeepAliveInterval(uint32_t aInterval) { mKeepAliveInterval = BigEndian::HostSwap32(aInterval); }
 
     private:
         uint32_t mInactivityTimeout; // In msec
@@ -932,8 +929,8 @@ private:
 
         bool IsValid(void) const { return GetSize() >= sizeof(*this); }
 
-        uint32_t GetRetryDelay(void) const { return HostSwap32(mRetryDelay); }
-        void     SetRetryDelay(uint32_t aDelay) { mRetryDelay = HostSwap32(aDelay); }
+        uint32_t GetRetryDelay(void) const { return BigEndian::HostSwap32(mRetryDelay); }
+        void     SetRetryDelay(uint32_t aDelay) { mRetryDelay = BigEndian::HostSwap32(aDelay); }
 
     private:
         uint32_t mRetryDelay;

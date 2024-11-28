@@ -58,6 +58,13 @@ Error Tlv::AppendTo(Message &aMessage) const { return aMessage.AppendBytes(this,
 
 Error Tlv::FindTlv(const Message &aMessage, uint8_t aType, uint16_t aMaxSize, Tlv &aTlv)
 {
+    uint16_t offset;
+
+    return FindTlv(aMessage, aType, aMaxSize, aTlv, offset);
+}
+
+Error Tlv::FindTlv(const Message &aMessage, uint8_t aType, uint16_t aMaxSize, Tlv &aTlv, uint16_t &aOffset)
+{
     Error      error;
     ParsedInfo info;
 
@@ -69,11 +76,11 @@ Error Tlv::FindTlv(const Message &aMessage, uint8_t aType, uint16_t aMaxSize, Tl
     }
 
     aMessage.ReadBytes(info.mOffset, &aTlv, aMaxSize);
+    aOffset = info.mOffset;
 
 exit:
     return error;
 }
-
 Error Tlv::FindTlvValueOffset(const Message &aMessage, uint8_t aType, uint16_t &aValueOffset, uint16_t &aLength)
 {
     Error      error;
@@ -209,7 +216,7 @@ template <typename UintType> Error Tlv::ReadUintTlv(const Message &aMessage, uin
     Error error;
 
     SuccessOrExit(error = ReadTlvValue(aMessage, aOffset, &aValue, sizeof(aValue)));
-    aValue = Encoding::BigEndian::HostSwap<UintType>(aValue);
+    aValue = BigEndian::HostSwap<UintType>(aValue);
 
 exit:
     return error;
@@ -264,7 +271,7 @@ template Error Tlv::FindUintTlv<uint8_t>(const Message &aMessage, uint8_t aType,
 template Error Tlv::FindUintTlv<uint16_t>(const Message &aMessage, uint8_t aType, uint16_t &aValue);
 template Error Tlv::FindUintTlv<uint32_t>(const Message &aMessage, uint8_t aType, uint32_t &aValue);
 
-Error Tlv::FindTlv(const Message &aMessage, uint8_t aType, void *aValue, uint8_t aLength)
+Error Tlv::FindTlv(const Message &aMessage, uint8_t aType, void *aValue, uint16_t aLength)
 {
     Error    error;
     uint16_t offset;
@@ -287,7 +294,7 @@ Error Tlv::AppendStringTlv(Message &aMessage, uint8_t aType, uint8_t aMaxStringL
 
 template <typename UintType> Error Tlv::AppendUintTlv(Message &aMessage, uint8_t aType, UintType aValue)
 {
-    UintType value = Encoding::BigEndian::HostSwap<UintType>(aValue);
+    UintType value = BigEndian::HostSwap<UintType>(aValue);
 
     return AppendTlv(aMessage, aType, &value, sizeof(UintType));
 }
@@ -313,6 +320,34 @@ Error Tlv::AppendTlv(Message &aMessage, uint8_t aType, const void *aValue, uint8
 
 exit:
     return error;
+}
+
+const Tlv *Tlv::FindTlv(const void *aTlvsStart, uint16_t aTlvsLength, uint8_t aType)
+{
+    const Tlv *tlv;
+    const Tlv *end = reinterpret_cast<const Tlv *>(reinterpret_cast<const uint8_t *>(aTlvsStart) + aTlvsLength);
+
+    for (tlv = reinterpret_cast<const Tlv *>(aTlvsStart); tlv < end; tlv = tlv->GetNext())
+    {
+        VerifyOrExit((tlv + 1) <= end, tlv = nullptr);
+
+        if (tlv->IsExtended())
+        {
+            VerifyOrExit((As<ExtendedTlv>(tlv) + 1) <= As<ExtendedTlv>(end), tlv = nullptr);
+        }
+
+        VerifyOrExit(tlv->GetNext() <= end, tlv = nullptr);
+
+        if (tlv->GetType() == aType)
+        {
+            ExitNow();
+        }
+    }
+
+    tlv = nullptr;
+
+exit:
+    return tlv;
 }
 
 } // namespace ot

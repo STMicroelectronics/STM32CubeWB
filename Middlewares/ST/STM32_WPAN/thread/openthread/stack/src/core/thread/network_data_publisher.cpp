@@ -39,10 +39,10 @@
 #include "common/array.hpp"
 #include "common/code_utils.hpp"
 #include "common/const_cast.hpp"
-#include "common/instance.hpp"
 #include "common/locator_getters.hpp"
 #include "common/log.hpp"
 #include "common/random.hpp"
+#include "instance/instance.hpp"
 #include "thread/network_data_local.hpp"
 #include "thread/network_data_service.hpp"
 
@@ -658,10 +658,30 @@ void Publisher::DnsSrpServiceEntry::Process(void)
         desiredNumEntries = kDesiredNumAnycast;
         break;
 
-    case kTypeUnicast:
     case kTypeUnicastMeshLocalEid:
-        CountUnicastEntries(numEntries, numPreferredEntries);
+    {
+        Service::DnsSrpAnycast::Info anycastInfo;
+        bool                         hasServiceDataEntry;
+
+        CountServerDataUnicastEntries(numEntries, numPreferredEntries, hasServiceDataEntry);
         desiredNumEntries = kDesiredNumUnicast;
+
+        if (hasServiceDataEntry || (Get<Service::Manager>().FindPreferredDnsSrpAnycastInfo(anycastInfo) == kErrorNone))
+        {
+            // If there is any service data unicast entry or anycast
+            // entry, we set the desired number of server data
+            // unicast entries to zero to remove any such previously
+            // added unicast entry.
+
+            desiredNumEntries = 0;
+        }
+
+        break;
+    }
+
+    case kTypeUnicast:
+        desiredNumEntries = kDesiredNumUnicast;
+        CountServiceDataUnicastEntries(numEntries, numPreferredEntries);
         break;
     }
 
@@ -702,9 +722,53 @@ void Publisher::DnsSrpServiceEntry::CountAnycastEntries(uint8_t &aNumEntries, ui
     }
 }
 
-void Publisher::DnsSrpServiceEntry::CountUnicastEntries(uint8_t &aNumEntries, uint8_t &aNumPreferredEntries) const
+void Publisher::DnsSrpServiceEntry::CountServerDataUnicastEntries(uint8_t &aNumEntries,
+                                                                  uint8_t &aNumPreferredEntries,
+                                                                  bool    &aHasServiceDataEntry) const
 {
-    // Count the number of "DNS/SRP Unicast" service entries in
+    // Count the number of server data DNS/SRP unicast entries in the
+    // Network Data. Also determine whether there is any service data
+    // DNS/SRP unicast entry (update `aHasServiceDataEntry`).
+
+    const ServiceTlv *serviceTlv = nullptr;
+    ServiceData       data;
+
+    aHasServiceDataEntry = false;
+
+    data.InitFrom(Service::DnsSrpUnicast::kServiceData);
+
+    while ((serviceTlv = Get<Leader>().FindNextThreadService(serviceTlv, data, NetworkData::kServicePrefixMatch)) !=
+           nullptr)
+    {
+        TlvIterator      subTlvIterator(*serviceTlv);
+        const ServerTlv *serverSubTlv;
+
+        if (serviceTlv->GetServiceDataLength() >= sizeof(Service::DnsSrpUnicast::ServiceData))
+        {
+            aHasServiceDataEntry = true;
+        }
+
+        while (((serverSubTlv = subTlvIterator.Iterate<ServerTlv>())) != nullptr)
+        {
+            if (serverSubTlv->GetServerDataLength() < sizeof(Service::DnsSrpUnicast::ServerData))
+            {
+                continue;
+            }
+
+            aNumEntries++;
+
+            if (IsPreferred(serverSubTlv->GetServer16()))
+            {
+                aNumPreferredEntries++;
+            }
+        }
+    }
+}
+
+void Publisher::DnsSrpServiceEntry::CountServiceDataUnicastEntries(uint8_t &aNumEntries,
+                                                                   uint8_t &aNumPreferredEntries) const
+{
+    // Count the number of service data DNS/SRP unicast entries in
     // the Network Data.
 
     const ServiceTlv *serviceTlv = nullptr;
@@ -718,45 +782,18 @@ void Publisher::DnsSrpServiceEntry::CountUnicastEntries(uint8_t &aNumEntries, ui
         TlvIterator      subTlvIterator(*serviceTlv);
         const ServerTlv *serverSubTlv;
 
+        if (serviceTlv->GetServiceDataLength() < sizeof(Service::DnsSrpUnicast::ServiceData))
+        {
+            continue;
+        }
+
         while (((serverSubTlv = subTlvIterator.Iterate<ServerTlv>())) != nullptr)
         {
-            if (serviceTlv->GetServiceDataLength() >= sizeof(Service::DnsSrpUnicast::ServiceData))
+            aNumEntries++;
+
+            if (IsPreferred(serverSubTlv->GetServer16()))
             {
-                aNumEntries++;
-
-                // Generally, we prefer entries where the SRP/DNS server
-                // address/port info is included in the service TLV data
-                // over the ones where the info is included in the
-                // server TLV data (i.e., we prefer infra-provided
-                // SRP/DNS entry over a BR local one using ML-EID). If
-                // our entry itself uses the service TLV data, then we
-                // prefer based on the associated RLOC16.
-
-                if (GetType() == kTypeUnicast)
-                {
-                    if (IsPreferred(serverSubTlv->GetServer16()))
-                    {
-                        aNumPreferredEntries++;
-                    }
-                }
-                else
-                {
-                    aNumPreferredEntries++;
-                }
-            }
-
-            if (serverSubTlv->GetServerDataLength() >= sizeof(Service::DnsSrpUnicast::ServerData))
-            {
-                aNumEntries++;
-
-                // If our entry also uses the server TLV data (with
-                // ML-EID address), then the we prefer based on the
-                // associated RLOC16.
-
-                if ((GetType() == kTypeUnicastMeshLocalEid) && IsPreferred(serverSubTlv->GetServer16()))
-                {
-                    aNumPreferredEntries++;
-                }
+                aNumPreferredEntries++;
             }
         }
     }

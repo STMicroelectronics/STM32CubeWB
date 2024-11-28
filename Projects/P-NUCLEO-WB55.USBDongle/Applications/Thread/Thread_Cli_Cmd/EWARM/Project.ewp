@@ -345,10 +345,10 @@
                 </option>
                 <option>
                     <name>CCIncludePath2</name>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Drivers\STM32WBxx_HAL_Driver\Inc</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Drivers\CMSIS\Include</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Drivers\CMSIS\Device\ST\STM32WBxx\Include</state>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\Drivers\BSP\P-NUCLEO-WB55.USBDongle\</state>
+                    <state>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc</state>
+                    <state>$PROJ_DIR$/../../../../../../Drivers/CMSIS/Include</state>
+                    <state>$PROJ_DIR$/../../../../../../Drivers/CMSIS/Device/ST/STM32WBxx/Include</state>
+                    <state>$PROJ_DIR$/../../../../../../Drivers/BSP/P-NUCLEO-WB55.USBDongle</state>
                     <state>$PROJ_DIR$/../Core/Inc</state>
                     <state>$PROJ_DIR$/../STM32_WPAN/App</state>
                     <state>$PROJ_DIR$/../STM32_WPAN/Target</state>
@@ -368,6 +368,7 @@
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/vcp</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include/openthread/platform</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/include</state>
+                    <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/include/mbedtls</state>
                     <state>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc/Legacy</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/core</state>
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/core/config</state>
@@ -1329,9 +1330,6 @@
                                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\border_router.c</name>
                             </file>
                             <file>
-                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\border_routing.c</name>
-                            </file>
-                            <file>
                                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\channel_manager.c</name>
                             </file>
                             <file>
@@ -1485,9 +1483,6 @@
                                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\thread_ftd.c</name>
                             </file>
                             <file>
-                                <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\trel.c</name>
-                            </file>
-                            <file>
                                 <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\core\openthread_api\udp.c</name>
                             </file>
                         </group>
@@ -1502,15 +1497,6 @@
                                     <name>cli</name>
                                     <file>
                                         <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\examples\apps\cli\cli_uart.cpp</name>
-                                    </file>
-                                </group>
-                            </group>
-                            <group>
-                                <name>platforms</name>
-                                <group>
-                                    <name>utils</name>
-                                    <file>
-                                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\examples\platforms\utils\uart.h</name>
                                     </file>
                                 </group>
                             </group>
@@ -1544,13 +1530,16 @@
                                     <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\cli\cli_joiner.cpp</name>
                                 </file>
                                 <file>
+                                    <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\cli\cli_link_metrics.cpp</name>
+                                </file>
+                                <file>
                                     <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\cli\cli_mac_filter.cpp</name>
                                 </file>
                                 <file>
                                     <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\cli\cli_network_data.cpp</name>
                                 </file>
                                 <file>
-                                    <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\cli\cli_output.cpp</name>
+                                    <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\cli\cli_ping.cpp</name>
                                 </file>
                                 <file>
                                     <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\cli\cli_srp_client.cpp</name>
@@ -1561,6 +1550,9 @@
                                 <file>
                                     <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\cli\cli_udp.cpp</name>
                                 </file>
+                                <file>
+                                    <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\cli\cli_utils.cpp</name>
+                                </file>
                             </group>
                             <group>
                                 <name>core</name>
@@ -1568,9 +1560,6 @@
                                     <name>common</name>
                                     <file>
                                         <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\common\binary_search.cpp</name>
-                                    </file>
-                                    <file>
-                                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\common\instance.cpp</name>
                                     </file>
                                     <file>
                                         <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\common\string.cpp</name>
@@ -1589,6 +1578,12 @@
                                     </file>
                                     <file>
                                         <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\crypto\mbedtls.cpp</name>
+                                    </file>
+                                </group>
+                                <group>
+                                    <name>instance</name>
+                                    <file>
+                                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\instance\instance.cpp</name>
                                     </file>
                                 </group>
                                 <group>
@@ -1644,6 +1639,9 @@
                                             <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\bignum.c</name>
                                         </file>
                                         <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\bignum_core.c</name>
+                                        </file>
+                                        <file>
                                             <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\ccm.c</name>
                                         </file>
                                         <file>
@@ -1692,6 +1690,9 @@
                                             <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\pk.c</name>
                                         </file>
                                         <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\pk_ecc.c</name>
+                                        </file>
+                                        <file>
                                             <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\pk_wrap.c</name>
                                         </file>
                                         <file>
@@ -1710,16 +1711,19 @@
                                             <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\ssl_ciphersuites.c</name>
                                         </file>
                                         <file>
-                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\ssl_cli.c</name>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\ssl_client.c</name>
                                         </file>
                                         <file>
                                             <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\ssl_msg.c</name>
                                         </file>
                                         <file>
-                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\ssl_srv.c</name>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\ssl_tls.c</name>
                                         </file>
                                         <file>
-                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\ssl_tls.c</name>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\ssl_tls12_client.c</name>
+                                        </file>
+                                        <file>
+                                            <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\ssl_tls12_server.c</name>
                                         </file>
                                         <file>
                                             <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\x509.c</name>
@@ -1736,6 +1740,9 @@
             </group>
             <group>
                 <name>utilities</name>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\utilities\advanced_memory_manager.c</name>
+                </file>
                 <file>
                     <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\utilities\dbg_trace.c</name>
                 </file>

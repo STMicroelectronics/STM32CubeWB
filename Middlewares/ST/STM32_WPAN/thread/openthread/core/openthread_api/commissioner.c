@@ -42,6 +42,8 @@ otError otCommissionerStart(otInstance *                 aInstance,
                             otCommissionerJoinerCallback aJoinerCallback,
                             void *                       aCallbackContext)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -57,11 +59,16 @@ otError otCommissionerStart(otInstance *                 aInstance,
   Ot_Cmd_TransferWithNotif();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 const char *otCommissionerGetId(otInstance *aInstance)
 {
+  const char *rspData;
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -73,11 +80,17 @@ const char *otCommissionerGetId(otInstance *aInstance)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (char *)p_ot_req->Data[0];
+  rspData = (const char *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otCommissionerSetId(otInstance *aInstance, const char *aId)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -90,11 +103,17 @@ otError otCommissionerSetId(otInstance *aInstance, const char *aId)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otCommissionerStop(otInstance *aInstance)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -106,7 +125,11 @@ otError otCommissionerStop(otInstance *aInstance)
   Ot_Cmd_TransferWithNotif();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otCommissionerAddJoiner(otInstance *        aInstance,
@@ -114,6 +137,8 @@ otError otCommissionerAddJoiner(otInstance *        aInstance,
     const char *        aPskd,
     uint32_t            aTimeout)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -128,7 +153,11 @@ otError otCommissionerAddJoiner(otInstance *        aInstance,
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otCommissionerAddJoinerWithDiscerner(otInstance *             aInstance,
@@ -136,6 +165,8 @@ otError otCommissionerAddJoinerWithDiscerner(otInstance *             aInstance,
                                              const char *             aPskd,
                                              uint32_t                 aTimeout)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -150,11 +181,17 @@ otError otCommissionerAddJoinerWithDiscerner(otInstance *             aInstance,
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otCommissionerGetNextJoinerInfo(otInstance *aInstance, uint16_t *aIterator, otJoinerInfo *aJoiner)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -168,11 +205,17 @@ otError otCommissionerGetNextJoinerInfo(otInstance *aInstance, uint16_t *aIterat
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otCommissionerRemoveJoiner(otInstance *aInstance, const otExtAddress *aEui64)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -185,11 +228,17 @@ otError otCommissionerRemoveJoiner(otInstance *aInstance, const otExtAddress *aE
   Ot_Cmd_TransferWithNotif();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otCommissionerRemoveJoinerWithDiscerner(otInstance *aInstance, const otJoinerDiscerner *aDiscerner)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -202,11 +251,17 @@ otError otCommissionerRemoveJoinerWithDiscerner(otInstance *aInstance, const otJ
   Ot_Cmd_TransferWithNotif();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 const char *otCommissionerGetProvisioningUrl(otInstance *aInstance)
 {
+  const char *rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -218,11 +273,17 @@ const char *otCommissionerGetProvisioningUrl(otInstance *aInstance)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (char*)p_ot_req->Data[0];
+  rspData = (const char *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otCommissionerSetProvisioningUrl(otInstance *aInstance, const char *aProvisioningUrl)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -235,7 +296,11 @@ otError otCommissionerSetProvisioningUrl(otInstance *aInstance, const char *aPro
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otCommissionerAnnounceBegin(otInstance *        aInstance,
@@ -244,6 +309,8 @@ otError otCommissionerAnnounceBegin(otInstance *        aInstance,
                                     uint16_t            aPeriod,
                                     const otIp6Address *aAddress)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -259,7 +326,11 @@ otError otCommissionerAnnounceBegin(otInstance *        aInstance,
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otCommissionerEnergyScan(otInstance *                       aInstance,
@@ -271,6 +342,8 @@ otError otCommissionerEnergyScan(otInstance *                       aInstance,
                                  otCommissionerEnergyReportCallback aCallback,
                                  void *                             aContext)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   otCommissionerEnergyReportCb = aCallback;
 
@@ -290,7 +363,11 @@ otError otCommissionerEnergyScan(otInstance *                       aInstance,
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otCommissionerPanIdQuery(otInstance *                        aInstance,
@@ -300,6 +377,8 @@ otError otCommissionerPanIdQuery(otInstance *                        aInstance,
                                  otCommissionerPanIdConflictCallback aCallback,
                                  void *                              aContext)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   otCommissionerPanIdConflictCb = aCallback;
   /* prepare buffer */
@@ -316,11 +395,17 @@ otError otCommissionerPanIdQuery(otInstance *                        aInstance,
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otCommissionerSendMgmtGet(otInstance *aInstance, const uint8_t *aTlvs, uint8_t aLength)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -334,7 +419,11 @@ otError otCommissionerSendMgmtGet(otInstance *aInstance, const uint8_t *aTlvs, u
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otCommissionerSendMgmtSet(otInstance *                  aInstance,
@@ -342,6 +431,8 @@ otError otCommissionerSendMgmtSet(otInstance *                  aInstance,
                                   const uint8_t *               aTlvs,
                                   uint8_t                       aLength)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -356,11 +447,17 @@ otError otCommissionerSendMgmtSet(otInstance *                  aInstance,
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 uint16_t otCommissionerGetSessionId(otInstance *aInstance)
 {
+  uint16_t rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -372,11 +469,17 @@ uint16_t otCommissionerGetSessionId(otInstance *aInstance)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (uint32_t)p_ot_req->Data[0];
+  rspData = (uint16_t)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otCommissionerState otCommissionerGetState(otInstance *aInstance)
 {
+  otCommissionerState rspData;
+  
   Pre_OtCmdProcessing();
   /* prepare buffer */
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
@@ -388,7 +491,11 @@ otCommissionerState otCommissionerGetState(otInstance *aInstance)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otCommissionerState) p_ot_req->Data[0];
+  rspData = (otCommissionerState)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 #endif /* OPENTHREAD_FTD && OPENTHREAD_CONFIG_COMMISSIONER_ENABLE */

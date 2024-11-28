@@ -24,6 +24,7 @@
 
 /* Exported functions  ------------------------------------------------------------*/
 void Pre_OtCmdProcessing(void);
+void Post_OtCmdProcessing(void);
 void Ot_Cmd_Transfer(void);
 void Ot_Cmd_TransferWithNotif(void);
 Thread_OT_Cmd_Request_t* THREAD_Get_OTCmdPayloadBuffer(void);

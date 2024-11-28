@@ -55,7 +55,7 @@ void otDnssdQuerySetCallbacks(otInstance *                    aInstance,
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 
 void otDnssdQueryHandleDiscoveredServiceInstance(otInstance *                aInstance,
@@ -75,7 +75,7 @@ void otDnssdQueryHandleDiscoveredServiceInstance(otInstance *                aIn
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 
 void otDnssdQueryHandleDiscoveredHost(otInstance *aInstance, const char *aHostFullName, otDnssdHostInfo *aHostInfo)
@@ -93,11 +93,13 @@ void otDnssdQueryHandleDiscoveredHost(otInstance *aInstance, const char *aHostFu
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 
 const otDnssdQuery *otDnssdGetNextQuery(otInstance *aInstance, const otDnssdQuery *aQuery)
 {
+  const otDnssdQuery *rspData;
+  
   Pre_OtCmdProcessing();
 
   /* prepare buffer */
@@ -111,11 +113,17 @@ const otDnssdQuery *otDnssdGetNextQuery(otInstance *aInstance, const otDnssdQuer
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otDnssdQuery*)p_ot_req->Data[0];
+  rspData = (const otDnssdQuery *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otDnssdQueryType otDnssdGetQueryTypeAndName(const otDnssdQuery *aQuery, char (*aNameOutput)[OT_DNS_MAX_NAME_SIZE])
 {
+  otDnssdQueryType rspData;
+  
   Pre_OtCmdProcessing();
 
   /* prepare buffer */
@@ -130,11 +138,17 @@ otDnssdQueryType otDnssdGetQueryTypeAndName(const otDnssdQuery *aQuery, char (*a
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otDnssdQueryType)p_ot_req->Data[0];
+  rspData = (otDnssdQueryType)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 const otDnssdCounters *otDnssdGetCounters(otInstance *aInstance)
 {
+  const otDnssdCounters *rspData;
+  
   Pre_OtCmdProcessing();
 
   /* prepare buffer */
@@ -147,7 +161,11 @@ const otDnssdCounters *otDnssdGetCounters(otInstance *aInstance)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otDnssdCounters*)p_ot_req->Data[0];
+  rspData = (const otDnssdCounters *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 #endif // OPENTHREAD_CONFIG_DNSSD_SERVER_ENABLE

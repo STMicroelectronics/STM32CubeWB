@@ -353,7 +353,7 @@
             <NoWarn>0</NoWarn>
             <uSurpInc>0</uSurpInc>
             <useXO>0</useXO>
-            <ClangAsOpt>4</ClangAsOpt>
+            <ClangAsOpt>1</ClangAsOpt>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -1110,6 +1110,11 @@
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\cli\cli_joiner.cpp</FilePath>
             </File>
             <File>
+              <FileName>cli_link_metrics.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\cli\cli_link_metrics.cpp</FilePath>
+            </File>
+            <File>
               <FileName>cli_mac_filter.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\cli\cli_mac_filter.cpp</FilePath>
@@ -1120,9 +1125,9 @@
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\cli\cli_network_data.cpp</FilePath>
             </File>
             <File>
-              <FileName>cli_output.cpp</FileName>
+              <FileName>cli_ping.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\cli\cli_output.cpp</FilePath>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\cli\cli_ping.cpp</FilePath>
             </File>
             <File>
               <FileName>cli_srp_client.cpp</FileName>
@@ -1143,6 +1148,11 @@
               <FileName>cli_udp.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\cli\cli_udp.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>cli_utils.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\cli\cli_utils.cpp</FilePath>
             </File>
           </Files>
         </Group>
@@ -1263,11 +1273,6 @@
               <FileName>heap_string.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\common\heap_string.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>instance.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\common\instance.cpp</FilePath>
             </File>
             <File>
               <FileName>log.cpp</FileName>
@@ -1392,6 +1397,16 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>openthread/stack/src/core/instance</GroupName>
+          <Files>
+            <File>
+              <FileName>instance.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\instance\instance.cpp</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>openthread/stack/src/core/mac</GroupName>
           <Files>
             <File>
@@ -1475,11 +1490,6 @@
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\meshcop\dataset.cpp</FilePath>
             </File>
             <File>
-              <FileName>dataset_local.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\meshcop\dataset_local.cpp</FilePath>
-            </File>
-            <File>
               <FileName>dataset_manager.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\meshcop\dataset_manager.cpp</FilePath>
@@ -1493,11 +1503,6 @@
               <FileName>dataset_updater.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\meshcop\dataset_updater.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>dtls.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\meshcop\dtls.cpp</FilePath>
             </File>
             <File>
               <FileName>energy_scan_client.cpp</FileName>
@@ -1545,9 +1550,19 @@
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\meshcop\panid_query_client.cpp</FilePath>
             </File>
             <File>
+              <FileName>secure_transport.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\meshcop\secure_transport.cpp</FilePath>
+            </File>
+            <File>
               <FileName>timestamp.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\meshcop\timestamp.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>tcat_agent.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\meshcop\tcat_agent.cpp</FilePath>
             </File>
           </Files>
         </Group>
@@ -1740,6 +1755,11 @@
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\thread\anycast_locator.cpp</FilePath>
             </File>
             <File>
+              <FileName>child.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\thread\child.cpp</FilePath>
+            </File>
+            <File>
               <FileName>child_supervision.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\thread\child_supervision.cpp</FilePath>
@@ -1840,6 +1860,11 @@
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\thread\mlr_manager.cpp</FilePath>
             </File>
             <File>
+              <FileName>neighbor.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\thread\neighbor.cpp</FilePath>
+            </File>
+            <File>
               <FileName>neighbor_table.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\thread\neighbor_table.cpp</FilePath>
@@ -1895,6 +1920,11 @@
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\thread\network_diagnostic.cpp</FilePath>
             </File>
             <File>
+              <FileName>network_diagnostic_tlvs.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\thread\network_diagnostic_tlvs.cpp</FilePath>
+            </File>
+            <File>
               <FileName>panid_query_server.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\thread\panid_query_server.cpp</FilePath>
@@ -1903,6 +1933,11 @@
               <FileName>radio_selector.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\thread\radio_selector.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>router.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\thread\router.cpp</FilePath>
             </File>
             <File>
               <FileName>router_table.cpp</FileName>
@@ -1928,11 +1963,6 @@
               <FileName>tmf.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\thread\tmf.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>topology.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\thread\topology.cpp</FilePath>
             </File>
             <File>
               <FileName>uri_paths.cpp</FileName>
@@ -2025,11 +2055,6 @@
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\aesni.c</FilePath>
             </File>
             <File>
-              <FileName>arc4.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\arc4.c</FilePath>
-            </File>
-            <File>
               <FileName>aria.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\aria.c</FilePath>
@@ -2055,9 +2080,9 @@
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\bignum.c</FilePath>
             </File>
             <File>
-              <FileName>blowfish.c</FileName>
+              <FileName>bignum_core.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\blowfish.c</FilePath>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\bignum_core.c</FilePath>
             </File>
             <File>
               <FileName>camellia.c</FileName>
@@ -2068,11 +2093,6 @@
               <FileName>ccm.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\ccm.c</FilePath>
-            </File>
-            <File>
-              <FileName>certs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\certs.c</FilePath>
             </File>
             <File>
               <FileName>chacha20.c</FileName>
@@ -2170,11 +2190,6 @@
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\gcm.c</FilePath>
             </File>
             <File>
-              <FileName>havege.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\havege.c</FilePath>
-            </File>
-            <File>
               <FileName>hkdf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\hkdf.c</FilePath>
@@ -2188,16 +2203,6 @@
               <FileName>md.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\md.c</FilePath>
-            </File>
-            <File>
-              <FileName>md2.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\md2.c</FilePath>
-            </File>
-            <File>
-              <FileName>md4.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\md4.c</FilePath>
             </File>
             <File>
               <FileName>md5.c</FileName>
@@ -2250,6 +2255,11 @@
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\pk.c</FilePath>
             </File>
             <File>
+              <FileName>pk_ecc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\pk_ecc.c</FilePath>
+            </File>
+            <File>
               <FileName>pk_wrap.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\pk_wrap.c</FilePath>
@@ -2258,11 +2268,6 @@
               <FileName>pkcs5.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\pkcs5.c</FilePath>
-            </File>
-            <File>
-              <FileName>pkcs11.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\pkcs11.c</FilePath>
             </File>
             <File>
               <FileName>pkcs12.c</FileName>
@@ -2315,11 +2320,6 @@
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\psa_crypto_client.c</FilePath>
             </File>
             <File>
-              <FileName>psa_crypto_driver_wrappers.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\psa_crypto_driver_wrappers.c</FilePath>
-            </File>
-            <File>
               <FileName>psa_crypto_ecp.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\psa_crypto_ecp.c</FilePath>
@@ -2370,11 +2370,6 @@
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\rsa.c</FilePath>
             </File>
             <File>
-              <FileName>rsa_internal.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\rsa_internal.c</FilePath>
-            </File>
-            <File>
               <FileName>sha1.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\sha1.c</FilePath>
@@ -2400,9 +2395,9 @@
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\ssl_ciphersuites.c</FilePath>
             </File>
             <File>
-              <FileName>ssl_cli.c</FileName>
+              <FileName>ssl_client.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\ssl_cli.c</FilePath>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\ssl_client.c</FilePath>
             </File>
             <File>
               <FileName>ssl_cookie.c</FileName>
@@ -2415,11 +2410,6 @@
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\ssl_msg.c</FilePath>
             </File>
             <File>
-              <FileName>ssl_srv.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\ssl_srv.c</FilePath>
-            </File>
-            <File>
               <FileName>ssl_ticket.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\ssl_ticket.c</FilePath>
@@ -2428,6 +2418,16 @@
               <FileName>ssl_tls.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\ssl_tls.c</FilePath>
+            </File>
+            <File>
+              <FileName>ssl_tls12_client.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\ssl_tls12_client.c</FilePath>
+            </File>
+            <File>
+              <FileName>ssl_tls12_server.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\ssl_tls12_server.c</FilePath>
             </File>
             <File>
               <FileName>ssl_tls13_keys.c</FileName>
@@ -2489,16 +2489,16 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\x509write_csr.c</FilePath>
             </File>
-            <File>
-              <FileName>xtea.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\mbedtls\repo\library\xtea.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>openthread/stack/third_party/tcplp/bsdtcp</GroupName>
           <Files>
+            <File>
+              <FileName>tcp_fastopen.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\third_party\tcplp\bsdtcp\tcp_fastopen.c</FilePath>
+            </File>
             <File>
               <FileName>tcp_input.c</FileName>
               <FileType>1</FileType>

@@ -136,6 +136,10 @@ typedef enum {
     MSG_M4TOM0_SHA256_HMAC_RESET = 0x0047, /* hmacReset */
     MSG_M4TOM0_SHA256_HMAC_INPUT = 0x0048, /* hmacInput */
     MSG_M4TOM0_SHA256_HMAC_RESULT = 0x0049, /* hmacResult */
+    
+    /* Startup Additions */
+    MSG_M4TOM0_STARTUP_FINDBIND_EP = 0x004a, /* ZbStartupFindBindStartEndpoint */
+    MSG_M0TOM4_STARTUP_FINDBIND_EP_CB = 0x004b,
     /* Reserved to 0x00ff for Future Use */
 
     /* ZDO Commands */

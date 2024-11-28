@@ -53,14 +53,31 @@ tBleStatus aci_hal_get_fw_build_number( uint16_t* Build_Number );
  *        - 0x35: CONFIG_DATA_SC_KEY_TYPE_OFFSET (Host only);
  *          Secure Connections key type (0: "normal", 1: "debug"); 1 byte
  *        - 0xB0: CONFIG_DATA_SMP_MODE_OFFSET (Host only);
- *          SMP mode (0: "normal", 1: "bypass", 2: "no blacklist", 4: "no peer
- *          debug key"); 1 byte
+ *          SMP mode (8-bit bitmap - bit 0: "bypass", bit 1: "no blacklist",
+ *          bit 2: "no peer debug key", bit 3:"pairing request event", bit
+ *          4:"no just works", bit 5:"no passkey entry", bit 6:"no out-of-
+ *          band", bit 7:"no numeric comparison"); 1 byte
  *        - 0xC0: CONFIG_DATA_LL_SCAN_CHAN_MAP_OFFSET (only for STM32WB);
  *          LL scan channel map (same format as Primary_Adv_Channel_Map); 1
  *          byte
  *        - 0xC1: CONFIG_DATA_LL_BG_SCAN_MODE_OFFSET (only for STM32WB);
  *          LL background scan mode (0: "BG scan disabled", 1: "BG scan
  *          enabled"); 1 byte
+ *        - 0xC2: CONFIG_DATA_LL_RSSI_GOLDEN_RANGE_OFFSET (only for STM32WBA);
+ *          LL RSSI golden range (two 8-bit signed values in dBm - byte #0 is
+ *          the lower value, byte #1 is the upper value); 2 bytes
+ *        - 0xC3: CONFIG_DATA_LL_RPA_MODE_OFFSET (only for STM32WB);
+ *          LL RPA mode (8-bit bitmap - bit 0: "no RPA update at start"); 1
+ *          byte
+ *        - 0xC4: CONFIG_DATA_LL_RX_ACL_CTRL_OFFSET (only for STM32WBA);
+ *          LL RX ACL control (byte #0 is "rx_pckt_count", byte #1 is
+ *          "rx_pckt_len"); 2 bytes
+ *        - 0xD1: CONFIG_DATA_LL_MAX_DATA_EXT_OFFSET (only for STM32WB full
+ *          stack);
+ *          LL maximum data length extension (bytes #0-1:
+ *          "supportedMaxTxOctets", bytes #2-3: "supportedMaxTxTime",  bytes
+ *          #4-5: "supportedMaxRxOctets",  bytes #6-7: "supportedMaxRxTime"); 8
+ *          bytes
  * @param Length Length of data to be written
  * @param Value Data to be written
  * @return Value indicating success or error code.
@@ -85,6 +102,9 @@ tBleStatus aci_hal_write_config_data( uint8_t Offset,
  *          Identity root key used to derive DHK (legacy) and IRK; 16 bytes
  *        - 0x2E: CONFIG_DATA_RANDOM_ADDRESS_OFFSET;
  *          Static Random Address; 6 bytes
+ *        - 0xC2: CONFIG_DATA_LL_RSSI_GOLDEN_RANGE_OFFSET (only for STM32WBA);
+ *          LL RSSI golden range (two 8-bit signed values in dBm - byte #0 is
+ *          the lower value, byte #1 is the upper value); 2 bytes
  * @param[out] Data_Length Length of Data in octets
  * @param[out] Data Data field associated with Offset parameter
  * @return Value indicating success or error code.
@@ -248,7 +268,7 @@ tBleStatus aci_hal_get_anchor_period( uint32_t* Anchor_Period,
  * @param Event_Mask Mask to enable/disable generation of HAL events
  *        Flags:
  *        - 0x00000000: No events specified (Default)
- *        - 0x00000001: ACI_HAL_SCAN_REQ_REPORT_EVENT
+ *        - 0x00000001: ACI_HAL_SCAN_REQ_REPORT_EVENT (only for STM32WB)
  *        - 0x00000002: ACI_HAL_SYNC_EVENT (only for STM32WBA)
  * @return Value indicating success or error code.
  */
@@ -308,8 +328,9 @@ tBleStatus aci_hal_read_rssi( uint8_t* RSSI );
  * is equal to the input length minus 9.
  * If the decryption fails, the returned status is BLE_STATUS_FAILED, otherwise
  * it is BLE_STATUS_SUCCESS.
- * Note: the In_Data_Length value must not exceed (BLE_CMD_MAX_PARAM_LEN - 27)
- * i.e. 228 for BLE_CMD_MAX_PARAM_LEN default value.
+ * Note: on STM32WB, the In_Data_Length value must not exceed
+ * (BLE_CMD_MAX_PARAM_LEN - 27) i.e. 228 for BLE_CMD_MAX_PARAM_LEN default
+ * value.
  * 
  * @param Mode EAD operation mode: encryption or decryption.
  *        Values:

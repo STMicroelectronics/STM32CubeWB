@@ -157,6 +157,7 @@ int main(void)
 
   /* Init code for STM32_WPAN */
   APPE_Init();
+  
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -512,7 +513,6 @@ void MX_USART1_UART_DeInit(void)
   }
 }
 #endif
-
 
 /** 
   * Enable DMA controller clock

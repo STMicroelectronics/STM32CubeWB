@@ -1,20 +1,20 @@
 /* USER CODE BEGIN Header */
 /**
- ******************************************************************************
-  * File Name          : utilities_conf.h
-  * Description        : Configuration file for STM32 Utilities.
-  *
- ******************************************************************************
+  ******************************************************************************
+  * @file    utilities_conf.h
+  * @author  MCD Application Team
+  * @brief   Configuration file for STM32 Utilities.
+  ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2019-2021 STMicroelectronics.
+  * Copyright (c) 2019-2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
   * in the root directory of this software component.
   * If no LICENSE file comes with this software, it is provided AS-IS.
   *
-  ******************************************************************************
+  *****************************************************************************
   */
 /* USER CODE END Header */
 
@@ -28,6 +28,7 @@ extern "C" {
 
 #include "cmsis_compiler.h"
 #include "string.h"
+#include "app_conf.h"
 
 /******************************************************************************
  * common
@@ -55,12 +56,11 @@ extern "C" {
 #define UTIL_SEQ_ENTER_CRITICAL_SECTION( )      UTILS_ENTER_CRITICAL_SECTION( )
 #define UTIL_SEQ_EXIT_CRITICAL_SECTION( )       UTILS_EXIT_CRITICAL_SECTION( )
 #define UTIL_SEQ_CONF_TASK_NBR                  (32)
-#define UTIL_SEQ_CONF_PRIO_NBR                  (2)
+#define UTIL_SEQ_CONF_PRIO_NBR                  CFG_SCH_PRIO_NBR
 #define UTIL_SEQ_MEMSET8( dest, value, size )   UTILS_MEMSET8( dest, value, size )
-  
+
 #ifdef __cplusplus
 }
 #endif
 
 #endif /*UTILITIES_CONF_H */
-

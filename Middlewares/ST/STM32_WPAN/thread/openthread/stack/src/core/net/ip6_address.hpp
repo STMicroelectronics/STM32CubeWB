@@ -36,18 +36,16 @@
 
 #include "openthread-core-config.h"
 
-#include <stdint.h>
-
 #include <openthread/ip6.h>
 
 #include "common/as_core_type.hpp"
 #include "common/clearable.hpp"
 #include "common/encoding.hpp"
 #include "common/equatable.hpp"
+#include "common/num_utils.hpp"
+#include "common/numeric_limits.hpp"
 #include "common/string.hpp"
 #include "mac/mac_types.hpp"
-
-using ot::Encoding::BigEndian::HostSwap16;
 
 namespace ot {
 
@@ -73,8 +71,8 @@ OT_TOOL_PACKED_BEGIN
 class NetworkPrefix : public otIp6NetworkPrefix, public Equatable<NetworkPrefix>, public Clearable<NetworkPrefix>
 {
 public:
-    static constexpr uint8_t kSize   = OT_IP6_PREFIX_SIZE;            ///< Size in bytes.
-    static constexpr uint8_t kLength = OT_IP6_PREFIX_SIZE * CHAR_BIT; ///< Length of Network Prefix in bits.
+    static constexpr uint8_t kSize   = OT_IP6_PREFIX_SIZE;   ///< Size in bytes.
+    static constexpr uint8_t kLength = kSize * kBitsPerByte; ///< Length of Network Prefix in bits.
 
     /**
      * Generates and sets the Network Prefix to a crypto-secure random Unique Local Address (ULA) based
@@ -96,8 +94,8 @@ OT_TOOL_PACKED_BEGIN
 class Prefix : public otIp6Prefix, public Clearable<Prefix>, public Unequatable<Prefix>
 {
 public:
-    static constexpr uint8_t kMaxLength = OT_IP6_ADDRESS_SIZE * CHAR_BIT; ///< Max length of a prefix in bits.
-    static constexpr uint8_t kMaxSize   = OT_IP6_ADDRESS_SIZE;            ///< Max (byte) size of a prefix.
+    static constexpr uint8_t kMaxSize   = OT_IP6_ADDRESS_SIZE;     ///< Max (byte) size of a prefix.
+    static constexpr uint8_t kMaxLength = kMaxSize * kBitsPerByte; ///< Max length of a prefix in bits.
 
     static constexpr uint16_t kInfoStringSize = OT_IP6_PREFIX_STRING_SIZE; ///< Info string size (`ToString()`).
 
@@ -121,7 +119,7 @@ public:
      * @returns The 16-bit subnet ID.
      *
      */
-    uint16_t GetSubnetId(void) const { return HostSwap16(mPrefix.mFields.m16[3]); }
+    uint16_t GetSubnetId(void) const { return BigEndian::HostSwap16(mPrefix.mFields.m16[3]); }
 
     /**
      * Gets the prefix length (in bits).
@@ -162,7 +160,7 @@ public:
      * @param[in] aSubnetId  A 16-bit subnet ID.
      *
      */
-    void SetSubnetId(uint16_t aSubnetId) { mPrefix.mFields.m16[3] = HostSwap16(aSubnetId); }
+    void SetSubnetId(uint16_t aSubnetId) { mPrefix.mFields.m16[3] = BigEndian::HostSwap16(aSubnetId); }
 
     /**
      * Set the prefix length.
@@ -283,7 +281,7 @@ public:
      * @returns The size (in bytes) of the prefix.
      *
      */
-    static uint8_t SizeForLength(uint8_t aLength) { return BitVectorBytes(aLength); }
+    static uint8_t SizeForLength(uint8_t aLength) { return BytesForBitSize(aLength); }
 
     /**
      * Returns the number of IPv6 prefix bits that match.
@@ -529,7 +527,7 @@ public:
      * @returns The RLOC16 or ALOC16.
      *
      */
-    uint16_t GetLocator(void) const { return HostSwap16(mFields.m16[3]); }
+    uint16_t GetLocator(void) const { return BigEndian::HostSwap16(mFields.m16[3]); }
 
     /**
      * Sets the Interface Identifier (IID) address locator field.
@@ -540,7 +538,7 @@ public:
      * @param[in]  aLocator   RLOC16 or ALOC16.
      *
      */
-    void SetLocator(uint16_t aLocator) { mFields.m16[3] = HostSwap16(aLocator); }
+    void SetLocator(uint16_t aLocator) { mFields.m16[3] = BigEndian::HostSwap16(aLocator); }
 
     /**
      * Applies a prefix to IID.
@@ -809,6 +807,27 @@ public:
     {
         SetToLocator(aNetworkPrefix, aAloc16);
     }
+
+    /**
+     * Indicates whether or not the IPv6 address follows the IPv4-mapped format.
+     *
+     * An IPv4-mapped IPv6 address consists of an 80-bit prefix of zeros, the next 16 bits set to  ones, and the
+     * remaining, least-significant 32 bits contain the IPv4 address, e.g., `::ffff:192.0.2.128` representing
+     * `192.0.2.128` IPv4 address.
+     *
+     * @retval TRUE   If the IPv6 address follows the IPv4-mapped format.
+     * @retval FALSE  If the IPv6 address does not follow the IPv4-mapped format.
+     *
+     */
+    bool IsIp4Mapped(void) const;
+
+    /**
+     * Sets the IPv6 address to follow the IPv4-mapped IPv6 address for a given IPv4 address.
+     *
+     * @param[in] aIp4Address  An IPv4 address.
+     *
+     */
+    void SetToIp4Mapped(const Ip4::Address &aIp4Address);
 
     /**
      * Returns the Network Prefix of the IPv6 address (most significant 64 bits of the address).

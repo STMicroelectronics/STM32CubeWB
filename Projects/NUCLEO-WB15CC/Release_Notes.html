@@ -41,16 +41,44 @@
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section14" checked aria-hidden="true"> <label for="collapse-section14" aria-hidden="true">V1.20.0 / 05-June-2024</label>
+<input type="checkbox" id="collapse-section15" checked aria-hidden="true"> <label for="collapse-section15" aria-hidden="true">V1.21.0 / 30-October-2024</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
+<ul>
+<li>Update of FW projects following changes in latest version of HAL/LL and Middlewares
+<ul>
+<li>Examples/HAL/HAL_TimeBase_TIM
+<ul>
+<li>ID 187902 : HAL_Init_Tick() is wrong in case timer source is not SysTick</li>
+</ul></li>
+</ul></li>
+<li><strong>BLE</strong> updates :
+<ul>
+<li>ID 187291 : ACI_HAL_FW_ERROR_EVENT and HCI_HARDWARE_ERROR_EVENT are now managed by default in BLE Custom template.</li>
+</ul></li>
+</ul>
+<h3 id="known-limitations">Known limitations</h3>
+<ul>
+<li>The Debug configuration is not available with STM32CubeIDE projects for the following application:
+<ul>
+<li>/BLE/BLE_Ota/STM32CubeIDE.</li>
+</ul></li>
+</ul>
+<p><br />
+</p>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section14" aria-hidden="true"> <label for="collapse-section14" aria-hidden="true">V1.20.0 / 05-June-2024</label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
 <ul>
 <li><strong>BLE</strong> updates :
 <ul>
 <li>ID 178246 : BLE characteristics greater than 255 bytes are now managed properly in CubeMX interface and generated code.</li>
 </ul></li>
 </ul>
-<h3 id="known-limitations">Known limitations</h3>
+<h3 id="known-limitations-1">Known limitations</h3>
 <ul>
 <li>The Debug configuration is not available with STM32CubeIDE projects for the following application:
 <ul>
@@ -67,14 +95,14 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section13" aria-hidden="true"> <label for="collapse-section13" aria-hidden="true">V1.19.0 / 07-February-2024</label>
 <div>
-<h2 id="main-changes-1">Main Changes</h2>
+<h2 id="main-changes-2">Main Changes</h2>
 <ul>
 <li>All templates and applications:
 <ul>
 <li>Update to MDK-ARM (KEIL) V5.38</li>
 </ul></li>
 </ul>
-<h3 id="known-limitations-1">Known limitations</h3>
+<h3 id="known-limitations-2">Known limitations</h3>
 <ul>
 <li>ID 166767 : Add device ID in advertising data for BLE_HeartRate application</li>
 <li>Following applications remain not supported:
@@ -88,8 +116,8 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section12" aria-hidden="true"> <label for="collapse-section12" aria-hidden="true">V1.18.0 / 31-October-2023</label>
 <div>
-<h2 id="main-changes-2">Main Changes</h2>
-<h3 id="known-limitations-2">Known limitations</h3>
+<h2 id="main-changes-3">Main Changes</h2>
+<h3 id="known-limitations-3">Known limitations</h3>
 <ul>
 <li>Following applications have been removed:
 <ul>
@@ -106,7 +134,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section11" aria-hidden="true"> <label for="collapse-section11" aria-hidden="true">V1.17.1 / 28-July-2023</label>
 <div>
-<h2 id="main-changes-3">Main Changes</h2>
+<h2 id="main-changes-4">Main Changes</h2>
 <h3 id="patch">Patch</h3>
 <ul>
 <li><p>Updated applications:</p>
@@ -127,12 +155,12 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section10" aria-hidden="true"> <label for="collapse-section10" aria-hidden="true">V1.17.0 / 7-June-2023</label>
 <div>
-<h2 id="main-changes-4">Main Changes</h2>
+<h2 id="main-changes-5">Main Changes</h2>
 <h3 id="maintenance">Maintenance</h3>
 <ul>
 <li>ID 134293: Fix the end address of the macro FLASH_USER_END_ADDR</li>
 </ul>
-<h3 id="known-limitations-3">Known limitations</h3>
+<h3 id="known-limitations-4">Known limitations</h3>
 <ul>
 <li>Following applications remain not supported:
 <ul>
@@ -153,7 +181,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section9" aria-hidden="true"> <label for="collapse-section9" aria-hidden="true">V1.16.0 / 08-February-2023</label>
 <div>
-<h2 id="main-changes-5">Main Changes</h2>
+<h2 id="main-changes-6">Main Changes</h2>
 <h3 id="maintenance-1">Maintenance</h3>
 <ul>
 <li>Update of FW projects following changes in latest version of HAL/LL and Middlewares
@@ -170,47 +198,6 @@
 <li><strong>UART/UART_Printf</strong>
 <ul>
 <li>Update to be compliant with IAR v9.20.1</li>
-</ul></li>
-</ul></li>
-</ul>
-<h3 id="known-limitations-4">Known limitations</h3>
-<ul>
-<li>Following applications remain not supported:
-<ul>
-<li>/NUCLEO-WB15CC/Applications/BLE/BLE_Ota (STM32CubeIDE Debug)</li>
-</ul></li>
-<li>Following applications have been removed:
-<ul>
-<li>/NUCLEO-WB15CC/Applications/BLE/BLE_MeshLightingLPN<br />
-</li>
-<li>/NUCLEO-WB15CC/Applications/BLE/BLE_MeshLightingPRFNode</li>
-</ul></li>
-</ul>
-<p><br />
-</p>
-</div>
-</div>
-<div class="collapse">
-<input type="checkbox" id="collapse-section8" aria-hidden="true"> <label for="collapse-section8" aria-hidden="true">V1.15.0 / 09-November-2022</label>
-<div>
-<h2 id="main-changes-6">Main Changes</h2>
-<h3 id="maintenance-2">Maintenance</h3>
-<ul>
-<li>Update of FW projects following changes in latest version of HAL/LL and Middlewares
-<ul>
-<li>Examples_LL/CRC/CRC_CalculateAndCheck</li>
-</ul></li>
-<li>Update of sysmem.c &amp; syscalls.c files for all CubeIDE projects<br />
-
-<ul>
-<li>Enhance code quality</li>
-<li>Fix problematic _sbrk implementations for CubeMX</li>
-</ul></li>
-<li>Updated examples LL:
-<ul>
-<li><strong>CRC/CRC_CalculateAndCheck</strong>
-<ul>
-<li>Fix incorrect bytes stream handling by LL</li>
 </ul></li>
 </ul></li>
 </ul>
@@ -232,9 +219,50 @@
 </div>
 </div>
 <div class="collapse">
-<input type="checkbox" id="collapse-section7" aria-hidden="true"> <label for="collapse-section7" aria-hidden="true">V1.14.1 / 19-July-2022</label>
+<input type="checkbox" id="collapse-section8" aria-hidden="true"> <label for="collapse-section8" aria-hidden="true">V1.15.0 / 09-November-2022</label>
 <div>
 <h2 id="main-changes-7">Main Changes</h2>
+<h3 id="maintenance-2">Maintenance</h3>
+<ul>
+<li>Update of FW projects following changes in latest version of HAL/LL and Middlewares
+<ul>
+<li>Examples_LL/CRC/CRC_CalculateAndCheck</li>
+</ul></li>
+<li>Update of sysmem.c &amp; syscalls.c files for all CubeIDE projects<br />
+
+<ul>
+<li>Enhance code quality</li>
+<li>Fix problematic _sbrk implementations for CubeMX</li>
+</ul></li>
+<li>Updated examples LL:
+<ul>
+<li><strong>CRC/CRC_CalculateAndCheck</strong>
+<ul>
+<li>Fix incorrect bytes stream handling by LL</li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="known-limitations-6">Known limitations</h3>
+<ul>
+<li>Following applications remain not supported:
+<ul>
+<li>/NUCLEO-WB15CC/Applications/BLE/BLE_Ota (STM32CubeIDE Debug)</li>
+</ul></li>
+<li>Following applications have been removed:
+<ul>
+<li>/NUCLEO-WB15CC/Applications/BLE/BLE_MeshLightingLPN<br />
+</li>
+<li>/NUCLEO-WB15CC/Applications/BLE/BLE_MeshLightingPRFNode</li>
+</ul></li>
+</ul>
+<p><br />
+</p>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section7" aria-hidden="true"> <label for="collapse-section7" aria-hidden="true">V1.14.1 / 19-July-2022</label>
+<div>
+<h2 id="main-changes-8">Main Changes</h2>
 <h3 id="maintenance-3">Maintenance</h3>
 <ul>
 <li><p>Updated applications:</p>
@@ -251,7 +279,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section6"  aria-hidden="true"> <label for="collapse-section6" aria-hidden="true">V1.14.0 / 07-June-2022</label>
 <div>
-<h2 id="main-changes-8">Main Changes</h2>
+<h2 id="main-changes-9">Main Changes</h2>
 <h3 id="maintenance-4">Maintenance</h3>
 <ul>
 <li>Update of FW projects following changes in latest version of HAL/LL and Middlewares</li>
@@ -267,7 +295,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section5" aria-hidden="true"> <label for="collapse-section5" aria-hidden="true">V1.13.1 / 10-December-2021</label>
 <div>
-<h2 id="main-changes-9">Main Changes</h2>
+<h2 id="main-changes-10">Main Changes</h2>
 <h3 id="patch-1">Patch</h3>
 <ul>
 <li>Add missing Debug build configuration for /P-NUCLEO-WB55.Nucleo/Applications/BLE/BLE_DataThroughput/CubeIDE/</li>
@@ -279,7 +307,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.13.0 / 12-November-2021</label>
 <div>
-<h2 id="main-changes-10">Main Changes</h2>
+<h2 id="main-changes-11">Main Changes</h2>
 <h3 id="maintenance-5">Maintenance</h3>
 <ul>
 <li>Update of FW projects following changes in latest version of HAL/LL and Middlewares</li>
@@ -300,7 +328,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section3" aria-hidden="true"> <label for="collapse-section3" aria-hidden="true">V1.12.0 / 24-June-2021</label>
 <div>
-<h2 id="main-changes-11">Main Changes</h2>
+<h2 id="main-changes-12">Main Changes</h2>
 <h3 id="maintenance-6">Maintenance</h3>
 <ul>
 <li>Update of FW projects following changes in latest version of HAL/LL and Middlewares</li>
@@ -322,7 +350,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" aria-hidden="true">V1.11.1 / 02-April-2021</label>
 <div>
-<h2 id="main-changes-12">Main Changes</h2>
+<h2 id="main-changes-13">Main Changes</h2>
 <h3 id="maintenance-7">Maintenance</h3>
 <ul>
 <li>Update BLE applications:
@@ -340,7 +368,7 @@
 <div class="collapse">
 <input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="true">V1.11.0 / 12-February-2021</label>
 <div>
-<h2 id="main-changes-13">Main Changes</h2>
+<h2 id="main-changes-14">Main Changes</h2>
 <h3 id="first-release">First release</h3>
 <p>First official release.</p>
 <ul>

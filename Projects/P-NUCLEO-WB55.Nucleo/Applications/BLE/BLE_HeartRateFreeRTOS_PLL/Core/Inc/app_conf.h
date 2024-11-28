@@ -30,7 +30,6 @@
 /******************************************************************************
  * Application Config
  ******************************************************************************/
-
 /**< generic parameters ******************************************************/
 
 /**
@@ -65,7 +64,6 @@
 #define CFG_FAST_CONN_ADV_INTERVAL_MAX    (0xa0)      /**< 100ms */
 #define CFG_LP_CONN_ADV_INTERVAL_MIN      (0x640)     /**< 1s */
 #define CFG_LP_CONN_ADV_INTERVAL_MAX      (0xfa0)     /**< 2.5s */
-
 /**
  * Define IO Authentication
  */
@@ -698,4 +696,3 @@ typedef enum
 #define CFG_OTP_END_ADRESS      OTP_AREA_END_ADDR
 
 #endif /*APP_CONF_H */
-

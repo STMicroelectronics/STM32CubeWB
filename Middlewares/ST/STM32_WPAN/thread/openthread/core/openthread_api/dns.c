@@ -46,11 +46,13 @@ void otDnsInitTxtEntryIterator(otDnsTxtEntryIterator *aIterator, const uint8_t *
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 
 otError otDnsGetNextTxtEntry(otDnsTxtEntryIterator *aIterator, otDnsTxtEntry *aEntry)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
 
   /* prepare buffer */
@@ -65,7 +67,11 @@ otError otDnsGetNextTxtEntry(otDnsTxtEntryIterator *aIterator, otDnsTxtEntry *aE
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 #if OPENTHREAD_CONFIG_REFERENCE_DEVICE_ENABLE
@@ -83,11 +89,12 @@ void otDnsSetNameCompressionEnabled(bool aEnabled)
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 
 bool otDnsIsNameCompressionEnabled(void)
 {
+  bool rspData;
   Pre_OtCmdProcessing();
 
   /* prepare buffer */
@@ -100,7 +107,11 @@ bool otDnsIsNameCompressionEnabled(void)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (bool)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 #endif
 
@@ -111,6 +122,7 @@ extern otDnsBrowseCallback otDnsBrowseCb;
 
 const otDnsQueryConfig *otDnsClientGetDefaultConfig(otInstance *aInstance)
 {
+  const otDnsQueryConfig *rspData;
   Pre_OtCmdProcessing();
 
   /* prepare buffer */
@@ -123,7 +135,11 @@ const otDnsQueryConfig *otDnsClientGetDefaultConfig(otInstance *aInstance)
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otDnsQueryConfig*)p_ot_req->Data[0];
+  rspData = (const otDnsQueryConfig *)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 void otDnsClientSetDefaultConfig(otInstance *aInstance, const otDnsQueryConfig *aConfig)
@@ -140,7 +156,7 @@ void otDnsClientSetDefaultConfig(otInstance *aInstance, const otDnsQueryConfig *
 
   Ot_Cmd_Transfer();
 
-  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  Post_OtCmdProcessing();
 }
 
 otError otDnsClientResolveAddress(otInstance *            aInstance,
@@ -149,6 +165,8 @@ otError otDnsClientResolveAddress(otInstance *            aInstance,
                                   void *                  aContext,
                                   const otDnsQueryConfig *aConfig)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
 
   otDnsAddressCb = aCallback;
@@ -166,7 +184,11 @@ otError otDnsClientResolveAddress(otInstance *            aInstance,
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 #if OPENTHREAD_CONFIG_DNS_CLIENT_NAT64_ENABLE
@@ -176,6 +198,8 @@ otError otDnsClientResolveIp4Address(otInstance *            aInstance,
                                      void *                  aContext,
                                      const otDnsQueryConfig *aConfig)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
 
   otDnsAddressCb = aCallback;
@@ -193,7 +217,11 @@ otError otDnsClientResolveIp4Address(otInstance *            aInstance,
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 #endif
 
@@ -201,6 +229,8 @@ otError otDnsAddressResponseGetHostName(const otDnsAddressResponse *aResponse,
                                         char *                      aNameBuffer,
                                         uint16_t                    aNameBufferSize)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
 
   /* prepare buffer */
@@ -216,7 +246,11 @@ otError otDnsAddressResponseGetHostName(const otDnsAddressResponse *aResponse,
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otDnsAddressResponseGetAddress(const otDnsAddressResponse *aResponse,
@@ -224,6 +258,8 @@ otError otDnsAddressResponseGetAddress(const otDnsAddressResponse *aResponse,
                                        otIp6Address *              aAddress,
                                        uint32_t *                  aTtl)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
 
   /* prepare buffer */
@@ -240,7 +276,11 @@ otError otDnsAddressResponseGetAddress(const otDnsAddressResponse *aResponse,
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 #if OPENTHREAD_CONFIG_DNS_CLIENT_SERVICE_DISCOVERY_ENABLE
@@ -251,6 +291,8 @@ otError otDnsClientBrowse(otInstance *            aInstance,
                           void *                  aContext,
                           const otDnsQueryConfig *aConfig)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
 
   otDnsBrowseCb = aCallback;
@@ -268,13 +310,19 @@ otError otDnsClientBrowse(otInstance *            aInstance,
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otDnsBrowseResponseGetServiceName(const otDnsBrowseResponse *aResponse,
                                           char *                     aNameBuffer,
                                           uint16_t                   aNameBufferSize)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
 
   /* prepare buffer */
@@ -290,7 +338,11 @@ otError otDnsBrowseResponseGetServiceName(const otDnsBrowseResponse *aResponse,
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otDnsBrowseResponseGetServiceInstance(const otDnsBrowseResponse *aResponse,
@@ -298,6 +350,8 @@ otError otDnsBrowseResponseGetServiceInstance(const otDnsBrowseResponse *aRespon
                                               char *                     aLabelBuffer,
                                               uint8_t                    aLabelBufferSize)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
 
   /* prepare buffer */
@@ -314,13 +368,19 @@ otError otDnsBrowseResponseGetServiceInstance(const otDnsBrowseResponse *aRespon
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otDnsBrowseResponseGetServiceInfo(const otDnsBrowseResponse *aResponse,
                                           const char *               aInstanceLabel,
                                           otDnsServiceInfo *         aServiceInfo)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
 
   /* prepare buffer */
@@ -336,7 +396,11 @@ otError otDnsBrowseResponseGetServiceInfo(const otDnsBrowseResponse *aResponse,
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otDnsBrowseResponseGetHostAddress(const otDnsBrowseResponse *aResponse,
@@ -345,6 +409,8 @@ otError otDnsBrowseResponseGetHostAddress(const otDnsBrowseResponse *aResponse,
                                           otIp6Address *             aAddress,
                                           uint32_t *                 aTtl)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
 
   /* prepare buffer */
@@ -362,7 +428,11 @@ otError otDnsBrowseResponseGetHostAddress(const otDnsBrowseResponse *aResponse,
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 extern otDnsServiceCallback otDnsServiceCb;
@@ -374,6 +444,8 @@ otError otDnsClientResolveService(otInstance *            aInstance,
                                   void *                  aContext,
                                   const otDnsQueryConfig *aConfig)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
 
   otDnsServiceCb = aCallback;
@@ -392,7 +464,11 @@ otError otDnsClientResolveService(otInstance *            aInstance,
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otDnsClientResolveServiceAndHostAddress(otInstance             *aInstance,
@@ -402,6 +478,8 @@ otError otDnsClientResolveServiceAndHostAddress(otInstance             *aInstanc
                                                 void                   *aContext,
                                                 const otDnsQueryConfig *aConfig)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
 
   otDnsServiceCb = aCallback;
@@ -420,7 +498,11 @@ otError otDnsClientResolveServiceAndHostAddress(otInstance             *aInstanc
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];  
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otDnsServiceResponseGetServiceName(const otDnsServiceResponse *aResponse,
@@ -429,6 +511,8 @@ otError otDnsServiceResponseGetServiceName(const otDnsServiceResponse *aResponse
                                            char *                      aNameBuffer,
                                            uint16_t                    aNameBufferSize)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
 
   /* prepare buffer */
@@ -446,11 +530,17 @@ otError otDnsServiceResponseGetServiceName(const otDnsServiceResponse *aResponse
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otDnsServiceResponseGetServiceInfo(const otDnsServiceResponse *aResponse, otDnsServiceInfo *aServiceInfo)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
 
   /* prepare buffer */
@@ -465,7 +555,11 @@ otError otDnsServiceResponseGetServiceInfo(const otDnsServiceResponse *aResponse
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 otError otDnsServiceResponseGetHostAddress(const otDnsServiceResponse *aResponse,
@@ -474,6 +568,8 @@ otError otDnsServiceResponseGetHostAddress(const otDnsServiceResponse *aResponse
                                            otIp6Address *              aAddress,
                                            uint32_t *                  aTtl)
 {
+  otError rspData;
+  
   Pre_OtCmdProcessing();
 
   /* prepare buffer */
@@ -491,7 +587,11 @@ otError otDnsServiceResponseGetHostAddress(const otDnsServiceResponse *aResponse
   Ot_Cmd_Transfer();
 
   p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
-  return (otError)p_ot_req->Data[0];
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
 }
 
 #endif // OPENTHREAD_CONFIG_DNS_CLIENT_SERVICE_DISCOVERY_ENABLE

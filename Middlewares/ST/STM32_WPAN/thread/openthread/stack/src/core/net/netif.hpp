@@ -116,17 +116,15 @@ public:
          * Clears and initializes the unicast address as a preferred, valid, thread-origin address with
          * 64-bit prefix length.
          *
-         * @param[in]   aPreferred  Whether to initialize as a preferred address.
-         *
          */
-        void InitAsThreadOrigin(bool aPreferred = false);
+        void InitAsThreadOrigin(void);
 
         /**
          * Clears and initializes the unicast address as a valid (but not preferred), thread-origin,
-         * realm-local scope (overridden) address with 64-bit prefix length.
+         * mesh-local address using the realm-local scope (overridden) address with 64-bit prefix length.
          *
          */
-        void InitAsThreadOriginRealmLocalScope(void);
+        void InitAsThreadOriginMeshLocal(void);
 
         /**
          * Clears and initializes the unicast address as a valid (but not preferred), thread-origin, global
@@ -214,6 +212,22 @@ public:
          *
          */
         AddressOrigin GetOrigin(void) const { return static_cast<AddressOrigin>(mAddressOrigin); }
+
+        /**
+         * Returns the next unicast address.
+         *
+         * @returns A pointer to the next unicast address.
+         *
+         */
+        const UnicastAddress *GetNext(void) const { return static_cast<const UnicastAddress *>(mNext); }
+
+        /**
+         * Returns the next unicast address.
+         *
+         * @returns A pointer to the next unicast address.
+         *
+         */
+        UnicastAddress *GetNext(void) { return static_cast<UnicastAddress *>(AsNonConst(mNext)); }
 
     private:
         bool Matches(const Address &aAddress) const { return GetAddress() == aAddress; }
@@ -382,6 +396,14 @@ public:
     const LinkedList<UnicastAddress> &GetUnicastAddresses(void) const { return mUnicastAddresses; }
 
     /**
+     * Returns the linked list of unicast addresses.
+     *
+     * @returns The linked list of unicast addresses.
+     *
+     */
+    LinkedList<UnicastAddress> &GetUnicastAddresses(void) { return mUnicastAddresses; }
+
+    /**
      * Adds a unicast address to the network interface.
      *
      * Is intended for addresses internal to OpenThread. The @p aAddress instance is directly added in the
@@ -405,14 +427,26 @@ public:
      * @param[in]  aAddress  A reference to the unicast address.
      *
      */
-    void RemoveUnicastAddress(const UnicastAddress &aAddress);
+    void RemoveUnicastAddress(UnicastAddress &aAddress);
+
+    /**
+     * Updates the preferred flag on a previously added (internal to OpenThread core) unicast address.
+     *
+     * If the address is not added to the network interface or the current preferred flag of @p aAddress is the same as
+     * the given @p aPreferred, no action is performed.
+     *
+     * @param[in] aAddress        The unicast address
+     * @param[in] aPreferred The new value for preferred flag.
+     *
+     */
+    void UpdatePreferredFlagOn(UnicastAddress &aAddress, bool aPreferred);
 
     /**
      * Indicates whether or not an address is assigned to the interface.
      *
      * @param[in]  aAddress  A reference to the unicast address.
      *
-     * @retval TRUE   If @p aAddress is assigned to the network interface,
+     * @retval TRUE   If @p aAddress is assigned to the network interface.
      * @retval FALSE  If @p aAddress is not assigned to the network interface.
      *
      */
@@ -423,7 +457,7 @@ public:
      *
      * @param[in]  aAddress  A reference to the unicast address.
      *
-     * @retval TRUE   If @p aAddress is assigned to the network interface,
+     * @retval TRUE   If @p aAddress is assigned to the network interface.
      * @retval FALSE  If @p aAddress is not assigned to the network interface.
      *
      */
@@ -629,6 +663,14 @@ public:
      *
      */
     bool HasAnyExternalMulticastAddress(void) const { return !ExternalMulticastAddress::Iterator(*this).IsDone(); }
+
+    /**
+     * Applies the new mesh local prefix.
+     *
+     * Updates all mesh-local unicast addresses and prefix-based multicast addresses of the network interface.
+     *
+     */
+    void ApplyNewMeshLocalPrefix(void);
 
 protected:
     /**

@@ -117,6 +117,7 @@ PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static TL_ZIGBEE_Config_t ZigbeeConfigBuffe
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ZigbeeOtCmdBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t ZigbeeNotifRspEvtBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t ZigbeeNotifRequestBuffer[sizeof(TL_PacketHeader_t) + TL_EVT_HDR_SIZE + 255U];
+uint8_t g_ot_notification_allowed = 0U;
 
 struct zigbee_app_info
 {
@@ -646,6 +647,18 @@ void ZIGBEE_CmdTransfer(void)
 }
 
 /**
+ * @brief  This function is used to transfer the commands from the M4 to the M0 with notification
+ *
+ * @param   None
+ * @return  None
+ */
+void ZIGBEE_CmdTransferWithNotif(void)
+{
+	g_ot_notification_allowed = 1;
+	ZIGBEE_CmdTransfer();
+}
+
+/**
  * @brief  This function is called when the M0+ acknowledge the fact that it has received a Cmd
  *
  *
@@ -798,35 +811,12 @@ void APP_ZIGBEE_LaunchPushButtonTask(void)
 
 static void APP_ZIGBEE_ProcessPushButton(ULONG argument)
 {
-  uint32_t        lCurrentTime;
-  static uint32_t lDetectRebound = 0;
-  
   UNUSED(argument);
-  
   for(;;)
   {
-    tx_semaphore_get(&PushButtonSemaphore, TX_WAIT_FOREVER);
-     
-    /* restart tick should handle the PB process */
-    lCurrentTime = HAL_GetTick();
-    if ( lCurrentTime < lDetectRebound )  
-    {
-      lDetectRebound = lCurrentTime;
-      APP_ZIGBEE_SW1_Process(); 
-    }
-    else 
-    {
-      /* check if we have a rebound in the PushButton */
-      if ( lCurrentTime > ( lDetectRebound + PB_REBOUND_DELAY ) )
-      {
-        lDetectRebound = lCurrentTime;
-        APP_ZIGBEE_SW1_Process(); 
-      }
-      else
-      { 
-        APP_DBG("Error during Rebound : Current (%d) and Old (%d) ", lCurrentTime, lDetectRebound ) ; 
-      }
-    }
+       tx_semaphore_get(&PushButtonSemaphore, TX_WAIT_FOREVER);
+       HAL_Delay(250);
+       APP_ZIGBEE_SW1_Process(); 
   }
 }
 

@@ -34,9 +34,9 @@
 #include "common/as_core_type.hpp"
 #include "common/code_utils.hpp"
 #include "common/debug.hpp"
-#include "common/instance.hpp"
 #include "common/locator_getters.hpp"
 #include "common/log.hpp"
+#include "instance/instance.hpp"
 #include "net/udp6.hpp"
 #include "thread/network_data_types.hpp"
 #include "thread/thread_netif.hpp"
@@ -48,11 +48,6 @@
 
 namespace ot {
 namespace Dns {
-
-#if OPENTHREAD_CONFIG_DNS_CLIENT_OVER_TCP_ENABLE
-using ot::Encoding::BigEndian::ReadUint16;
-using ot::Encoding::BigEndian::WriteUint16;
-#endif
 
 RegisterLogModule("DnsClient");
 
@@ -168,7 +163,10 @@ Error Client::Response::CheckForHostNameAlias(Section aSection, Name &aHostName)
 {
     // If the response includes a CNAME record mapping the query host
     // name to a canonical name, we update `aHostName` to the new alias
-    // name. Otherwise `aHostName` remains as before.
+    // name. Otherwise `aHostName` remains as before. This method handles
+    // when there are multiple CNAME records mapping the host name multiple
+    // times. We limit number of changes to `kMaxCnameAliasNameChanges`
+    // to detect and handle if the response contains CNAME record loops.
 
     Error       error;
     uint16_t    offset;
@@ -177,26 +175,31 @@ Error Client::Response::CheckForHostNameAlias(Section aSection, Name &aHostName)
 
     VerifyOrExit(mMessage != nullptr, error = kErrorNotFound);
 
-    SelectSection(aSection, offset, numRecords);
-    error = ResourceRecord::FindRecord(*mMessage, offset, numRecords, /* aIndex */ 0, aHostName, cnameRecord);
-
-    switch (error)
+    for (uint16_t counter = 0; counter < kMaxCnameAliasNameChanges; counter++)
     {
-    case kErrorNone:
+        SelectSection(aSection, offset, numRecords);
+        error = ResourceRecord::FindRecord(*mMessage, offset, numRecords, /* aIndex */ 0, aHostName, cnameRecord);
+
+        if (error == kErrorNotFound)
+        {
+            error = kErrorNone;
+            ExitNow();
+        }
+
+        SuccessOrExit(error);
+
         // A CNAME record was found. `offset` now points to after the
         // last read byte within the `mMessage` into the `cnameRecord`
         // (which is the start of the new canonical name).
+
         aHostName.SetFromMessage(*mMessage, offset);
-        error = Name::ParseName(*mMessage, offset);
-        break;
+        SuccessOrExit(error = Name::ParseName(*mMessage, offset));
 
-    case kErrorNotFound:
-        error = kErrorNone;
-        break;
-
-    default:
-        break;
+        // Loop back to check if there may be a CNAME record for the
+        // new `aHostName`.
     }
+
+    error = kErrorParse;
 
 exit:
     return error;
@@ -796,7 +799,7 @@ Error Client::InitTcpSocket(void)
     Error                       error;
     otTcpEndpointInitializeArgs endpointArgs;
 
-    memset(&endpointArgs, 0x00, sizeof(endpointArgs));
+    ClearAllBytes(endpointArgs);
     endpointArgs.mSendDoneCallback         = HandleTcpSendDoneCallback;
     endpointArgs.mEstablishedCallback      = HandleTcpEstablishedCallback;
     endpointArgs.mReceiveAvailableCallback = HandleTcpReceiveAvailableCallback;
@@ -1164,7 +1167,7 @@ Error Client::SendQuery(Query &aQuery, QueryInfo &aInfo, bool aUpdateTimer)
             PrepareTcpMessage(*message);
             break;
         case kTcpConnectedSending:
-            WriteUint16(length, mSendBufferBytes + mSendLink.mLength);
+            BigEndian::WriteUint16(length, mSendBufferBytes + mSendLink.mLength);
             SuccessOrAssert(error = message->Read(message->GetOffset(),
                                                   (mSendBufferBytes + sizeof(uint16_t) + mSendLink.mLength), length));
             IgnoreError(mEndpoint.SendByExtension(length + sizeof(uint16_t), /* aFlags */ 0));
@@ -1493,9 +1496,8 @@ void Client::PrepareResponseAndFinalize(Query &aQuery, const Message &aResponseM
 
 void Client::HandleTimer(void)
 {
-    TimeMilli now      = TimerMilli::GetNow();
-    TimeMilli nextTime = now.GetDistantFuture();
-    QueryInfo info;
+    NextFireTime nextTime;
+    QueryInfo    info;
 #if OPENTHREAD_CONFIG_DNS_CLIENT_OVER_TCP_ENABLE
     bool hasTcpQuery = false;
 #endif
@@ -1511,7 +1513,7 @@ void Client::HandleTimer(void)
                 continue;
             }
 
-            if (now >= info.mRetransmissionTime)
+            if (nextTime.GetNow() >= info.mRetransmissionTime)
             {
                 if (info.mTransmissionCount >= info.mConfig.GetMaxTxAttempts())
                 {
@@ -1522,10 +1524,7 @@ void Client::HandleTimer(void)
                 IgnoreError(SendQuery(*query, info, /* aUpdateTimer */ false));
             }
 
-            if (nextTime > info.mRetransmissionTime)
-            {
-                nextTime = info.mRetransmissionTime;
-            }
+            nextTime.UpdateIfEarlier(info.mRetransmissionTime);
 
 #if OPENTHREAD_CONFIG_DNS_CLIENT_OVER_TCP_ENABLE
             if (info.mConfig.GetTransportProto() == QueryConfig::kDnsTransportTcp)
@@ -1536,10 +1535,7 @@ void Client::HandleTimer(void)
         }
     }
 
-    if (nextTime < now.GetDistantFuture())
-    {
-        mTimer.FireAt(nextTime);
-    }
+    mTimer.FireAt(nextTime);
 
 #if OPENTHREAD_CONFIG_DNS_CLIENT_OVER_TCP_ENABLE
     if (!hasTcpQuery && mTcpState != kTcpUninitialized)
@@ -1631,7 +1627,7 @@ void Client::ResolveHostAddressIfNeeded(Query &aQuery, const Message &aResponseM
 
     PopulateResponse(response, aQuery, aResponseMessage);
 
-    memset(&serviceInfo, 0, sizeof(serviceInfo));
+    ClearAllBytes(serviceInfo);
     serviceInfo.mHostNameBuffer     = hostName;
     serviceInfo.mHostNameBufferSize = sizeof(hostName);
     SuccessOrExit(response.ReadServiceInfo(Response::kAnswerSection, Name(aQuery, kNameOffsetInQuery), serviceInfo));
@@ -1670,7 +1666,7 @@ void Client::PrepareTcpMessage(Message &aMessage)
     uint16_t length = aMessage.GetLength() - aMessage.GetOffset();
 
     // Prepending the DNS query with length of the packet according to RFC1035.
-    WriteUint16(length, mSendBufferBytes + mSendLink.mLength);
+    BigEndian::WriteUint16(length, mSendBufferBytes + mSendLink.mLength);
     SuccessOrAssert(
         aMessage.Read(aMessage.GetOffset(), (mSendBufferBytes + sizeof(uint16_t) + mSendLink.mLength), length));
     mSendLink.mLength += length + sizeof(uint16_t);
@@ -1780,7 +1776,7 @@ void Client::HandleTcpReceiveAvailable(otTcpEndpoint *aEndpoint,
         SuccessOrExit(ReadFromLinkBuffer(data, offset, *message, sizeof(uint16_t)));
 
         IgnoreError(message->Read(/* aOffset */ 0, length));
-        length = HostSwap16(length);
+        length = BigEndian::HostSwap16(length);
 
         // Try to read `length` bytes.
         IgnoreError(message->SetLength(0));

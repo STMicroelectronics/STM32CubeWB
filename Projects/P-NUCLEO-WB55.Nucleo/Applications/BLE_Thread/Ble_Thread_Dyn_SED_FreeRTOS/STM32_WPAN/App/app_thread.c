@@ -929,8 +929,21 @@ void TL_THREAD_NotReceived( TL_EvtPacket_t * Notbuffer )
   */
 void Pre_OtCmdProcessing(void)
 {
-	osMutexAcquire(MtxShciId, osWaitForever);
+  osMutexAcquire(MtxShciId, osWaitForever);
 }
+
+/**
+  * @brief  This function is called at the end of any ot commands sent to the M0
+  *         core. It is the counterpart of Pre_OtCmdProcessing() function, 
+  *         unlocking sending of new ot commands.
+  * @param  None
+  * @retval None
+  */
+void Post_OtCmdProcessing(void)
+{
+  osMutexRelease(MtxShciId);
+}
+
 
 /**
   * @brief  This function waits for getting an acknowledgment from the M0.
@@ -941,7 +954,6 @@ void Pre_OtCmdProcessing(void)
 static void Wait_Getting_Ack_From_M0(void)
 {
   osSemaphoreAcquire(OtCmdAckSem, osWaitForever);
-  osMutexRelease(MtxShciId);
 }
 
 /**

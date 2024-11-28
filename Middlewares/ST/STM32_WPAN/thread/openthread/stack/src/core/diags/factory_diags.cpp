@@ -43,8 +43,8 @@
 
 #include "common/as_core_type.hpp"
 #include "common/code_utils.hpp"
-#include "common/instance.hpp"
 #include "common/locator_getters.hpp"
+#include "instance/instance.hpp"
 #include "radio/radio.hpp"
 #include "utils/parse_cmdline.hpp"
 
@@ -846,7 +846,7 @@ Error Diags::ProcessCmd(uint8_t aArgsLength, char *aArgs[], char *aOutput, size_
 
     // This `rcp` command is for debugging and testing only, building only when NDEBUG is not defined
     // so that it will be excluded from release build.
-#if !defined(NDEBUG) && defined(OPENTHREAD_RADIO)
+#if OPENTHREAD_RADIO && !defined(NDEBUG)
     if (aArgsLength > 0 && !strcmp(aArgs[0], "rcp"))
     {
         aArgs++;

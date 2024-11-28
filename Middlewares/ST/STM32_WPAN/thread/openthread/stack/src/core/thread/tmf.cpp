@@ -132,6 +132,7 @@ bool Agent::HandleResource(const char *aUriPath, Message &aMessage, const Ip6::M
         Case(kUriAddressSolicit, Mle::MleRouter);
         Case(kUriAddressRelease, Mle::MleRouter);
         Case(kUriActiveSet, MeshCoP::ActiveDatasetManager);
+        Case(kUriActiveReplace, MeshCoP::ActiveDatasetManager);
         Case(kUriPendingSet, MeshCoP::PendingDatasetManager);
         Case(kUriLeaderPetition, MeshCoP::Leader);
         Case(kUriLeaderKeepAlive, MeshCoP::Leader);
@@ -271,7 +272,7 @@ Message::Priority Agent::DscpToPriority(uint8_t aDscp)
     return priority;
 }
 
-#if OPENTHREAD_CONFIG_DTLS_ENABLE
+#if OPENTHREAD_CONFIG_SECURE_TRANSPORT_ENABLE
 
 SecureAgent::SecureAgent(Instance &aInstance)
     : Coap::CoapSecure(aInstance)
@@ -329,7 +330,7 @@ bool SecureAgent::HandleResource(const char *aUriPath, Message &aMessage, const 
     return didHandle;
 }
 
-#endif // OPENTHREAD_CONFIG_DTLS_ENABLE
+#endif // OPENTHREAD_CONFIG_SECURE_TRANSPORT_ENABLE
 
 } // namespace Tmf
 } // namespace ot

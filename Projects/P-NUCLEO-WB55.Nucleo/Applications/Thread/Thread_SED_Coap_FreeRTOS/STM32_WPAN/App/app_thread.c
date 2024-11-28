@@ -54,7 +54,8 @@
 #define C_CHANNEL_NB            12U
 #define THREAD_LINK_POLL_PERIOD_MS      (5000)                        /**< 5s */
 
-osMutexId_t MtxOtCmdId;
+static osMutexId_t MtxOtCmdId;
+static osSemaphoreId_t OtCmdAckSem;
 
 /* FreeRtos stacks attributes */
 const osThreadAttr_t ThreadMsgM0ToM4Process_attr = {
@@ -76,12 +77,6 @@ const osThreadAttr_t ThreadCliProcess_attr = {
      .priority = CFG_THREAD_CLI_PROCESS_PRIORITY,
      .stack_size = CFG_THREAD_CLI_PROCESS_STACK_SIZE
  };
-
-typedef enum
-{
-  ot_TL_CmdBusy,
-  ot_TL_CmdAvailable
-} ot_TL_CmdStatus_t;
 
 /* USER CODE BEGIN PD */
 #define C_RESSOURCE                     "light"
@@ -118,7 +113,6 @@ static void HostTxCb( void );
 static void Wait_Getting_Ack_From_M0(void);
 static void Receive_Ack_From_M0(void);
 static void Receive_Notification_From_M0(void);
-static void ot_StatusNot(ot_TL_CmdStatus_t status);
 #if (CFG_HW_LPUART1_ENABLED == 1)
 extern void MX_LPUART1_UART_Init(void);
 #endif
@@ -175,7 +169,6 @@ static __IO uint16_t CptReceiveCmdFromUser = 0;
 static TL_CmdPacket_t *p_thread_otcmdbuffer;
 static TL_EvtPacket_t *p_thread_notif_M0_to_M4;
 static __IO uint32_t  CptReceiveMsgFromM0 = 0;
-static volatile int FlagReceiveAckFromM0 = 0;
 
 PLACE_IN_SECTION("MB_MEM1") ALIGN(4) static TL_TH_Config_t ThreadConfigBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t ThreadOtCmdBuffer;
@@ -251,6 +244,10 @@ void APP_THREAD_Init( void )
 
   /* USER CODE END APP_THREAD_INIT_TIMER */
 
+  /* Create binary semaphores for OT command handling */
+  OtCmdAckSem = osSemaphoreNew(1, 0, NULL);
+  MtxOtCmdId = osMutexNew(NULL);
+  
   /* Create the different FreeRTOS tasks requested to run this Thread application*/
   OsTaskMsgM0ToM4Id = osThreadNew(APP_THREAD_FreeRTOSProcessMsgM0ToM4Task, NULL,&ThreadMsgM0ToM4Process_attr);
 
@@ -872,8 +869,6 @@ Thread_OT_Cmd_Request_t* THREAD_Get_NotificationPayloadBuffer(void)
 
 static void Ot_Cmd_Transfer_Common(void)
 {
-  ot_StatusNot(ot_TL_CmdBusy);
-
   /* OpenThread OT command cmdcode range 0x280 .. 0x3DF = 352 */
   p_thread_otcmdbuffer->cmdserial.cmd.cmdcode = 0x280U;
   /* Size = otCmdBuffer->Size (Number of OT cmd arguments : 1 arg = 32bits so multiply by 4 to get size in bytes)
@@ -885,8 +880,6 @@ static void Ot_Cmd_Transfer_Common(void)
 
   /* Wait completion of cmd */
   Wait_Getting_Ack_From_M0();
-
-  ot_StatusNot(ot_TL_CmdAvailable);
 }
 
 /**
@@ -956,8 +949,21 @@ void TL_THREAD_NotReceived( TL_EvtPacket_t * Notbuffer )
   */
 void Pre_OtCmdProcessing(void)
 {
-
+  osMutexAcquire(MtxOtCmdId, osWaitForever);
 }
+
+/**
+  * @brief  This function is called at the end of any ot commands sent to the M0
+  *         core. It is the counterpart of Pre_OtCmdProcessing() function, 
+  *         unlocking sending of new ot commands.
+  * @param  None
+  * @retval None
+  */
+void Post_OtCmdProcessing(void)
+{
+   osMutexRelease(MtxOtCmdId);
+}
+
 
 /**
   * @brief  This function waits for getting an acknowledgment from the M0.
@@ -967,10 +973,7 @@ void Pre_OtCmdProcessing(void)
   */
 static void Wait_Getting_Ack_From_M0(void)
 {
-  while (FlagReceiveAckFromM0 == 0)
-  {
-  }
-  FlagReceiveAckFromM0 = 0;
+  osSemaphoreAcquire(OtCmdAckSem, osWaitForever);
 }
 
 /**
@@ -982,7 +985,7 @@ static void Wait_Getting_Ack_From_M0(void)
   */
 static void Receive_Ack_From_M0(void)
 {
-  FlagReceiveAckFromM0 = 1;
+  osSemaphoreRelease(OtCmdAckSem);
 }
 
 /**
@@ -995,24 +998,6 @@ static void Receive_Notification_From_M0(void)
 {
   CptReceiveMsgFromM0++;
   osThreadFlagsSet(OsTaskMsgM0ToM4Id,1);
-}
-
-static void ot_StatusNot( ot_TL_CmdStatus_t status )
-{
-  switch (status)
-  {
-    case ot_TL_CmdBusy:
-      osMutexAcquire( MtxOtCmdId, osWaitForever );
-      break;
-
-    case ot_TL_CmdAvailable:
-      osMutexRelease( MtxOtCmdId );
-      break;
-
-    default:
-      break;
-  }
-  return;
 }
 
 #if (CFG_USB_INTERFACE_ENABLE != 0)

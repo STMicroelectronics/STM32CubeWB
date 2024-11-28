@@ -26,7 +26,7 @@
 /*  APPLICATION INTERFACE DEFINITION                       RELEASE        */
 /*                                                                        */
 /*    tx_api.h                                            PORTABLE C      */
-/*                                                           6.2.1        */
+/*                                                           6.4.0        */
 /*  AUTHOR                                                                */
 /*                                                                        */
 /*    William E. Lamie, Microsoft Corporation                             */
@@ -97,6 +97,13 @@
 /*  03-08-2023      Tiejun Zhou             Modified comment(s),          */
 /*                                            update patch number,        */
 /*                                            resulting in version 6.2.1  */
+/*  10-31-2023      Xiuwen Cai              Modified comment(s),          */
+/*                                            added option for random     */
+/*                                            number stack filling,       */
+/*                                            resulting in version 6.3.0  */
+/*  12-31-2023      Tiejun Zhou             Modified comment(s),          */
+/*                                            update version number,      */
+/*                                            resulting in version 6.4.0  */
 /*                                                                        */
 /**************************************************************************/
 
@@ -135,8 +142,8 @@ extern   "C" {
 
 #define AZURE_RTOS_THREADX
 #define THREADX_MAJOR_VERSION           6
-#define THREADX_MINOR_VERSION           2
-#define THREADX_PATCH_VERSION           1
+#define THREADX_MINOR_VERSION           4
+#define THREADX_PATCH_VERSION           0
 
 /* Define the following symbol for backward compatibility */
 #define EL_PRODUCT_THREADX
@@ -171,7 +178,11 @@ extern   "C" {
 #define TX_NO_MESSAGES                  ((UINT)   0)
 #define TX_EMPTY                        ((ULONG)  0)
 #define TX_CLEAR_ID                     ((ULONG)  0)
+#if defined(TX_ENABLE_RANDOM_NUMBER_STACK_FILLING) && defined(TX_ENABLE_STACK_CHECKING)
+#define TX_STACK_FILL                   (thread_ptr -> tx_thread_stack_fill_value)
+#else
 #define TX_STACK_FILL                   ((ULONG)  0xEFEFEFEFUL)
+#endif
 
 
 /* Thread execution state values.  */
@@ -617,6 +628,12 @@ typedef struct TX_THREAD_STRUCT
     /* Define suspension sequence number.  This is used to ensure suspension is still valid when
        cleanup routine executes.  */
     ULONG               tx_thread_suspension_sequence;
+
+#if defined(TX_ENABLE_RANDOM_NUMBER_STACK_FILLING) && defined(TX_ENABLE_STACK_CHECKING)
+
+    /* Define the random stack fill number. This can be used to detect stack overflow.  */
+    ULONG               tx_thread_stack_fill_value;
+#endif
 
     /* Define the user extension field.  This typically is defined
        to white space, but some ports of ThreadX may need to have
@@ -1889,6 +1906,21 @@ UINT        _tx_trace_interrupt_control(UINT new_posture);
 
 #ifndef TX_INITIALIZE_KERNEL_ENTER_EXTENSION
 #define TX_INITIALIZE_KERNEL_ENTER_EXTENSION
+#endif
+
+
+/* Add a default macro that can be re-defined in tx_port.h to add processing to the initialize random number generator.
+   By default, this is simply defined as whitespace.  */
+
+#ifndef TX_INITIALIZE_RANDOM_GENERATOR_INITIALIZATION
+#define TX_INITIALIZE_RANDOM_GENERATOR_INITIALIZATION
+#endif
+
+
+/* Define the TX_RAND macro to the standard library function, if not already defined.  */
+
+#ifndef TX_RAND
+#define TX_RAND()                                       rand()
 #endif
 
 

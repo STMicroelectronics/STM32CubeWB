@@ -246,7 +246,7 @@ VL53L0X_Error VL53L0X_PollingDelay(VL53L0X_DEV Dev) {
 /**
  *  Setup all detected sensors for single shot mode and setup ranging configuration
  */
-void SetupSingleShot(VL53L0X_Dev_t Dev)
+void SetupSingleShot(VL53L0X_DEV Dev)
 {
   int status;
   uint8_t VhvSettings;
@@ -260,34 +260,34 @@ void SetupSingleShot(VL53L0X_Dev_t Dev)
 	uint8_t finalRangeVcselPeriod = 10;
 
                           
-  if( Dev.Present){
-    status=VL53L0X_StaticInit(&Dev);
+  if( Dev->Present){
+    status=VL53L0X_StaticInit(Dev);
     if( status ){
       printf("VL53L0X_StaticInit failed\n");
     }
     
     
-    status = VL53L0X_PerformRefCalibration(&Dev, &VhvSettings, &PhaseCal);
+    status = VL53L0X_PerformRefCalibration(Dev, &VhvSettings, &PhaseCal);
     if( status ){
       printf("VL53L0X_PerformRefCalibration failed\n");
     }
     
-    status = VL53L0X_PerformRefSpadManagement(&Dev, &refSpadCount, &isApertureSpads);
+    status = VL53L0X_PerformRefSpadManagement(Dev, &refSpadCount, &isApertureSpads);
     if( status ){
       printf("VL53L0X_PerformRefSpadManagement failed\n");
     }
     
-    status = VL53L0X_SetDeviceMode(&Dev, VL53L0X_DEVICEMODE_SINGLE_RANGING); // Setup in single ranging mode
+    status = VL53L0X_SetDeviceMode(Dev, VL53L0X_DEVICEMODE_SINGLE_RANGING); // Setup in single ranging mode
     if( status ){
       printf("VL53L0X_SetDeviceMode failed\n");
     }
     
-    status = VL53L0X_SetLimitCheckEnable(&Dev, VL53L0X_CHECKENABLE_SIGMA_FINAL_RANGE, 1); // Enable Sigma limit
+    status = VL53L0X_SetLimitCheckEnable(Dev, VL53L0X_CHECKENABLE_SIGMA_FINAL_RANGE, 1); // Enable Sigma limit
     if( status ){
       printf("VL53L0X_SetLimitCheckEnable failed\n");
     }
     
-    status = VL53L0X_SetLimitCheckEnable(&Dev, VL53L0X_CHECKENABLE_SIGNAL_RATE_FINAL_RANGE, 1); // Enable Signa limit
+    status = VL53L0X_SetLimitCheckEnable(Dev, VL53L0X_CHECKENABLE_SIGNAL_RATE_FINAL_RANGE, 1); // Enable Signa limit
     if( status ){
       printf("VL53L0X_SetLimitCheckEnable failed\n");
     }
@@ -299,32 +299,32 @@ void SetupSingleShot(VL53L0X_Dev_t Dev)
     preRangeVcselPeriod = 18;
     finalRangeVcselPeriod = 14;
     
-    status = VL53L0X_SetLimitCheckValue(&Dev,  VL53L0X_CHECKENABLE_SIGNAL_RATE_FINAL_RANGE, signalLimit);
+    status = VL53L0X_SetLimitCheckValue(Dev,  VL53L0X_CHECKENABLE_SIGNAL_RATE_FINAL_RANGE, signalLimit);
     
     if( status ){
       printf("VL53L0X_SetLimitCheckValue failed\n");
     }
     
-    status = VL53L0X_SetLimitCheckValue(&Dev,  VL53L0X_CHECKENABLE_SIGMA_FINAL_RANGE, sigmaLimit);
+    status = VL53L0X_SetLimitCheckValue(Dev,  VL53L0X_CHECKENABLE_SIGMA_FINAL_RANGE, sigmaLimit);
     if( status ){
       printf("VL53L0X_SetLimitCheckValue failed\n");
     }
     
-    status = VL53L0X_SetMeasurementTimingBudgetMicroSeconds(&Dev,  timingBudget);
+    status = VL53L0X_SetMeasurementTimingBudgetMicroSeconds(Dev,  timingBudget);
     if( status ){
       printf("VL53L0X_SetMeasurementTimingBudgetMicroSeconds failed\n");
     }
     
-    status = VL53L0X_SetVcselPulsePeriod(&Dev,  VL53L0X_VCSEL_PERIOD_PRE_RANGE, preRangeVcselPeriod);
+    status = VL53L0X_SetVcselPulsePeriod(Dev,  VL53L0X_VCSEL_PERIOD_PRE_RANGE, preRangeVcselPeriod);
     if( status ){
       printf("VL53L0X_SetVcselPulsePeriod failed\n");
     }
     
-    status = VL53L0X_SetVcselPulsePeriod(&Dev,  VL53L0X_VCSEL_PERIOD_FINAL_RANGE, finalRangeVcselPeriod);
+    status = VL53L0X_SetVcselPulsePeriod(Dev,  VL53L0X_VCSEL_PERIOD_FINAL_RANGE, finalRangeVcselPeriod);
     if( status ){
       printf("VL53L0X_SetVcselPulsePeriod failed\n");
     }
     
-    Dev.LeakyFirst=1;
+    Dev->LeakyFirst=1;
   }
 }

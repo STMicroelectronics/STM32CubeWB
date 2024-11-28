@@ -43,18 +43,26 @@
 #define MBEDTLS_PLATFORM_SNPRINTF_MACRO snprintf
 
 #define MBEDTLS_AES_C
+#if (MBEDTLS_VERSION_NUMBER >= 0x03050000)
+#define MBEDTLS_AES_ONLY_128_BIT_KEY_LENGTH
+#endif
 #define MBEDTLS_AES_ROM_TABLES
 #define MBEDTLS_ASN1_PARSE_C
 #define MBEDTLS_ASN1_WRITE_C
 #define MBEDTLS_BIGNUM_C
+#if (MBEDTLS_VERSION_NUMBER >= 0x03050000)
+//#define MBEDTLS_BLOCK_CIPHER_NO_DECRYPT /* ST Added aes_alt.c need decrypt */
+#endif
 #define MBEDTLS_CCM_C
 #define MBEDTLS_CIPHER_C
 #define MBEDTLS_CMAC_C
 #define MBEDTLS_CTR_DRBG_C
+#define MBEDTLS_DEPRECATED_REMOVED
+//#define MBEDTLS_DEPRECATED_WARNING /* ST Added Do not compile with IAR */
 #define MBEDTLS_ECJPAKE_C
 #define MBEDTLS_ECP_C
 #define MBEDTLS_ECP_DP_SECP256R1_ENABLED
-#define MBEDTLS_ECP_NIST_OPTIM
+//#define MBEDTLS_ECP_NIST_OPTIM /* ST Added alt ST implementation not compatible with this opti */
 #define MBEDTLS_ENTROPY_C
 #define MBEDTLS_HAVE_ASM
 #define MBEDTLS_HMAC_DRBG_C
@@ -62,6 +70,7 @@
 #define MBEDTLS_MD_C
 #define MBEDTLS_NO_DEFAULT_ENTROPY_SOURCES
 #define MBEDTLS_NO_PLATFORM_ENTROPY
+#define MBEDTLS_OID_C
 #define MBEDTLS_PK_C
 #define MBEDTLS_PK_PARSE_C
 #define MBEDTLS_PLATFORM_C
@@ -92,11 +101,15 @@
 #define MBEDTLS_KEY_EXCHANGE_ECDHE_ECDSA_ENABLED
 #endif
 
+#if OPENTHREAD_CONFIG_BLE_TCAT_ENABLE
+#define MBEDTLS_SSL_KEEP_PEER_CERTIFICATE
+#define MBEDTLS_GCM_C
+#endif
+
 #ifdef MBEDTLS_KEY_EXCHANGE_ECDHE_ECDSA_ENABLED
 #define MBEDTLS_BASE64_C
 #define MBEDTLS_ECDH_C
 #define MBEDTLS_ECDSA_C
-#define MBEDTLS_OID_C
 #define MBEDTLS_PEM_PARSE_C
 #define MBEDTLS_X509_USE_C
 #define MBEDTLS_X509_CRT_PARSE_C
@@ -109,7 +122,6 @@
 #if OPENTHREAD_CONFIG_DETERMINISTIC_ECDSA_ENABLE
 #define MBEDTLS_ECDSA_DETERMINISTIC
 #endif
-#define MBEDTLS_OID_C
 #define MBEDTLS_PEM_PARSE_C
 #define MBEDTLS_PK_WRITE_C
 #endif
@@ -128,7 +140,9 @@
 #define MBEDTLS_MEMORY_BUFFER_ALLOC_C
 #endif
 
-#if OPENTHREAD_CONFIG_COAP_SECURE_API_ENABLE
+#if OPENTHREAD_CONFIG_BLE_TCAT_ENABLE
+#define MBEDTLS_SSL_MAX_CONTENT_LEN      2000 /**< Maxium fragment length in bytes */
+#elif OPENTHREAD_CONFIG_COAP_SECURE_API_ENABLE
 #define MBEDTLS_SSL_MAX_CONTENT_LEN      900 /**< Maxium fragment length in bytes */
 #else
 #define MBEDTLS_SSL_MAX_CONTENT_LEN      768 /**< Maxium fragment length in bytes */
@@ -144,6 +158,10 @@
 #include MBEDTLS_USER_CONFIG_FILE
 #endif
 
-#include "mbedtls/check_config.h"
+#include "mbedtls/version.h"
+#if (MBEDTLS_VERSION_NUMBER < 0x03000000)
+    // Configuration sanity check. Done automatically in Mbed TLS >= 3.0.
+    #include "mbedtls/check_config.h"
+#endif
 
 #endif /* MBEDTLS_CONFIG_H */
