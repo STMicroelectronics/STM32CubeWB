@@ -5,7 +5,7 @@
  *****************************************************************************
  * @attention
  *
- * Copyright (c) 2018-2024 STMicroelectronics.
+ * Copyright (c) 2018-2025 STMicroelectronics.
  * All rights reserved.
  *
  * This software is licensed under terms that can be found in the LICENSE file
@@ -439,20 +439,21 @@
 
 /* ------------------------------------------------------------------------- */
 
-/* Definitions for FW_Error_Type
- * (ACI_HAL_FW_ERROR_EVENT)
+/* Definitions for Warning_Type
+ * (ACI_HAL_WARNING_EVENT)
  */
-#define FW_L2CAP_RECOMBINATION_ERROR                 0x01U
-#define FW_GATT_UNEXPECTED_PEER_MESSAGE              0x02U
-#define FW_NVM_LEVEL_WARNING                         0x03U
-#define FW_COC_RX_DATA_LENGTH_TOO_LARGE              0x04U
-#define FW_ECOC_CONN_RSP_ALREADY_ASSIGNED_DCID       0x05U
+#define WARNING_L2CAP_RECOMBINATION_FAILURE          0x01U
+#define WARNING_GATT_UNEXPECTED_PEER_MESSAGE         0x02U
+#define WARNING_NVM_ALMOST_FULL                      0x03U
+#define WARNING_COC_RX_DATA_LENGTH_TOO_LARGE         0x04U
+#define WARNING_COC_ALREADY_ASSIGNED_DCID            0x05U
+#define WARNING_SMP_UNEXPECTED_LTK_REQUEST           0x06U
 
 /* ------------------------------------------------------------------------- */
 
 /* Offset for configuration values (see ACI_HAL_WRITE_CONFIG_DATA)
  */
-#define CONFIG_DATA_PUBADDR_OFFSET                 0x00U
+#define CONFIG_DATA_PUBLIC_ADDRESS_OFFSET          0x00U
 #define CONFIG_DATA_ER_OFFSET                      0x08U
 #define CONFIG_DATA_IR_OFFSET                      0x18U
 #define CONFIG_DATA_RANDOM_ADDRESS_OFFSET          0x2EU
@@ -468,7 +469,7 @@
 
 /* Length for configuration values (see ACI_HAL_WRITE_CONFIG_DATA)
  */
-#define CONFIG_DATA_PUBADDR_LEN                     6
+#define CONFIG_DATA_PUBLIC_ADDRESS_LEN              6
 #define CONFIG_DATA_ER_LEN                         16
 #define CONFIG_DATA_IR_LEN                         16
 #define CONFIG_DATA_RANDOM_ADDRESS_LEN              6

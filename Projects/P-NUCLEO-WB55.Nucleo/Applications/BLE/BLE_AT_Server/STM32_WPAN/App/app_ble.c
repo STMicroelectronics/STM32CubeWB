@@ -628,8 +628,6 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
           break; /* ACI_GAP_PASS_KEY_REQ_VSEVT_CODE */
       case ACI_GAP_AUTHORIZATION_REQ_VSEVT_CODE:
           break; /* ACI_GAP_AUTHORIZATION_REQ_VSEVT_CODE */
-      case ACI_GAP_PERIPHERAL_SECURITY_INITIATED_VSEVT_CODE:
-          break; /* ACI_GAP_PERIPHERAL_SECURITY_INITIATED_VSEVT_CODE */
       case ACI_GAP_BOND_LOST_VSEVT_CODE:
           break; /* ACI_GAP_BOND_LOST_VSEVT_CODE */
       case ACI_GAP_ADDR_NOT_RESOLVED_VSEVT_CODE:
@@ -759,17 +757,17 @@ static void Ble_Hci_Gap_Gatt_Init(void){
    */
   if ((global_ble_addr_type == GAP_PUBLIC_ADDR) && (global_ble_cfg_addr_type == GAP_PUBLIC_ADDR))
   {
-    ret = aci_hal_write_config_data(CONFIG_DATA_PUBADDR_OFFSET,
-                              CONFIG_DATA_PUBADDR_LEN,
+    ret = aci_hal_write_config_data(CONFIG_DATA_PUBLIC_ADDRESS_OFFSET,
+                              CONFIG_DATA_PUBLIC_ADDRESS_LEN,
                               (uint8_t*) global_bdaddress);
     
     if (ret != BLE_STATUS_SUCCESS)
     {
-      APP_DBG_MSG("  Fail   : aci_hal_write_config_data command - CONFIG_DATA_PUBADDR_OFFSET, result: 0x%x \n", ret);
+      APP_DBG_MSG("  Fail   : aci_hal_write_config_data command - CONFIG_DATA_PUBLIC_ADDRESS_OFFSET, result: 0x%x \n", ret);
     }
     else
     {
-      APP_DBG_MSG("  Success: aci_hal_write_config_data command - CONFIG_DATA_PUBADDR_OFFSET\n");
+      APP_DBG_MSG("  Success: aci_hal_write_config_data command - CONFIG_DATA_PUBLIC_ADDRESS_OFFSET\n");
       APP_DBG_MSG("  Public Bluetooth Address: %02x:%02x:%02x:%02x:%02x:%02x\n",global_bdaddress[5],global_bdaddress[4],global_bdaddress[3],global_bdaddress[2],global_bdaddress[1],global_bdaddress[0]);
     } 
     

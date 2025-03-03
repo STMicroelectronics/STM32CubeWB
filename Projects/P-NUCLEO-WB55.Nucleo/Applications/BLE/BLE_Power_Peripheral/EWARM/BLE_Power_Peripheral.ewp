@@ -1227,12 +1227,6 @@
       <file>
         <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_rtc_ex.c</name>
       </file>
-      <file>
-        <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_tim.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$/../../../../../../Drivers/STM32WBxx_HAL_Driver/Src/stm32wbxx_hal_tim_ex.c</name>
-      </file>
     </group>
     <group>
       <name>CMSIS</name>
@@ -1240,6 +1234,15 @@
         <name>$PROJ_DIR$/../Core/Src/system_stm32wbxx.c</name>
       </file>
     </group>
+  </group>
+  <group>
+    <name>Utilities</name>
+    <file>
+      <name>$PROJ_DIR$/../../../../../../Utilities/lpm/tiny_lpm/stm32_lpm.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$/../../../../../../Utilities/sequencer/stm32_seq.c</name>
+    </file>
   </group>
   <group>
     <name>Middlewares</name>
@@ -1300,15 +1303,6 @@
         <name>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/ble/svc/Src/svc_ctl.c</name>
       </file>
     </group>
-  </group>
-  <group>
-    <name>Utilities</name>
-    <file>
-      <name>$PROJ_DIR$/../../../../../../Utilities/lpm/tiny_lpm/stm32_lpm.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$/../../../../../../Utilities/sequencer/stm32_seq.c</name>
-    </file>
   </group>
 </project>
 

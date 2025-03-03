@@ -100,24 +100,24 @@ Wireless Coprocessor binary.
 
 
 Minimum requirements for the demo:
-- 1 STM32WB55xx-Nucleo board in MAC 802.15.4 FFD mode 
+- 1 STM32WB55xx-Nucleo board in MAC 802.15.4 Node mode 
 using current generated binary.
-    (This device will be referred as COORDINATOR )
-- 1 STM32WB55xx-Nucleo board in MAC 802.15.4 Node - RFD 
-(see MAC 802.14.4 RFD example)
     (This device will be referred as NODE )
+- 1 STM32WB55xx-Nucleo board in MAC 802.15.4 Cordinator 
+(see MAC 802.14.4 Cordinator example)
+    (This device will be referred as COORDINATOR)
 
 In order to make the program work, you must do the following: 
  - Connect 2 STM32WB55xx-Nucleo boards to your PC 
  
- COORDINATOR :
+ NODE  :
          - Open your preferred toolchain 
          - Rebuild all files and load your image into 
-         COORDINATOR target memory 
+         NODE target memory 
          - The example run on Reset
  
- NODE :
-         - Refers to  MAC 802.14.4 RFD example to build 
+ COORDINATOR :
+         - Refers to  MAC 802.14.4 Cordinator example to build 
          and load generated image
      
 To get the traces in real time, you can connect an HyperTerminal to the LPUART (CN10-35) Com Port.

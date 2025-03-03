@@ -84,42 +84,21 @@ uint8_t phyTestSetChannel(uint8_t channel_nb)
 }
 
 /**
- * @brief  PHY test continuous Tx start on the current channel
+ * @brief  PHY test set Tx power
  *
- * @param  none
+ * @param  tx_power: transmission power to set in dBm, in the range [-21, +6]
  * @retval 0 if successful, 2 if bad argument
  */
-uint8_t phyTestContinuousTxStart()
+uint8_t phyTestSetTxPower(int8_t tx_power)
 {
   Pre_ZigbeeCmdProcessing();
   /* prepare buffer */
   Zigbee_Cmd_Request_t* p_zb_req = ZIGBEE_Get_OTCmdPayloadBuffer();
   
-  p_zb_req->ID = MSG_M4TOM0_PHY_CONTINUOUS_TX_START;
+  p_zb_req->ID = MSG_M4TOM0_PHY_SET_TX_POWER;
   
-  p_zb_req->Size=0;
-  
-  ZIGBEE_CmdTransfer();
-  
-  p_zb_req = ZIGBEE_Get_OTCmdRspPayloadBuffer();
-  return (uint8_t)p_zb_req->Data[0];
-}
-
-/**
- * @brief  PHY test continuous Tx stop
- *
- * @param  None
- * @retval 0 if successful, 0xFF otherwise
- */
-uint8_t phyTestContinuousTxStop(void)
-{
-  Pre_ZigbeeCmdProcessing();
-  /* prepare buffer */
-  Zigbee_Cmd_Request_t* p_zb_req = ZIGBEE_Get_OTCmdPayloadBuffer();
-  
-  p_zb_req->ID = MSG_M4TOM0_PHY_CONTINUOUS_TX_STOP;
-  
-  p_zb_req->Size=0;
+  p_zb_req->Size=1;
+  p_zb_req->Data[0] = (uint32_t)tx_power;
   
   ZIGBEE_CmdTransfer();
   
@@ -173,44 +152,6 @@ uint8_t phyTestContinuousWaveStop(void)
 }
 
 /**
- * @brief  PHY test Tx start
- *
- * @param  nb_frames: number of frames to send
- * @param  size_of_frame: number of bytes in the frame
- * @param  tx_frame: the frame to transmit
- * @retval 0 if successful, 0xFF otherwise
- */
-uint8_t phyTestTxStart(uint32_t nb_frames, uint8_t size_of_frame, uint8_t *tx_frame)
-{   
-  if( size_of_frame > (OT_CMD_BUFFER_SIZE-1) )
-  {
-    return 0xFF;
-  }
-  else
-  {
-    Pre_ZigbeeCmdProcessing();
-    /* prepare buffer */
-    Zigbee_Cmd_Request_t* p_zb_req = ZIGBEE_Get_OTCmdPayloadBuffer();
-    
-    p_zb_req->ID = MSG_M4TOM0_PHY_TX_START;
-    
-    p_zb_req->Size=1;
-    p_zb_req->Data[0] = nb_frames;
-    
-    while( p_zb_req->Size != (size_of_frame+1) )
-    {
-      p_zb_req->Data[p_zb_req->Size] = (uint32_t)tx_frame[p_zb_req->Size-1];
-      p_zb_req->Size++;
-    }
-    
-    ZIGBEE_CmdTransfer();
-    
-    p_zb_req = ZIGBEE_Get_OTCmdRspPayloadBuffer();
-    return (uint8_t)p_zb_req->Data[0];
-  }
-}
-
-/**
  * @brief  PHY test Rx start
  *
  * @param  None
@@ -252,4 +193,86 @@ uint32_t phyTestRxStop(void)
   
   p_zb_req = ZIGBEE_Get_OTCmdRspPayloadBuffer();
   return (uint32_t)p_zb_req->Data[0];
+}
+
+/**
+ * @brief  PHY test Tx start
+ *
+ * @param  nb_frames: number of frames to send
+ * @param  size_of_frame: number of bytes in the frame
+ * @param  tx_frame: the frame to transmit
+ * @retval 0 if successful, 0xFF otherwise
+ */
+uint8_t phyTestTxStart(uint32_t nb_frames, uint8_t size_of_frame, uint8_t *tx_frame)
+{   
+  if( size_of_frame > (OT_CMD_BUFFER_SIZE-1) )
+  {
+    return 0xFF;
+  }
+  else
+  {
+    Pre_ZigbeeCmdProcessing();
+    /* prepare buffer */
+    Zigbee_Cmd_Request_t* p_zb_req = ZIGBEE_Get_OTCmdPayloadBuffer();
+    
+    p_zb_req->ID = MSG_M4TOM0_PHY_TX_START;
+    
+    p_zb_req->Size=1;
+    p_zb_req->Data[0] = nb_frames;
+    
+    while( p_zb_req->Size != (size_of_frame+1) )
+    {
+      p_zb_req->Data[p_zb_req->Size] = (uint32_t)tx_frame[p_zb_req->Size-1];
+      p_zb_req->Size++;
+    }
+    
+    ZIGBEE_CmdTransfer();
+    
+    p_zb_req = ZIGBEE_Get_OTCmdRspPayloadBuffer();
+    return (uint8_t)p_zb_req->Data[0];
+  }
+}
+
+/**
+ * @brief  PHY test continuous Tx start on the current channel
+ *
+ * @param  none
+ * @retval 0 if successful, 2 if bad argument
+ */
+uint8_t phyTestContinuousTxStart(void)
+{
+  Pre_ZigbeeCmdProcessing();
+  /* prepare buffer */
+  Zigbee_Cmd_Request_t* p_zb_req = ZIGBEE_Get_OTCmdPayloadBuffer();
+  
+  p_zb_req->ID = MSG_M4TOM0_PHY_CONTINUOUS_TX_START;
+  
+  p_zb_req->Size=0;
+  
+  ZIGBEE_CmdTransfer();
+  
+  p_zb_req = ZIGBEE_Get_OTCmdRspPayloadBuffer();
+  return (uint8_t)p_zb_req->Data[0];
+}
+
+/**
+ * @brief  PHY test continuous Tx stop
+ *
+ * @param  None
+ * @retval 0 if successful, 0xFF otherwise
+ */
+uint8_t phyTestContinuousTxStop(void)
+{
+  Pre_ZigbeeCmdProcessing();
+  /* prepare buffer */
+  Zigbee_Cmd_Request_t* p_zb_req = ZIGBEE_Get_OTCmdPayloadBuffer();
+  
+  p_zb_req->ID = MSG_M4TOM0_PHY_CONTINUOUS_TX_STOP;
+  
+  p_zb_req->Size=0;
+  
+  ZIGBEE_CmdTransfer();
+  
+  p_zb_req = ZIGBEE_Get_OTCmdRspPayloadBuffer();
+  return (uint8_t)p_zb_req->Data[0];
 }

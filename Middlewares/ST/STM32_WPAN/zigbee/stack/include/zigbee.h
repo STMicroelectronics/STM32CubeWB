@@ -3,7 +3,7 @@
  * @heading Zigbee Utilities
  * @brief Zigbee header file.
  * @author Exegin Technologies
- * @copyright Copyright [2009 - 2023] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2025] Exegin Technologies Limited. All rights reserved.
  *
  * This file groups global/external definitions from all the layer specific header files
  * e.g, aps, nwk, zdo etc... into a single place, so that one can just include zigbee.h for
@@ -203,6 +203,14 @@ enum ZbTcsoStatusT {
  * Stack Logging
  *---------------------------------------------------------------
  */
+#define LOGFMTx64                  "0x%08x%08x"
+#define LOGVALx64(val)             (uint32_t)(val >> 32U), (uint32_t)(val)
+
+/* E.g. PRIu64 */
+#ifndef LOGFMTu64
+# define LOGFMTu64                  "%lu"
+#endif
+
 /* Debugging log mask. */
 #define ZB_LOG_MASK_FATAL               0x00000001U /* Unrecoverable errors. */
 #define ZB_LOG_MASK_ERROR               0x00000002U /* Recoverable internal errors. */
@@ -553,7 +561,6 @@ void ZbShutdown(struct ZigBeeT *zb);
 enum ZbStatusCodeT ZbStatePause(struct ZigBeeT *zb, void (*callback)(void *arg), void *arg);
 enum ZbStatusCodeT ZbStateResume(struct ZigBeeT *zb);
 
-
 /*---------------------------------------------------------------
  * Misc. Helper Functions
  *---------------------------------------------------------------
@@ -583,12 +590,6 @@ unsigned int zb_hex_bin_to_str(const uint8_t *in_data, unsigned int in_len, char
 void ZbDebugMemory(struct ZigBeeT *zb);
 void ZbDebugInfo(struct ZigBeeT *zb);
 
-/*---------------------------------------------------------------
- * Misc Debug (may not be available on all platforms)
- *---------------------------------------------------------------
- */
-
-uint8_t  MacSetPropStrictDataPollReq(uint8_t val);
 /*---------------------------------------------------------------
  * Additional Layer Includes
  *---------------------------------------------------------------

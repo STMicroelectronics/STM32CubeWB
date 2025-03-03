@@ -1,11 +1,11 @@
 /*****************************************************************************
  * @file    ble_gatt_aci.h
- * @brief   STM32WB BLE API (gatt_aci)
+ * @brief   STM32WB BLE API (GATT_ACI)
  *          Auto-generated file: do not edit!
  *****************************************************************************
  * @attention
  *
- * Copyright (c) 2018-2024 STMicroelectronics.
+ * Copyright (c) 2018-2025 STMicroelectronics.
  * All rights reserved.
  *
  * This software is licensed under terms that can be found in the LICENSE file

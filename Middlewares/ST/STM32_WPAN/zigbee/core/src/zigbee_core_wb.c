@@ -72,6 +72,7 @@ int hmacResult(HMACContext *context, uint8_t digest[USHAMaxHashSize]);
 #endif /* ZIGBEE_DIRECT_ACTIVATED */
 /* Touchlink callbacks */
 static struct ZbTouchlinkCallbacks zigbee_m4_tl_callbacks;
+uint8_t MacSetPropStrictDataPollReq(uint8_t val);
 
 void * zb_heap_alloc(struct ZigBeeT *zb, size_t sz, const char *funcname, unsigned int linenum);
 void zb_heap_free(struct ZigBeeT *zb, void *ptr, const char *funcname, unsigned int linenum);
@@ -3088,10 +3089,11 @@ ZbHashInit(struct ZbHash *h)
     h->length = 0;
 }
 
-void
+bool
 ZbHashAdd(struct ZbHash *h, const void *data, uint32_t len)
 {
     Zigbee_Cmd_Request_t *ipcc_req;
+    bool rc;
 
     Pre_ZigbeeCmdProcessing();
     ipcc_req = ZIGBEE_Get_OTCmdPayloadBuffer();
@@ -3101,7 +3103,9 @@ ZbHashAdd(struct ZbHash *h, const void *data, uint32_t len)
     ipcc_req->Data[1] = (uint32_t)data;
     ipcc_req->Data[2] = (uint32_t)len;
     ZIGBEE_CmdTransfer();
+    rc = (bool)zb_ipc_m4_get_retval();
     Post_ZigbeeCmdProcessing();
+    return rc;
 }
 
 #ifdef ZIGBEE_DIRECT_ACTIVATED

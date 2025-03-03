@@ -5,7 +5,7 @@
  ******************************************************************************
  * @attention
  *
- * Copyright (c) 2018-2024 STMicroelectronics.
+ * Copyright (c) 2018-2025 STMicroelectronics.
  * All rights reserved.
  *
  * This software is licensed under terms that can be found in the LICENSE file
@@ -97,6 +97,7 @@
 #define HCI_LE_TRANSMIT_POWER_REPORTING_SUBEVT_CODE                    0x21U
 #define HCI_LE_BIGINFO_ADVERTISING_REPORT_SUBEVT_CODE                  0x22U
 #define HCI_LE_SUBRATE_CHANGE_SUBEVT_CODE                              0x23U
+#define HCI_LE_CIS_ESTABLISHED_V2_SUBEVT_CODE                          0x2AU
 
 /* HCI error code */
 #define HCI_SUCCESS_ERR_CODE                                           0x00U

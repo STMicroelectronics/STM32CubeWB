@@ -602,8 +602,8 @@ static void Ble_Hci_Gap_Gatt_Init(void)
   * Write the BD Address
   */
   bd_address = Ble_GetBdAddress();
-  aci_hal_write_config_data(CONFIG_DATA_PUBADDR_OFFSET,
-                            CONFIG_DATA_PUBADDR_LEN,
+  aci_hal_write_config_data(CONFIG_DATA_PUBLIC_ADDRESS_OFFSET,
+                            CONFIG_DATA_PUBLIC_ADDRESS_LEN,
                             (uint8_t*) bd_address);
   
   /**

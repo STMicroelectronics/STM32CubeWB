@@ -645,19 +645,6 @@ void UTIL_SEQ_Idle(void)
   return;
 }
 
-/**
-  * @brief  This function is called by the scheduler each time an event
-  *         is pending.
-  *
-  * @param  evt_waited_bm : Event pending.
-  * @retval None
-  */
-void UTIL_SEQ_EvtIdle(UTIL_SEQ_bm_t task_id_bm, UTIL_SEQ_bm_t evt_waited_bm)
-{
-  UTIL_SEQ_Run(UTIL_SEQ_DEFAULT);
-  return;
-}
-
 void shci_notify_asynch_evt(void* pdata)
 {
   UTIL_SEQ_SetTask(1<<CFG_TASK_SYSTEM_HCI_ASYNCH_EVT_ID, CFG_SCH_PRIO_0);

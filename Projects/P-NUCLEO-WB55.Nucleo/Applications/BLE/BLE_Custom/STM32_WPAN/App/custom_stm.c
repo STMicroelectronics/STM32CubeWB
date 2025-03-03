@@ -461,11 +461,11 @@ void SVCCTL_InitCustomSvc(void)
    */
   max_attr_record = 9;
 
-  /* USER CODE BEGIN SVCCTL_InitService */
-  /* max_attr_record to be updated if descriptors have been added */
+  /* USER CODE BEGIN SVCCTL_InitService1 */
+    /* max_attr_record to be updated if descriptors have been added */
 
-  /* USER CODE END SVCCTL_InitService */
-
+  /* USER CODE END SVCCTL_InitService1 */
+  
   COPY_MY_P2P_SERVER_UUID(uuid.Char_UUID_128);
   ret = aci_gatt_add_service(UUID_TYPE_128,
                              (Service_UUID_t *) &uuid,
@@ -576,10 +576,10 @@ void SVCCTL_InitCustomSvc(void)
    */
   max_attr_record = 8;
 
-  /* USER CODE BEGIN SVCCTL_InitService */
+  /* USER CODE BEGIN SVCCTL_InitService2 */
   /* max_attr_record to be updated if descriptors have been added */
 
-  /* USER CODE END SVCCTL_InitService */
+  /* USER CODE END SVCCTL_InitService2 */
 
   uuid.Char_UUID_16 = 0x180d;
   ret = aci_gatt_add_service(UUID_TYPE_16,
@@ -990,48 +990,96 @@ tBleStatus Custom_STM_App_Update_Char_Ext(uint16_t Connection_Handle, Custom_STM
       /* USER CODE BEGIN Updated_Length_Service_1_Char_1*/
 
       /* USER CODE END Updated_Length_Service_1_Char_1*/
-	  Generic_STM_App_Update_Char_Ext(Connection_Handle, CustomContext.CustomMy_P2PsHdle, CustomContext.CustomLed_CHdle, SizeLed_C, pPayload);
+      ret = Generic_STM_App_Update_Char_Ext(Connection_Handle, CustomContext.CustomMy_P2PsHdle, CustomContext.CustomLed_CHdle, SizeLed_C, pPayload);
 
+      if (ret != BLE_STATUS_SUCCESS)
+      {
+        APP_DBG_MSG("  Fail   : Generic_STM_App_Update_Char_Ext command, result : 0x%x \n\r", ret);
+      }
+      else
+      {
+        APP_DBG_MSG("  Success: Generic_STM_App_Update_Char_Ext command\n\r");
+      }
       break;
 
     case CUSTOM_STM_SWITCH_C:
       /* USER CODE BEGIN Updated_Length_Service_1_Char_2*/
 
       /* USER CODE END Updated_Length_Service_1_Char_2*/
-	  Generic_STM_App_Update_Char_Ext(Connection_Handle, CustomContext.CustomMy_P2PsHdle, CustomContext.CustomSwitch_CHdle, SizeSwitch_C, pPayload);
+      ret = Generic_STM_App_Update_Char_Ext(Connection_Handle, CustomContext.CustomMy_P2PsHdle, CustomContext.CustomSwitch_CHdle, SizeSwitch_C, pPayload);
 
+      if (ret != BLE_STATUS_SUCCESS)
+      {
+        APP_DBG_MSG("  Fail   : Generic_STM_App_Update_Char_Ext command, result : 0x%x \n\r", ret);
+      }
+      else
+      {
+        APP_DBG_MSG("  Success: Generic_STM_App_Update_Char_Ext command\n\r");
+      }
       break;
 
     case CUSTOM_STM_LONG_C:
       /* USER CODE BEGIN Updated_Length_Service_1_Char_3*/
 
       /* USER CODE END Updated_Length_Service_1_Char_3*/
-	  Generic_STM_App_Update_Char_Ext(Connection_Handle, CustomContext.CustomMy_P2PsHdle, CustomContext.CustomLong_CHdle, SizeLong_C, pPayload);
+      ret = Generic_STM_App_Update_Char_Ext(Connection_Handle, CustomContext.CustomMy_P2PsHdle, CustomContext.CustomLong_CHdle, SizeLong_C, pPayload);
 
+      if (ret != BLE_STATUS_SUCCESS)
+      {
+        APP_DBG_MSG("  Fail   : Generic_STM_App_Update_Char_Ext command, result : 0x%x \n\r", ret);
+      }
+      else
+      {
+        APP_DBG_MSG("  Success: Generic_STM_App_Update_Char_Ext command\n\r");
+      }
       break;
 
     case CUSTOM_STM_HRS_M:
       /* USER CODE BEGIN Updated_Length_Service_2_Char_1*/
 
       /* USER CODE END Updated_Length_Service_2_Char_1*/
-	  Generic_STM_App_Update_Char_Ext(Connection_Handle, CustomContext.CustomMy_HrsHdle, CustomContext.CustomHrs_MHdle, SizeHrs_M, pPayload);
+      ret = Generic_STM_App_Update_Char_Ext(Connection_Handle, CustomContext.CustomMy_HrsHdle, CustomContext.CustomHrs_MHdle, SizeHrs_M, pPayload);
 
+      if (ret != BLE_STATUS_SUCCESS)
+      {
+        APP_DBG_MSG("  Fail   : Generic_STM_App_Update_Char_Ext command, result : 0x%x \n\r", ret);
+      }
+      else
+      {
+        APP_DBG_MSG("  Success: Generic_STM_App_Update_Char_Ext command\n\r");
+      }
       break;
 
     case CUSTOM_STM_HRS_SL:
       /* USER CODE BEGIN Updated_Length_Service_2_Char_2*/
 
       /* USER CODE END Updated_Length_Service_2_Char_2*/
-	  Generic_STM_App_Update_Char_Ext(Connection_Handle, CustomContext.CustomMy_HrsHdle, CustomContext.CustomHrs_SlHdle, SizeHrs_Sl, pPayload);
+      ret = Generic_STM_App_Update_Char_Ext(Connection_Handle, CustomContext.CustomMy_HrsHdle, CustomContext.CustomHrs_SlHdle, SizeHrs_Sl, pPayload);
 
+      if (ret != BLE_STATUS_SUCCESS)
+      {
+        APP_DBG_MSG("  Fail   : Generic_STM_App_Update_Char_Ext command, result : 0x%x \n\r", ret);
+      }
+      else
+      {
+        APP_DBG_MSG("  Success: Generic_STM_App_Update_Char_Ext command\n\r");
+      }
       break;
 
     case CUSTOM_STM_HRS_CTRLP:
       /* USER CODE BEGIN Updated_Length_Service_2_Char_3*/
 
       /* USER CODE END Updated_Length_Service_2_Char_3*/
-	  Generic_STM_App_Update_Char_Ext(Connection_Handle, CustomContext.CustomMy_HrsHdle, CustomContext.CustomHrs_CtrlpHdle, SizeHrs_Ctrlp, pPayload);
+      ret = Generic_STM_App_Update_Char_Ext(Connection_Handle, CustomContext.CustomMy_HrsHdle, CustomContext.CustomHrs_CtrlpHdle, SizeHrs_Ctrlp, pPayload);
 
+      if (ret != BLE_STATUS_SUCCESS)
+      {
+        APP_DBG_MSG("  Fail   : Generic_STM_App_Update_Char_Ext command, result : 0x%x \n\r", ret);
+      }
+      else
+      {
+        APP_DBG_MSG("  Success: Generic_STM_App_Update_Char_Ext command\n\r");
+      }
       break;
 
     default:

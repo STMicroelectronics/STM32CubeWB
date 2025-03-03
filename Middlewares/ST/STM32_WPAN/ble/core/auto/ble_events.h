@@ -5,7 +5,7 @@
  *****************************************************************************
  * @attention
  *
- * Copyright (c) 2018-2024 STMicroelectronics.
+ * Copyright (c) 2018-2025 STMicroelectronics.
  * All rights reserved.
  *
  * This software is licensed under terms that can be found in the LICENSE file
@@ -23,7 +23,7 @@
 
 #define HCI_EVENT_TABLE_SIZE 6
 #define HCI_LE_EVENT_TABLE_SIZE 16
-#define HCI_VS_EVENT_TABLE_SIZE 55
+#define HCI_VS_EVENT_TABLE_SIZE 54
 
 typedef struct
 {
@@ -136,36 +136,22 @@ void hci_read_remote_version_information_complete_event( uint8_t Status,
 
 /**
  * @brief HCI_HARDWARE_ERROR_EVENT
- * The Hardware Error event is used to indicate some implementation specific
- * type of hardware failure for the controller. This event is used to notify
- * the Host that a hardware failure has occurred in the Controller.
+ * This event is used to notify the Host that a hardware failure has occurred
+ * in the Controller.
+ * Refer to Annex for details on the possible values of Hardware_Code.
  * 
- * @param Hardware_Code Hardware Error Event code.
- *        Error code 0 is not used.
- *        Error code 1 is bluecore act2 error detected (only for STM32WB).
- *        Error code 2 is bluecore time overrun error detected (only for
- *        STM32WB).
- *        Error code 3 is internal FIFO full.
- *        Error code 4 is ISR delay error detected (only for STM32WB and only
- *        from cut 2.2).
- *        Error code 5 is LL internal error (only for STM32WBA).
- *        Values:
- *        - 0x01: event_act2 error
- *        - 0x02: event_time_overrun error
- *        - 0x03: event_fifo_full error
- *        - 0x04: event_isr_delay_error
- *        - 0x05: event_ll_error
+ * @param Hardware_Code Implementation-specific hardware code.
  * @return None
  */
 void hci_hardware_error_event( uint8_t Hardware_Code );
 
 /**
  * @brief HCI_NUMBER_OF_COMPLETED_PACKETS_EVENT
- * The Number Of Completed Packets event is used by the Controller to indicate
- * to the Host how many HCI Data Packets have been completed (transmitted or
- * flushed) for each Connection_Handle since the previous Number Of Completed
- * Packets event was sent to the Host. This means that the corresponding buffer
- * space has been freed in the Controller. Based on this information, and the
+ * This event is used by the Controller to indicate to the Host how many HCI
+ * Data Packets have been completed (transmitted or flushed) for each
+ * Connection_Handle since the previous Number Of Completed Packets event was
+ * sent to the Host. This means that the corresponding buffer space has been
+ * freed in the Controller. Based on this information, and the
  * HC_Total_Num_ACL_Data_Packets and HC_Total_Num_Synchronous_Data_Packets
  * return parameter of the Read_Buffer_Size command, the Host can determine for
  * which Connection_Handles the following HCI Data Packets should be sent to
@@ -546,14 +532,14 @@ void hci_le_directed_advertising_report_event( uint8_t Num_Reports,
  *        Values:
  *        - 0x01: The transmitter PHY for the connection is LE 1M
  *        - 0x02: The transmitter PHY for the connection is LE 2M
- *        - 0x03: The transmitter PHY for the connection is LE Coded (not
- *          supported on STM32WB)
+ *        - 0x03: The transmitter PHY for the connection is LE Coded [not
+ *          supported on STM32WB]
  * @param RX_PHY Receiver PHY in use.
  *        Values:
  *        - 0x01: The receiver PHY for the connection is LE 1M
  *        - 0x02: The receiver PHY for the connection is LE 2M
- *        - 0x03: The receiver PHY for the connection is LE Coded (not
- *          supported on STM32WB)
+ *        - 0x03: The receiver PHY for the connection is LE Coded [not
+ *          supported on STM32WB]
  * @return None
  */
 void hci_le_phy_update_complete_event( uint8_t Status,
@@ -810,15 +796,6 @@ void aci_gap_pass_key_req_event( uint16_t Connection_Handle );
 void aci_gap_authorization_req_event( uint16_t Connection_Handle );
 
 /**
- * @brief ACI_GAP_PERIPHERAL_SECURITY_INITIATED_EVENT
- * This event is generated when the Peripheral Security Request is successfully
- * sent to the Central.
- * 
- * @return None
- */
-void aci_gap_peripheral_security_initiated_event( void );
-
-/**
  * @brief ACI_GAP_BOND_LOST_EVENT
  * This event is generated when a pairing request is issued in response to a
  * Peripheral Security Request from a Central which has previously bonded with
@@ -826,9 +803,12 @@ void aci_gap_peripheral_security_initiated_event( void );
  * the command ACI_GAP_ALLOW_REBOND in order to allow the Peripheral to
  * continue the pairing process with the Central.
  * 
+ * @param Connection_Handle Handle of the connection where this event occurred.
+ *        Values:
+ *        - 0x0000 ... 0x0EFF
  * @return None
  */
-void aci_gap_bond_lost_event( void );
+void aci_gap_bond_lost_event( uint16_t Connection_Handle );
 
 /**
  * @brief ACI_GAP_PROC_COMPLETE_EVENT
@@ -1939,12 +1919,12 @@ void aci_l2cap_coc_tx_pool_available_event( void );
  *        - 0x05: Central connection
  *        - 0x06: TX test mode
  *        - 0x07: RX test mode
- *        - 0x09: Periodic advertising (only for STM32WBA)
- *        - 0x0A: Periodic sync (only for STM32WBA)
- *        - 0x0B: Iso broadcast (only for STM32WBA)
- *        - 0x0C: Iso sync (only for STM32WBA)
- *        - 0x0D: Iso peripheral connection (only for STM32WBA)
- *        - 0x0E: Iso central connection (only for STM32WBA)
+ *        - 0x09: Periodic advertising [only for STM32WBA]
+ *        - 0x0A: Periodic sync [only for STM32WBA]
+ *        - 0x0B: Iso broadcast [only for STM32WBA]
+ *        - 0x0C: Iso sync [only for STM32WBA]
+ *        - 0x0D: Iso peripheral connection [only for STM32WBA]
+ *        - 0x0E: Iso central connection [only for STM32WBA]
  * @param Next_State Incoming radio event
  *        Values:
  *        - 0x00: Idle
@@ -1954,23 +1934,23 @@ void aci_l2cap_coc_tx_pool_available_event( void );
  *        - 0x05: Central connection
  *        - 0x06: TX test mode
  *        - 0x07: RX test mode
- *        - 0x09: Periodic advertising (only for STM32WBA)
- *        - 0x0A: Periodic sync (only for STM32WBA)
- *        - 0x0B: Iso broadcast (only for STM32WBA)
- *        - 0x0C: Iso sync (only for STM32WBA)
- *        - 0x0D: Iso peripheral connection (only for STM32WBA)
- *        - 0x0E: Iso central connection (only for STM32WBA)
+ *        - 0x09: Periodic advertising [only for STM32WBA]
+ *        - 0x0A: Periodic sync [only for STM32WBA]
+ *        - 0x0B: Iso broadcast [only for STM32WBA]
+ *        - 0x0C: Iso sync [only for STM32WBA]
+ *        - 0x0D: Iso peripheral connection [only for STM32WBA]
+ *        - 0x0E: Iso central connection [only for STM32WBA]
  * @param Next_State_SysTime For STM32WB: 32-bit absolute current time
  *        expressed in internal time units;
  *        For STM32WBA: remaining time before next event expressed in
  *        microseconds.
- * @param Last_State_Slot Slot number of completed radio event (only for
- *        STM32WB)
+ * @param Last_State_Slot Slot number of completed radio event [only for
+ *        STM32WB]
  *        Values:
  *        - 0xFF: Idle
  *        - 0x00 ... 0x07
- * @param Next_State_Slot Slot number of incoming radio event (only for
- *        STM32WB)
+ * @param Next_State_Slot Slot number of incoming radio event [only for
+ *        STM32WB]
  *        Values:
  *        - 0xFF: Idle
  *        - 0x00 ... 0x07
@@ -2014,23 +1994,24 @@ void aci_hal_scan_req_report_event( uint8_t RSSI,
                                     const uint8_t* Peer_Address );
 
 /**
- * @brief ACI_HAL_FW_ERROR_EVENT
- * This event is generated to report firmware error information.
+ * @brief ACI_HAL_WARNING_EVENT
+ * This event is generated to report warning information.
  * 
- * @param FW_Error_Type FW Error type
+ * @param Warning_Type Warning type
  *        Values:
  *        - 0x01: L2CAP recombination failure
  *        - 0x02: GATT unexpected peer message
- *        - 0x03: NVM level warning
+ *        - 0x03: NVM almost full
  *        - 0x04: COC RX data length too large
- *        - 0x05: ECOC already assigned DCID
+ *        - 0x05: COC already assigned DCID
+ *        - 0x06: SMP unexpected LTK request
  * @param Data_Length Length of Data in octets
- * @param Data The error event info
+ * @param Data Debug information.
  * @return None
  */
-void aci_hal_fw_error_event( uint8_t FW_Error_Type,
-                             uint8_t Data_Length,
-                             const uint8_t* Data );
+void aci_hal_warning_event( uint8_t Warning_Type,
+                            uint8_t Data_Length,
+                            const uint8_t* Data );
 
 
 #endif /* BLE_EVENTS_H__ */

@@ -108,8 +108,6 @@ uint8_t hr_energy_reset = CUSTOM_STM_HRS_ENERGY_NOT_RESET;
 /* My_P2P_Server */
 static void Custom_Switch_c_Update_Char(void);
 static void Custom_Switch_c_Send_Notification(void);
-static void Custom_Long_c_Update_Char(void);
-static void Custom_Long_c_Send_Notification(void);
 /* My_Heart_Rate */
 static void Custom_Hrs_m_Update_Char(void);
 static void Custom_Hrs_m_Send_Notification(void);
@@ -357,7 +355,6 @@ void Custom_APP_Init(void)
 
   UTIL_SEQ_RegTask(1<< CFG_TASK_SW1_BUTTON_PUSHED_ID, UTIL_SEQ_RFU, Custom_Switch_c_Send_Notification);
   UTIL_SEQ_RegTask(1<< CFG_TASK_MEAS_REQ_ID, UTIL_SEQ_RFU, Custom_Hrs_m_Send_Notification);
-  UTIL_SEQ_RegTask(1<< CFG_TASK_SW2_BUTTON_PUSHED_ID, UTIL_SEQ_RFU, Custom_Long_c_Send_Notification);
   
   Custom_App_Context.Switch_c_Notification_Status = TOGGLE_OFF;   
   Custom_App_Context.SW1_Status = 0;
@@ -549,64 +546,6 @@ void Custom_Switch_c_Send_Notification(void) /* Property Notification */
   /* USER CODE BEGIN Switch_c_NS_Last*/
 
   /* USER CODE END Switch_c_NS_Last*/
-
-  return;
-}
-
-__USED void Custom_Long_c_Update_Char(void) /* Property Read */
-{
-  uint8_t updateflag = 0;
-
-  /* USER CODE BEGIN Long_c_UC_1*/
-
-  /* USER CODE END Long_c_UC_1*/
-
-  if (updateflag != 0)
-  {
-	Custom_STM_App_Update_Char_Ext(Connection_Handle, CUSTOM_STM_LONG_C, (uint8_t *)UpdateCharData);
-  }
-
-  /* USER CODE BEGIN Long_c_UC_Last*/
-
-  /* USER CODE END Long_c_UC_Last*/
-  return;
-}
-
-void Custom_Long_c_Send_Notification(void) /* Property Notification */
-{
-  uint8_t updateflag = 0;
-
-  /* USER CODE BEGIN Long_c_NS_1*/
-  uint16_t i;
-  
-  if (Custom_App_Context.Long_c_Notification_Status == TOGGLE_ON)
-  {
-    updateflag = 1;
-    
-    for (i=0;i<SizeLong_C;i++)
-    {
-      NotifyCharData[i] = 0xAA;
-    }
-    
-    if (Custom_App_Context.SW2_Status == 0)
-    {
-      Custom_App_Context.SW2_Status = 1;
-    }
-    else
-    {
-      Custom_App_Context.SW2_Status = 0;
-    }
-  }
-  /* USER CODE END Long_c_NS_1*/
-
-  if (updateflag != 0)
-  {
-	Custom_STM_App_Update_Char_Ext(Connection_Handle, CUSTOM_STM_LONG_C, (uint8_t *)NotifyCharData);
-  }
-
-  /* USER CODE BEGIN Long_c_NS_Last*/
-
-  /* USER CODE END Long_c_NS_Last*/
 
   return;
 }

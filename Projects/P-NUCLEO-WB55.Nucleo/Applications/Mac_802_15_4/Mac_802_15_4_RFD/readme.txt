@@ -24,7 +24,7 @@
 How to use MAC 802.15.4 Association and Data exchange.
 
 This application requires two STM32WB55xx-Nucleo boards. One device will act as 
-802.15.4 coordinator ensuring association response and network establishment. 
+802.15.4 FFD - Coordinator ensuring association response and network establishment. 
 The other device will act as a MAC 802.15.4 RFD - Node. The Node request 
 association on startup and send data to the coordinator. 
 
@@ -102,8 +102,8 @@ Wireless Coprocessor binary.
 Minimum requirements for the demo:
 - 1 STM32WB55xx-Nucleo board in MAC 802.15.4 RFD mode 
 using current generated binary.
-    ( This device will be referred as  NODE )
-- 1 STM32WB55xx-Nucleo board in MAC 802.15.4 Node - FFD 
+    ( This device will be referred as NODE )
+- 1 STM32WB55xx-Nucleo board in MAC 802.15.4 FFD - Coordinator
 (see MAC 802.14.4 FFD example)
     ( This device will be referred as COORDINATOR )
 
@@ -139,7 +139,7 @@ By default, after a reset, both board starts. Coordinator must be started firstl
 to the node association request.
 
 This MAC 802.15.4 example is to demonstrate Point-to-Point communication using MAC components between 
-a RFD (ie.: the COORDINATOR) and an RFD (ie.: the NODE). 
+a FFD (ie.: the COORDINATOR) and an RFD (ie.: the NODE). 
 
 Upon COORDINATOR start, the device initializes the MAC 802.15.4 and associated resources in non-beaconned
 enable mode. 

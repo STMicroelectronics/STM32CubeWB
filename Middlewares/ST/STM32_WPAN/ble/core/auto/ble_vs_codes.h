@@ -5,7 +5,7 @@
  *****************************************************************************
  * @attention
  *
- * Copyright (c) 2018-2024 STMicroelectronics.
+ * Copyright (c) 2018-2025 STMicroelectronics.
  * All rights reserved.
  *
  * This software is licensed under terms that can be found in the LICENSE file
@@ -33,9 +33,6 @@
 
 /* ACI_GAP_AUTHORIZATION_REQ_EVENT code */
 #define ACI_GAP_AUTHORIZATION_REQ_VSEVT_CODE              0x0403U
-
-/* ACI_GAP_PERIPHERAL_SECURITY_INITIATED_EVENT code */
-#define ACI_GAP_PERIPHERAL_SECURITY_INITIATED_VSEVT_CODE  0x0404U
 
 /* ACI_GAP_BOND_LOST_EVENT code */
 #define ACI_GAP_BOND_LOST_VSEVT_CODE                      0x0405U
@@ -193,8 +190,8 @@
 /* ACI_HAL_SCAN_REQ_REPORT_EVENT code */
 #define ACI_HAL_SCAN_REQ_REPORT_VSEVT_CODE                0x0005U
 
-/* ACI_HAL_FW_ERROR_EVENT code */
-#define ACI_HAL_FW_ERROR_VSEVT_CODE                       0x0006U
+/* ACI_HAL_WARNING_EVENT code */
+#define ACI_HAL_WARNING_VSEVT_CODE                        0x0006U
 
 
 #endif /* BLE_VS_CODES_H__ */

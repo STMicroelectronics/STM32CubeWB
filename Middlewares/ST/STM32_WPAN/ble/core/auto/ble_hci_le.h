@@ -1,11 +1,11 @@
 /*****************************************************************************
  * @file    ble_hci_le.h
- * @brief   STM32WB BLE API (hci_le)
+ * @brief   STM32WB BLE API (HCI_LE)
  *          Auto-generated file: do not edit!
  *****************************************************************************
  * @attention
  *
- * Copyright (c) 2018-2024 STMicroelectronics.
+ * Copyright (c) 2018-2025 STMicroelectronics.
  * All rights reserved.
  *
  * This software is licensed under terms that can be found in the LICENSE file
@@ -79,8 +79,8 @@ tBleStatus hci_read_remote_version_information( uint16_t Connection_Handle );
  *        - 0x0000000000000080: Encryption Change Event
  *        - 0x0000000000000800: Read Remote Version Information Complete Event
  *        - 0x0000000000008000: Hardware Error Event
- *        - 0x0000000002000000: Data Buffer Overflow Event (not supported on
- *          STM32WB)
+ *        - 0x0000000002000000: Data Buffer Overflow Event [not supported on
+ *          STM32WB]
  *        - 0x0000800000000000: Encryption Key Refresh Complete Event
  *        - 0x2000000000000000: LE Meta-Event
  * @return Value indicating success or error code.
@@ -320,14 +320,10 @@ tBleStatus hci_read_local_supported_features( uint8_t* LMP_Features );
 
 /**
  * @brief HCI_READ_BD_ADDR
- * On an LE Controller, this command shall read the Public Device Address as
- * defined in [Vol 6] Part B, Section 1.3, Device Address. If this Controller
- * does not have a Public Device Address, the value 0x000000000000 shall be
- * returned.
- * On an LE Controller, the public address shall be the same as the BD_ADDR.
+ * On an LE Controller, this command shall read the Public Device Address.
  * See Bluetooth spec. v.6.0 [Vol 4, Part E, 7.4.6].
  * 
- * @param[out] BD_ADDR BD_ADDR ( Bluetooth Device Address) of the Device.
+ * @param[out] BD_ADDR BD_ADDR (Bluetooth Device Address) of the device.
  * @return Value indicating success or error code.
  */
 tBleStatus hci_read_bd_addr( uint8_t* BD_ADDR );
@@ -416,6 +412,7 @@ tBleStatus hci_read_rssi( uint16_t Connection_Handle,
  *          event
  *        - 0x0000008000000000: LE Periodic Advertising Response Report event
  *        - 0x0000010000000000: LE Enhanced Connection Complete event [v2]
+ *        - 0x0000020000000000: LE CIS Established event [v2]
  *        - 0x0000040000000000: LE Read All Remote Features Complete event
  *        - 0x0000080000000000: LE CS Read Remote Supported Capabilities
  *          Complete event
@@ -926,6 +923,7 @@ tBleStatus hci_le_clear_filter_accept_list( void );
  *        Values:
  *        - 0x00: Public Device Address
  *        - 0x01: Random Device Address
+ *        - 0xFF: Devices sending anonymous advertisements
  * @param Address Public Device Address or Random Device Address.
  * @return Value indicating success or error code.
  */
@@ -950,6 +948,7 @@ tBleStatus hci_le_add_device_to_filter_accept_list( uint8_t Address_Type,
  *        Values:
  *        - 0x00: Public Device Address
  *        - 0x01: Random Device Address
+ *        - 0xFF: Devices sending anonymous advertisements
  * @param Address Public Device Address or Random Device Address.
  * @return Value indicating success or error code.
  */
@@ -1212,10 +1211,7 @@ tBleStatus hci_le_receiver_test( uint8_t RX_Frequency );
 /**
  * @brief HCI_LE_TRANSMITTER_TEST
  * This command is used to start a test where the DUT generates test reference
- * packets at a fixed interval. The Controller shall transmit at maximum power.
- * An LE Controller supporting the LE_Transmitter_Test command shall support
- * Packet_Payload values 0x00, 0x01 and 0x02. An LE Controller may support
- * other values of Packet_Payload.
+ * packets at a fixed interval.
  * See Bluetooth spec. v.6.0 [Vol 4, Part E, 7.8.29].
  * 
  * @param TX_Frequency N = (F - 2402) / 2
@@ -1245,7 +1241,7 @@ tBleStatus hci_le_transmitter_test( uint8_t TX_Frequency,
 /**
  * @brief HCI_LE_TEST_END
  * This command is used to stop any test which is in progress. The
- * Number_Of_Packets for a transmitter test shall be reported as 0x0000. The
+ * Number_Of_Packets for a transmitter test is reported as 0x0000. The
  * Number_Of_Packets is an unsigned number and contains the number of received
  * packets.
  * See Bluetooth spec. v.6.0 [Vol 4, Part E, 7.8.30].
@@ -1578,14 +1574,14 @@ tBleStatus hci_le_read_maximum_data_length( uint16_t* supportedMaxTxOctets,
  *        Values:
  *        - 0x01: The transmitter PHY for the connection is LE 1M
  *        - 0x02: The transmitter PHY for the connection is LE 2M
- *        - 0x03: The transmitter PHY for the connection is LE Coded (not
- *          supported on STM32WB)
+ *        - 0x03: The transmitter PHY for the connection is LE Coded [not
+ *          supported on STM32WB]
  * @param[out] RX_PHY Receiver PHY in use.
  *        Values:
  *        - 0x01: The receiver PHY for the connection is LE 1M
  *        - 0x02: The receiver PHY for the connection is LE 2M
- *        - 0x03: The receiver PHY for the connection is LE Coded (not
- *          supported on STM32WB)
+ *        - 0x03: The receiver PHY for the connection is LE Coded [not
+ *          supported on STM32WB]
  * @return Value indicating success or error code.
  */
 tBleStatus hci_le_read_phy( uint16_t Connection_Handle,
@@ -1612,15 +1608,28 @@ tBleStatus hci_le_read_phy( uint16_t Connection_Handle,
  * at least one bit shall be set to 1.
  * See Bluetooth spec. v.6.0 [Vol 4, Part E, 7.8.48].
  * 
- * @param ALL_PHYS Host preferences for TX PHY and RX PHY
- *        Values:
- *        - 0x00 ... 0x03
- * @param TX_PHYS Host preferences for TX PHY (no LE coded support on STM32WB)
- *        Values:
- *        - 0x00 ... 0x03
- * @param RX_PHYS Host preferences for RX PHY (no LE coded support on STM32WB)
- *        Values:
- *        - 0x00 ... 0x03
+ * @param ALL_PHYS Preferences for TX PHY and RX PHY.
+ *        Flags:
+ *        - 0x01: The Host has no preference among the transmitter PHYs
+ *          supported by the Controller
+ *        - 0x02: The Host has no preference among the receiver PHYs supported
+ *          by the Controller
+ * @param TX_PHYS Preferences for TX PHY.
+ *        Flags:
+ *        - 0x01: The Host prefers to use the LE 1M transmitter PHY (possibly
+ *          among others)
+ *        - 0x02: The Host prefers to use the LE 2M transmitter PHY (possibly
+ *          among others)
+ *        - 0x04: The Host prefers to use the LE Coded transmitter PHY
+ *          (possibly among others) [not supported on STM32WB]
+ * @param RX_PHYS Preferences for RX PHY.
+ *        Flags:
+ *        - 0x01: The Host prefers to use the LE 1M receiver PHY (possibly
+ *          among others)
+ *        - 0x02: The Host prefers to use the LE 2M receiver PHY (possibly
+ *          among others)
+ *        - 0x04: The Host prefers to use the LE Coded receiver PHY (possibly
+ *          among others) [not supported on STM32WB]
  * @return Value indicating success or error code.
  */
 tBleStatus hci_le_set_default_phy( uint8_t ALL_PHYS,
@@ -1663,17 +1672,30 @@ tBleStatus hci_le_set_default_phy( uint8_t ALL_PHYS,
  * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
- * @param ALL_PHYS Host preferences for TX PHY and RX PHY
- *        Values:
- *        - 0x00 ... 0x03
- * @param TX_PHYS Host preferences for TX PHY (no LE coded support on STM32WB)
- *        Values:
- *        - 0x00 ... 0x03
- * @param RX_PHYS Host preferences for RX PHY (no LE coded support on STM32WB)
- *        Values:
- *        - 0x00 ... 0x03
- * @param PHY_options Bit field used to specify options for PHYs (not used on
- *        STM32WB)
+ * @param ALL_PHYS Preferences for TX PHY and RX PHY.
+ *        Flags:
+ *        - 0x01: The Host has no preference among the transmitter PHYs
+ *          supported by the Controller
+ *        - 0x02: The Host has no preference among the receiver PHYs supported
+ *          by the Controller
+ * @param TX_PHYS Preferences for TX PHY.
+ *        Flags:
+ *        - 0x01: The Host prefers to use the LE 1M transmitter PHY (possibly
+ *          among others)
+ *        - 0x02: The Host prefers to use the LE 2M transmitter PHY (possibly
+ *          among others)
+ *        - 0x04: The Host prefers to use the LE Coded transmitter PHY
+ *          (possibly among others) [not supported on STM32WB]
+ * @param RX_PHYS Preferences for RX PHY.
+ *        Flags:
+ *        - 0x01: The Host prefers to use the LE 1M receiver PHY (possibly
+ *          among others)
+ *        - 0x02: The Host prefers to use the LE 2M receiver PHY (possibly
+ *          among others)
+ *        - 0x04: The Host prefers to use the LE Coded receiver PHY (possibly
+ *          among others) [not supported on STM32WB]
+ * @param PHY_options Bit field used to specify options for PHYs [not used on
+ *        STM32WB].
  *        Values:
  *        - 0x0000: the Host has no preferred coding when transmitting on the
  *          LE Coded PHY
@@ -1704,8 +1726,8 @@ tBleStatus hci_le_set_phy( uint16_t Connection_Handle,
  *        Values:
  *        - 0x01: Receiver set to use the LE 1M PHY
  *        - 0x02: Receiver set to use the LE 2M PHY
- *        - 0x03: Receiver set to use the LE Coded PHY (not supported on
- *          STM32WB)
+ *        - 0x03: Receiver set to use the LE Coded PHY [not supported on
+ *          STM32WB]
  * @param Modulation_Index Modulation index capability of the transmitter
  *        Values:
  *        - 0x00: Assume transmitter will have a standard modulation index
@@ -1719,11 +1741,7 @@ tBleStatus hci_le_receiver_test_v2( uint8_t RX_Frequency,
 /**
  * @brief HCI_LE_TRANSMITTER_TEST_V2
  * This command is used to start a test where the DUT generates test reference
- * packets at a fixed interval. The Controller shall transmit at maximum power.
- * An LE Controller supporting this command shall support Packet_Payload values
- * 0x00, 0x01 and 0x02. An LE Controller supporting the LE Coded PHY shall also
- * support Packet_Payload value 0x04 (not supported by STM32WB). An LE
- * Controller may support other values of Packet_Payload.
+ * packets at a fixed interval.
  * See Bluetooth spec. v.6.0 [Vol 4, Part E, 7.8.29].
  * 
  * @param TX_Frequency N = (F - 2402) / 2
@@ -1749,9 +1767,9 @@ tBleStatus hci_le_receiver_test_v2( uint8_t RX_Frequency,
  *        - 0x01: Transmitter set to use the LE 1M PHY
  *        - 0x02: Transmitter set to use the LE 2M PHY
  *        - 0x03: Transmitter set to use the LE Coded PHY with S=8 data coding
- *          (not supported on STM32WB)
+ *          [not supported on STM32WB]
  *        - 0x04: Transmitter set to use the LE Coded PHY with S=2 data coding
- *          (not supported on STM32WB)
+ *          [not supported on STM32WB]
  * @return Value indicating success or error code.
  */
 tBleStatus hci_le_transmitter_test_v2( uint8_t TX_Frequency,
@@ -1836,8 +1854,8 @@ tBleStatus hci_le_set_advertising_set_random_address( uint8_t Advertising_Handle
  * @param Primary_Adv_PHY Primary advertising PHY.
  *        Values:
  *        - 0x01: Primary advertisement PHY is LE 1M
- *        - 0x03: Primary advertisement PHY is LE Coded (not supported on
- *          STM32WB)
+ *        - 0x03: Primary advertisement PHY is LE Coded [not supported on
+ *          STM32WB]
  * @param Secondary_Adv_Max_Skip Secondary advertising maximum skip.
  *        Values:
  *        - 0x00: AUX_ADV_IND shall be sent prior to the next advertising event
@@ -1848,8 +1866,8 @@ tBleStatus hci_le_set_advertising_set_random_address( uint8_t Advertising_Handle
  *        Values:
  *        - 0x01: Secondary advertisement PHY is LE 1M
  *        - 0x02: Secondary advertisement PHY is LE 2M
- *        - 0x03: Secondary advertisement PHY is LE Coded (not supported on
- *          STM32WB)
+ *        - 0x03: Secondary advertisement PHY is LE Coded [not supported on
+ *          STM32WB]
  * @param Adv_SID Value of the Advertising SID subfield in the ADI field of the
  *        PDU.
  *        Values:
@@ -2051,8 +2069,8 @@ tBleStatus hci_le_clear_advertising_sets( void );
  * @param Scanning_PHYs Scan PHYs.
  *        Flags:
  *        - 0x01: Scan advertisements on the LE 1M PHY
- *        - 0x04: Scan advertisements on the LE Coded PHY (not supported on
- *          STM32WB)
+ *        - 0x04: Scan advertisements on the LE Coded PHY [not supported on
+ *          STM32WB]
  * @param Scan_Param_Phy See @ref Scan_Param_Phy_t
  * @return Value indicating success or error code.
  */
@@ -2126,8 +2144,8 @@ tBleStatus hci_le_set_extended_scan_enable( uint8_t Enable,
  *        - 0x01: Scan connectable advertisements on the LE 1M PHY- Connection
  *          parameters for the LE 1M PHY
  *        - 0x02: Connection parameters for the LE 2M PHY
- *        - 0x04: Scan connectable advertisements on the LE Coded PHY (not
- *          supported on STM32WB)
+ *        - 0x04: Scan connectable advertisements on the LE Coded PHY [not
+ *          supported on STM32WB]
  * @param Init_Param_Phy See @ref Init_Param_Phy_t
  * @return Value indicating success or error code.
  */

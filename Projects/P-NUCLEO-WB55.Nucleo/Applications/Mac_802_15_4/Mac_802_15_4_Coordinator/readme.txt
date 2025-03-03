@@ -25,7 +25,7 @@ How to use MAC 802.15.4 Association and Data exchange.
 
 This application requires two STM32WB55xx-Nucleo boards. One device will act as 
 802.15.4 coordinator ensuring association response and network establishment. 
-The other device will act as a MAC 802.15.4 RFD - Node. The Node request 
+The other device will act as a MAC 802.15.4 Node. The Node request 
 association on startup and send data to the coordinator. 
 
 Below example implements the Coordinator Devices.
@@ -115,7 +115,7 @@ In order to make the program work, you must do the following:
          - The example run on Reset
  
  NODE :
-         - Refers to  MAC 802.14.4 RFD example to build 
+         - Refers to  MAC 802.14.4 NODE example to build 
            and load generated image
      
 To get the traces in real time, you can connect an HyperTerminal to the LPUART (CN10-35) Com Port.

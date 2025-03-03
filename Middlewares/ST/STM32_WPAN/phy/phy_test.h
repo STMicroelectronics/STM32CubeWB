@@ -22,16 +22,17 @@
 
 uint8_t phyTestMode(uint8_t enableDisable);
 uint8_t phyTestSetChannel(uint8_t channel_nb);
+uint8_t phyTestSetTxPower(int8_t tx_power);
 
 uint8_t phyTestContinuousTxStart(void);
 uint8_t phyTestContinuousTxStop(void);
 
-uint8_t phyTestContinuousWaveStart(uint16_t frq_mhz);
-uint8_t phyTestContinuousWaveStop(void);
+uint8_t phyTestRxStart(void);
+uint32_t phyTestRxStop(void);
 
 uint8_t phyTestTxStart(uint32_t nb_frames, uint8_t size_of_frame, uint8_t *tx_frame);
 
-uint8_t phyTestRxStart(void);
-uint32_t phyTestRxStop(void);
+uint8_t phyTestContinuousWaveStart(uint16_t frq_mhz);
+uint8_t phyTestContinuousWaveStop(void);
 
 #endif // PHY_TEST_H_

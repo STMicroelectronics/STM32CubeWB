@@ -949,6 +949,13 @@ void TL_THREAD_NotReceived( TL_EvtPacket_t * Notbuffer )
   */
 void Pre_OtCmdProcessing(void)
 {
+  /* OT command not be sent in interrupt context */
+  if (__get_IPSR() != 0U)
+  {
+    /* 'assert' endless loop */
+    for( ; ; );
+  }
+ 
   osMutexAcquire(MtxOtCmdId, osWaitForever);
 }
 

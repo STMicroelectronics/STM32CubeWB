@@ -86,42 +86,21 @@ uint8_t phyTestSetChannel(uint8_t channel_nb)
 }
 
 /**
- * @brief  PHY test continuous Tx start on the current channel
+ * @brief  PHY test set Tx power
  *
- * @param  none
+ * @param  tx_power: transmission power to set in dBm, in the range [-21, +6]
  * @retval 0 if successful, 2 if bad argument
  */
-uint8_t phyTestContinuousTxStart(void)
+uint8_t phyTestSetTxPower(int8_t tx_power)
 {
   Mac_802_15_4_PreCmdProcessing();
   /* prepare buffer */
   TL_CmdPacket_t* p_mac_req = MAC_802_15_4_GetCmdBuffer();
   
-  utils_mac_set_cmdCode(MSG_M4TOM0_PHY_CONTINUOUS_TX_START);
+  utils_mac_set_cmdCode(MSG_M4TOM0_PHY_SET_TX_POWER);
   
-  p_mac_req->cmdserial.cmd.plen=0;
-  
-  Mac_802_15_4_CmdTransfer();
-  
-  TL_Evt_t* p_mac_rsp_evt = MAC_802_15_4_GetRspPayEvt();
-  return (uint8_t)p_mac_rsp_evt->payload[0];
-}
-
-/**
- * @brief  PHY test continuous Tx stop
- *
- * @param  None
- * @retval 0 if successful, 0xFF otherwise
- */
-uint8_t phyTestContinuousTxStop(void)
-{
-  Mac_802_15_4_PreCmdProcessing();
-  /* prepare buffer */
-  TL_CmdPacket_t* p_mac_req = MAC_802_15_4_GetCmdBuffer();
-  
-  utils_mac_set_cmdCode(MSG_M4TOM0_PHY_CONTINUOUS_TX_STOP);
-  
-  p_mac_req->cmdserial.cmd.plen=0;
+  p_mac_req->cmdserial.cmd.plen=1;
+  p_mac_req->cmdserial.cmd.payload[0] = (uint32_t)tx_power;
   
   Mac_802_15_4_CmdTransfer();
   
@@ -176,44 +155,6 @@ uint8_t phyTestContinuousWaveStop(void)
 }
 
 /**
- * @brief  PHY test Tx start
- *
- * @param  nb_frames: number of frames to send
- * @param  size_of_frame: number of bytes in the frame
- * @param  tx_frame: the frame to transmit
- * @retval 0 if successful, 0xFF otherwise
- */
-uint8_t phyTestTxStart(uint32_t nb_frames, uint8_t size_of_frame, uint8_t *tx_frame)
-{   
-  if( size_of_frame > (MAX_CMD_BUFFER_SIZE-1) )
-  {
-    return 0xFF;
-  }
-  else
-  {
-    Mac_802_15_4_PreCmdProcessing();
-    /* prepare buffer */
-    TL_CmdPacket_t* p_mac_req = MAC_802_15_4_GetCmdBuffer();
-    
-    utils_mac_set_cmdCode(MSG_M4TOM0_PHY_TX_START);
-    
-    p_mac_req->cmdserial.cmd.plen=1;
-    p_mac_req->cmdserial.cmd.payload[0] = nb_frames;
-    
-    while( p_mac_req->cmdserial.cmd.plen != (size_of_frame+1) )
-    {
-      p_mac_req->cmdserial.cmd.payload[p_mac_req->cmdserial.cmd.plen] = tx_frame[p_mac_req->cmdserial.cmd.plen-1];
-      p_mac_req->cmdserial.cmd.plen++;
-    }
-    
-    Mac_802_15_4_CmdTransfer();
-    
-    TL_Evt_t* p_mac_rsp_evt = MAC_802_15_4_GetRspPayEvt();
-    return (uint8_t)p_mac_rsp_evt->payload[0];
-  }
-}
-
-/**
  * @brief  PHY test Rx start
  *
  * @param  None
@@ -255,4 +196,86 @@ uint32_t phyTestRxStop(void)
   
   TL_Evt_t* p_mac_rsp_evt = MAC_802_15_4_GetRspPayEvt();
   return (uint32_t)((uint32_t)p_mac_rsp_evt->payload[0] + (uint32_t)(p_mac_rsp_evt->payload[1] << 8));
+}
+
+/**
+ * @brief  PHY test Tx start
+ *
+ * @param  nb_frames: number of frames to send
+ * @param  size_of_frame: number of bytes in the frame
+ * @param  tx_frame: the frame to transmit
+ * @retval 0 if successful, 0xFF otherwise
+ */
+uint8_t phyTestTxStart(uint32_t nb_frames, uint8_t size_of_frame, uint8_t *tx_frame)
+{   
+  if( size_of_frame > (MAX_CMD_BUFFER_SIZE-1) )
+  {
+    return 0xFF;
+  }
+  else
+  {
+    Mac_802_15_4_PreCmdProcessing();
+    /* prepare buffer */
+    TL_CmdPacket_t* p_mac_req = MAC_802_15_4_GetCmdBuffer();
+    
+    utils_mac_set_cmdCode(MSG_M4TOM0_PHY_TX_START);
+    
+    p_mac_req->cmdserial.cmd.plen=1;
+    p_mac_req->cmdserial.cmd.payload[0] = nb_frames;
+    
+    while( p_mac_req->cmdserial.cmd.plen != (size_of_frame+1) )
+    {
+      p_mac_req->cmdserial.cmd.payload[p_mac_req->cmdserial.cmd.plen] = tx_frame[p_mac_req->cmdserial.cmd.plen-1];
+      p_mac_req->cmdserial.cmd.plen++;
+    }
+    
+    Mac_802_15_4_CmdTransfer();
+    
+    TL_Evt_t* p_mac_rsp_evt = MAC_802_15_4_GetRspPayEvt();
+    return (uint8_t)p_mac_rsp_evt->payload[0];
+  }
+}
+
+/**
+ * @brief  PHY test continuous Tx start on the current channel
+ *
+ * @param  none
+ * @retval 0 if successful, 2 if bad argument
+ */
+uint8_t phyTestContinuousTxStart(void)
+{
+  Mac_802_15_4_PreCmdProcessing();
+  /* prepare buffer */
+  TL_CmdPacket_t* p_mac_req = MAC_802_15_4_GetCmdBuffer();
+  
+  utils_mac_set_cmdCode(MSG_M4TOM0_PHY_CONTINUOUS_TX_START);
+  
+  p_mac_req->cmdserial.cmd.plen=0;
+  
+  Mac_802_15_4_CmdTransfer();
+  
+  TL_Evt_t* p_mac_rsp_evt = MAC_802_15_4_GetRspPayEvt();
+  return (uint8_t)p_mac_rsp_evt->payload[0];
+}
+
+/**
+ * @brief  PHY test continuous Tx stop
+ *
+ * @param  None
+ * @retval 0 if successful, 0xFF otherwise
+ */
+uint8_t phyTestContinuousTxStop(void)
+{
+  Mac_802_15_4_PreCmdProcessing();
+  /* prepare buffer */
+  TL_CmdPacket_t* p_mac_req = MAC_802_15_4_GetCmdBuffer();
+  
+  utils_mac_set_cmdCode(MSG_M4TOM0_PHY_CONTINUOUS_TX_STOP);
+  
+  p_mac_req->cmdserial.cmd.plen=0;
+  
+  Mac_802_15_4_CmdTransfer();
+  
+  TL_Evt_t* p_mac_rsp_evt = MAC_802_15_4_GetRspPayEvt();
+  return (uint8_t)p_mac_rsp_evt->payload[0];
 }

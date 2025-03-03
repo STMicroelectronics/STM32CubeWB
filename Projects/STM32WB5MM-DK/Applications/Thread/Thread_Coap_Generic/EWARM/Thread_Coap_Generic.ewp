@@ -74,7 +74,7 @@
                 </option>
                 <option>
                     <name>OGChipSelectEditMenu</name>
-                    <state>STM32WB55RG	ST STM32WB55RG</state>
+                    <state>STM32WB5MMG	ST STM32WB5MMG</state>
                 </option>
                 <option>
                     <name>GenLowLevelInterface</name>
@@ -82,7 +82,7 @@
                 </option>
                 <option>
                     <name>GEndianModeBE</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>OGBufferedTerminalOutput</name>
@@ -99,7 +99,7 @@
                 <option>
                     <name>GBECoreSlave</name>
                     <version>31</version>
-                    <state>0</state>
+                    <state>39</state>
                 </option>
                 <option>
                     <name>OGUseCmsis</name>
@@ -120,7 +120,7 @@
                 </option>
                 <option>
                     <name>GFPUDeviceSlave</name>
-                    <state>STM32WB55RG	ST STM32WB55RG</state>
+                    <state>STM32WB5MMG	ST STM32WB5MMG</state>
                 </option>
                 <option>
                     <name>FPU2</name>
@@ -180,7 +180,7 @@
                 </option>
                 <option>
                     <name>DSPExtension</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>TrustZone</name>

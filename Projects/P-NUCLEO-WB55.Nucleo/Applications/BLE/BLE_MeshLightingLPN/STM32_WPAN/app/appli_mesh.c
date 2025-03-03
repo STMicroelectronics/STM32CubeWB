@@ -941,7 +941,7 @@ int Appli_CheckBdMacAddr(void)
 #endif
   
 #ifdef INTERNAL_UNIQUE_NUMBER_MAC
-  status = aci_hal_read_config_data(CONFIG_DATA_PUBADDR_OFFSET, 
+  status = aci_hal_read_config_data(CONFIG_DATA_PUBLIC_ADDRESS_OFFSET, 
                                     &bdaddr[7],
                                     bdaddr); 
   if(status != BLE_STATUS_SUCCESS) 

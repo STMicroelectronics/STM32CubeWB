@@ -4,7 +4,7 @@
     <title>_htmresc\ReleaseNotes.html</title>
   </head>
   <body style="font-size: 10pt; font-family: Verdana;">
-    <h3 style="color: blue; text-decoration: underline;">STM32CubeWB Firmware Package V1.21.0 / 30-October-2024</h3>
+    <h3 style="color: blue; text-decoration: underline;">STM32CubeWB Firmware Package V1.22.0 / 05-February-2025</h3>
     <div style="margin-left: 18pt;">
       <p>
         <b><u>Main Changes</u></b>
@@ -16,34 +16,32 @@
         <li>
           <strong>BLE</strong> updates
           <ul>
-            <li> Update to latest TCRL-2024.1.</li>
-            <li> Several bug fixes on Copro side.</li>
+            <li> TCRL-2024-2 compliancy.</li>
           </ul>
         </li>
         <li>
           <strong>MAC</strong> updates
           <ul>
-            <li> Several minor bug fixes :  Remove wrong Rx buffer allocation notification, Panid conflict management regression on 1.19 release.</li>
+            <li> Improve memory management to prevent memory leaks on overloaded networks. </li>
+            <li> Review outdated indirect data before releasing buffers sooner.</li>
+            <li> Improve MAC state machine. </li>
           </ul>
         </li>
         <li>
           <strong>Thread</strong> updates
           <ul>
-            <li> OpenThread update to SHA-1: 4a0d6b7b6495a1e4e2e03ab7a4f8baa064df4a6e (June 11th 2024).</li>
+            <li> Assert added in the case of OT command called in ISR context. (FreeRTOS context only)</li>
           </ul>
         </li>
         <li>
           <strong>Zigbee</strong> updates
           <ul>
-            <li> The default number of routing tables have been updated. Refer to the wiki page for more details :</li>
-            <ul>
-              <li> https://wiki.st.com/stm32mcu/wiki/Connectivity:STM32WB_Zigbee_memory_requirements.</li>
-            </ul>
+            <li> Fixing corner case issue related to RoutingRecord for Router and related to ZbStartupPersist and ZbStartupRejoin for EndDevice.</li>
           </ul>
         </li>
       </p>
       <p>
-        <b>Maintenance Release for HAL/LL Drivers and Projects updates</b>
+        <b>Maintenance Release for HAL/LL Drivers updates</b>
       </p>
       <p>
         <li> <strong>HAL/LL Drivers</strong> updates
@@ -51,38 +49,11 @@
             <li>
                Update HAL/LL drivers to include latest corrections
                 <ul>
-                  <li> Update of HAL ADC, QSPI, SPI, UART, USB drivers.</li>
-                  <li> Update of LL ADC, SPI, USB drivers.</li>
+                  <li> Update of HAL  RNG, HSEM, RTC, UART, TIM drivers.</li>
+                  <li> Update of LL LPUART drivers.</li>
                 </ul>
             </li>
             <li> Refer to <a href="../Drivers/STM32WBxx_HAL_Driver/Release_Notes.html">release notes</a> for further details </li>
-          </ul>
-        </li>
-
-
-        <li> <strong>Projects </strong> updates
-         <ul>
-            <li>
-              Update of FW projects following changes in latest version of HAL/LL and Middlewares and alignments with CubeMx
-              <ul>
-                <li> STM32WB5MM-DK/Applications/TouchSensing/TouchSensing_1touchkey/Src/tsl_user.c</li>
-                <li> NUCLEO-WB15CC/Applications/FreeRTOS/FreeRTOS_Mutexes/Src/stm32wbxx_hal_timebase_tim.c</li>
-                <li> NUCLEO-WB15CC/Examples/HAL/HAL_TimeBase_TIM/Src/stm32wbxx_hal_timebase_tim.c</li>
-                <li> P-NUCLEO-WB55.Nucleo/Applications/BLE/BLE_HeartRateFreeRTOS_ANCS/Core/Src/stm32wbxx_hal_timebase_tim.c</li>
-                <li> P-NUCLEO-WB55.Nucleo/Applications/BLE/BLE_HeartRateFreeRTOS/Core/Src/stm32wbxx_hal_timebase_tim.c</li>
-                <li> P-NUCLEO-WB55.Nucleo/Applications/FreeRTOS/FreeRTOS_Mail/Src/stm32wbxx_hal_timebase_tim.c</li>
-                <li> P-NUCLEO-WB55.Nucleo/Applications/FreeRTOS/FreeRTOS_Mutexes/Src/stm32wbxx_hal_timebase_tim.c.</li>
-                <li> P-NUCLEO-WB55.Nucleo/Applications/FreeRTOS/FreeRTOS_Queues/Src/stm32wbxx_hal_timebase_tim.c</li>
-                <li> P-NUCLEO-WB55.Nucleo/Applications/FreeRTOS/FreeRTOS_Semaphore/Src/stm32wbxx_hal_timebase_tim.c</li>
-                <li> P-NUCLEO-WB55.Nucleo/Applications/FreeRTOS/FreeRTOS_SemaphoreFromISR/Src/stm32wbxx_hal_timebase_tim.c</li>
-                <li> P-NUCLEO-WB55.Nucleo/Applications/FreeRTOS/FreeRTOS_Signal/Src/stm32wbxx_hal_timebase_tim.c</li>
-                <li> P-NUCLEO-WB55.Nucleo/Applications/FreeRTOS/FreeRTOS_SignalFromISR/Src/stm32wbxx_hal_timebase_tim.c</li>
-                <li> P-NUCLEO-WB55.Nucleo/Applications/FreeRTOS/FreeRTOS_ThreadCreation/Src/stm32wbxx_hal_timebase_tim.c</li>
-                <li> P-NUCLEO-WB55.Nucleo/Applications/FreeRTOS/FreeRTOS_Timers/Src/stm32wbxx_hal_timebase_tim.c</li>
-                <li> P-NUCLEO-WB55.Nucleo/Applications/Thread/Thread_SED_Coap_FreeRTOS/Core/Src/stm32wbxx_hal_timebase_tim.c</li>
-                <li> P-NUCLEO-WB55.Nucleo/Examples/HAL/HAL_TimeBase_TIM/Src/stm32wbxx_hal_timebase_tim.c</li>
-              </ul>
-            </li>
           </ul>
         </li>
       </p>

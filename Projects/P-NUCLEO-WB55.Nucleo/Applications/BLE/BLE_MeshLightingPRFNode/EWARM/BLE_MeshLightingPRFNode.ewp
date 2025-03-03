@@ -355,7 +355,7 @@
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread\shci</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble\mesh\MeshModel\Inc</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\interface\patterns\ble_thread</state>
-                    <state>$PROJ_DIR$\..\STM32_WPAN\app</state>
+                    <state>$PROJ_DIR$\..\STM32_WPAN\App</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\ble</state>
                 </option>
                 <option>
@@ -1129,49 +1129,49 @@
                 <group>
                     <name>App</name>
                     <file>
-                        <name>$PROJ_DIR$\..\STM32_WPAN\app\app_ble.c</name>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\App\app_ble.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_config.c</name>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\App\appli_config.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_config_client.c</name>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\App\appli_config_client.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_generic.c</name>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\App\appli_generic.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_generic_client.c</name>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\App\appli_generic_client.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_light.c</name>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\App\appli_light.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_light_client.c</name>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\App\appli_light_client.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_light_lc.c</name>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\App\appli_light_lc.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_mesh.c</name>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\App\appli_mesh.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_nvm.c</name>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\App\appli_nvm.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_sensor.c</name>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\App\appli_sensor.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_sensors_client.c</name>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\App\appli_sensors_client.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\STM32_WPAN\app\appli_vendor.c</name>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\App\appli_vendor.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\STM32_WPAN\app\models_if.c</name>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\App\models_if.c</name>
                     </file>
                     <file>
-                        <name>$PROJ_DIR$\..\STM32_WPAN\app\pal_nvm.c</name>
+                        <name>$PROJ_DIR$\..\STM32_WPAN\App\pal_nvm.c</name>
                     </file>
                 </group>
                 <group>

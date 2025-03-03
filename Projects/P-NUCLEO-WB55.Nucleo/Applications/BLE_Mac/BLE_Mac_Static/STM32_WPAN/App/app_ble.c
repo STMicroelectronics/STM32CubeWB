@@ -709,8 +709,8 @@ static void Ble_Tl_Init( void )
    */
 
   bd_addr = BleGetBdAddress();
-  aci_hal_write_config_data(CONFIG_DATA_PUBADDR_OFFSET,
-                            CONFIG_DATA_PUBADDR_LEN,
+  aci_hal_write_config_data(CONFIG_DATA_PUBLIC_ADDRESS_OFFSET,
+                            CONFIG_DATA_PUBLIC_ADDRESS_LEN,
                             (uint8_t*) bd_addr);
 
   /* BLE MAC in ADV Packet */

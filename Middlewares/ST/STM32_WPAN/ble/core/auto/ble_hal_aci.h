@@ -1,11 +1,11 @@
 /*****************************************************************************
  * @file    ble_hal_aci.h
- * @brief   STM32WB BLE API (hal_aci)
+ * @brief   STM32WB BLE API (HAL_ACI)
  *          Auto-generated file: do not edit!
  *****************************************************************************
  * @attention
  *
- * Copyright (c) 2018-2024 STMicroelectronics.
+ * Copyright (c) 2018-2025 STMicroelectronics.
  * All rights reserved.
  *
  * This software is licensed under terms that can be found in the LICENSE file
@@ -35,49 +35,39 @@ tBleStatus aci_hal_get_fw_build_number( uint16_t* Build_Number );
  * @brief ACI_HAL_WRITE_CONFIG_DATA
  * This command writes a value to a configure data structure. It is useful to
  * setup directly some parameters for the BLE stack.
- * Note: the HCI_RESET command resets the configure data structure.
+ * Refer to Annex for details on the different parameters that can be
+ * configured.
  * 
  * @param Offset Offset of the element in the configuration data structure
  *        which has to be written.
  *        Values:
- *        - 0x00: CONFIG_DATA_PUBADDR_OFFSET;
+ *        - 0x00: CONFIG_DATA_PUBLIC_ADDRESS_OFFSET;
  *          Bluetooth public address; 6 bytes
- *        - 0x08: CONFIG_DATA_ER_OFFSET (Host only);
- *          Encryption root key used to derive LTK (legacy) and CSRK; 16 bytes
- *        - 0x18: CONFIG_DATA_IR_OFFSET (Host only);
- *          Identity root key used to derive DHK (legacy) and IRK; 16 bytes
- *        - 0x2E: CONFIG_DATA_RANDOM_ADDRESS_OFFSET (Host only);
+ *        - 0x08: CONFIG_DATA_ER_OFFSET;
+ *          Encryption root key; 16 bytes
+ *        - 0x18: CONFIG_DATA_IR_OFFSET;
+ *          Identity root key; 16 bytes
+ *        - 0x2E: CONFIG_DATA_RANDOM_ADDRESS_OFFSET;
  *          Static Random Address; 6 bytes
- *        - 0x34: CONFIG_DATA_GAP_ADD_REC_NBR_OFFSET (Host only);
- *          GAP service additional record number
- *        - 0x35: CONFIG_DATA_SC_KEY_TYPE_OFFSET (Host only);
- *          Secure Connections key type (0: "normal", 1: "debug"); 1 byte
- *        - 0xB0: CONFIG_DATA_SMP_MODE_OFFSET (Host only);
- *          SMP mode (8-bit bitmap - bit 0: "bypass", bit 1: "no blacklist",
- *          bit 2: "no peer debug key", bit 3:"pairing request event", bit
- *          4:"no just works", bit 5:"no passkey entry", bit 6:"no out-of-
- *          band", bit 7:"no numeric comparison"); 1 byte
- *        - 0xC0: CONFIG_DATA_LL_SCAN_CHAN_MAP_OFFSET (only for STM32WB);
- *          LL scan channel map (same format as Primary_Adv_Channel_Map); 1
- *          byte
- *        - 0xC1: CONFIG_DATA_LL_BG_SCAN_MODE_OFFSET (only for STM32WB);
- *          LL background scan mode (0: "BG scan disabled", 1: "BG scan
- *          enabled"); 1 byte
- *        - 0xC2: CONFIG_DATA_LL_RSSI_GOLDEN_RANGE_OFFSET (only for STM32WBA);
- *          LL RSSI golden range (two 8-bit signed values in dBm - byte #0 is
- *          the lower value, byte #1 is the upper value); 2 bytes
- *        - 0xC3: CONFIG_DATA_LL_RPA_MODE_OFFSET (only for STM32WB);
- *          LL RPA mode (8-bit bitmap - bit 0: "no RPA update at start"); 1
- *          byte
- *        - 0xC4: CONFIG_DATA_LL_RX_ACL_CTRL_OFFSET (only for STM32WBA);
- *          LL RX ACL control (byte #0 is "rx_pckt_count", byte #1 is
- *          "rx_pckt_len"); 2 bytes
- *        - 0xD1: CONFIG_DATA_LL_MAX_DATA_EXT_OFFSET (only for STM32WB full
- *          stack);
- *          LL maximum data length extension (bytes #0-1:
- *          "supportedMaxTxOctets", bytes #2-3: "supportedMaxTxTime",  bytes
- *          #4-5: "supportedMaxRxOctets",  bytes #6-7: "supportedMaxRxTime"); 8
- *          bytes
+ *        - 0x34: CONFIG_DATA_GAP_ADD_REC_NBR_OFFSET;
+ *          GAP service additional record number; 1 byte
+ *        - 0x35: CONFIG_DATA_SC_KEY_TYPE_OFFSET;
+ *          Secure Connections key type; 1 byte
+ *        - 0xB0: CONFIG_DATA_SMP_MODE_OFFSET;
+ *          SMP mode; 1 byte
+ *        - 0xC0: CONFIG_DATA_LL_SCAN_CHAN_MAP_OFFSET [only for STM32WB];
+ *          LL scan channel map; 1 byte
+ *        - 0xC1: CONFIG_DATA_LL_BG_SCAN_MODE_OFFSET [only for STM32WB];
+ *          LL background scan mode; 1 byte
+ *        - 0xC2: CONFIG_DATA_LL_RSSI_GOLDEN_RANGE_OFFSET [only for STM32WBA];
+ *          LL RSSI golden range; 2 bytes
+ *        - 0xC3: CONFIG_DATA_LL_RPA_MODE_OFFSET [only for STM32WB];
+ *          LL RPA mode; 1 byte
+ *        - 0xC4: CONFIG_DATA_LL_RX_ACL_CTRL_OFFSET [only for STM32WBA];
+ *          LL RX ACL control; 2 bytes
+ *        - 0xD1: CONFIG_DATA_LL_MAX_DATA_EXT_OFFSET [only for STM32WB full
+ *          stack];
+ *          LL maximum data length extension; 8 bytes
  * @param Length Length of data to be written
  * @param Value Data to be written
  * @return Value indicating success or error code.
@@ -94,7 +84,7 @@ tBleStatus aci_hal_write_config_data( uint8_t Offset,
  * @param Offset Offset of the element in the configuration data structure
  *        which has to be read.
  *        Values:
- *        - 0x00: CONFIG_DATA_PUBADDR_OFFSET;
+ *        - 0x00: CONFIG_DATA_PUBLIC_ADDRESS_OFFSET;
  *          Bluetooth public address; 6 bytes
  *        - 0x08: CONFIG_DATA_ER_OFFSET;
  *          Encryption root key used to derive LTK (legacy) and CSRK; 16 bytes
@@ -102,7 +92,7 @@ tBleStatus aci_hal_write_config_data( uint8_t Offset,
  *          Identity root key used to derive DHK (legacy) and IRK; 16 bytes
  *        - 0x2E: CONFIG_DATA_RANDOM_ADDRESS_OFFSET;
  *          Static Random Address; 6 bytes
- *        - 0xC2: CONFIG_DATA_LL_RSSI_GOLDEN_RANGE_OFFSET (only for STM32WBA);
+ *        - 0xC2: CONFIG_DATA_LL_RSSI_GOLDEN_RANGE_OFFSET [only for STM32WBA];
  *          LL RSSI golden range (two 8-bit signed values in dBm - byte #0 is
  *          the lower value, byte #1 is the upper value); 2 bytes
  * @param[out] Data_Length Length of Data in octets
@@ -234,12 +224,12 @@ tBleStatus aci_hal_get_link_status( uint8_t* Link_Status,
  *        - 0x0020: Central connection
  *        - 0x0040: TX test mode
  *        - 0x0080: RX test mode
- *        - 0x0200: Periodic advertising (only for STM32WBA)
- *        - 0x0400: Periodic sync (only for STM32WBA)
- *        - 0x0800: Iso broadcast (only for STM32WBA)
- *        - 0x1000: Iso sync (only for STM32WBA)
- *        - 0x2000: Iso peripheral connection (only for STM32WBA)
- *        - 0x4000: Iso central connection (only for STM32WBA)
+ *        - 0x0200: Periodic advertising [only for STM32WBA]
+ *        - 0x0400: Periodic sync [only for STM32WBA]
+ *        - 0x0800: Iso broadcast [only for STM32WBA]
+ *        - 0x1000: Iso sync [only for STM32WBA]
+ *        - 0x2000: Iso peripheral connection [only for STM32WBA]
+ *        - 0x4000: Iso central connection [only for STM32WBA]
  * @return Value indicating success or error code.
  */
 tBleStatus aci_hal_set_radio_activity_mask( uint16_t Radio_Activity_Mask );
@@ -268,8 +258,8 @@ tBleStatus aci_hal_get_anchor_period( uint32_t* Anchor_Period,
  * @param Event_Mask Mask to enable/disable generation of HAL events
  *        Flags:
  *        - 0x00000000: No events specified (Default)
- *        - 0x00000001: ACI_HAL_SCAN_REQ_REPORT_EVENT (only for STM32WB)
- *        - 0x00000002: ACI_HAL_SYNC_EVENT (only for STM32WBA)
+ *        - 0x00000001: ACI_HAL_SCAN_REQ_REPORT_EVENT [only for STM32WB]
+ *        - 0x00000002: ACI_HAL_SYNC_EVENT [only for STM32WBA]
  * @return Value indicating success or error code.
  */
 tBleStatus aci_hal_set_event_mask( uint32_t Event_Mask );

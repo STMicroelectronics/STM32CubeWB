@@ -5,7 +5,7 @@
  *****************************************************************************
  * @attention
  *
- * Copyright (c) 2018-2024 STMicroelectronics.
+ * Copyright (c) 2018-2025 STMicroelectronics.
  * All rights reserved.
  *
  * This software is licensed under terms that can be found in the LICENSE file
@@ -42,12 +42,11 @@ static void hci_le_scan_request_received_event_process( const uint8_t* in );
 static void hci_le_channel_selection_algorithm_event_process( const uint8_t* in );
 static void aci_hal_end_of_radio_activity_event_process( const uint8_t* in );
 static void aci_hal_scan_req_report_event_process( const uint8_t* in );
-static void aci_hal_fw_error_event_process( const uint8_t* in );
+static void aci_hal_warning_event_process( const uint8_t* in );
 static void aci_gap_limited_discoverable_event_process( const uint8_t* in );
 static void aci_gap_pairing_complete_event_process( const uint8_t* in );
 static void aci_gap_pass_key_req_event_process( const uint8_t* in );
 static void aci_gap_authorization_req_event_process( const uint8_t* in );
-static void aci_gap_peripheral_security_initiated_event_process( const uint8_t* in );
 static void aci_gap_bond_lost_event_process( const uint8_t* in );
 static void aci_gap_proc_complete_event_process( const uint8_t* in );
 static void aci_gap_addr_not_resolved_event_process( const uint8_t* in );
@@ -133,12 +132,11 @@ const hci_event_table_t hci_vs_event_table[HCI_VS_EVENT_TABLE_SIZE] =
 {
   { 0x0004U, aci_hal_end_of_radio_activity_event_process },
   { 0x0005U, aci_hal_scan_req_report_event_process },
-  { 0x0006U, aci_hal_fw_error_event_process },
+  { 0x0006U, aci_hal_warning_event_process },
   { 0x0400U, aci_gap_limited_discoverable_event_process },
   { 0x0401U, aci_gap_pairing_complete_event_process },
   { 0x0402U, aci_gap_pass_key_req_event_process },
   { 0x0403U, aci_gap_authorization_req_event_process },
-  { 0x0404U, aci_gap_peripheral_security_initiated_event_process },
   { 0x0405U, aci_gap_bond_lost_event_process },
   { 0x0407U, aci_gap_proc_complete_event_process },
   { 0x0408U, aci_gap_addr_not_resolved_event_process },
@@ -628,20 +626,20 @@ static void aci_hal_scan_req_report_event_process( const uint8_t* in )
                                  rp0->Peer_Address );
 }
 
-/* ACI_HAL_FW_ERROR_EVENT callback function */
-__WEAK void aci_hal_fw_error_event( uint8_t FW_Error_Type,
-                                    uint8_t Data_Length,
-                                    const uint8_t* Data )
+/* ACI_HAL_WARNING_EVENT callback function */
+__WEAK void aci_hal_warning_event( uint8_t Warning_Type,
+                                   uint8_t Data_Length,
+                                   const uint8_t* Data )
 {
 }
 
-/* ACI_HAL_FW_ERROR_EVENT process function */
-static void aci_hal_fw_error_event_process( const uint8_t* in )
+/* ACI_HAL_WARNING_EVENT process function */
+static void aci_hal_warning_event_process( const uint8_t* in )
 {
-  aci_hal_fw_error_event_rp0 *rp0 = (void*)in;
-  aci_hal_fw_error_event( rp0->FW_Error_Type,
-                          rp0->Data_Length,
-                          rp0->Data );
+  aci_hal_warning_event_rp0 *rp0 = (void*)in;
+  aci_hal_warning_event( rp0->Warning_Type,
+                         rp0->Data_Length,
+                         rp0->Data );
 }
 
 /* ACI_GAP_LIMITED_DISCOVERABLE_EVENT callback function */
@@ -695,26 +693,16 @@ static void aci_gap_authorization_req_event_process( const uint8_t* in )
   aci_gap_authorization_req_event( rp0->Connection_Handle );
 }
 
-/* ACI_GAP_PERIPHERAL_SECURITY_INITIATED_EVENT callback function */
-__WEAK void aci_gap_peripheral_security_initiated_event( void )
-{
-}
-
-/* ACI_GAP_PERIPHERAL_SECURITY_INITIATED_EVENT process function */
-static void aci_gap_peripheral_security_initiated_event_process( const uint8_t* in )
-{
-  aci_gap_peripheral_security_initiated_event( );
-}
-
 /* ACI_GAP_BOND_LOST_EVENT callback function */
-__WEAK void aci_gap_bond_lost_event( void )
+__WEAK void aci_gap_bond_lost_event( uint16_t Connection_Handle )
 {
 }
 
 /* ACI_GAP_BOND_LOST_EVENT process function */
 static void aci_gap_bond_lost_event_process( const uint8_t* in )
 {
-  aci_gap_bond_lost_event( );
+  aci_gap_bond_lost_event_rp0 *rp0 = (void*)in;
+  aci_gap_bond_lost_event( rp0->Connection_Handle );
 }
 
 /* ACI_GAP_PROC_COMPLETE_EVENT callback function */

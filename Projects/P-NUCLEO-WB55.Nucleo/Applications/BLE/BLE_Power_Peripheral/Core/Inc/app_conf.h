@@ -671,7 +671,7 @@ typedef enum
 
 #define NOTIFY_TX_INT_MS   (1000*TO_SET_DELAY_IN_MS/CFG_TS_TICK_VAL)  /**< 1s */
 
-#define USER_PAYLOAD_LENGTH                20 //244   /*User_Payload_Length must be between 1 and 244*/
+#define USER_PAYLOAD_LENGTH                244   /*User_Payload_Length must be between 1 and 244*/
 
 #define CONN_INT_REQ                       (0x0080)   /* L2cap Connection Interval Request*/
 #define CONN_INT_LP_REQ                    (0x0200)

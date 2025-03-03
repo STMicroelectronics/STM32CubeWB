@@ -291,10 +291,10 @@ void SVCCTL_InitCustomSvc(void)
    */
   max_attr_record = 6;
 
-  /* USER CODE BEGIN SVCCTL_InitService */
+  /* USER CODE BEGIN SVCCTL_InitService1 */
   /* max_attr_record to be updated if descriptors have been added */
 
-  /* USER CODE END SVCCTL_InitService */
+  /* USER CODE END SVCCTL_InitService1 */
 
   uuid.Char_UUID_16 = 0xff10;
   ret = aci_gatt_add_service(UUID_TYPE_16,
@@ -523,16 +523,32 @@ tBleStatus Custom_STM_App_Update_Char_Ext(uint16_t Connection_Handle, Custom_STM
       /* USER CODE BEGIN Updated_Length_Service_1_Char_1*/
 
       /* USER CODE END Updated_Length_Service_1_Char_1*/
-	  Generic_STM_App_Update_Char_Ext(Connection_Handle, CustomContext.CustomPwrco_SvcHdle, CustomContext.CustomPwrco_WriteHdle, SizePwrco_Write, pPayload);
+      ret = Generic_STM_App_Update_Char_Ext(Connection_Handle, CustomContext.CustomPwrco_SvcHdle, CustomContext.CustomPwrco_WriteHdle, SizePwrco_Write, pPayload);
 
+      if (ret != BLE_STATUS_SUCCESS)
+      {
+        APP_DBG_MSG("  Fail   : Generic_STM_App_Update_Char_Ext command, result : 0x%x \n\r", ret);
+      }
+      else
+      {
+        APP_DBG_MSG("  Success: Generic_STM_App_Update_Char_Ext command\n\r");
+      }
       break;
 
     case CUSTOM_STM_PWRCO_NOTIFY:
       /* USER CODE BEGIN Updated_Length_Service_1_Char_2*/
 
       /* USER CODE END Updated_Length_Service_1_Char_2*/
-	  Generic_STM_App_Update_Char_Ext(Connection_Handle, CustomContext.CustomPwrco_SvcHdle, CustomContext.CustomPwrco_NotifyHdle, SizePwrco_Notify, pPayload);
+      ret = Generic_STM_App_Update_Char_Ext(Connection_Handle, CustomContext.CustomPwrco_SvcHdle, CustomContext.CustomPwrco_NotifyHdle, SizePwrco_Notify, pPayload);
 
+      if (ret != BLE_STATUS_SUCCESS)
+      {
+        APP_DBG_MSG("  Fail   : Generic_STM_App_Update_Char_Ext command, result : 0x%x \n\r", ret);
+      }
+      else
+      {
+        APP_DBG_MSG("  Success: Generic_STM_App_Update_Char_Ext command\n\r");
+      }
       break;
 
     default:
