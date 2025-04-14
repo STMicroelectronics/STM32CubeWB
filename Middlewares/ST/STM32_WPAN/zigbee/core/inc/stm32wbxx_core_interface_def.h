@@ -354,6 +354,7 @@ typedef enum {
     MSG_M4TOM0_PHY_RX_STOP = 0x4006,
     MSG_M4TOM0_PHY_CONTINUOUS_TX_START = 0x4007,
     MSG_M4TOM0_PHY_CONTINUOUS_TX_STOP = 0x4008,
+    MSG_M4TOM0_PHY_SET_TX_POWER = 0x4009,
 } MsgId_Zigbee_Enum_t;
 
 /* List of errors returned by the interface  */
