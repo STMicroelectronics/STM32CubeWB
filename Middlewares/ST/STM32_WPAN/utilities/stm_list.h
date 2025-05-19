@@ -20,6 +20,10 @@
 #ifndef _STM_LIST_H_
 #define _STM_LIST_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Includes ------------------------------------------------------------------*/
 #include "stm32_wpan_common.h"
 
@@ -51,5 +55,9 @@ int LST_get_size (tListNode * listHead);
 void LST_get_next_node (tListNode * ref_node, tListNode ** node);
 
 void LST_get_prev_node (tListNode * ref_node, tListNode ** node);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _STM_LIST_H_ */
