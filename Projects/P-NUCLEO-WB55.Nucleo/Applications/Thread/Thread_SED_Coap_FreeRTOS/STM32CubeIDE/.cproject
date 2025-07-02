@@ -81,6 +81,7 @@
 									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F"/>
 									<listOptionValue builtIn="false" value="../../../../../../../Utilities/lpm/tiny_lpm"/>
 									<listOptionValue builtIn="false" value="../../../../../../../Utilities/sequencer"/>
+									<listOptionValue builtIn="false" value="../../../../../../../Drivers/CMSIS/RTOS2/Include"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.877641738" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>
@@ -241,6 +242,7 @@
 									<listOptionValue builtIn="false" value="../../../../../../../Middlewares/ST/STM32_WPAN/utilities"/>
 									<listOptionValue builtIn="false" value="../../../../../../../Utilities/lpm/tiny_lpm"/>
 									<listOptionValue builtIn="false" value="../../../../../../../Utilities/sequencer"/>
+									<listOptionValue builtIn="false" value="../../../../../../../Drivers/CMSIS/RTOS2/Include"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.987679760" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>
@@ -327,15 +329,6 @@
 		<project id="Thread_SED_Coap_FreeRTOS.null.232501425" name="Thread_SED_Coap_FreeRTOS"/>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
-	<storageModule moduleId="scannerConfiguration">
-		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		<scannerConfigBuildInfo instanceId="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.release.1004737070;com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.release.1004737070.;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.729090397;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.987679760">
-			<autodiscovery enabled="false" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1734037559;com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1734037559.;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.939566878;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.877641738">
-			<autodiscovery enabled="false" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
-	</storageModule>
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration configurationName="Debug">
 			<resource resourceType="PROJECT" workspacePath="/Thread_SED_Coap_FreeRTOS"/>
@@ -345,4 +338,19 @@
 		</configuration>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
+	<storageModule moduleId="scannerConfiguration">
+		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		<scannerConfigBuildInfo instanceId="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1734037559;com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1734037559.;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.939566878;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.877641738">
+			<autodiscovery enabled="false" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1734037559;com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1734037559.;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.1021260351;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.input.cpp.787544744">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.release.1004737070;com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.release.1004737070.;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.245306454;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.input.cpp.787544744">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.release.1004737070;com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.release.1004737070.;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.729090397;com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.987679760">
+			<autodiscovery enabled="false" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+	</storageModule>
 </cproject>

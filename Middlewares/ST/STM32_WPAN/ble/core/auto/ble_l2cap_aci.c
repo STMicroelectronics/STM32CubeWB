@@ -15,7 +15,7 @@
  *****************************************************************************
  */
 
-#include "ble_l2cap_aci.h"
+#include "auto/ble_l2cap_aci.h"
 
 tBleStatus aci_l2cap_connection_parameter_update_req( uint16_t Connection_Handle,
                                                       uint16_t Conn_Interval_Min,
@@ -137,6 +137,7 @@ tBleStatus aci_l2cap_coc_connect_confirm( uint16_t Connection_Handle,
                                           uint16_t MPS,
                                           uint16_t Initial_Credits,
                                           uint16_t Result,
+                                          uint8_t Max_Channel_Number,
                                           uint8_t* Channel_Number,
                                           uint8_t* Channel_Index_List )
 {
@@ -156,6 +157,8 @@ tBleStatus aci_l2cap_coc_connect_confirm( uint16_t Connection_Handle,
   index_input += 2;
   cp0->Result = Result;
   index_input += 2;
+  cp0->Max_Channel_Number = Max_Channel_Number;
+  index_input += 1;
   Osal_MemSet( &rq, 0, sizeof(rq) );
   rq.ogf = 0x3f;
   rq.ocf = 0x189;

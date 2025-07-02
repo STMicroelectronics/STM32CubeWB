@@ -818,6 +818,8 @@ static void SYS_UserEventReceivedCallback( void * pData )
       APP_FLAG_SET(APP_FLAG_FUS_FW_RUNNING);
       APP_FLAG_RESET(APP_FLAG_WIRELESS_FW_RUNNING);
       
+      ((tSHCI_UserEvtRxParam *)pData)->status = SHCI_TL_UserEventFlow_Disable;
+      
       /* No RF stack installed most probably */
       Error_Handler(); /* UNEXPECTED */
     }
@@ -843,8 +845,6 @@ static void SYS_UserEventReceivedCallback( void * pData )
   default:
     break;
   }
-  
-  ((tSHCI_UserEvtRxParam *)pData)->status = SHCI_TL_UserEventFlow_Disable;
   
   return;
 }

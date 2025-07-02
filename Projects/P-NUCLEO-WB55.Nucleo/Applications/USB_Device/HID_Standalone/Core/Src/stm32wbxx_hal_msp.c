@@ -68,6 +68,8 @@ void HAL_MspInit(void)
 
   /* USER CODE END MspInit 0 */
 
+  HAL_PWREx_EnableVddUSB();
+
   /* System interrupt init*/
 
   /* USER CODE BEGIN MspInit 1 */

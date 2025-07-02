@@ -147,6 +147,22 @@
 
 /* ------------------------------------------------------------------------- */
 
+/* BLE stack options (Options)
+ * (ACI_RESET)
+ */
+#define BLE_OPTIONS_LL_ONLY                      0x00000001UL
+#define BLE_OPTIONS_NO_SVC_CHANGE_DESC           0x00000002UL
+#define BLE_OPTIONS_DEV_NAME_READ_ONLY           0x00000004UL
+#define BLE_OPTIONS_EXTENDED_ADV                 0x00000008UL
+#define BLE_OPTIONS_CS_ALGO_2                    0x00000010UL
+#define BLE_OPTIONS_REDUCED_DB_IN_NVM            0x00000020UL
+#define BLE_OPTIONS_GATT_CACHING                 0x00000040UL
+#define BLE_OPTIONS_POWER_CLASS_1                0x00000080UL
+#define BLE_OPTIONS_APPEARANCE_WRITABLE          0x00000100UL
+#define BLE_OPTIONS_ENHANCED_ATT                 0x00000200UL
+
+/* ------------------------------------------------------------------------- */
+
 /* Characteristic value lengths
  */
 #define DEVICE_NAME_CHARACTERISTIC_LEN                  8
@@ -288,6 +304,7 @@
 #define REASON_DHKEY_CHECK_FAILED                  0x0BU
 #define REASON_NUM_COMPARISON_FAILED               0x0CU
 #define REASON_KEY_REJECTED                        0x0FU
+#define REASON_BUSY                                0x10U
 
 /* Passkey input type detected
  * (ACI_GAP_PASSKEY_INPUT)
@@ -440,7 +457,7 @@
 /* ------------------------------------------------------------------------- */
 
 /* Definitions for Warning_Type
- * (ACI_HAL_WARNING_EVENT)
+ * (ACI_WARNING_EVENT)
  */
 #define WARNING_L2CAP_RECOMBINATION_FAILURE          0x01U
 #define WARNING_GATT_UNEXPECTED_PEER_MESSAGE         0x02U
@@ -448,6 +465,7 @@
 #define WARNING_COC_RX_DATA_LENGTH_TOO_LARGE         0x04U
 #define WARNING_COC_ALREADY_ASSIGNED_DCID            0x05U
 #define WARNING_SMP_UNEXPECTED_LTK_REQUEST           0x06U
+#define WARNING_GATT_BEARER_NOT_ALLOCATED            0x07U
 
 /* ------------------------------------------------------------------------- */
 

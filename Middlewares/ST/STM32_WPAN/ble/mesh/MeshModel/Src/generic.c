@@ -1076,23 +1076,22 @@ MOBLE_RESULT GenericModelServer_ProcessMessageCb(MODEL_MessageHeader_t *pmsgPara
     
   if((result == MOBLE_RESULT_SUCCESS) && 
      (publishAddress != 0x0000) && 
-       (modelStateChangeFlag == MOBLE_TRUE))
+     (modelStateChangeFlag == MOBLE_TRUE))
   {
     if(ADDRESS_IS_UNICAST(pmsgParam->dst_peer))
     {
       pmsgParam->peer_addr = publishAddress;
       Model_SendResponse(pmsgParam, opcode, pRxData, dataLength);
     }
-        else
+    else
     {
-
       pmsgParam->peer_addr = publishAddress;
       pmsgParam->dst_peer = BLEMesh_GetAddress();       // Replace group address by the single node address for response
       Model_SendResponse(pmsgParam, opcode, pRxData, dataLength);
     }
                 
-      modelStateChangeFlag = MOBLE_FALSE;   
-      TRACE_I(TF_GENERIC_M,"Publishing state when change to the address %.2X \r\n",publishAddress);
+    modelStateChangeFlag = MOBLE_FALSE;   
+    TRACE_I(TF_GENERIC_M,"Publishing state when change to the address %.2X \r\n",publishAddress);
   }
   return MOBLE_RESULT_SUCCESS;
 }
@@ -1479,7 +1478,11 @@ void Light_CtlTemp_GenericLevelBinding(Light_CtlStatus_t* bCtlTempParam, MOBLEUI
   TRACE_M(TF_GENERIC_M, "\r\n ******** PresentCtlTemperature16 = %d,  ********\r\n\r\n", bCtlTempParam->PresentCtlTemperature16);
   TRACE_M(TF_GENERIC_M, "\r\n ******** productValue = %ld,  ********\r\n\r\n", productValue); 
  
-  Generic_LevelStatus[elementIndex].Present_Level16 = (MOBLEINT16)(round((productValue / (float)(MAX_CTL_TEMP_RANGE - MIN_CTL_TEMP_RANGE))) - 32768);
+  /*  Generic_LevelStatus[elementIndex].Present_Level16 = (MOBLEINT16)(round((productValue / (float)(MAX_CTL_TEMP_RANGE - MIN_CTL_TEMP_RANGE))) - 32768); 
+   *  Remove New warning Pa205 "implicit conversion from float to double" for systems with a single-precision only FPU. 
+   * The warning is an alert that a double-precision library implementation will be used for the operation.
+   */
+  Generic_LevelStatus[elementIndex].Present_Level16 = (MOBLEINT16)(round((productValue / (double)(MAX_CTL_TEMP_RANGE - MIN_CTL_TEMP_RANGE))) - 32768);
   TRACE_M(TF_GENERIC_M, "\r\n ********, Present Level value %d ********\r\n\r\n" ,Generic_LevelStatus[elementIndex].Present_Level16); 
   GenericLevel_LightBinding(&Generic_LevelStatus[elementIndex] , BINDING_LIGHT_CTL_TEMP_SET,elementIndex,
                                                           trnsnFlag,trnsnCmplt);

@@ -325,7 +325,8 @@ void APP_BLE_Init( void )
      CFG_BLE_TX_PATH_COMPENS,
      CFG_BLE_RX_PATH_COMPENS,
      CFG_BLE_CORE_VERSION,
-     CFG_BLE_OPTIONS_EXT
+     CFG_BLE_OPTIONS_EXT,
+     CFG_BLE_MAX_ADD_EATT_BEARERS
     }
   };
 
@@ -616,10 +617,10 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *p_Pckt )
 #endif
               Connection_Interval = p_connection_complete_event->Conn_Interval * 1.25;
             
-              APP_DBG_MSG("**INTERVAL = %.2f ms \n",Connection_Interval);
+              APP_DBG_MSG("**INTERVAL = %.2f ms \n",(double)Connection_Interval);
               APP_DBG_MSG("**LATENCY = 0x%x \n",p_connection_complete_event->Conn_Latency);
               Supervision_Timeout = p_connection_complete_event->Supervision_Timeout * 10;
-              APP_DBG_MSG("**SUPERVISION_TIMEOUT = %.2f ms \n",Supervision_Timeout);
+              APP_DBG_MSG("**SUPERVISION_TIMEOUT = %.2f ms \n",(double)Supervision_Timeout);
               APP_DBG_MSG("\r\n\r");
             
               UTIL_SEQ_SetTask(1 << CFG_TASK_LINK_CONFIG_ID, CFG_SCH_PRIO_0);

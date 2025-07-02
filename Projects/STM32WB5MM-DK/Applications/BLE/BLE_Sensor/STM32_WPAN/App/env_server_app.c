@@ -176,7 +176,7 @@ static void ENV_Handle_Sensor(void)
   if(ENV_Server_App_Context.hasTemperature >= 1)
   {    
     BSP_ENV_SENSOR_GetValue(ENV_SENSOR_STTS22H_0, ENV_TEMPERATURE, &temperature);
-    sprintf(tempValue,"Temp 1 : %2.1f C",temperature);
+    sprintf(tempValue,"Temp 1 : %2.1f C",(double)temperature);
     UTIL_LCD_DisplayStringAtLine(3,(uint8_t*)tempValue);
     MCR_BLUEMS_F2I_1D(temperature, intPart, decPart);
     ENV_Server_App_Context.TemperatureValue[0] = intPart*10+decPart;    

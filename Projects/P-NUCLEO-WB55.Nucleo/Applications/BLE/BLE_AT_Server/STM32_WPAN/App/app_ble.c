@@ -294,7 +294,6 @@ static void Ble_Hci_Gap_Gatt_Init(void);
 const uint8_t* BleGetBdAddress( void );
 static void Adv_Request( APP_BLE_ConnStatus_t New_Status );
 static void Add_Advertisment_Service_UUID( uint16_t servUUID );
-static void Adv_Mgr( void );
 static void Switch_OFF_GPIO( void );
 
 #if(L2CAP_REQUEST_NEW_CONN_PARAM != 0)
@@ -362,7 +361,8 @@ void APP_BLE_Init( void )
      CFG_BLE_TX_PATH_COMPENS,
      CFG_BLE_RX_PATH_COMPENS,
      CFG_BLE_CORE_VERSION,
-     CFG_BLE_OPTIONS_EXT
+     CFG_BLE_OPTIONS_EXT,
+     CFG_BLE_MAX_ADD_EATT_BEARERS
     }
   };
 
@@ -438,15 +438,15 @@ void APP_BLE_Init( void )
   UTIL_SEQ_RegTask( 1<<CFG_TASK_INDICATION_UPDATE_CHAR_ID, UTIL_SEQ_RFU, Manage_Indication_Update_Charac);
 
   /**
-   * Create timer to handle the connection state machine
-   */
-
-  HW_TS_Create(CFG_TIM_PROC_ID_ISR, &(BleApplicationContext.Advertising_mgr_timer_Id), hw_ts_SingleShot, Adv_Mgr);
-
-  /**
    * Create timer to handle the Led Switch OFF
    */
   HW_TS_Create(CFG_TIM_PROC_ID_ISR, &(BleApplicationContext.SwitchOffGPIO_timer_Id), hw_ts_SingleShot, Switch_OFF_GPIO);
+  
+#if (L2CAP_REQUEST_NEW_CONN_PARAM != 0)
+  UTIL_SEQ_RegTask(1<<CFG_TASK_CONN_UPDATE_REG_ID, UTIL_SEQ_RFU, Connection_Interval_Update_Req);
+  index_con_int = 0;
+  mutex = 1;
+#endif /* L2CAP_REQUEST_NEW_CONN_PARAM != 0 */  
 }
 
 SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt ) 
@@ -562,8 +562,6 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *pckt )
           connection_complete_event = (hci_le_connection_complete_event_rp0 *) meta_evt->data;
           global_conn_int_min = (uint8_t)(connection_complete_event->Conn_Interval);
           global_conn_int_max = (uint8_t)(connection_complete_event->Conn_Interval);
-
-          HW_TS_Stop(BleApplicationContext.Advertising_mgr_timer_Id);
 
           printf("HCI_LE_CONNECTION_COMPLETE_SUBEVT_CODE for connection handle 0x%x\n", connection_complete_event->Connection_Handle);
           if (BleApplicationContext.Device_Connection_Status == APP_BLE_LP_CONNECTING)
@@ -1025,12 +1023,6 @@ static void Adv_Request(APP_BLE_ConnStatus_t New_Status)
     Max_Inter = CFG_LP_CONN_ADV_INTERVAL_MAX;
   }
 
-    /**
-     * Stop the timer, it will be restarted for a new shot
-     * It does not hurt if the timer was not running
-     */
-    HW_TS_Stop(BleApplicationContext.Advertising_mgr_timer_Id);
-
     APP_DBG_MSG("First index in %d state \n", BleApplicationContext.Device_Connection_Status);
 
     if ((New_Status == APP_BLE_LP_ADV)
@@ -1071,8 +1063,6 @@ static void Adv_Request(APP_BLE_ConnStatus_t New_Status)
       if (New_Status == APP_BLE_FAST_ADV)
       {
         APP_DBG_MSG("Successfully Start Fast Advertising \n" );
-        /* Start Timer to STOP ADV - TIMEOUT */
-        HW_TS_Start(BleApplicationContext.Advertising_mgr_timer_Id, INITIAL_ADV_TIMEOUT);
       }
       else
       {
@@ -1159,18 +1149,6 @@ static void Add_Advertisment_Service_UUID( uint16_t servUUID )
   BleApplicationContext.BleApplicationContext_legacy.advtServUUID[BleApplicationContext.BleApplicationContext_legacy.advtServUUIDlen] =
       (uint8_t) (servUUID >> 8) & 0xFF;
   BleApplicationContext.BleApplicationContext_legacy.advtServUUIDlen++;
-
-  return;
-}
-
-static void Adv_Mgr( void )
-{
-  /**
-   * The code shall be executed in the background as an aci command may be sent
-   * The background is the only place where the application can make sure a new aci command
-   * is not sent if there is a pending one
-   */
-  UTIL_SEQ_SetTask(1 << CFG_TASK_ADV_UPDATE_ID, CFG_SCH_PRIO_0);
 
   return;
 }

@@ -3382,9 +3382,17 @@ void GenericLevel_LightBinding(Generic_LevelStatus_t* gLevel_param , MOBLEUINT8 
 */
 MOBLEUINT16 Light_Actual_LinearBinding(MOBLEUINT8 elementIndex)
 {
-  float productValue;
+  /*  float productValue; 
+   *  Remove New warning Pa205 "implicit conversion from float to double" for systems with a single-precision only FPU. 
+   * The warning is an alert that a double-precision library implementation will be used for the operation.
+   */
+  double productValue;
   
-  productValue = pow((((float)Light_LightnessStatus[elementIndex].LightnessPresentValue16)/65535) , 2);
+  /*  productValue = pow((((float)Light_LightnessStatus[elementIndex].LightnessPresentValue16)/65535) , 2); 
+   *  Remove New warning Pa205 "implicit conversion from float to double" for systems with a single-precision only FPU. 
+   * The warning is an alert that a double-precision library implementation will be used for the operation.
+   */
+  productValue = pow((((double)Light_LightnessStatus[elementIndex].LightnessPresentValue16)/65535) , 2);
   Light_LightnessStatus[elementIndex].LinearPresentValue16 = (MOBLEUINT16)(65535 * productValue);
  
   return Light_LightnessStatus[elementIndex].LinearPresentValue16; 
@@ -3405,18 +3413,30 @@ MOBLEUINT16 Light_Linear_ActualBinding(MOBLEUINT32 length, MOBLEUINT8 elementInd
   /*
   6.1.2.1.1 - actual lightness = 655354 * squareroot(linear lightness/ 655354).
   */
-  float productValue;
+  /*  float productValue; 
+   *  Remove New warning Pa205 "implicit conversion from float to double" for systems with a single-precision only FPU. 
+   * The warning is an alert that a double-precision library implementation will be used for the operation.
+   */
+  double productValue;
   
   if(length <= 3)
   {
-    productValue = sqrt((((float)Light_LightnessStatus[elementIndex].LinearPresentValue16) / 65535));
+    /*  productValue = sqrt((((float)Light_LightnessStatus[elementIndex].LinearPresentValue16) / 65535)); 
+     *  Remove New warning Pa205 "implicit conversion from float to double" for systems with a single-precision only FPU. 
+     * The warning is an alert that a double-precision library implementation will be used for the operation.
+     */
+    productValue = sqrt((((double)Light_LightnessStatus[elementIndex].LinearPresentValue16) / 65535));
     Light_LightnessStatus[elementIndex].LightnessPresentValue16 = (MOBLEUINT16)(65535 * productValue);      
     
     return Light_LightnessStatus[elementIndex].LightnessPresentValue16;  
   }
   else
   {
-    productValue = sqrt((((float)Light_LightnessStatus[elementIndex].TargetValue16) / 65535));
+    /*  productValue = sqrt((((float)Light_LightnessStatus[elementIndex].TargetValue16) / 65535)); 
+     *  Remove New warning Pa205 "implicit conversion from float to double" for systems with a single-precision only FPU. 
+     * The warning is an alert that a double-precision library implementation will be used for the operation.
+     */
+    productValue = sqrt((((double)Light_LightnessStatus[elementIndex].TargetValue16) / 65535));
     Light_LightnessStatus[elementIndex].TargetValue16 = (MOBLEUINT16)(65535 * productValue);
     Light_TemporaryStatus[elementIndex].TargetParam_1 = Light_LightnessStatus[elementIndex].TargetValue16;   
     
@@ -3548,7 +3568,11 @@ void GenericLevel_CtlTempBinding(Generic_LevelStatus_t * bLevelParam, MOBLEUINT8
   MOBLEUINT32 productValue;
   
   productValue = (bLevelParam->Present_Level16 + 32768) * (MAX_CTL_TEMP_RANGE - MIN_CTL_TEMP_RANGE) ;
-  Light_CtlStatus[elementIndex].PresentCtlTemperature16 = (MOBLEUINT16)(MIN_CTL_TEMP_RANGE + round(((productValue) / (float)65535)));
+  /*  Light_CtlStatus[elementIndex].PresentCtlTemperature16 = (MOBLEUINT16)(MIN_CTL_TEMP_RANGE + round(((productValue) / (float)65535))); 
+   *  Remove New warning Pa205 "implicit conversion from float to double" for systems with a single-precision only FPU. 
+   * The warning is an alert that a double-precision library implementation will be used for the operation.
+   */
+  Light_CtlStatus[elementIndex].PresentCtlTemperature16 = (MOBLEUINT16)(MIN_CTL_TEMP_RANGE + round(((productValue) / (double)65535)));
   
   TRACE_M(TF_LIGHT_M, "PresentGeneric = %d,\r\n", bLevelParam->Present_Level16);
   TRACE_M(TF_LIGHT_M, "Present Level value %d\r\n", Light_CtlStatus[elementIndex].PresentCtlTemperature16); 

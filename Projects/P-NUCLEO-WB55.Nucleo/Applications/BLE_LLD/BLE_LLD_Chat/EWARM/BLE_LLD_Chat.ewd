@@ -44,7 +44,7 @@
                 </option>
                 <option>
                     <name>MemFile</name>
-                    <state>$TOOLKIT_DIR$\CONFIG\debugger\ST\STM32WB55RG.ddf</state>
+                    <state>$TOOLKIT_DIR$\CONFIG\debugger\ST\STM32WB55_CM4.ddf</state>
                 </option>
                 <option>
                     <name>RunToEnable</name>
@@ -112,7 +112,7 @@
                 </option>
                 <option>
                     <name>FlashLoadersV3</name>
-                    <state>$TOOLKIT_DIR$\config\flashloader\ST\FlashSTM32WB55xG.board</state>
+                    <state>$TOOLKIT_DIR$\config\flashloader\ST\FlashSTM32WBxxxG_M4.board</state>
                 </option>
                 <option>
                     <name>OCImagesSuppressCheck1</name>
@@ -1098,7 +1098,7 @@
                 </option>
                 <option>
                     <name>CCSwoClockAuto</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>CCSwoClockEdit</name>
@@ -1166,7 +1166,7 @@
                 </option>
                 <option>
                     <name>CCSTLinkUsbSerialNoSelect</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>CCSTLinkJtagSpeedList</name>

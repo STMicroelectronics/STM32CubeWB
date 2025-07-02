@@ -32,6 +32,7 @@
 #include "app_ble.h"
 #include "shci.h"
 #include "app_debug.h"
+#include "FreeRTOS.h"
 
 /* Private includes -----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */

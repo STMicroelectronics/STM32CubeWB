@@ -2,7 +2,7 @@
 <project>
     <fileVersion>3</fileVersion>
     <configuration>
-        <name>BLE_LLD_proximity</name>
+        <name>BLE_LLD_Proximity</name>
         <toolchain>
             <name>ARM</name>
         </toolchain>
@@ -44,7 +44,7 @@
                 </option>
                 <option>
                     <name>MemFile</name>
-                    <state>$TOOLKIT_DIR$\CONFIG\debugger\ST\STM32WB55RG.ddf</state>
+                    <state>$TOOLKIT_DIR$\CONFIG\debugger\ST\STM32WB55_CM4.ddf</state>
                 </option>
                 <option>
                     <name>RunToEnable</name>
@@ -76,11 +76,11 @@
                 </option>
                 <option>
                     <name>OCDownloadVerifyAll</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>OCProductVersion</name>
-                    <state>7.10.3.6927</state>
+                    <state>9.20.1.43525</state>
                 </option>
                 <option>
                     <name>OCDynDriverList</name>
@@ -112,7 +112,7 @@
                 </option>
                 <option>
                     <name>FlashLoadersV3</name>
-                    <state>$TOOLKIT_DIR$\config\flashloader\ST\FlashSTM32WB55xG.board</state>
+                    <state>$TOOLKIT_DIR$\config\flashloader\ST\FlashSTM32WBxxxG_M4.board</state>
                 </option>
                 <option>
                     <name>OCImagesSuppressCheck1</name>
@@ -286,10 +286,6 @@
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
                 <option>
-                    <name>CatchSFERR</name>
-                    <state>1</state>
-                </option>
-                <option>
                     <name>OCDriverInfo</name>
                     <state>1</state>
                 </option>
@@ -320,7 +316,7 @@
                 </option>
                 <option>
                     <name>CMSISDAPInterfaceRadio</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>CMSISDAPInterfaceCmdLine</name>
@@ -405,6 +401,10 @@
                 </option>
                 <option>
                     <name>CatchINTERR</name>
+                    <state>1</state>
+                </option>
+                <option>
+                    <name>CatchSFERR</name>
                     <state>1</state>
                 </option>
                 <option>
@@ -502,10 +502,6 @@
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
                 <option>
-                    <name>CatchSFERR</name>
-                    <state>1</state>
-                </option>
-                <option>
                     <name>OCDriverInfo</name>
                     <state>1</state>
                 </option>
@@ -544,7 +540,7 @@
                 </option>
                 <option>
                     <name>IjetInterfaceRadio</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>IjetInterfaceCmdLine</name>
@@ -581,7 +577,7 @@
                 </option>
                 <option>
                     <name>IjetCpuClockEdit</name>
-                    <state>72.0</state>
+                    <state></state>
                 </option>
                 <option>
                     <name>IjetSwoPrescalerList</name>
@@ -654,6 +650,10 @@
                 </option>
                 <option>
                     <name>CatchINTERR</name>
+                    <state>1</state>
+                </option>
+                <option>
+                    <name>CatchSFERR</name>
                     <state>1</state>
                 </option>
                 <option>
@@ -784,10 +784,6 @@
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
                 <option>
-                    <name>CCCatchSFERR</name>
-                    <state>0</state>
-                </option>
-                <option>
                     <name>JLinkSpeed</name>
                     <state>1000</state>
                 </option>
@@ -886,12 +882,12 @@
                 </option>
                 <option>
                     <name>CCJLinkInterfaceRadio</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>CCJLinkResetList</name>
                     <version>6</version>
-                    <state>7</state>
+                    <state>5</state>
                 </option>
                 <option>
                     <name>CCJLinkInterfaceCmdLine</name>
@@ -926,6 +922,10 @@
                     <state>0</state>
                 </option>
                 <option>
+                    <name>CCCatchSFERR</name>
+                    <state>0</state>
+                </option>
+                <option>
                     <name>CCCatchHARDERR</name>
                     <state>0</state>
                 </option>
@@ -952,7 +952,7 @@
                 </option>
                 <option>
                     <name>CCCpuClockEdit</name>
-                    <state>72.0</state>
+                    <state></state>
                 </option>
                 <option>
                     <name>CCSwoClockAuto</name>
@@ -1001,7 +1001,7 @@
                 </option>
                 <option>
                     <name>CCLmiFtdiInterfaceRadio</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>CCLmiFtdiInterfaceCmdLine</name>
@@ -1098,7 +1098,7 @@
                 </option>
                 <option>
                     <name>CCSwoClockAuto</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>CCSwoClockEdit</name>
@@ -1435,7 +1435,7 @@
                 </option>
                 <option>
                     <name>CCXds100InterfaceRadio</name>
-                    <state>0</state>
+                    <state>2</state>
                 </option>
                 <option>
                     <name>CCXds100InterfaceCmdLine</name>
@@ -1444,7 +1444,7 @@
                 <option>
                     <name>CCXds100ProbeList</name>
                     <version>0</version>
-                    <state>0</state>
+                    <state>3</state>
                 </option>
                 <option>
                     <name>CCXds100SWOPortRadio</name>

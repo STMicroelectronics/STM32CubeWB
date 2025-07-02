@@ -29,6 +29,8 @@
 #include "mesh_cfg.h"
 #include <string.h>
 
+#include "stm32_lcd.h"
+
 /** @addtogroup ST_BLE_Mesh
 *  @{
 */
@@ -379,18 +381,24 @@ MOBLE_RESULT Appli_Vendor_LEDControl( MOBLEUINT8 const *data, MOBLEUINT32 length
         TRACE_M(TF_VENDOR,"Appli_LED_THERMOMETER callback received for elementIndex %d \r\n", elementIndex);
         intensityValue = data[1];
 #ifdef INDICATOR_NODE
+        char text[32];
+        
+        sprintf(text,"Received T:%d C",intensityValue);
+
+        UTIL_LCD_DisplayStringAtLine(3,(uint8_t*)text);
+        
         TRACE_M(TF_VENDOR,"Appli_LED_THERMOMETER : Intensity value %d \r\n", intensityValue);
-        if((intensityValue>170)&&(intensityValue<=255)){
+        if((intensityValue>30)&&(intensityValue<=255)){
           aPwmLedGsData_vendor[PWM_LED_RED]   = PWM_LED_GSDATA_7_0;
           aPwmLedGsData_vendor[PWM_LED_GREEN] = PWM_LED_GSDATA_OFF;
           aPwmLedGsData_vendor[PWM_LED_BLUE]  = PWM_LED_GSDATA_OFF;
         }
-        else if((intensityValue>85)&&(intensityValue<=170)){
+        else if((intensityValue>15)&&(intensityValue<=30)){
           aPwmLedGsData_vendor[PWM_LED_RED]   = PWM_LED_GSDATA_OFF;
           aPwmLedGsData_vendor[PWM_LED_GREEN] = PWM_LED_GSDATA_7_0;
           aPwmLedGsData_vendor[PWM_LED_BLUE]  = PWM_LED_GSDATA_OFF;
         }
-        else if((intensityValue>0)&&(intensityValue<=85)){
+        else if((intensityValue>0)&&(intensityValue<=15)){
           aPwmLedGsData_vendor[PWM_LED_RED]   = PWM_LED_GSDATA_OFF;
           aPwmLedGsData_vendor[PWM_LED_GREEN] = PWM_LED_GSDATA_OFF;
           aPwmLedGsData_vendor[PWM_LED_BLUE]  = PWM_LED_GSDATA_7_0;
@@ -578,7 +586,7 @@ void Appli_Vendor_Publish_Temperature(MOBLE_ADDRESS srcAddress, MOBLEUINT8 tempe
     
   AppliBuff[0] = APPLI_CMD_LED_THERMOMETER;
   AppliBuff[1] = temperature;
-  TRACE_I(TF_VENDOR_M, "Publish Temperature \r\n");
+  TRACE_I(TF_VENDOR_M, "Publish Temperature %d C\r\n", temperature);
   result = BLEMesh_SetRemotePublication(VENDORMODEL_STMICRO_ID1, srcAddress,
                                             APPLI_LED_CONTROL_STATUS_CMD, 
                                             AppliBuff, sizeof(AppliBuff),

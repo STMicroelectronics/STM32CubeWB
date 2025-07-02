@@ -238,14 +238,10 @@ Step 6. Modify publication address of your Thermometer Node to publish his vendo
 Step 7. Once the Thermometer and Indicator Nodes are provisioned, you can close the smartphone application.
 		The Green LED of your Proxy node should switch OFF as it is no longer connected to the Smartphone.
 		
-Step 8.	The Thermometer send Vendor command to change the RGB LED color of the Indicator Node depending on the temperature he is measuring.
-		Blue = low temperature
-		Green = medium temperature
-		Red = High temperature
-
-NOTE: The actual code manage temperature between 20 and 30 degrees Celsius.
-      You can change it by modifying min_temp, max_temp.
-	  into PublishTemp_Task() function
+Step 8.	The Thermometer send Vendor command to change the RGB LED color of the Indicator Node and LCD display (rounded received temperature) depending on the temperature he is measuring.
+		Blue = low temperature between 0 and 15 degrees Celsius
+		Green = medium temperature between 16 and 30 degrees Celsius
+		Red = High temperature higher or equal than 31 degrees Celsius
 
 
  * <h3><center>&copy; COPYRIGHT STMicroelectronics</center></h3>

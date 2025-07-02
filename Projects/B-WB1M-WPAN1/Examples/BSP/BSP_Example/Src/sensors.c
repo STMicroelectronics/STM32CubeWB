@@ -64,7 +64,7 @@ void Temperature_demo(void)
       Error_Handler();
     }
     
-    printf("\tTemperature = %f\n", temperature);
+    printf("\tTemperature = %f\n", (double)temperature);
     HAL_Delay(1000);
   }
   

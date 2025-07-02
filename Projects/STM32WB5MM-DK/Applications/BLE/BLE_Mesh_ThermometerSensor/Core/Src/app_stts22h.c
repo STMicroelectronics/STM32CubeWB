@@ -140,7 +140,7 @@ void STTS22H_PrintValues(void){
 
   STTS22H_TEMP_GetTemperature(&stts22h_obj_0,&temp_val);
 
-  sprintf(text,"T:%2.1f C",temp_val);
+  sprintf(text,"T:%2.1f C",(double)temp_val);
 
   UTIL_LCD_DisplayStringAtLine(3,(uint8_t*)text);
 #ifdef ENABLE_SENSOR_MODEL_SERVER

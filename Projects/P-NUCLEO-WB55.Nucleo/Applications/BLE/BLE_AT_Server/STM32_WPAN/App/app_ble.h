@@ -188,11 +188,6 @@ typedef struct _tBLEProfileGlobalContext
       BleGlobalContext_t BleApplicationContext_legacy;
       APP_BLE_ConnStatus_t Device_Connection_Status;
       
-      /**
-      * ID of the Advertising Timeout
-      */
-      uint8_t Advertising_mgr_timer_Id;
-      
       uint8_t SwitchOffGPIO_timer_Id;
     }BleApplicationContext_t;
 /* USER CODE BEGIN ET */

@@ -354,6 +354,14 @@
 #define CFG_BLE_MAX_TX_POWER            (6)
 
 /**
+* BLE stack Maximum number of created Enhanced ATT bearers to be configured
+* in addition to the number of links
+*     - Range: 0 .. 4
+*/ 
+#define CFG_BLE_MAX_ADD_EATT_BEARERS    (4)
+        
+
+/**
  * BLE Rx model configuration flags to be configured with:
  * - SHCI_C2_BLE_INIT_RX_MODEL_AGC_RSSI_LEGACY
  * - SHCI_C2_BLE_INIT_RX_MODEL_AGC_RSSI_BLOCKER 

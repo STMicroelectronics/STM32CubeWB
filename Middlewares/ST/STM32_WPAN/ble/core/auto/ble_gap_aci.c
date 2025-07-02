@@ -15,7 +15,7 @@
  *****************************************************************************
  */
 
-#include "ble_gap_aci.h"
+#include "auto/ble_gap_aci.h"
 
 tBleStatus aci_gap_set_non_discoverable( void )
 {
@@ -1185,39 +1185,6 @@ tBleStatus aci_gap_set_oob_data( uint8_t Device_Type,
   Osal_MemSet( &rq, 0, sizeof(rq) );
   rq.ogf = 0x3f;
   rq.ocf = 0x0a8;
-  rq.cparam = cmd_buffer;
-  rq.clen = index_input;
-  rq.rparam = &status;
-  rq.rlen = 1;
-  if ( hci_send_req(&rq, FALSE) < 0 )
-    return BLE_STATUS_TIMEOUT;
-  return status;
-}
-
-tBleStatus aci_gap_add_devices_to_resolving_list( uint8_t Num_of_Resolving_list_Entries,
-                                                  const Identity_Entry_t* Identity_Entry,
-                                                  uint8_t Clear_Resolving_List )
-{
-  struct hci_request rq;
-  uint8_t cmd_buffer[BLE_CMD_MAX_PARAM_LEN];
-  aci_gap_add_devices_to_resolving_list_cp0 *cp0 = (aci_gap_add_devices_to_resolving_list_cp0*)(cmd_buffer);
-  aci_gap_add_devices_to_resolving_list_cp1 *cp1 = (aci_gap_add_devices_to_resolving_list_cp1*)(cmd_buffer + 1 + Num_of_Resolving_list_Entries * (sizeof(Identity_Entry_t)));
-  tBleStatus status = 0;
-  int index_input = 0;
-  cp0->Num_of_Resolving_list_Entries = Num_of_Resolving_list_Entries;
-  index_input += 1;
-  /* var_len_data input */
-  {
-    Osal_MemCpy( (void*)&cp0->Identity_Entry, (const void*)Identity_Entry, Num_of_Resolving_list_Entries * (sizeof(Identity_Entry_t)) );
-    index_input += Num_of_Resolving_list_Entries * (sizeof(Identity_Entry_t));
-    {
-      cp1->Clear_Resolving_List = Clear_Resolving_List;
-    }
-    index_input += 1;
-  }
-  Osal_MemSet( &rq, 0, sizeof(rq) );
-  rq.ogf = 0x3f;
-  rq.ocf = 0x0a9;
   rq.cparam = cmd_buffer;
   rq.clen = index_input;
   rq.rparam = &status;

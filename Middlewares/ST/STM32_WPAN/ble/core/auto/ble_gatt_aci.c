@@ -15,7 +15,7 @@
  *****************************************************************************
  */
 
-#include "ble_gatt_aci.h"
+#include "auto/ble_gatt_aci.h"
 
 tBleStatus aci_gatt_init( void )
 {

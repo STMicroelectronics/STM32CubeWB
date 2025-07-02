@@ -565,54 +565,63 @@ extern "C" {
    */
   int8_t max_tx_power;
   
-   /**
-   * RX model configuration
-   * - bit 0:   1: agc_rssi model improved vs RF blockers    0: Legacy agc_rssi model
-   * - other bits: reserved ( shall be set to 0)
-   */
+  /**
+  * RX model configuration
+  * - bit 0:   1: agc_rssi model improved vs RF blockers    0: Legacy agc_rssi model
+  * - other bits: reserved ( shall be set to 0)
+  */
   uint8_t rx_model_config;
-
-  /* Maximum number of advertising sets.
-   * Range: 1 .. 8 with limitation:
-   * This parameter is linked to max_adv_data_len such as both compliant with allocated Total memory computed with BLE_EXT_ADV_BUFFER_SIZE based 
-   * on Max Extended advertising configuration supported.
-   * This parameter is considered by the CPU2 when Options has SHCI_C2_BLE_INIT_OPTIONS_EXT_ADV flag set
-   */
+  
+  /** Maximum number of advertising sets.
+  * Range: 1 .. 8 with limitation:
+  * This parameter is linked to max_adv_data_len such as both compliant with allocated Total memory computed with BLE_EXT_ADV_BUFFER_SIZE based 
+  * on Max Extended advertising configuration supported.
+  * This parameter is considered by the CPU2 when Options has SHCI_C2_BLE_INIT_OPTIONS_EXT_ADV flag set
+  */
   uint8_t max_adv_set_nbr;
-
-  /* Maximum advertising data length (in bytes)
-   * Range: 31 .. 1650 with limitation:
-   * This parameter is linked to max_adv_set_nbr such as both compliant with allocated Total memory computed with BLE_EXT_ADV_BUFFER_SIZE based 
-   * on Max Extended advertising configuration supported.
-   * This parameter is considered by the CPU2 when Options has SHCI_C2_BLE_INIT_OPTIONS_EXT_ADV flag set
-   */
+  
+  /** Maximum advertising data length (in bytes)
+  * Range: 31 .. 1650 with limitation:
+  * This parameter is linked to max_adv_set_nbr such as both compliant with allocated Total memory computed with BLE_EXT_ADV_BUFFER_SIZE based 
+  * on Max Extended advertising configuration supported.
+  * This parameter is considered by the CPU2 when Options has SHCI_C2_BLE_INIT_OPTIONS_EXT_ADV flag set
+  */
   uint16_t max_adv_data_len;
-
-  /* RF TX Path Compensation Value (16-bit signed integer). Units: 0.1 dB.
-   * Range: -1280 .. 1280
-   */
+  
+  /** RF TX Path Compensation Value (16-bit signed integer). Units: 0.1 dB.
+  * Range: -1280 .. 1280
+  */
   int16_t tx_path_compens;
-
-  /* RF RX Path Compensation Value (16-bit signed integer). Units: 0.1 dB.
-   * Range: -1280 .. 1280
-   */
+  
+  /** RF RX Path Compensation Value (16-bit signed integer). Units: 0.1 dB.
+  * Range: -1280 .. 1280
+  */
   int16_t rx_path_compens;
-
-  /* BLE core specification version (8-bit unsigned integer).
-   * values as: 11(5.2), 12(5.3), 13(5.4)
-   */
+  
+  /** BLE core specification version (8-bit unsigned integer).
+  * values as: 11(5.2), 12(5.3), 13(5.4)
+  */
   uint8_t ble_core_version; 
- 
-   /**
-   * Options flags extension
-   * - bit 0:   1: appearance Writable              0: appearance Read-Only
-   * - bit 1:   1: Enhanced ATT supported           0: Enhanced ATT not supported
-   * - other bits: reserved ( shall be set to 0)
-   */
+  
+  /**
+  * Options flags extension
+  * - bit 0:   1: appearance Writable              0: appearance Read-Only
+  * - bit 1:   1: Enhanced ATT supported           0: Enhanced ATT not supported
+  * - other bits: reserved ( shall be set to 0)
+  */
   uint8_t Options_extension;
-
-      } SHCI_C2_Ble_Init_Cmd_Param_t;
-
+  
+  /**
+  * MaxAddEattBearers
+  *
+  * Maximum number of bearers that can be created for Enhanced ATT
+  * in addition to the number of links
+  *     - Range: 0 .. 4
+  */
+  uint8_t MaxAddEattBearers;
+  
+  } SHCI_C2_Ble_Init_Cmd_Param_t;
+  
   typedef PACKED_STRUCT{
     SHCI_Header_t Header;       /** Does not need to be initialized by the user */
     SHCI_C2_Ble_Init_Cmd_Param_t Param;

@@ -167,7 +167,7 @@ static void MOTION_Handle_Sensor(void)
     accX = (float)acceleration.x;
     accY = (float)acceleration.y;
     accZ = (float)acceleration.z;
-    sprintf(accValue,"%5.0f|%5.0f|%5.0f",accX,accY,accZ);
+    sprintf(accValue,"%5.0f|%5.0f|%5.0f",(double)accX,(double)accY,(double)accZ);
       
     MOTION_Server_App_Context.acceleration = acceleration;
   }
@@ -180,7 +180,7 @@ static void MOTION_Handle_Sensor(void)
     gyroX = (float)((angular_velocity.x) / 100.0);
     gyroY = (float)((angular_velocity.y) / 100.0);
     gyroZ = (float)((angular_velocity.z) / 100.0);
-    sprintf(gyroValue,"%5.0f|%5.0f|%5.0f",gyroX,gyroY,gyroZ);
+    sprintf(gyroValue,"%5.0f|%5.0f|%5.0f",(double)gyroX,(double)gyroY,(double)gyroZ);
       
     MOTION_Server_App_Context.angular_velocity = angular_velocity;
   }

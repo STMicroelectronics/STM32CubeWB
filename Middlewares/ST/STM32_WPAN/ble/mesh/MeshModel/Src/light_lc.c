@@ -196,7 +196,7 @@ MODEL_OpcodeTableParam_t Light_LC_Opcodes_Table[] = {
  {LIGHT_LC_SETUP_SERVER_MODEL_ID, LIGHT_LC_PROPERTY_GET,       MOBLE_TRUE,   2,               2,               LIGHT_LC_PROPERTY_STATUS, 2,                10},
  {LIGHT_LC_SETUP_SERVER_MODEL_ID, LIGHT_LC_PROPERTY_SET,       MOBLE_TRUE,   2,               10,              LIGHT_LC_PROPERTY_STATUS, 2,                10},
  {LIGHT_LC_SETUP_SERVER_MODEL_ID, LIGHT_LC_PROPERTY_SET_UNACK, MOBLE_FALSE,  2,               10,              LIGHT_LC_PROPERTY_STATUS, 2,                10},
- {LIGHT_LC_SETUP_SERVER_MODEL_ID, LIGHT_LC_PROPERTY_STATUS,    MOBLE_FALSE,  2,               10,              0                       , 2,                10}, #endif /* ENABLE_LIGHT_MODEL_SERVER_LC */#endif /* ENABLE_LIGHT_MODEL_SERVER_LC */
+ {LIGHT_LC_SETUP_SERVER_MODEL_ID, LIGHT_LC_PROPERTY_STATUS,    MOBLE_FALSE,  2,               10,              0                       , 2,                10}, 
 #endif /* ENABLE_LIGHT_MODEL_SERVER_LC */
  {0}
 };

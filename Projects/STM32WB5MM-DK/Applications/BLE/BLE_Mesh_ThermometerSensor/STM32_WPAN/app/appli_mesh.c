@@ -80,6 +80,9 @@
 #if (LOW_POWER_FEATURE == 1)
 #define LPN_API_TIMER_INTERVAL           5*(1000000/CFG_TS_TICK_VAL)  /* 5 secondes */
 #endif
+
+#define BSP_PWM_DELAY                    200
+
 /* Private macro -------------------------------------------------------------*/
 #define MAX_APPLI_BUFF_SIZE             8 
 #define MAX_PENDING_PACKETS_QUE_SIZE    2
@@ -256,17 +259,20 @@ void LED_Deinit(void)
 void LED_On(aPwmLedGsData_TypeDef aPwmLedGsData)
 {
   BSP_PWM_LED_Init();
+  HAL_Delay(BSP_PWM_DELAY);
   BSP_PWM_LED_On(aPwmLedGsData);
+  HAL_Delay(BSP_PWM_DELAY);
   LED_Deinit();
 }
 
 void LED_Off(void)
 {
   BSP_PWM_LED_Init();
+  HAL_Delay(BSP_PWM_DELAY);
   BSP_PWM_LED_Off();
+  HAL_Delay(BSP_PWM_DELAY);
   LED_Deinit();
 }
-
 
 /************************* Button Control functions ********************/
 /**
@@ -283,7 +289,9 @@ static void Appli_ShortButtonPress(void)
   aPwmLedGsData_app[PWM_LED_BLUE]  = PWM_LED_GSDATA_OFF;
   
   BSP_PWM_LED_Init();
+  HAL_Delay(BSP_PWM_DELAY);
   BSP_PWM_LED_Toggle(aPwmLedGsData_app);
+  HAL_Delay(BSP_PWM_DELAY);
   LED_Deinit();
 }
   
@@ -389,25 +397,19 @@ static void PublishTempTimerCb(void)
 */ 
 static void PublishTemp_Task()
 {
-  /** Modify temperature range to fit your usecase conditions : in this example Tmin=20 degrees C, Tmax = 30 degrees C **/
-  float min_temp = 20.0f;
-  float max_temp = 30.0f;
-  
+
   float temp_val;
   
   STTS22H_getTemperatureValue(&temp_val);
-  if(temp_val < min_temp){
-    temp_val=min_temp;
-  }
-  else if(temp_val > max_temp){
-    temp_val=max_temp;
-  }
-    
-  actual_temp = (MOBLEINT8)(((temp_val - min_temp) / (max_temp - min_temp)) * 255);
-  if((abs(actual_temp-prev_temp))>0x2){
+  
+  actual_temp = (MOBLEINT8)(round((double)(temp_val)));
+
+  if((abs(actual_temp-prev_temp)) > 0)
+  {
     Appli_Vendor_Publish_Temperature(BLEMesh_GetAddress(), actual_temp);
     prev_temp=actual_temp;
   }
+
 }
 #endif /* THERMOMETER_NODE */
 
@@ -1757,7 +1759,6 @@ void Appli_Init(MOBLEUINT8 *flag)
   */
   HW_TS_Create(CFG_TIM_PROC_ID_ISR, &InputOOBTimeOut_Id, hw_ts_SingleShot, InputOOBTimeOutTask);
 #endif
-
 }
 
 /*****************************Config Model Callbacks***************************/

@@ -804,8 +804,8 @@ static void APP_ZIGBEE_Temp_Meas_Read_cb(const ZbZclReadRspT *readRsp, void *arg
         case ZCL_TEMP_MEAS_ATTR_MEAS_VAL:
           current_temp_attr = pletoh16(readRsp->attr[i].value);
           current_temp = (float)current_temp_attr/100;
-          APP_DBG("[TEMP MEAS] Current Temp= %.1f C",(float)current_temp);
-          sprintf(text,"Remote T:%.1f C",current_temp);
+          APP_DBG("[TEMP MEAS] Current Temp= %.1f C",(double)current_temp);
+          sprintf(text,"Remote T:%.1f C",(double)current_temp);
           UTIL_LCD_ClearStringLine(3);
           UTIL_LCD_DisplayStringAt(0, LINE(3), (uint8_t *)text, CENTER_MODE);
           BSP_LCD_Refresh(0);
@@ -896,7 +896,7 @@ static void APP_ZIGBEE_Temp_meas_client_report(struct ZbZclClusterT *clusterPtr,
         temp_cur = (int16_t)attr_val;
         APP_DBG("[From 0x%016llx] - [TEMP MEAS]     %d C",dataIndPtr->src.extAddr,temp_cur/100);
         temp_val = (float) temp_cur/100;
-        sprintf(text,"Rep.Rem T:%.1f C",temp_val);
+        sprintf(text,"Rep.Rem T:%.1f C",(double)temp_val);
         UTIL_LCD_ClearStringLine(3);
         UTIL_LCD_DisplayStringAt(0, LINE(3), (uint8_t *)text, CENTER_MODE);
         BSP_LCD_Refresh(0);

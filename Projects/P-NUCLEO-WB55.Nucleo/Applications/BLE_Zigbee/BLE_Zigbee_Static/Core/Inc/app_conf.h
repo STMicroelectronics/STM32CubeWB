@@ -453,6 +453,8 @@ typedef enum
 
 #if ( (CFG_DEBUG_BLE_TRACE != 0) || (CFG_DEBUG_APP_TRACE != 0) )
 #define CFG_DEBUG_TRACE             1
+#else
+#define CFG_DEBUG_TRACE             0
 #endif
 
 #if (CFG_DEBUG_TRACE != 0)

@@ -220,7 +220,15 @@
 
 #define CFG_BLE_MIN_TX_POWER            (-40) 
 
-#define CFG_BLE_MAX_TX_POWER            (6) 
+#define CFG_BLE_MAX_TX_POWER            (6)
+
+/**
+* BLE stack Maximum number of created Enhanced ATT bearers to be configured
+* in addition to the number of links
+*     - Range: 0 .. 4
+*/ 
+#define CFG_BLE_MAX_ADD_EATT_BEARERS    (4)
+         
 
 
 /**

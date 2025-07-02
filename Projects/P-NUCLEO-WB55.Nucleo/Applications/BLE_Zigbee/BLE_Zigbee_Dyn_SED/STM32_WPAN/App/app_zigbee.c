@@ -742,7 +742,7 @@ static void APP_ZIGBEE_OnOff_Toggle(void)
   toggle_cnt++;
   UTIL_SEQ_WaitEvt(EVENT_ON_OFF_RSP);
   APP_DBG_FULL(LOG_LEVEL_INFO, APPLI_LOG_REGION_GENERAL, "==> Nb TOGGLE ON/OFF sent: %d (%d Fail - %.2f%%) - %d BLE Disc %s",
-      toggle_cnt, toggle_fail, (float)(toggle_fail * 100)/(float)toggle_cnt, disc_cnt, COLOR_DEFAULT);
+      toggle_cnt, toggle_fail, (double)(toggle_fail * 100)/(double)toggle_cnt, disc_cnt, COLOR_DEFAULT);
 }
 
 

@@ -216,7 +216,7 @@ zcl_press_meas_press_client_report(struct ZbZclClusterT *clusterPtr, struct ZbAp
         attr_val= pletoh16(in_payload);
         pressure = (float)attr_val/10;
    
-        APP_DBG("[PRESS MEAS] Reported pressure from server %.1f kPa",pressure);
+        APP_DBG("[PRESS MEAS] Reported pressure from server %.1f kPa",(double)pressure);
     }
 
    
@@ -537,15 +537,15 @@ static void press_meas_read_cb(const ZbZclReadRspT *readRsp, void *arg)
       {
       case ZCL_PRESS_MEAS_ATTR_MEAS_VAL:
         current_press = pletoh16(readRsp->attr[i].value);
-        APP_DBG("[PRESS MEAS] Current Pressure= %.1f kPa",(float)current_press/10);
+        APP_DBG("[PRESS MEAS] Current Pressure= %.1f kPa",(double)current_press/10);
         break;
       case ZCL_PRESS_MEAS_ATTR_MIN_MEAS_VAL:
         min_press = pletoh16(readRsp->attr[i].value);
-        APP_DBG("[PRESS MEAS] Min pressure info= %.1f kPa",(float)min_press/10);
+        APP_DBG("[PRESS MEAS] Min pressure info= %.1f kPa",(double)min_press/10);
         break;
       case ZCL_PRESS_MEAS_ATTR_MAX_MEAS_VAL:
         max_press = pletoh16(readRsp->attr[i].value);
-        APP_DBG("[PRESS MEAS] Max pressure info= %.1f kPa",(float)max_press/10);
+        APP_DBG("[PRESS MEAS] Max pressure info= %.1f kPa",(double)max_press/10);
         break;
       default:
         break;

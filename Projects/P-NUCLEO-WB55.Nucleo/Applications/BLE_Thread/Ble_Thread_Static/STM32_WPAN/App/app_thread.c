@@ -322,19 +322,20 @@ static void APP_THREAD_DeviceConfig(void)
   otError error;
   otNetworkKey networkKey = {{0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF}};
 
+  otInstanceFinalize(NULL);
 #ifdef ENABLE_OPENTHREAD_CLI
   static otInstance *PtOpenThreadInstance;
-  otInstanceFinalize(NULL);
   PtOpenThreadInstance = otInstanceInitSingle();
   otAppCliInit(PtOpenThreadInstance);
+#else
+  otInstanceInitSingle();
 #endif /* ENABLE_OPENTHREAD_CLI */  
-  
+
   error = otInstanceErasePersistentInfo(NULL);
   if (error != OT_ERROR_NONE)
   {
     APP_THREAD_Error(ERR_THREAD_ERASE_PERSISTENT_INFO,error);
   }
-  otInstanceInitSingle();
   error = otSetStateChangedCallback(NULL, APP_THREAD_StateNotif, NULL);
   if (error != OT_ERROR_NONE)
   {

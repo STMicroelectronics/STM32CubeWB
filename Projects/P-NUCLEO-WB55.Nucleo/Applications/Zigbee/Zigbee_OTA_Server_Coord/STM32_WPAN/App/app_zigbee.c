@@ -73,8 +73,8 @@ static bool APP_ZIGBEE_OTA_Server_QueryNextImage_cb(struct ZbZclOtaImageDefiniti
 static enum ZclStatusCodeT APP_ZIGBEE_OTA_Server_ImageBlock_cb(struct ZbZclOtaImageDefinition *image,  struct ZbZclOtaImageData *image_data, 
                                                         uint8_t field_control, uint64_t request_node_address, 
                                                         struct ZbZclOtaImageWaitForData *image_wait, void *arg);
-static enum ZclStatusCodeT APP_ZIGBEE_OTA_Server_UpgradeEnd_cb(struct ZbZclOtaImageDefinition *image_definition, enum ZclStatusCodeT *status, 
-                                                               struct ZbZclOtaEndResponseTimes *end_response_times, void *arg);
+static enum ZclStatusCodeT APP_ZIGBEE_OTA_Server_UpgradeEnd_cb(struct ZbZclOtaImageDefinition *image_definition, enum ZclStatusCodeT status, 
+                                                               struct ZbZclOtaEndResponseTimes *end_response_times, struct ZbZclAddrInfoT *src_info, void *arg);
 
 static void APP_ZIGBEE_OTA_Server_ImageNotify(void);
 static int APP_ZIGBEE_OTA_Server_FindSuitableImage(struct ZbZclOtaImageDefinition *query);
@@ -322,8 +322,9 @@ static enum ZclStatusCodeT APP_ZIGBEE_OTA_Server_ImageBlock_cb(struct ZbZclOtaIm
  * @param  arg: Passed argument
  * @retval ZCL status code
  */
-static enum ZclStatusCodeT APP_ZIGBEE_OTA_Server_UpgradeEnd_cb(struct ZbZclOtaImageDefinition * image_definition, enum ZclStatusCodeT *status, 
-                                                               struct ZbZclOtaEndResponseTimes * end_response_times, void *arg){
+
+static enum ZclStatusCodeT APP_ZIGBEE_OTA_Server_UpgradeEnd_cb(struct ZbZclOtaImageDefinition * image_definition, enum ZclStatusCodeT status, 
+                                                               struct ZbZclOtaEndResponseTimes * end_response_times, struct ZbZclAddrInfoT *src_info, void *arg){
   uint32_t  upgrade_time;
   double    upgrade_troughput;
   struct APP_ZIGBEE_OtaServerInfo * server_info = (struct APP_ZIGBEE_OtaServerInfo *) arg;  
@@ -333,7 +334,7 @@ static enum ZclStatusCodeT APP_ZIGBEE_OTA_Server_UpgradeEnd_cb(struct ZbZclOtaIm
   APP_DBG("[OTA] Upgrade End request received.");
   
   /* Show upgrade end status */
-  switch (*status) {
+  switch (status) {
     case ZCL_STATUS_SUCCESS:
       upgrade_time = ( HAL_GetTick() - server_info->block_transfer.download_time ) / 1000;
       upgrade_troughput = (((double)server_info->requested_image_header.total_image_size / upgrade_time ) / 1000) * 8;

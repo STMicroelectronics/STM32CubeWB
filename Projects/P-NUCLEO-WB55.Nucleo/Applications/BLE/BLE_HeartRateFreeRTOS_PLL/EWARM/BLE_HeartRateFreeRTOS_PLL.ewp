@@ -363,6 +363,7 @@
                     <state>$PROJ_DIR$/../../../../../../Middlewares/ST/STM32_WPAN/ble</state>
                     <state>$PROJ_DIR$/../../../../../../Drivers/CMSIS/Include</state>
                     <state>$PROJ_DIR$/../../../../../../Drivers/BSP/P-NUCLEO-WB55.Nucleo</state>
+                    <state>$PROJ_DIR$/../../../../../../Drivers/CMSIS/RTOS2/Include</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>
@@ -623,6 +624,8 @@
                 <option>
                     <name>AUserIncludes</name>
                     <state>$PROJ_DIR$\..\Core\Inc</state>
+                    <state>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\Third_Party\FreeRTOS\Source\include</state>
+                    <state>$PROJ_DIR$\..\..\..\..\..\..\Drivers\CMSIS\RTOS2\Include</state>
                 </option>
                 <option>
                     <name>AExtraOptionsCheckV2</name>

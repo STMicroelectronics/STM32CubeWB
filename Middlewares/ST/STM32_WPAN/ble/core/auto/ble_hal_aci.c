@@ -15,25 +15,7 @@
  *****************************************************************************
  */
 
-#include "ble_hal_aci.h"
-
-tBleStatus aci_hal_get_fw_build_number( uint16_t* Build_Number )
-{
-  struct hci_request rq;
-  aci_hal_get_fw_build_number_rp0 resp;
-  Osal_MemSet( &resp, 0, sizeof(resp) );
-  Osal_MemSet( &rq, 0, sizeof(rq) );
-  rq.ogf = 0x3f;
-  rq.ocf = 0x000;
-  rq.rparam = &resp;
-  rq.rlen = sizeof(resp);
-  if ( hci_send_req(&rq, FALSE) < 0 )
-    return BLE_STATUS_TIMEOUT;
-  if ( resp.Status )
-    return resp.Status;
-  *Build_Number = resp.Build_Number;
-  return BLE_STATUS_SUCCESS;
-}
+#include "auto/ble_hal_aci.h"
 
 tBleStatus aci_hal_write_config_data( uint8_t Offset,
                                       uint8_t Length,
@@ -252,28 +234,6 @@ tBleStatus aci_hal_set_event_mask( uint32_t Event_Mask )
   return status;
 }
 
-tBleStatus aci_hal_get_pm_debug_info( uint8_t* Allocated_For_TX,
-                                      uint8_t* Allocated_For_RX,
-                                      uint8_t* Allocated_MBlocks )
-{
-  struct hci_request rq;
-  aci_hal_get_pm_debug_info_rp0 resp;
-  Osal_MemSet( &resp, 0, sizeof(resp) );
-  Osal_MemSet( &rq, 0, sizeof(rq) );
-  rq.ogf = 0x3f;
-  rq.ocf = 0x01c;
-  rq.rparam = &resp;
-  rq.rlen = sizeof(resp);
-  if ( hci_send_req(&rq, FALSE) < 0 )
-    return BLE_STATUS_TIMEOUT;
-  if ( resp.Status )
-    return resp.Status;
-  *Allocated_For_TX = resp.Allocated_For_TX;
-  *Allocated_For_RX = resp.Allocated_For_RX;
-  *Allocated_MBlocks = resp.Allocated_MBlocks;
-  return BLE_STATUS_SUCCESS;
-}
-
 tBleStatus aci_hal_set_peripheral_latency( uint8_t Enable )
 {
   struct hci_request rq;
@@ -456,17 +416,104 @@ tBleStatus aci_hal_rx_stop( void )
   return status;
 }
 
-tBleStatus aci_hal_stack_reset( void )
+tBleStatus aci_reset( uint8_t Mode,
+                      uint32_t Options )
 {
   struct hci_request rq;
+  uint8_t cmd_buffer[BLE_CMD_MAX_PARAM_LEN];
+  aci_reset_cp0 *cp0 = (aci_reset_cp0*)(cmd_buffer);
   tBleStatus status = 0;
+  int index_input = 0;
+  cp0->Mode = Mode;
+  index_input += 1;
+  cp0->Options = Options;
+  index_input += 4;
   Osal_MemSet( &rq, 0, sizeof(rq) );
   rq.ogf = 0x3f;
-  rq.ocf = 0x03b;
+  rq.ocf = 0x300;
+  rq.cparam = cmd_buffer;
+  rq.clen = index_input;
   rq.rparam = &status;
   rq.rlen = 1;
   if ( hci_send_req(&rq, FALSE) < 0 )
     return BLE_STATUS_TIMEOUT;
   return status;
+}
+
+tBleStatus aci_get_information( uint32_t* Version,
+                                uint32_t* Options,
+                                uint32_t* Debug_Info )
+{
+  struct hci_request rq;
+  aci_get_information_rp0 resp;
+  Osal_MemSet( &resp, 0, sizeof(resp) );
+  Osal_MemSet( &rq, 0, sizeof(rq) );
+  rq.ogf = 0x3f;
+  rq.ocf = 0x301;
+  rq.rparam = &resp;
+  rq.rlen = sizeof(resp);
+  if ( hci_send_req(&rq, FALSE) < 0 )
+    return BLE_STATUS_TIMEOUT;
+  if ( resp.Status )
+    return resp.Status;
+  Osal_MemCpy( (void*)Version, (const void*)resp.Version, 8 );
+  *Options = resp.Options;
+  Osal_MemCpy( (void*)Debug_Info, (const void*)resp.Debug_Info, 12 );
+  return BLE_STATUS_SUCCESS;
+}
+
+tBleStatus aci_write_config_data( uint8_t Offset,
+                                  uint8_t Length,
+                                  const uint8_t* Value )
+{
+  struct hci_request rq;
+  uint8_t cmd_buffer[BLE_CMD_MAX_PARAM_LEN];
+  aci_write_config_data_cp0 *cp0 = (aci_write_config_data_cp0*)(cmd_buffer);
+  tBleStatus status = 0;
+  int index_input = 0;
+  cp0->Offset = Offset;
+  index_input += 1;
+  cp0->Length = Length;
+  index_input += 1;
+  Osal_MemCpy( (void*)&cp0->Value, (const void*)Value, Length );
+  index_input += Length;
+  Osal_MemSet( &rq, 0, sizeof(rq) );
+  rq.ogf = 0x3f;
+  rq.ocf = 0x302;
+  rq.cparam = cmd_buffer;
+  rq.clen = index_input;
+  rq.rparam = &status;
+  rq.rlen = 1;
+  if ( hci_send_req(&rq, FALSE) < 0 )
+    return BLE_STATUS_TIMEOUT;
+  return status;
+}
+
+tBleStatus aci_read_config_data( uint8_t Offset,
+                                 uint8_t* Data_Length,
+                                 uint8_t* Data )
+{
+  struct hci_request rq;
+  uint8_t cmd_buffer[BLE_CMD_MAX_PARAM_LEN];
+  aci_read_config_data_cp0 *cp0 = (aci_read_config_data_cp0*)(cmd_buffer);
+  aci_read_config_data_rp0 resp;
+  Osal_MemSet( &resp, 0, sizeof(resp) );
+  int index_input = 0;
+  cp0->Offset = Offset;
+  index_input += 1;
+  Osal_MemSet( &rq, 0, sizeof(rq) );
+  rq.ogf = 0x3f;
+  rq.ocf = 0x303;
+  rq.cparam = cmd_buffer;
+  rq.clen = index_input;
+  rq.rparam = &resp;
+  rq.rlen = sizeof(resp);
+  if ( hci_send_req(&rq, FALSE) < 0 )
+    return BLE_STATUS_TIMEOUT;
+  if ( resp.Status )
+    return resp.Status;
+  *Data_Length = resp.Data_Length;
+  Osal_MemCpy( (void*)Data, (const void*)resp.Data, *Data_Length);
+  return BLE_STATUS_SUCCESS;
 }
 

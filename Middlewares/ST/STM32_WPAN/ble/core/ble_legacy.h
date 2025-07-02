@@ -37,6 +37,11 @@
 /* Deprecated names for ACI/HCI commands and events
  */
 
+#define hci_le_read_local_supported_features \
+        hci_le_read_local_supported_features_page_0
+#define hci_le_read_remote_features \
+        hci_le_read_remote_features_page_0
+
 #define aci_gap_configure_whitelist \
         aci_gap_configure_filter_accept_list
 #define aci_gap_slave_security_req \
@@ -46,16 +51,40 @@
 #define aci_gap_slave_security_initiated_event \
         aci_gap_peripheral_security_initiated_event
 
+typedef __PACKED_STRUCT
+{
+  /**
+   * Identity address type
+   * Values:
+   * - 0x00: Public Identity Address
+   * - 0x01: Random (static) Identity Address
+   */
+  uint8_t Peer_Identity_Address_Type;
+  /**
+   * Public or Random (static) Identity Address of the peer device
+   */
+  uint8_t Peer_Identity_Address[6];
+} Identity_Entry_t;
+
 #define Whitelist_Entry_t \
         Peer_Entry_t
 #define Whitelist_Identity_Entry_t \
         Identity_Entry_t
 
+#define HCI_LE_READ_REMOTE_FEATURES_COMPLETE_SUBEVT_CODE \
+        HCI_LE_READ_REMOTE_FEATURES_PAGE_0_COMPLETE_SUBEVT_CODE
+
+#define hci_le_read_remote_features_complete_event_rp0 \
+        hci_le_read_remote_features_page_0_complete_event_rp0
+
 #define ACI_GAP_SLAVE_SECURITY_INITIATED_VSEVT_CODE \
         ACI_GAP_PERIPHERAL_SECURITY_INITIATED_VSEVT_CODE
 
 #define ACI_HAL_FW_ERROR_VSEVT_CODE \
-        ACI_HAL_WARNING_VSEVT_CODE
+        ACI_WARNING_VSEVT_CODE
+
+#define ACI_HAL_WARNING_VSEVT_CODE \
+        ACI_WARNING_VSEVT_CODE
 
 typedef __PACKED_STRUCT
 {
@@ -63,6 +92,12 @@ typedef __PACKED_STRUCT
   uint8_t Data_Length;
   uint8_t Data[(BLE_EVT_MAX_PARAM_LEN - 2) - 2];
 } aci_hal_fw_error_event_rp0;
+
+#define aci_hal_warning_event_rp0 \
+        aci_warning_event_rp0
+
+#define aci_hal_warning_event \
+        aci_warning_event
 
 /* Other deprecated names
  */
@@ -163,6 +198,84 @@ tBleStatus aci_gap_is_device_bonded( uint8_t Peer_Address_Type,
   uint8_t type, address[6];
   return aci_gap_check_bonded_device( Peer_Address_Type, Peer_Address,
                                       &type, address );
+}
+
+/**
+ * @brief ACI_GAP_ADD_DEVICES_TO_RESOLVING_LIST
+ * This  command is used to add devices to the list of address translations
+ * used to resolve Resolvable Private Addresses in the Controller.
+ * 
+ * @param Num_of_Resolving_list_Entries Number of devices that have to be added
+ *        to the list.
+ * @param Identity_Entry See @ref Identity_Entry_t
+ * @param Clear_Resolving_List Clear the resolving list
+ *        Values:
+ *        - 0x00: Do not clear
+ *        - 0x01: Clear before adding
+ * @return Value indicating success or error code.
+ */
+__STATIC_INLINE
+tBleStatus aci_gap_add_devices_to_resolving_list( uint8_t Num_of_Resolving_list_Entries,
+                                                  const Identity_Entry_t* Identity_Entry,
+                                                  uint8_t Clear_Resolving_List )
+{
+  return aci_gap_add_devices_to_list( Num_of_Resolving_list_Entries,
+                                      (const List_Entry_t*)Identity_Entry,
+                                      Clear_Resolving_List );
+}
+
+/**
+ * @brief ACI_HAL_GET_FW_BUILD_NUMBER
+ * This command returns the build number associated with the firmware version
+ * currently running
+ * 
+ * @param[out] Build_Number Build number of the firmware.
+ * @return Value indicating success or error code.
+ */
+__STATIC_INLINE
+tBleStatus aci_hal_get_fw_build_number( uint16_t* Build_Number )
+{
+  uint32_t version[2], options[1], debug_info[3];
+  tBleStatus status = aci_get_information( version, options, debug_info );
+  *Build_Number = (uint16_t)(version[1] >> 16);
+  return status;
+}
+
+/**
+ * @brief ACI_HAL_GET_PM_DEBUG_INFO
+ * This command is used to retrieve TX, RX and total buffer count allocated for
+ * ACL packets.
+ * 
+ * @param[out] Allocated_For_TX MBlocks allocated for TXing
+ * @param[out] Allocated_For_RX MBlocks allocated for RXing
+ * @param[out] Allocated_MBlocks Overall allocated MBlocks
+ * @return Value indicating success or error code.
+ */
+__STATIC_INLINE
+tBleStatus aci_hal_get_pm_debug_info( uint8_t* Allocated_For_TX,
+                                      uint8_t* Allocated_For_RX,
+                                      uint8_t* Allocated_MBlocks )
+{
+  uint32_t version[2], options[1], debug_info[3];
+  tBleStatus status = aci_get_information( version, options, debug_info );
+  *Allocated_For_TX = ((uint8_t)(((uint16_t*)debug_info)[2]) +
+                       (uint8_t)(((uint16_t*)debug_info)[3]));
+  *Allocated_For_RX = (uint8_t)(((uint16_t*)debug_info)[1]);
+  *Allocated_MBlocks = (*Allocated_For_TX) + (*Allocated_For_RX);
+  return status;
+}
+
+/**
+ * @brief ACI_HAL_STACK_RESET
+ * This command is equivalent to HCI_RESET but ensures the sleep mode is
+ * entered immediately after its completion.
+ * 
+ * @return Value indicating success or error code.
+ */
+__STATIC_INLINE
+tBleStatus aci_hal_stack_reset( void )
+{
+  return aci_reset( 0, 0 );
 }
 
 

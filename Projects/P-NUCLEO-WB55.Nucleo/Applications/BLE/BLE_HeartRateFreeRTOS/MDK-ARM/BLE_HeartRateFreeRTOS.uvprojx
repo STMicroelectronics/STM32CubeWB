@@ -16,7 +16,7 @@
         <TargetCommonOption>
           <Device>STM32WB55RGVx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32WBxx_DFP.1.4.0</PackID>
+          <PackID>Keil.STM32WBxx_DFP.1.3.0</PackID>
           <PackURL>https://www.keil.com/pack/</PackURL>
           <Cpu>IROM(0x08000000-0x807FFFF) IRAM(0x20000004-0x2002FC03) CLOCK(8000000) FPU2 CPUTYPE("Cortex-M4")</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -340,7 +340,7 @@
               <MiscControls>-Wno-implicit-const-int-float-conversion</MiscControls>
               <Define>USE_STM32WBXX_NUCLEO,STM32WB55xx,USE_HAL_DRIVER,CORE_CM4</Define>
               <Undefine></Undefine>
-              <IncludePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/template;../../../../../../Middlewares/ST/STM32_WPAN/ble/core/auto;../../../../../../Middlewares/ST/STM32_WPAN;../../../../../../Drivers/CMSIS/Device/ST/STM32WBxx/Include;../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc;../../../../../../Drivers/BSP/P-NUCLEO-WB55.Nucleo;../../../../../../Middlewares/ST/STM32_WPAN/ble/core/;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl;../../../../../../Middlewares/ST/STM32_WPAN/utilities;../../../../../../Utilities/lpm/tiny_lpm;../../../../../../Utilities/sequencer;../../../../../../Drivers/CMSIS/Include;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread;../../../../../../Middlewares/ST/STM32_WPAN/ble;../Core/Inc;../STM32_WPAN/app;../../../../../../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2;../../../../../../Middlewares/Third_Party/FreeRTOS/Source/include;..\..\..\..\..\..\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F</IncludePath>
+              <IncludePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/template;../../../../../../Middlewares/ST/STM32_WPAN/ble/core/auto;../../../../../../Middlewares/ST/STM32_WPAN;../../../../../../Drivers/CMSIS/Device/ST/STM32WBxx/Include;../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc;../../../../../../Drivers/BSP/P-NUCLEO-WB55.Nucleo;../../../../../../Middlewares/ST/STM32_WPAN/ble/core/;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl;../../../../../../Middlewares/ST/STM32_WPAN/utilities;../../../../../../Utilities/lpm/tiny_lpm;../../../../../../Utilities/sequencer;../../../../../../Drivers/CMSIS/Include;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci;../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread;../../../../../../Middlewares/ST/STM32_WPAN/ble;../Core/Inc;../STM32_WPAN/app;../../../../../../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2;../../../../../../Middlewares/Third_Party/FreeRTOS/Source/include;..\..\..\..\..\..\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM4F;..\..\..\..\..\..\Drivers\CMSIS\RTOS2\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>

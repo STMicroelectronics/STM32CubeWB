@@ -148,7 +148,7 @@ enum ZbBdbTouchlinkKeyIndexT {
  * which can cause further network problems. */
 #define ZB_BDB_FLAG_ZDO_NWK_UPDATE_SCAN_DISABLE         0x00000100U
 
-/* Used for debugging APS layer */
+/* Used for debugging APS layer (Deprecated) */
 #define ZB_BDB_FLAG_DEBUG_APS                           0x00000200U
 
 /** BDB IB Attributes */

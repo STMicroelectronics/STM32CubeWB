@@ -386,8 +386,8 @@ MOBLE_RESULT Appli_Sensor_ReadValue(MOBLEUINT8 sensorOffset,
     {
       STTS22H_getTemperatureValue(&temp_val);
 
-      pValueParams->data[0] = (MOBLEUINT8)round(temp_val*2);
-      sprintf(text,"T:%2.1f C",temp_val);
+      pValueParams->data[0] = (MOBLEUINT8)round((double)temp_val*2);
+      sprintf(text,"T:%2.1f C",(double)temp_val);
       UTIL_LCD_DisplayStringAtLine(3,(uint8_t*)text);
       BSP_LCD_Refresh(0);
     }

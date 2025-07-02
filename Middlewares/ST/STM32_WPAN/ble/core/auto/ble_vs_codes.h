@@ -19,6 +19,12 @@
 #define BLE_VS_CODES_H__
 
 
+/* Vendor specific codes of ACI General events
+ */
+
+/* ACI_WARNING_EVENT code */
+#define ACI_WARNING_VSEVT_CODE                            0x0006U
+
 /* Vendor specific codes of ACI GAP events
  */
 
@@ -189,9 +195,6 @@
 
 /* ACI_HAL_SCAN_REQ_REPORT_EVENT code */
 #define ACI_HAL_SCAN_REQ_REPORT_VSEVT_CODE                0x0005U
-
-/* ACI_HAL_WARNING_EVENT code */
-#define ACI_HAL_WARNING_VSEVT_CODE                        0x0006U
 
 
 #endif /* BLE_VS_CODES_H__ */

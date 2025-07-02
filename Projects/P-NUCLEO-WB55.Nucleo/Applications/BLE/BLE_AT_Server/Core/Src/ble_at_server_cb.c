@@ -351,8 +351,8 @@ uint8_t stm32wb_at_BLE_ADV_PARAM_server_cb(char *buff)
   sprintf(buff, "%d,%d,%.1f,%.1f,%d", 
                   global_entry_number,
                   global_adv_type,
-                  global_adv_int_min * 0.625f,
-                  global_adv_int_max * 0.625f,
+                  (double)(global_adv_int_min * 0.625f),
+                  (double)(global_adv_int_max * 0.625f),
                   global_ble_addr_type | global_ble_cfg_addr_type);
 
   return 0;
@@ -417,7 +417,7 @@ uint8_t stm32wb_at_BLE_INIT_server_cb(char *buff)
   (void)strcat(buff, global_name);
   (void)strcat(buff, AT_SEPARATOR);
   
-  (void)sprintf(str_tmp, "%.2f", global_tx_power);
+  (void)sprintf(str_tmp, "%.2f", (double)global_tx_power);
   (void)strcat(buff, str_tmp);
 
   return 0;
@@ -481,14 +481,14 @@ uint8_t stm32wb_at_BLE_NAME_server_cb(char *buff)
 
 uint8_t stm32wb_at_BLE_RF_POWER_server_cb(char *buff)
 {
-  sprintf(buff, "%.2f", global_tx_power);
+  sprintf(buff, "%.2f", (double)global_tx_power);
 
   return 0;
 }
 
 uint8_t stm32wb_at_BLE_CONN_INT_server_cb(char *buff)
 {
-  sprintf(buff, "%.2f,%.2f", global_conn_int_min, global_conn_int_max);
+  sprintf(buff, "%.2f,%.2f", (double)global_conn_int_min, (double)global_conn_int_max);
 
   return 0;
 }

@@ -19,7 +19,7 @@
 #define BLE_L2CAP_ACI_H__
 
 
-#include "ble_types.h"
+#include "auto/ble_types.h"
 
 /**
  * @brief ACI_L2CAP_CONNECTION_PARAMETER_UPDATE_REQ
@@ -87,8 +87,7 @@ tBleStatus aci_l2cap_connection_parameter_update_req( uint16_t Connection_Handle
  *        Time = N * 0.625 ms.
  *        Values:
  *        - 0x0000 (0.000 ms)  ... 0xFFFF (40959.375 ms)
- * @param Identifier Identifier received in ACI_L2CAP_Connection_Update_Req
- *        event.
+ * @param Identifier Received identifier.
  * @param Accept Specify if connection update parameters are acceptable or not.
  *        Values:
  *        - 0x00: Reject
@@ -108,7 +107,7 @@ tBleStatus aci_l2cap_connection_parameter_update_resp( uint16_t Connection_Handl
 /**
  * @brief ACI_L2CAP_COC_CONNECT
  * This command sends a Credit Based Connection Request packet on the specified
- * connection. See Bluetooth Core specification Vol.3 Part A.
+ * connection. See Core Specification [Vol 3, Part A].
  * 
  * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
@@ -119,9 +118,11 @@ tBleStatus aci_l2cap_connection_parameter_update_resp( uint16_t Connection_Handl
  * @param MTU Maximum Transmission Unit.
  *        Values:
  *        - 23 ... 65535
+ *        - 64 ... 246: for Enhanced ATT
  * @param MPS Maximum payload size (in octets).
  *        Values:
  *        - 23 ... 248
+ *        - 64 ... 248: for Enhanced ATT
  * @param Initial_Credits Number of K-frames that can be received on the
  *        created channel(s) by the L2CAP layer entity sending this packet.
  *        Values:
@@ -145,8 +146,16 @@ tBleStatus aci_l2cap_coc_connect( uint16_t Connection_Handle,
  * @brief ACI_L2CAP_COC_CONNECT_CONFIRM
  * This command sends a Credit Based Connection Response packet. It must be
  * used upon receipt of a connection request through an
- * ACI_L2CAP_COC_CONNECT_EVENT event. See Bluetooth Core specification Vol.3
- * Part A.
+ * ACI_L2CAP_COC_CONNECT_EVENT event.
+ * By setting the Result parameter to 0x0000, the application can accept all
+ * connections or only some. In this case, the number of accepted connections
+ * depends on the Max_Channel_Number parameter. Note that if some connections
+ * are refused, the Result parameter is automatically modified by the BLE
+ * stack.
+ * By setting the Result parameter to a non-zero value, the application can
+ * refuse all connections. The Result value shall then be one of the
+ * "Connection refused" or "All connections refused" values.
+ * See Core Specification [Vol 3, Part A].
  * 
  * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
@@ -154,18 +163,25 @@ tBleStatus aci_l2cap_coc_connect( uint16_t Connection_Handle,
  * @param MTU Maximum Transmission Unit.
  *        Values:
  *        - 23 ... 65535
+ *        - 64 ... 246: for Enhanced ATT
  * @param MPS Maximum payload size (in octets).
  *        Values:
  *        - 23 ... 248
+ *        - 64 ... 248: for Enhanced ATT
  * @param Initial_Credits Number of K-frames that can be received on the
  *        created channel(s) by the L2CAP layer entity sending this packet.
  *        Values:
  *        - 0 ... 65535
- * @param Result This parameter indicates the outcome of the request. A value
- *        of 0x0000 indicates success while a non-zero value indicates the
- *        request is refused.
+ * @param Result Indicates the outcome of the request. See Core Specification
+ *        [Vol 3, Part A, Table 4.16] for LE credit based connection-oriented
+ *        channels, or [Vol 3, Part A, Table 4.17] for enhanced credit based
+ *        connection-oriented channels.
  *        Values:
- *        - 0x0000 ... 0x000C
+ *        - 0x0000 ... 0x000F
+ * @param Max_Channel_Number Indicates the maximum number of channels that can
+ *        be created.
+ *        Values:
+ *        - 0x01 ... 0x05
  * @param[out] Channel_Number Number of created channels. It is the length of
  *        Channel_Index_List.
  *        Values:
@@ -179,13 +195,14 @@ tBleStatus aci_l2cap_coc_connect_confirm( uint16_t Connection_Handle,
                                           uint16_t MPS,
                                           uint16_t Initial_Credits,
                                           uint16_t Result,
+                                          uint8_t Max_Channel_Number,
                                           uint8_t* Channel_Number,
                                           uint8_t* Channel_Index_List );
 
 /**
  * @brief ACI_L2CAP_COC_RECONF
  * This command sends a Credit Based Reconfigure Request packet on the
- * specified connection. See Bluetooth Core specification Vol.3 Part A.
+ * specified connection. See Core Specification [Vol 3, Part A].
  * 
  * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
@@ -193,9 +210,11 @@ tBleStatus aci_l2cap_coc_connect_confirm( uint16_t Connection_Handle,
  * @param MTU Maximum Transmission Unit.
  *        Values:
  *        - 23 ... 65535
+ *        - 64 ... 246: for Enhanced ATT
  * @param MPS Maximum payload size (in octets).
  *        Values:
  *        - 23 ... 248
+ *        - 64 ... 248: for Enhanced ATT
  * @param Channel_Number Number of created channels. It is the length of
  *        Channel_Index_List.
  *        Values:
@@ -214,17 +233,17 @@ tBleStatus aci_l2cap_coc_reconf( uint16_t Connection_Handle,
  * @brief ACI_L2CAP_COC_RECONF_CONFIRM
  * This command sends a Credit Based Reconfigure Response packet. It must be
  * used upon receipt of a Credit Based Reconfigure Request through an
- * ACI_L2CAP_COC_RECONF_EVENT event. See Bluetooth Core specification Vol.3
- * Part A.
+ * ACI_L2CAP_COC_RECONF_EVENT event. A Result value of 0x0000 indicates success
+ * while a non-zero value indicates the request is refused.
+ * See Core Specification [Vol 3, Part A].
  * 
  * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
- * @param Result This parameter indicates the outcome of the request. A value
- *        of 0x0000 indicates success while a non-zero value indicates the
- *        request is refused.
+ * @param Result Indicates the outcome of the request. See Core Specification
+ *        [Vol 3, Part A, Table 4.18].
  *        Values:
- *        - 0x0000 ... 0x000C
+ *        - 0x0000 ... 0x0004
  * @return Value indicating success or error code.
  */
 tBleStatus aci_l2cap_coc_reconf_confirm( uint16_t Connection_Handle,
@@ -233,7 +252,7 @@ tBleStatus aci_l2cap_coc_reconf_confirm( uint16_t Connection_Handle,
 /**
  * @brief ACI_L2CAP_COC_DISCONNECT
  * This command sends a Disconnection Request signaling packet on the specified
- * connection-oriented channel. See Bluetooth Core specification Vol.3 Part A.
+ * connection-oriented channel. See Core Specification [Vol 3, Part A].
  * The ACI_L2CAP_COC_DISCONNECT_EVENT event is received when the disconnection
  * of the channel is effective.
  * 
@@ -246,7 +265,7 @@ tBleStatus aci_l2cap_coc_disconnect( uint8_t Channel_Index );
 /**
  * @brief ACI_L2CAP_COC_FLOW_CONTROL
  * This command sends a Flow Control Credit signaling packet on the specified
- * connection-oriented channel. See Bluetooth Core specification Vol.3 Part A.
+ * connection-oriented channel. See Core Specification [Vol 3, Part A].
  * 
  * @param Channel_Index Index of the connection-oriented channel for which the
  *        primitive applies.
@@ -263,7 +282,7 @@ tBleStatus aci_l2cap_coc_flow_control( uint8_t Channel_Index,
 /**
  * @brief ACI_L2CAP_COC_TX_DATA
  * This command sends a K-frame packet on the specified connection-oriented
- * channel. See Bluetooth Core specification Vol.3 Part A.
+ * channel. See Core Specification [Vol 3, Part A].
  * Note: for the first K-frame of the SDU, the Information data shall contain
  * the L2CAP SDU Length coded on two octets followed by the K-frame information
  * payload. For the next K-frames of the SDU, the Information data shall only

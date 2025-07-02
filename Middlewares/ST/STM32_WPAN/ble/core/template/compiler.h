@@ -112,7 +112,7 @@
  * @brief  This is the section dedicated to Keil toolchain
  */
 #else
-#ifdef __CC_ARM	
+#ifdef __CC_ARM
 
 #ifndef __WEAK
 #define __WEAK __weak

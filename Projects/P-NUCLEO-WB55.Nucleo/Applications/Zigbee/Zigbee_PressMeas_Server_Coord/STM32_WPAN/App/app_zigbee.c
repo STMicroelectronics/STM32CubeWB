@@ -458,16 +458,16 @@ static void APP_ZIGBEE_ParsePressMeasValue()
   {
      BSP_LED_Off(LED_GREEN);
      BSP_LED_On(LED_RED);
-     APP_DBG("[PRESS MEAS] Current Pressure %.1f kPa -------> HIGH PRESSURE REACHED",(float)cur_press/10);
+     APP_DBG("[PRESS MEAS] Current Pressure %.1f kPa -------> HIGH PRESSURE REACHED",(double)cur_press/10);
   }
   else
   {
     BSP_LED_On(LED_GREEN);
     BSP_LED_Off(LED_RED);
-    APP_DBG("[PRESS MEAS] Current Pressure %.1f kPa",(float)cur_press/10);
+    APP_DBG("[PRESS MEAS] Current Pressure %.1f kPa",(double)cur_press/10);
   }
-  APP_DBG("[PRESS MEAS] Minimal Pressure info : %.1f kPa",(float)min_press/10);
-  APP_DBG("[PRESS MEAS] Maximal Pressure info : %.1f kPa",(float)max_press/10);    
+  APP_DBG("[PRESS MEAS] Minimal Pressure info : %.1f kPa",(double)min_press/10);
+  APP_DBG("[PRESS MEAS] Maximal Pressure info : %.1f kPa",(double)max_press/10);    
   APP_DBG("");
 
 }

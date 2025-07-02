@@ -184,7 +184,7 @@
 #define CONN_L(x) ((int)((x)/0.625f))
 #define CONN_P(x) ((int)((x)/1.25f))
 
-  /*  L2CAP Connection Update request parameters used for test only with smart Phone */
+/*  L2CAP Connection Update request parameters used for test only with smart Phone */
 #define L2CAP_REQUEST_NEW_CONN_PARAM             0
 
 #define L2CAP_INTERVAL_MIN              CONN_P(1000) /* 1s */
@@ -372,6 +372,14 @@
 #define CFG_BLE_MIN_TX_POWER            (-40)
 
 #define CFG_BLE_MAX_TX_POWER            (6)
+
+/**
+* BLE stack Maximum number of created Enhanced ATT bearers to be configured
+* in addition to the number of links
+*     - Range: 0 .. 4
+*/ 
+#define CFG_BLE_MAX_ADD_EATT_BEARERS    (4)
+        
 
 /**
  * BLE Rx model configuration flags to be configured with:
@@ -684,9 +692,7 @@ typedef enum
 /**< Add in that list all tasks that may send a ACI/HCI command */
 typedef enum
 {
-  CFG_TASK_ADV_UPDATE_ID,
   CFG_TASK_MEAS_REQ_ID,
-  CFG_TASK_ADV_CANCEL_ID,
 #if (L2CAP_REQUEST_NEW_CONN_PARAM != 0 )
   CFG_TASK_CONN_UPDATE_REG_ID,
 #endif

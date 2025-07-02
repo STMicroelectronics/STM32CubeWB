@@ -4,39 +4,33 @@
     <title>_htmresc\ReleaseNotes.html</title>
   </head>
   <body style="font-size: 10pt; font-family: Verdana;">
-    <h3 style="color: blue; text-decoration: underline;">STM32CubeWB Firmware Package V1.22.0 / 05-February-2025</h3>
+    <h3 style="color: blue; text-decoration: underline;">STM32CubeWB Firmware Package V1.23.0 / 04-June-2025</h3>
     <div style="margin-left: 18pt;">
       <p>
         <b><u>Main Changes</u></b>
       </p>
       <p>
-        <b>Maintenance Release for BLE, 802.15.4, Thread and Zigbee updates</b>
+        <b>Maintenance Release for BLE, 802.15.4 and FUS updates</b>
       </p>
       <p>
         <li>
           <strong>BLE</strong> updates
           <ul>
-            <li> TCRL-2024-2 compliancy.</li>
+            <li> TCRL-2025-1 compliancy.</li>
+            <li> New feature added : Randomized RPA Updates. (Core Specification V6.1).</li>
           </ul>
         </li>
         <li>
-          <strong>MAC</strong> updates
+          <strong>802.15.4</strong> updates
           <ul>
-            <li> Improve memory management to prevent memory leaks on overloaded networks. </li>
-            <li> Review outdated indirect data before releasing buffers sooner.</li>
-            <li> Improve MAC state machine. </li>
+            <li> Bug fixes.</li>
           </ul>
         </li>
         <li>
-          <strong>Thread</strong> updates
+          <strong>FUS</strong> updates
           <ul>
-            <li> Assert added in the case of OT command called in ISR context. (FreeRTOS context only)</li>
-          </ul>
-        </li>
-        <li>
-          <strong>Zigbee</strong> updates
-          <ul>
-            <li> Fixing corner case issue related to RoutingRecord for Router and related to ZbStartupPersist and ZbStartupRejoin for EndDevice.</li>
+            <li> New FUS version : V2.1.0.</li>
+            <li> Safeboot version : V2.0.1.</li>
           </ul>
         </li>
       </p>
@@ -49,9 +43,27 @@
             <li>
                Update HAL/LL drivers to include latest corrections
                 <ul>
-                  <li> Update of HAL  RNG, HSEM, RTC, UART, TIM drivers.</li>
-                  <li> Update of LL LPUART drivers.</li>
+                  <li> Update of HAL I2C,SPI,LPTIM , IWDG, RTC, TIM drivers.</li>
+                  <li> Update of LL IWDG drivers.</li>
                 </ul>
+            </li>
+          </ul>
+        </li>
+        <li> <strong>Projects </strong> updates
+          <ul>
+            <li>
+              Update of FW projects following changes in latest version of HAL/LL and Middlewares and alignments with CubeMx
+              <ul>
+                  <li> /P-NUCLEO-WB55.Nucleo/Applications/USB_Device/CDC_Standalon.</li>
+                  <li> /P-NUCLEO-WB55.Nucleo/Applications/USB_Device/DFU_Standalone.</li>
+                  <li> /P-NUCLEO-WB55.Nucleo/Applications/USB_Device/HID_Standalone.</li>
+                  <li> /P-NUCLEO-WB55.Nucleo/Examples/QSPI/QSPI_ExecuteInPlace.</li>
+                  <li> /P-NUCLEO-WB55.Nucleo/Examples/QSPI/QSPI_MemoryMapped.</li>
+                  <li> /P-NUCLEO-WB55.Nucleo/Examples/QSPI/QSPI_ReadWrite_DMA.</li>
+                  <li> /P-NUCLEO-WB55.Nucleo/Examples/QSPI/QSPI_ReadWrite_IT.</li>
+                  <li> /P-NUCLEO-WB55.USBDongle/Applications/USB_Device/DFU_Standalone.</li>
+                  <li> /P-NUCLEO-WB55.USBDongle/Applications/USB_Device/HID_Standalone.</li>
+              </ul>
             </li>
             <li> Refer to <a href="../Drivers/STM32WBxx_HAL_Driver/Release_Notes.html">release notes</a> for further details </li>
           </ul>
