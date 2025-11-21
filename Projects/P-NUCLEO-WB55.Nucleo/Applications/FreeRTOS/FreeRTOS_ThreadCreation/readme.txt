@@ -1,6 +1,6 @@
 /**
   @page FreeRTOS_ThreadCreation FreeRTOS Thread Creation example
- 
+
   @verbatim
   ******************************************************************************
   * @file    FreeRTOS/FreeRTOS_ThreadCreation/readme.txt
@@ -20,17 +20,17 @@
 
 @par Application Description
 
-How to implement thread creation using CMSIS RTOS API. 
+How to implement thread creation using CMSIS RTOS API.
 
-This application creates two threads with the same priority, which execute in 
-a periodic cycle of 15 seconds. 
+This application creates two threads with the same priority, which execute in
+a periodic cycle of 15 seconds.
 
-In the first 5 seconds, the thread 1 toggles LED1 each 200 ms and the 
-thread 2 toggles LED2 each 500 ms.
+In the first 5 seconds, the thread 1 toggles LED_BLUE each 200 ms and the
+thread 2 toggles LED_GREEN each 500 ms.
 In the following 5 seconds, the thread 1 suspends itself and the thread 2
-continue toggling LED2.
-In the last 5 seconds, the thread 2 resumes execution of thread 1 then 
-suspends itself, the thread 1 toggles the LED1 each 500 ms.    
+continue toggling LED_GREEN.
+In the last 5 seconds, the thread 2 resumes execution of thread 1 then
+suspends itself, the thread 1 toggles the LED_BLUE each 500 ms.
 
 @note Care must be taken when using HAL_Delay(), this function provides accurate
       delay (in milliseconds) based on variable incremented in HAL time base ISR.
@@ -39,14 +39,14 @@ suspends itself, the thread 1 toggles the LED1 each 500 ms.
       the peripheral interrupt. Otherwise the caller ISR process will be blocked.
       To change the HAL time base interrupt priority you have to use HAL_NVIC_SetPriority()
       function.
- 
+
 @note The application needs to ensure that the HAL time base is always set to 1 millisecond
       to have correct HAL operation.
 
-@note The FreeRTOS heap size configTOTAL_HEAP_SIZE defined in FreeRTOSConfig.h is set accordingly to the 
+@note The FreeRTOS heap size configTOTAL_HEAP_SIZE defined in FreeRTOSConfig.h is set accordingly to the
       OS resources memory requirements of the application with +10% margin and rounded to the upper Kbyte boundary.
 
-For more details about FreeRTOS implementation on STM32Cube, please refer to UM1722 "Developing Applications 
+For more details about FreeRTOS implementation on STM32Cube, please refer to UM1722 "Developing Applications
 on STM32Cube with RTOS".
 
 @par Keywords
@@ -71,14 +71,14 @@ RTOS, FreeRTOS, Threading
 
   - This application has been tested with P-NUCLEO-WB55 board and can be
     easily tailored to any other supported device and development board.
-    
+
 
 @par How to use it ?
 
 In order to make the program work, you must do the following:
- - Open your preferred toolchain 
+ - Open your preferred toolchain
  - Rebuild all files and load your image into target memory
  - Run the example
-  
+
  * <h3><center>&copy; COPYRIGHT STMicroelectronics</center></h3>
  */

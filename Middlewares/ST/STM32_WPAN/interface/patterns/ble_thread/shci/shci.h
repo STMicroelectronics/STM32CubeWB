@@ -35,6 +35,8 @@ extern "C" {
   {
     WIRELESS_FW_RUNNING = 0x00,
     FUS_FW_RUNNING = 0x01,
+    NVM_BACKUP_RUNNING = 0x10,
+    NVM_RESTORE_RUNNING = 0x11
   } SHCI_SysEvt_Ready_Rsp_t;
 
   /* ERROR CODES
@@ -197,7 +199,7 @@ extern "C" {
     SHCI_OCF_C2_FUS_STORE_USR_KEY,
     SHCI_OCF_C2_FUS_LOAD_USR_KEY,
     SHCI_OCF_C2_FUS_START_WS,
-    SHCI_OCF_C2_FUS_RESERVED2,
+    SHCI_OCF_C2_FUS_FW_PURGE,
     SHCI_OCF_C2_FUS_RESERVED3,
     SHCI_OCF_C2_FUS_LOCK_USR_KEY,
     SHCI_OCF_C2_FUS_UNLOAD_USR_KEY,
@@ -276,6 +278,10 @@ extern "C" {
 /** No command parameters */
 /** No response parameters*/
 
+#define SHCI_OPCODE_C2_FUS_FW_PURGE   (( SHCI_OGF << 10) + SHCI_OCF_C2_FUS_FW_PURGE)
+/** No command parameters */
+/** No response parameters*/
+
 #define SHCI_OPCODE_C2_FUS_UPDATE_AUTH_KEY    (( SHCI_OGF << 10) + SHCI_OCF_C2_FUS_UPDATE_AUTH_KEY)
   typedef PACKED_STRUCT{
   uint8_t KeySize;
@@ -304,6 +310,7 @@ extern "C" {
   {
     KEYSIZE_16 =  16,
     KEYSIZE_32 = 32,
+    KEYSIZE_64 = 64
   };
 
   typedef PACKED_STRUCT{
@@ -565,63 +572,76 @@ extern "C" {
    */
   int8_t max_tx_power;
   
-  /**
-  * RX model configuration
-  * - bit 0:   1: agc_rssi model improved vs RF blockers    0: Legacy agc_rssi model
-  * - other bits: reserved ( shall be set to 0)
-  */
+   /**
+   * RX model configuration
+   * - bit 0:   1: agc_rssi model improved vs RF blockers    0: Legacy agc_rssi model
+   * - other bits: reserved ( shall be set to 0)
+   */
   uint8_t rx_model_config;
-  
-  /** Maximum number of advertising sets.
-  * Range: 1 .. 8 with limitation:
-  * This parameter is linked to max_adv_data_len such as both compliant with allocated Total memory computed with BLE_EXT_ADV_BUFFER_SIZE based 
-  * on Max Extended advertising configuration supported.
-  * This parameter is considered by the CPU2 when Options has SHCI_C2_BLE_INIT_OPTIONS_EXT_ADV flag set
-  */
+
+  /* Maximum number of advertising sets.
+   * Range: 1 .. 8 with limitation:
+   * This parameter is linked to max_adv_data_len such as both compliant with allocated Total memory computed with BLE_EXT_ADV_BUFFER_SIZE based 
+   * on Max Extended advertising configuration supported.
+   * This parameter is considered by the CPU2 when Options has SHCI_C2_BLE_INIT_OPTIONS_EXT_ADV flag set
+   */
   uint8_t max_adv_set_nbr;
-  
-  /** Maximum advertising data length (in bytes)
-  * Range: 31 .. 1650 with limitation:
-  * This parameter is linked to max_adv_set_nbr such as both compliant with allocated Total memory computed with BLE_EXT_ADV_BUFFER_SIZE based 
-  * on Max Extended advertising configuration supported.
-  * This parameter is considered by the CPU2 when Options has SHCI_C2_BLE_INIT_OPTIONS_EXT_ADV flag set
-  */
+
+  /* Maximum advertising data length (in bytes)
+   * Range: 31 .. 1650 with limitation:
+   * This parameter is linked to max_adv_set_nbr such as both compliant with allocated Total memory computed with BLE_EXT_ADV_BUFFER_SIZE based 
+   * on Max Extended advertising configuration supported.
+   * This parameter is considered by the CPU2 when Options has SHCI_C2_BLE_INIT_OPTIONS_EXT_ADV flag set
+   */
   uint16_t max_adv_data_len;
-  
-  /** RF TX Path Compensation Value (16-bit signed integer). Units: 0.1 dB.
-  * Range: -1280 .. 1280
-  */
+
+  /* RF TX Path Compensation Value (16-bit signed integer). Units: 0.1 dB.
+   * Range: -1280 .. 1280
+   */
   int16_t tx_path_compens;
-  
-  /** RF RX Path Compensation Value (16-bit signed integer). Units: 0.1 dB.
-  * Range: -1280 .. 1280
-  */
+
+  /* RF RX Path Compensation Value (16-bit signed integer). Units: 0.1 dB.
+   * Range: -1280 .. 1280
+   */
   int16_t rx_path_compens;
-  
-  /** BLE core specification version (8-bit unsigned integer).
-  * values as: 11(5.2), 12(5.3), 13(5.4)
-  */
+
+  /* BLE core specification version (8-bit unsigned integer).
+   * values as: 11(5.2), 12(5.3), 13(5.4)
+   */
   uint8_t ble_core_version; 
-  
-  /**
-  * Options flags extension
-  * - bit 0:   1: appearance Writable              0: appearance Read-Only
-  * - bit 1:   1: Enhanced ATT supported           0: Enhanced ATT not supported
-  * - other bits: reserved ( shall be set to 0)
-  */
+ 
+   /**
+   * Options flags extension
+   * - bit 0:   1: appearance Writable              0: appearance Read-Only
+   * - bit 1:   1: Enhanced ATT supported           0: Enhanced ATT not supported
+   * - other bits: reserved ( shall be set to 0)
+   */
   uint8_t Options_extension;
-  
-  /**
-  * MaxAddEattBearers
-  *
+   
+   /**
+   * MaxAddEattBearers
+   *
   * Maximum number of bearers that can be created for Enhanced ATT
   * in addition to the number of links
   *     - Range: 0 .. 4
   */
   uint8_t MaxAddEattBearers;
   
-  } SHCI_C2_Ble_Init_Cmd_Param_t;
+  /**
+  * Address of the RAM buffer allocated for the extension of Host commands.
+  * This buffer is referred as the "extra data" buffer in the BLE Wireless
+  * Interface document. If the commands that need this extension are never
+  * used, this parameter can be set to NULL.
+  */
+  uint8_t* extra_data_buffer;
   
+  /**
+  * Size of the RAM buffer allocated for the extension of Host commands.
+  */
+  uint32_t extra_data_buffer_size;
+  
+  } SHCI_C2_Ble_Init_Cmd_Param_t;
+   
   typedef PACKED_STRUCT{
     SHCI_Header_t Header;       /** Does not need to be initialized by the user */
     SHCI_C2_Ble_Init_Cmd_Param_t Param;
@@ -1000,7 +1020,9 @@ extern "C" {
 #define INFO_STACK_TYPE_BLE_ZIGBEE_RFD_DYNAMIC      0x79
 #define INFO_STACK_TYPE_RLV                         0x80
 #define INFO_STACK_TYPE_BLE_MAC_STATIC              0x90
-
+#define INFO_STACK_TYPE_NVM_BACKUP                  0xF0
+#define INFO_STACK_TYPE_NVM_RESTORE                 0xF1
+  
 typedef struct {
 /**
  * Wireless Info
@@ -1064,6 +1086,16 @@ typedef struct {
   * @retval Status
   */
   SHCI_CmdStatus_t SHCI_C2_FUS_FwDelete( void );
+
+  /**
+  * SHCI_C2_FUS_FwPurge
+  * @brief Delete the wireless stack on CPU2 and the NVM section (if any)
+  *        Note:  This command is only supported by the FUS.
+  *
+  * @param  None
+  * @retval Status
+  */
+ SHCI_CmdStatus_t SHCI_C2_FUS_FwPurge( void );
 
   /**
   * SHCI_C2_FUS_UpdateAuthKey

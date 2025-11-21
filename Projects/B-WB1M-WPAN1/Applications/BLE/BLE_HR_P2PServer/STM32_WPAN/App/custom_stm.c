@@ -468,7 +468,7 @@ void SVCCTL_InitCustomSvc(void)
   }
   else
   {
-    APP_DBG_MSG("  Success: aci_gatt_add_service command: My_P2PS \n\r");
+    APP_DBG_MSG("  Success: aci_gatt_add_service command: My_P2PS, handle = 0x%04x \n\r", CustomContext.CustomMy_P2PsHdle);
   }
 
   /**
@@ -490,7 +490,7 @@ void SVCCTL_InitCustomSvc(void)
   }
   else
   {
-    APP_DBG_MSG("  Success: aci_gatt_add_char command   : LED_C \n\r");
+    APP_DBG_MSG("  Success: aci_gatt_add_char command   : LED_C, handle = 0x%04x \n\r", CustomContext.CustomLed_CHdle);
   }
 
   /* USER CODE BEGIN SVCCTL_Init_Service1_Char1 */
@@ -516,7 +516,7 @@ void SVCCTL_InitCustomSvc(void)
   }
   else
   {
-    APP_DBG_MSG("  Success: aci_gatt_add_char command   : SWITCH_C \n\r");
+    APP_DBG_MSG("  Success: aci_gatt_add_char command   : SWITCH_C, handle = 0x%04x \n\r", CustomContext.CustomSwitch_CHdle);
   }
 
   /* USER CODE BEGIN SVCCTL_Init_Service1_Char2 */
@@ -542,7 +542,7 @@ void SVCCTL_InitCustomSvc(void)
   }
   else
   {
-    APP_DBG_MSG("  Success: aci_gatt_add_char command   : LONG_C \n\r");
+    APP_DBG_MSG("  Success: aci_gatt_add_char command   : LONG_C, handle = 0x%04x \n\r", CustomContext.CustomLong_CHdle);
   }
 
   /* USER CODE BEGIN SVCCTL_Init_Service1_Char3 */
@@ -583,7 +583,7 @@ void SVCCTL_InitCustomSvc(void)
   }
   else
   {
-    APP_DBG_MSG("  Success: aci_gatt_add_service command: My_HRS \n\r");
+    APP_DBG_MSG("  Success: aci_gatt_add_service command: My_HRS, handle = 0x%04x \n\r", CustomContext.CustomMy_HrsHdle);
   }
 
   /**
@@ -605,7 +605,7 @@ void SVCCTL_InitCustomSvc(void)
   }
   else
   {
-    APP_DBG_MSG("  Success: aci_gatt_add_char command   : HRS_M \n\r");
+    APP_DBG_MSG("  Success: aci_gatt_add_char command   : HRS_M, handle = 0x%04x \n\r", CustomContext.CustomHrs_MHdle);
   }
 
   /* USER CODE BEGIN SVCCTL_Init_Service2_Char1 */
@@ -631,7 +631,7 @@ void SVCCTL_InitCustomSvc(void)
   }
   else
   {
-    APP_DBG_MSG("  Success: aci_gatt_add_char command   : HRS_SL \n\r");
+    APP_DBG_MSG("  Success: aci_gatt_add_char command   : HRS_SL, handle = 0x%04x \n\r", CustomContext.CustomHrs_SlHdle);
   }
 
   /* USER CODE BEGIN SVCCTL_Init_Service2_Char2 */
@@ -657,7 +657,7 @@ void SVCCTL_InitCustomSvc(void)
   }
   else
   {
-    APP_DBG_MSG("  Success: aci_gatt_add_char command   : HRS_CTRL \n\r");
+    APP_DBG_MSG("  Success: aci_gatt_add_char command   : HRS_CTRL, handle = 0x%04x \n\r", CustomContext.CustomHrs_CtrlHdle);
   }
 
   /* USER CODE BEGIN SVCCTL_Init_Service2_Char3 */

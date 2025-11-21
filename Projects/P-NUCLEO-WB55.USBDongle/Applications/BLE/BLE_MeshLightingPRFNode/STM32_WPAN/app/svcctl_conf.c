@@ -24,6 +24,7 @@
 
 /* Private defines -----------------------------------------------------------*/
 #define BD_ADDR_SIZE_LOCAL    6
+#define BLE_DEFAULT_PIN                     (111111)
 
 /* Private variables ---------------------------------------------------------*/
 static const uint8_t M_bd_addr[BD_ADDR_SIZE_LOCAL] =

@@ -4,71 +4,78 @@
     <title>_htmresc\ReleaseNotes.html</title>
   </head>
   <body style="font-size: 10pt; font-family: Verdana;">
-    <h3 style="color: blue; text-decoration: underline;">STM32CubeWB Firmware Package V1.23.0 / 04-June-2025</h3>
+    <h3 style="color: blue; text-decoration: underline;">STM32CubeWB Firmware Package V1.24.0 / 29-October-2025</h3>
     <div style="margin-left: 18pt;">
       <p>
         <b><u>Main Changes</u></b>
       </p>
+      <ul>
+        <li>SLA0044 Legal terms updated to latest revision (Rev 6 / October 2025)</li>
+        <li>SLA0048 Legal terms updated to latest revision (Rev 5 / October 2025)</li>
+      </ul>
       <p>
         <b>Maintenance Release for BLE, 802.15.4 and FUS updates</b>
       </p>
-      <p>
+      <ul>
         <li>
-          <strong>BLE</strong> updates
+          <strong>FUS</strong> updates
           <ul>
-            <li> TCRL-2025-1 compliancy.</li>
-            <li> New feature added : Randomized RPA Updates. (Core Specification V6.1).</li>
+            <li>New FUS version: v2.2.0 (Enhanced Security, SA0024 remains applicable)</li>
           </ul>
         </li>
         <li>
-          <strong>802.15.4</strong> updates
+          <strong>BLE</strong> updates
           <ul>
-            <li> Bug fixes.</li>
+            <li>BLE host stack is updated to comply with “Security and Privacy Mandates” Batch 2.</li>
+            <li>Man-In-The-Middle (MITM) management is enhanced in the BLE stack to provide more flexibility and better interoperability.</li>
           </ul>
         </li>
         <li>
-          <strong>FUS</strong> updates
+          <strong>Thread</strong> updates
           <ul>
-            <li> New FUS version : V2.1.0.</li>
-            <li> Safeboot version : V2.0.1.</li>
+            <li>Thread 1.4 support. OT stack update to SHA-1: cbb04be4a64910a8ad160ae1aae2e34fc31031b9 (June 9th 2025)</li>
           </ul>
         </li>
-      </p>
+        <li>
+          <strong>802.15.4</strong> updates
+          <ul>
+            <li>Bug fixes</li>
+          </ul>
+        </li>
+        <li>
+          <strong>Zigbee</strong> updates
+          <ul>
+            <li>Bug fixes</li>
+          </ul>
+        </li>
+      </ul>
       <p>
         <b>Maintenance Release for HAL/LL Drivers updates</b>
       </p>
-      <p>
-        <li> <strong>HAL/LL Drivers</strong> updates
-         <ul>
-            <li>
-               Update HAL/LL drivers to include latest corrections
-                <ul>
-                  <li> Update of HAL I2C,SPI,LPTIM , IWDG, RTC, TIM drivers.</li>
-                  <li> Update of LL IWDG drivers.</li>
-                </ul>
-            </li>
-          </ul>
-        </li>
-        <li> <strong>Projects </strong> updates
+      <ul>
+        <li>
+          <strong>HAL/LL Drivers</strong> updates
           <ul>
-            <li>
-              Update of FW projects following changes in latest version of HAL/LL and Middlewares and alignments with CubeMx
+            <li>Update HAL/LL drivers to include latest corrections
               <ul>
-                  <li> /P-NUCLEO-WB55.Nucleo/Applications/USB_Device/CDC_Standalon.</li>
-                  <li> /P-NUCLEO-WB55.Nucleo/Applications/USB_Device/DFU_Standalone.</li>
-                  <li> /P-NUCLEO-WB55.Nucleo/Applications/USB_Device/HID_Standalone.</li>
-                  <li> /P-NUCLEO-WB55.Nucleo/Examples/QSPI/QSPI_ExecuteInPlace.</li>
-                  <li> /P-NUCLEO-WB55.Nucleo/Examples/QSPI/QSPI_MemoryMapped.</li>
-                  <li> /P-NUCLEO-WB55.Nucleo/Examples/QSPI/QSPI_ReadWrite_DMA.</li>
-                  <li> /P-NUCLEO-WB55.Nucleo/Examples/QSPI/QSPI_ReadWrite_IT.</li>
-                  <li> /P-NUCLEO-WB55.USBDongle/Applications/USB_Device/DFU_Standalone.</li>
-                  <li> /P-NUCLEO-WB55.USBDongle/Applications/USB_Device/HID_Standalone.</li>
+                <li>Update of HAL CRYP, GPIO, LPUART, RTC LPTIM, TIM, UART, USART drivers.</li>
+                <li>Update of LL ADC, RTC drivers.</li>
               </ul>
             </li>
-            <li> Refer to <a href="../Drivers/STM32WBxx_HAL_Driver/Release_Notes.html">release notes</a> for further details </li>
           </ul>
         </li>
-      </p>
+        <li>
+          <strong>Projects</strong> updates
+          <ul>
+            <li>For B-WB1M-WPAN1 board
+              <ul>
+                <li>Fix warning for B-WB1M-WPAN1/Examples/BSP_Example</li>
+              </ul>
+            </li>
+            <li>Refer to <a href="../Drivers/STM32WBxx_HAL_Driver/Release_Notes.html">release notes</a> for further details</li>
+          </ul>
+        </li>
+      </ul>
     </div>
   </body>
 </html>

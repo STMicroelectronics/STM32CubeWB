@@ -308,7 +308,7 @@ void SVCCTL_InitCustomSvc(void)
   }
   else
   {
-    APP_DBG_MSG("  Success: aci_gatt_add_service command: PwrCo_Svc \n\r");
+    APP_DBG_MSG("  Success: aci_gatt_add_service command: PwrCo_Svc, handle = 0x%04x \n\r", CustomContext.CustomPwrco_SvcHdle);
   }
 
   /**
@@ -330,7 +330,7 @@ void SVCCTL_InitCustomSvc(void)
   }
   else
   {
-    APP_DBG_MSG("  Success: aci_gatt_add_char command   : PWRCO_WRITE \n\r");
+    APP_DBG_MSG("  Success: aci_gatt_add_char command   : PWRCO_WRITE, handle = 0x%04x \n\r", CustomContext.CustomPwrco_WriteHdle);
   }
 
   /* USER CODE BEGIN SVCCTL_Init_Service1_Char1 */
@@ -356,7 +356,7 @@ void SVCCTL_InitCustomSvc(void)
   }
   else
   {
-    APP_DBG_MSG("  Success: aci_gatt_add_char command   : PWRCO_NOTIFY \n\r");
+    APP_DBG_MSG("  Success: aci_gatt_add_char command   : PWRCO_NOTIFY, handle = 0x%04x \n\r", CustomContext.CustomPwrco_NotifyHdle);
   }
 
   /* USER CODE BEGIN SVCCTL_Init_Service1_Char2 */

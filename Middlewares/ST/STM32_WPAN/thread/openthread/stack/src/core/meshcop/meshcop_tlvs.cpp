@@ -33,12 +33,7 @@
 
 #include "meshcop_tlvs.hpp"
 
-#include "common/const_cast.hpp"
-#include "common/debug.hpp"
-#include "common/num_utils.hpp"
-#include "common/numeric_limits.hpp"
-#include "common/string.hpp"
-#include "meshcop/meshcop.hpp"
+#include "instance/instance.hpp"
 
 namespace ot {
 namespace MeshCoP {
@@ -136,8 +131,8 @@ Error ChannelMaskTlv::ReadChannelMask(uint32_t &aChannelMask) const
     EntriesData entriesData;
 
     entriesData.Clear();
-    entriesData.mData   = &mEntriesStart;
-    entriesData.mLength = GetLength();
+    entriesData.mData = &mEntriesStart;
+    entriesData.mOffsetRange.Init(0, GetLength());
 
     return entriesData.Parse(aChannelMask);
 }
@@ -145,16 +140,24 @@ Error ChannelMaskTlv::ReadChannelMask(uint32_t &aChannelMask) const
 Error ChannelMaskTlv::FindIn(const Message &aMessage, uint32_t &aChannelMask)
 {
     Error       error;
-    EntriesData entriesData;
+    OffsetRange offsetRange;
 
-    entriesData.Clear();
-    entriesData.mMessage = &aMessage;
-
-    SuccessOrExit(error = FindTlvValueOffset(aMessage, Tlv::kChannelMask, entriesData.mOffset, entriesData.mLength));
-    error = entriesData.Parse(aChannelMask);
+    SuccessOrExit(error = FindTlvValueOffsetRange(aMessage, Tlv::kChannelMask, offsetRange));
+    error = ParseValue(aMessage, offsetRange, aChannelMask);
 
 exit:
     return error;
+}
+
+Error ChannelMaskTlv::ParseValue(const Message &aMessage, const OffsetRange &aOffsetRange, uint32_t &aChannelMask)
+{
+    EntriesData entriesData;
+
+    entriesData.Clear();
+    entriesData.mMessage     = &aMessage;
+    entriesData.mOffsetRange = aOffsetRange;
+
+    return entriesData.Parse(aChannelMask);
 }
 
 Error ChannelMaskTlv::EntriesData::Parse(uint32_t &aChannelMask)
@@ -162,9 +165,8 @@ Error ChannelMaskTlv::EntriesData::Parse(uint32_t &aChannelMask)
     // Validates and parses the Channel Mask TLV entries for each
     // channel page and if successful updates `aChannelMask` to
     // return the combined mask for all channel pages supported by
-    // radio. The entries can be either contained in `mMessage` from
-    // `mOffset` (when `mMessage` is non-null) or be in a buffer
-    // `mData`. `mLength` gives the number of bytes for all entries.
+    // radio. The entries can be either contained in `mMessage`
+    // (when `mMessage` is non-null) or be in a buffer `mData`.
 
     Error        error = kErrorParse;
     Entry        readEntry;
@@ -173,11 +175,11 @@ Error ChannelMaskTlv::EntriesData::Parse(uint32_t &aChannelMask)
 
     aChannelMask = 0;
 
-    VerifyOrExit(mLength > 0); // At least one entry.
+    VerifyOrExit(!mOffsetRange.IsEmpty()); // At least one entry.
 
-    while (mLength > 0)
+    while (!mOffsetRange.IsEmpty())
     {
-        VerifyOrExit(mLength > kEntryHeaderSize);
+        VerifyOrExit(mOffsetRange.Contains(kEntryHeaderSize));
 
         if (mMessage != nullptr)
         {
@@ -185,17 +187,17 @@ Error ChannelMaskTlv::EntriesData::Parse(uint32_t &aChannelMask)
             // validating the entry and that the entry's channel page
             // is supported by radio, we read the full `Entry`.
 
-            mMessage->ReadBytes(mOffset, &readEntry, kEntryHeaderSize);
+            mMessage->ReadBytes(mOffsetRange.GetOffset(), &readEntry, kEntryHeaderSize);
             entry = &readEntry;
         }
         else
         {
-            entry = reinterpret_cast<const Entry *>(mData);
+            entry = reinterpret_cast<const Entry *>(&mData[mOffsetRange.GetOffset()]);
         }
 
         size = kEntryHeaderSize + entry->GetMaskLength();
 
-        VerifyOrExit(size <= mLength);
+        VerifyOrExit(mOffsetRange.Contains(size));
 
         if (Radio::SupportsChannelPage(entry->GetChannelPage()))
         {
@@ -206,22 +208,13 @@ Error ChannelMaskTlv::EntriesData::Parse(uint32_t &aChannelMask)
 
             if (mMessage != nullptr)
             {
-                IgnoreError(mMessage->Read(mOffset, readEntry));
+                IgnoreError(mMessage->Read(mOffsetRange, readEntry));
             }
 
             aChannelMask |= (entry->GetMask() & Radio::ChannelMaskForPage(entry->GetChannelPage()));
         }
 
-        mLength -= size;
-
-        if (mMessage != nullptr)
-        {
-            mOffset += size;
-        }
-        else
-        {
-            mData += size;
-        }
+        mOffsetRange.AdvanceOffset(size);
     }
 
     error = kErrorNone;
@@ -230,7 +223,7 @@ exit:
     return error;
 }
 
-void ChannelMaskTlv::PrepareValue(Value &aValue, uint32_t aChannelMask)
+void ChannelMaskTlv::PrepareValue(Value &aValue, uint32_t aChannelMask, bool aIncludeZeroPageMasks)
 {
     Entry *entry = reinterpret_cast<Entry *>(aValue.mData);
 
@@ -240,7 +233,7 @@ void ChannelMaskTlv::PrepareValue(Value &aValue, uint32_t aChannelMask)
     {
         uint32_t mask = (Radio::ChannelMaskForPage(page) & aChannelMask);
 
-        if (mask != 0)
+        if ((mask != 0) || aIncludeZeroPageMasks)
         {
             entry->SetChannelPage(page);
             entry->SetMaskLength(kMaskLength);

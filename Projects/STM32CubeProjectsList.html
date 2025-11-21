@@ -18,7 +18,7 @@
 
     <h1>STM32CubeWB Firmware Examples for STM32WBxx Series</h1>
 
-    <p class="copyright">Copyright 2019 STMicroelectronics</p>
+    <p class="copyright">Copyright 2022 STMicroelectronics</p>
 
     <div class="picture">
       <img alt="" id="_x0000_i1025" src="../_htmresc/st_logo_2020.png" style="border: 0px solid ; width: 104px; height: 77px;"/>
@@ -3235,7 +3235,7 @@ the STM32WBxx UART HAL and LL API, the LL API being used for performance improve
         <td>0</td>
       </tr>
       <tr align=center>
-        <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" rowspan=138><p id="Applications">Applications</p></td>
+        <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" rowspan=137><p id="Applications">Applications</p></td>
         <td align=left rowspan=39><p id="BLE">BLE</p></td>
         <td align=left><p id="BLE_AT_Server">BLE_AT_Server</p></td>
         <td align=left>
@@ -3955,20 +3955,7 @@ featuring full-duplex audio streaming over Bluetooth 5.0 using Opus codec.
         <td>-</td>
       </tr>
       <tr align=center>
-        <td align=left rowspan=9><p id="FreeRTOS">FreeRTOS</p></td>
-        <td align=left><p id="FreeRTOS_Mail">FreeRTOS_Mail</p></td>
-        <td align=left>
-How to use mail queues with CMSIS RTOS API.
-</td>
-        <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center>1</td>
-        <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center></td>
-        <td>-</td>
-        <td>-</td>
-        <td><font size="5" color=green>CubeMx</font></td>
-        <td>-</td>
-        <td>-</td>
-      </tr>
-      <tr align=center>
+        <td align=left rowspan=8><p id="FreeRTOS">FreeRTOS</p></td>
         <td align=left><p id="FreeRTOS_Mutexes">FreeRTOS_Mutexes</p></td>
         <td align=left>
 How to use mutexes with CMSIS RTOS API.
@@ -3986,9 +3973,9 @@ How to use mutexes with CMSIS RTOS API.
         <td align=left>
 How to use message queues with CMSIS RTOS API.
 </td>
-        <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center>1</td>
+        <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center>2</td>
         <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center></td>
-        <td>-</td>
+        <td><font size="5" color=red>New</font></td>
         <td>-</td>
         <td><font size="5" color=green>CubeMx</font></td>
         <td>-</td>
@@ -4021,41 +4008,41 @@ How to use semaphore from ISR with CMSIS RTOS API.
         <td>-</td>
       </tr>
       <tr align=center>
-        <td align=left><p id="FreeRTOS_Signal">FreeRTOS_Signal</p></td>
-        <td align=left>
-How to perform thread signaling using CMSIS RTOS API.
-</td>
-        <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center>1</td>
-        <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center></td>
-        <td>-</td>
-        <td>-</td>
-        <td><font size="5" color=green>CubeMx</font></td>
-        <td>-</td>
-        <td>-</td>
-      </tr>
-      <tr align=center>
-        <td align=left><p id="FreeRTOS_SignalFromISR">FreeRTOS_SignalFromISR</p></td>
-        <td align=left>
-This application shows the usage of CMSIS-OS Signal API from ISR context.
-</td>
-        <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center>1</td>
-        <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center></td>
-        <td>-</td>
-        <td>-</td>
-        <td><font size="5" color=green>CubeMx</font></td>
-        <td>-</td>
-        <td>-</td>
-      </tr>
-      <tr align=center>
         <td align=left><p id="FreeRTOS_ThreadCreation">FreeRTOS_ThreadCreation</p></td>
         <td align=left>
-How to implement thread creation using CMSIS RTOS API. 
+How to implement thread creation using CMSIS RTOS API.
 </td>
         <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center>1</td>
         <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center></td>
         <td>-</td>
         <td>-</td>
         <td><font size="5" color=green>CubeMx</font></td>
+        <td>-</td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="FreeRTOS_ThreadFlags">FreeRTOS_ThreadFlags</p></td>
+        <td align=left>
+How to perform thread flagging using CMSIS RTOS API.
+</td>
+        <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center>1</td>
+        <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center></td>
+        <td>-</td>
+        <td>-</td>
+        <td><font size="5" color=red>New</font></td>
+        <td>-</td>
+        <td>-</td>
+      </tr>
+      <tr align=center>
+        <td align=left><p id="FreeRTOS_ThreadFlagsFromISR">FreeRTOS_ThreadFlagsFromISR</p></td>
+        <td align=left>
+This application shows the usage of CMSIS-OS ThreadFlags API from ISR context.
+</td>
+        <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center>1</td>
+        <td style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center></td>
+        <td>-</td>
+        <td>-</td>
+        <td><font size="5" color=red>New</font></td>
         <td>-</td>
         <td>-</td>
       </tr>
@@ -5045,19 +5032,19 @@ How to use the Custom long string cluster on a device acting as a Server with Co
       </tr>
       <tr style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center>
         <td colspan="3"><b>Total number of applications</b></td><td>176</td>
-        <td>137</td>
-        <td>14</td>
+        <td>136</td>
+        <td>15</td>
         <td>19</td>
-        <td>127</td>
+        <td>126</td>
         <td>14</td>
         <td>2</td>
       </tr>
       <tr style="background-repeat: no-repeat;background-position: right center;background-color: #39A9DC;color: #FFF;" align=center>
       	<td colspan="4"><b>Total number of projects</b></td><td>472</td>
-          <td>347</td>
-      	<td>24</td>
+          <td>346</td>
+      	<td>25</td>
       	<td>20</td>
-      	<td>333</td>
+      	<td>332</td>
       	<td>90</td>
       	<td>5</td>
       </tr>

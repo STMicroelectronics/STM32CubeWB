@@ -1,34 +1,234 @@
 
-  @verbatim
-  ******************************************************************************
-  *
-  *           Portions Copyright © 2019 STMicroelectronics International N.V. All rights reserved.
-  *           Portions Copyright (C) 2016 Real Time Engineers Ltd, All rights reserved
-  *
-  * @file    st_readme.txt
-  * @author  MCD Application Team
-  * @brief   This file lists the main modification done by STMicroelectronics on
-  *          FreeRTOS for integration with STM32Cube solution.
-  *          For more details on FreeRTOS implementation on STM32Cube, please refer
-  *          to UM1722 "Developing Applications on STM32Cube with FreeRTOS"
-  ******************************************************************************
-  *
-  * Copyright (c) 2019 STMicroelectronics. All rights reserved.
-  *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                       opensource.org/licenses/BSD-3-Clause
-  *
-  ******************************************************************************
+@verbatim
+******************************************************************************
+* @file    st_readme.txt
+* @author  MCD Application Team
+* @brief   This file lists the main modification done by STMicroelectronics on
+*          FreeRTOS for integration with STM32Cube solution.
+*          For more details on FreeRTOS implementation on STM32Cube, please refe
+*          to UM1722 "Developing Applications on STM32Cube with FreeRTOS"
+******************************************************************************
+*
+* Copyright (c) 2022 STMicroelectronics. All rights reserved.
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+*
+ * The above copyright notice and this permission notice shall be included in all
+* copies or substantial portions of the Software.
+*
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
+* ******************************************************************************
   @endverbatim
 
 =======
+### 11-October-2024 ###
+=========================
+  + FreeRTOS: Update to FreeRTOS v10.6.2
+
+  + Add files to include folder
+    - include/mpu_syscall_numbers.h
+    - include/newlib-freertos.h
+    - include/picolibc-freertos.h
+
+  + Add file to portable/Common folder
+    - portable/Common/mpu_wrappers_v2.c
+
+  + Add files to portable folder
+    - portable/GCC/ARM_CM3_MPU/mpu_wrappers_v2_asm.c
+    - portable/GCC-RVDS/ARM_CM4_MPU/mpu_wrappers_v2_asm.c
+    - portable/GCC/ARM_CM23/non_secure/mpu_wrappers_v2_asm.c
+    - portable/GCC/ARM_CM23_NTZ/non_secure/mpu_wrappers_v2_asm.c
+    - portable/GCC/ARM_CM33/non_secure/mpu_wrappers_v2_asm.c
+    - portable/GCC/ARM_CM33_NTZ/non_secure/mpu_wrappers_v2_asm.c
+    - portable/GCC/ARM_CM55/non_secure/mpu_wrappers_v2_asm.c
+    - portable/GCC/ARM_CM55_NTZ/non_secure/mpu_wrappers_v2_asm.c
+    - portable/GCC/ARM_CM85/non_secure/mpu_wrappers_v2_asm.c
+    - portable/GCC/ARM_CM85_NTZ/non_secure/mpu_wrappers_v2_asm.c
+    - portable/RVDS/ARM_CM4_MPU/mpu_wrappers_v2_asm.c
+    - portable/IAR/ARM_CM4_MPU/mpu_wrappers_v2_asm.S
+    - portable/IAR/ARM_CM23/non_secure/mpu_wrappers_v2_asm.S
+    - portable/IAR/ARM_CM23_NTZ/non_secure/mpu_wrappers_v2_asm.S
+    - portable/IAR/ARM_CM33/non_secure/mpu_wrappers_v2_asm.S
+    - portable/IAR/ARM_CM33_NTZ/non_secure/mpu_wrappers_v2_asm.S
+    - portable/IAR/ARM_CM55/non_secure/mpu_wrappers_v2_asm.S
+    - portable/IAR/ARM_CM55_NTZ/non_secure/mpu_wrappers_v2_asm.S
+    - portable/IAR/ARM_CM85/non_secure/mpu_wrappers_v2_asm.S
+    - portable/IAR/ARM_CM85_NTZ/non_secure/mpu_wrappers_v2_asm.S
+
+  + Add support for 16 MPU regions to Cortex-M33, M55 and M85 ports
+    - Source/portable/IAR/ARM_CM33_NTZ/non_secure/portmacro.h
+    - Source/portable/IAR/ARM_CM33/non_secure/portmacro.h
+    - Source/portable/IAR/ARM_CM55_NTZ/non_secure/portmacro.h
+    - Source/portable/IAR/ARM_CM55/non_secure/portmacro.h
+    - Source/portable/IAR/ARM_CM85_NTZ/non_secure/portmacro.h
+    - Source/portable/IAR/ARM_CM85/non_secure/portmacro.h
+
+  + Add missing MPU API prototypes
+    - Source/include/mpu_prototypes.h
+    - Source/include/mpu_wrappers.h
+
+  + CMSIS_RTOS_V2: update API to be compatible with Cortex A
+    - CMSIS_RTOS_V2/cmsis_os2.c
+
+### 03-May-2024 ###
+=========================
+  + Restore ARM_CA9, ARM_CM55 and ARM_CM85 port files
+
+     - Source/portable/GCC/ARM_CA9/port.c
+     - Source/portable/GCC/ARM_CA9/portASM.S
+     - Source/portable/GCC/ARM_CA9/portmacro.h
+     - Source/portable/GCC/ARM_CM55/non_secure/port.c
+     - Source/portable/GCC/ARM_CM55/non_secure/portasm.c
+     - Source/portable/GCC/ARM_CM55/non_secure/portasm.h
+     - Source/portable/GCC/ARM_CM55/non_secure/portmacro.h
+     - Source/portable/GCC/ARM_CM55/non_secure/portmacrocommon.h
+     - Source/portable/GCC/ARM_CM55/secure/secure_context.c
+     - Source/portable/GCC/ARM_CM55/secure/secure_context.h
+     - Source/portable/GCC/ARM_CM55/secure/secure_context_port.c
+     - Source/portable/GCC/ARM_CM55/secure/secure_heap.c
+     - Source/portable/GCC/ARM_CM55/secure/secure_heap.h
+     - Source/portable/GCC/ARM_CM55/secure/secure_init.c
+     - Source/portable/GCC/ARM_CM55/secure/secure_init.h
+     - Source/portable/GCC/ARM_CM55/secure/secure_port_macros.h
+     - Source/portable/GCC/ARM_CM55_NTZ/non_secure/port.c
+     - Source/portable/GCC/ARM_CM55_NTZ/non_secure/portasm.c
+     - Source/portable/GCC/ARM_CM55_NTZ/non_secure/portasm.h
+     - Source/portable/GCC/ARM_CM55_NTZ/non_secure/portmacro.h
+     - Source/portable/GCC/ARM_CM55_NTZ/non_secure/portmacrocommon.h
+     - Source/portable/GCC/ARM_CM85/non_secure/port.c
+     - Source/portable/GCC/ARM_CM85/non_secure/portasm.c
+     - Source/portable/GCC/ARM_CM85/non_secure/portasm.h
+     - Source/portable/GCC/ARM_CM85/non_secure/portmacro.h
+     - Source/portable/GCC/ARM_CM85/non_secure/portmacrocommon.h
+     - Source/portable/GCC/ARM_CM85/secure/secure_context.c
+     - Source/portable/GCC/ARM_CM85/secure/secure_context.h
+     - Source/portable/GCC/ARM_CM85/secure/secure_context_port.c
+     - Source/portable/GCC/ARM_CM85/secure/secure_heap.c
+     - Source/portable/GCC/ARM_CM85/secure/secure_heap.h
+     - Source/portable/GCC/ARM_CM85/secure/secure_init.c
+     - Source/portable/GCC/ARM_CM85/secure/secure_init.h
+     - Source/portable/GCC/ARM_CM85/secure/secure_port_macros.h
+     - Source/portable/GCC/ARM_CM85_NTZ/non_secure/port.c
+     - Source/portable/GCC/ARM_CM85_NTZ/non_secure/portasm.c
+     - Source/portable/GCC/ARM_CM85_NTZ/non_secure/portasm.h
+     - Source/portable/GCC/ARM_CM85_NTZ/non_secure/portmacro.h
+     - Source/portable/GCC/ARM_CM85_NTZ/non_secure/portmacrocommon.h
+     - Source/portable/IAR/ARM_CA9/port.c
+     - Source/portable/IAR/ARM_CA9/portASM.h
+     - Source/portable/IAR/ARM_CA9/portASM.s
+     - Source/portable/IAR/ARM_CA9/portmacro.h
+     - Source/portable/IAR/ARM_CM55/non_secure/port.c
+     - Source/portable/IAR/ARM_CM55/non_secure/portasm.h
+     - Source/portable/IAR/ARM_CM55/non_secure/portasm.s
+     - Source/portable/IAR/ARM_CM55/non_secure/portmacro.h
+     - Source/portable/IAR/ARM_CM55/non_secure/portmacrocommon.h
+     - Source/portable/IAR/ARM_CM55/secure/secure_context.c
+     - Source/portable/IAR/ARM_CM55/secure/secure_context.h
+     - Source/portable/IAR/ARM_CM55/secure/secure_context_port_asm.s
+     - Source/portable/IAR/ARM_CM55/secure/secure_heap.c
+     - Source/portable/IAR/ARM_CM55/secure/secure_heap.h
+     - Source/portable/IAR/ARM_CM55/secure/secure_init.c
+     - Source/portable/IAR/ARM_CM55/secure/secure_init.h
+     - Source/portable/IAR/ARM_CM55/secure/secure_port_macros.h
+     - Source/portable/IAR/ARM_CM55_NTZ/non_secure/port.c
+     - Source/portable/IAR/ARM_CM55_NTZ/non_secure/portasm.h
+     - Source/portable/IAR/ARM_CM55_NTZ/non_secure/portasm.s
+     - Source/portable/IAR/ARM_CM55_NTZ/non_secure/portmacro.h
+     - Source/portable/IAR/ARM_CM55_NTZ/non_secure/portmacrocommon.h
+     - Source/portable/IAR/ARM_CM85/non_secure/port.c
+     - Source/portable/IAR/ARM_CM85/non_secure/portasm.h
+     - Source/portable/IAR/ARM_CM85/non_secure/portasm.s
+     - Source/portable/IAR/ARM_CM85/non_secure/portmacro.h
+     - Source/portable/IAR/ARM_CM85/non_secure/portmacrocommon.h
+     - Source/portable/IAR/ARM_CM85/secure/secure_context.c
+     - Source/portable/IAR/ARM_CM85/secure/secure_context.h
+     - Source/portable/IAR/ARM_CM85/secure/secure_context_port_asm.s
+     - Source/portable/IAR/ARM_CM85/secure/secure_heap.c
+     - Source/portable/IAR/ARM_CM85/secure/secure_heap.h
+     - Source/portable/IAR/ARM_CM85/secure/secure_init.c
+     - Source/portable/IAR/ARM_CM85/secure/secure_init.h
+     - Source/portable/IAR/ARM_CM85/secure/secure_port_macros.h
+     - Source/portable/IAR/ARM_CM85_NTZ/non_secure/port.c
+     - Source/portable/IAR/ARM_CM85_NTZ/non_secure/portasm.h
+     - Source/portable/IAR/ARM_CM85_NTZ/non_secure/portasm.s
+     - Source/portable/IAR/ARM_CM85_NTZ/non_secure/portmacro.h
+     - Source/portable/IAR/ARM_CM85_NTZ/non_secure/portmacrocommon.h
+     - 
+
+### 17-November-2023 ###
+=========================
+  + CMSIS_RTOS_V2: Restore cmsis_os.h file for backward comaptibility
 
 ### 18-August-2023 ###
 =========================
   + LICENSE update
       - Add a LICENSE.md file at the root of the directory
+
+### 19-May-2023 ###
+=========================
+  + FreeRTOS: Update to FreeRTOS v10.5.1
+
+  + Add portmacrocommon files:
+
+      - GCC/ARM_CM23_NTZ/non_secure/portmacrocommon.h
+      - GCC/ARM_CM23/non_secure/portmacrocommon.h
+      - GCC/ARM_CM33_NTZ/non_secure/portmacrocommon.h
+      - GCC/ARM_CM33/non_secure/portmacrocommon.h
+      - IAR/ARM_CM23_NTZ/non_secure/portmacrocommon.h
+      - IAR/ARM_CM23/non_secure/portmacrocommon.h
+      - IAR/ARM_CM33_NTZ/non_secure/portmacrocommon.h
+      - IAR/ARM_CM33/non_secure/portmacrocommon.h
+
+  + Delete ARM_CM7_MPU files :
+      - GCC/ARM_CM7_MPU/r0p1/port.c
+      - GCC/ARM_CM7_MPU/r0p1/portmacro.h
+      - GCC/ARM_CM7_MPU/ReadMe.txt
+      - IAR/ARM_CM7_MPU/r0p1/port.c
+      - IAR/ARM_CM7_MPU/r0p1/portasm.s
+      - IAR/ARM_CM7_MPU/r0p1/portmacro.h
+      - IAR/ARM_CM7_MPU/ReadMe.txt
+      - RVDS/ARM_CM7_MPU/r0p1/port.c
+      - RVDS/ARM_CM7_MPU/r0p1/portmacro.h
+      - RVDS/ARM_CM7_MPU/ReadMe.txt
+
+  + CMSIS_RTOS_V2: update against the latest CMSIS-FreeRTOS v10.5.1 release
+      - CMSIS_RTOS_V2/cmsis_os2.c
+
+### 05-August-2022 ###
+=========================
+  + FreeRTOS: Update to FreeRTOS v10.4.6
+
+  + Add ARM_CM7_MPU port files for all compilers:
+      - GCC/ARM_CM7_MPU/r0p1/port.c
+      - GCC/ARM_CM7_MPU/r0p1/portmacro.h
+      - IAR/ARM_CM7_MPU/r0p1/port.c
+      - IAR/ARM_CM7_MPU/r0p1/portasm.s
+      - IAR/ARM_CM7_MPU/r0p1/portmacro.h
+      - RVDS/ARM_CM7_MPU/r0p1/port.c
+      - RVDS/ARM_CM7_MPU/r0p1/portmacro.h
+
+  + CMSIS_RTOS_V2: update against the latest CMSIS-FreeRTOS v10.4.6 release
+      - CMSIS_RTOS_V2/cmsis_os2.c
+      - CMSIS_RTOS_V2/freertos_os2.h
+
+  + CMSIS_RTOS_V2: Remove the following files as cmsis_RTOS1 is no more supported
+(applications should use cmsis_os2.h file under Drivers/CMSIS/RTOS2/Include)
+      - CMSIS_RTOS_V2/cmsis_os.h
+      - CMSIS_RTOS_V2/cmsis_os2.h
+
+  + CMSIS_RTOS V1 : Removed as it's no more supported:
+      - CMSIS_RTOS/cmsis_os.c
+      - CMSIS_RTOS/cmsis_os.h
 
 ### 31-August-2020 ###
 =========================
@@ -40,12 +240,11 @@
 ### 20-July-2020 ###
 =========================
   + FreeRTOS: Update to FreeRTOS v10.3.1
-  
+
   + CMSIS_RTOS_V2: update against the latest CMSIS-FreeRTOS v10.3.0 release
       - CMSIS_RTOS_V2/cmsis_os2.c
       - CMSIS_RTOS_V2/freertos_mpool.h
       - CMSIS_RTOS_V2/freertos_os2.h
-      - CMSIS_RTOS_V2/os_systick.c
 
   + Add Tickless Idle support for CM23/CM33
       - GCC/ARM_CM23/non_secure/port.c
@@ -64,7 +263,7 @@
       - IAR/ARM_CM33/non_secure/portmacro.h
       - IAR/ARM_CM33_NTZ/non_secure/port.c
       - IAR/ARM_CM33_NTZ/non_secure/portmacro.h
-  
+
   +  Fix MPU hardfault bug for Cortex-M4 MPU
       - GCC\ARM_CM4_MPU\port.c
       - IAR\ARM_CM4_MPU\port.c
@@ -358,7 +557,7 @@
           example : osMutex1Id = osRecursiveMutexCreate (osMutex(Mutex1));
 
       - Fix implementation of functions osSemaphoreWait(), osMutexRelease() and osMutexWait() by using the appropriate
-         freeRTOS “FromISR” APIs when called from an interrupt.
+         freeRTOS Â“FromISRÂ” APIs when called from an interrupt.
 
       - Fix compilation warning when the constant INCLUDE_eTaskGetState is not defined
 

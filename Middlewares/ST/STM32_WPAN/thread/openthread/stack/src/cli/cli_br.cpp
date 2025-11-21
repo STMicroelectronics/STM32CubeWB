@@ -143,6 +143,70 @@ exit:
     return error;
 }
 
+#if OPENTHREAD_CONFIG_BORDER_ROUTING_MULTI_AIL_DETECTION_ENABLE
+
+template <> otError Br::Process<Cmd("multiail")>(Arg aArgs[])
+{
+    otError error = OT_ERROR_NONE;
+
+    /**
+     * @cli br multiail
+     * @code
+     * br multiail
+     * not detected
+     * @endcode
+     * @par api_copy
+     * #otBorderRoutingIsMultiAilDetected
+     */
+    if (aArgs[0].IsEmpty())
+    {
+        OutputLine("%sdetected", otBorderRoutingIsMultiAilDetected(GetInstancePtr()) ? "" : "not ");
+    }
+    /**
+     * @cli br multiail callback
+     * @code
+     * br multiail callback enable
+     * Done
+     * @endcode
+     * @cparam br multiail callback @ca{enable|disable}
+     * @par api_copy
+     * #otBorderRoutingSetMultiAilCallback
+     */
+    else if (aArgs[0] == "callback")
+    {
+        bool                            enable;
+        otBorderRoutingMultiAilCallback callback = nullptr;
+
+        SuccessOrExit(error = ParseEnableOrDisable(aArgs[1], enable));
+
+        if (enable)
+        {
+            callback = &HandleMultiAilDetected;
+        }
+
+        otBorderRoutingSetMultiAilCallback(GetInstancePtr(), callback, this);
+    }
+    else
+    {
+        error = OT_ERROR_INVALID_ARGS;
+    }
+
+exit:
+    return error;
+}
+
+void Br::HandleMultiAilDetected(bool aDetected, void *aContext)
+{
+    static_cast<Br *>(aContext)->HandleMultiAilDetected(aDetected);
+}
+
+void Br::HandleMultiAilDetected(bool aDetected)
+{
+    OutputLine("BR multi AIL callback: %s", aDetected ? "detected" : "cleared");
+}
+
+#endif // OPENTHREAD_CONFIG_BORDER_ROUTING_MULTI_AIL_DETECTION_ENABLE
+
 otError Br::ParsePrefixTypeArgs(Arg aArgs[], PrefixType &aFlags)
 {
     otError error = OT_ERROR_NONE;
@@ -169,6 +233,114 @@ otError Br::ParsePrefixTypeArgs(Arg aArgs[], PrefixType &aFlags)
     }
 
     VerifyOrExit(aArgs[1].IsEmpty(), error = OT_ERROR_INVALID_ARGS);
+
+exit:
+    return error;
+}
+
+template <> otError Br::Process<Cmd("omrconfig")>(Arg aArgs[])
+{
+    otError                  error = OT_ERROR_NONE;
+    otIp6Prefix              customPrefix;
+    otRoutePreference        preference;
+    otBorderRoutingOmrConfig omrConfig;
+
+    /**
+     * @cli br omrconfig
+     * @code
+     * br omrconfig
+     * auto
+     * Done
+     * @endcode
+     * @code
+     * br omrconfig
+     * custom (fd00:0:0:0::/64, prf:med)
+     * Done
+     * @endcode
+     * @par
+     * Outputs current OMR prefix configuration mode.
+     * @sa otBorderRoutingGetOmrConfig
+     */
+    if (aArgs[0].IsEmpty())
+    {
+        omrConfig = otBorderRoutingGetOmrConfig(GetInstancePtr(), &customPrefix, &preference);
+
+        switch (omrConfig)
+        {
+        case OT_BORDER_ROUTING_OMR_CONFIG_AUTO:
+            OutputLine("auto");
+            break;
+        case OT_BORDER_ROUTING_OMR_CONFIG_CUSTOM:
+            OutputFormat("custom (");
+            OutputIp6Prefix(customPrefix);
+            OutputLine(", prf:%s)", PreferenceToString(preference));
+            break;
+        case OT_BORDER_ROUTING_OMR_CONFIG_DISABLED:
+            OutputLine("disabled");
+            break;
+        }
+    }
+    else
+    {
+        ClearAllBytes(customPrefix);
+        preference = OT_ROUTE_PREFERENCE_MED;
+
+        /**
+         * @cli br omrconfig auto
+         * @code
+         * br omrconfig auto
+         * Done
+         * @endcode
+         * @par
+         * Sets OMR prefix configuration mode to `auto` In this mode, the Border Routing Manager automatically
+         * selects and manages the OMR prefix.
+         */
+        if (aArgs[0] == "auto")
+        {
+            omrConfig = OT_BORDER_ROUTING_OMR_CONFIG_AUTO;
+            VerifyOrExit(aArgs[1].IsEmpty(), error = OT_ERROR_INVALID_ARGS);
+        }
+        /**
+         * @cli br omrconfig custom
+         * @code
+         * br omrconfig custom fd00::/64 med
+         * Done
+         * @endcode
+         * @cparam br omrconfig custom @ca{prefix} [@ca{high}|@ca{med}|@ca{low}]
+         * @par
+         * Sets OMR prefix configuration mode to `custom`. In this mode, a custom OMR prefix and its associated
+         * preference are used.
+         */
+        else if (aArgs[0] == "custom")
+        {
+            omrConfig = OT_BORDER_ROUTING_OMR_CONFIG_CUSTOM;
+
+            SuccessOrExit(error = aArgs[1].ParseAsIp6Prefix(customPrefix));
+            SuccessOrExit(error = Interpreter::ParsePreference(aArgs[2], preference));
+            VerifyOrExit(aArgs[3].IsEmpty(), error = OT_ERROR_INVALID_ARGS);
+        }
+        /**
+         * @cli br omrconfig disable
+         * @code
+         * br omrconfig disable
+         * Done
+         * @endcode
+         * @cparam br omrconfig disable
+         * @par
+         * Sets OMR prefix configuration mode to `disable` which prevents the Border Routing Manager from adding any
+         * local or DHCPv6 PD OMR prefixes to the Network Data.
+         */
+        else if (aArgs[0] == "disable")
+        {
+            omrConfig = OT_BORDER_ROUTING_OMR_CONFIG_DISABLED;
+        }
+        else
+        {
+            ExitNow(error = OT_ERROR_INVALID_ARGS);
+        }
+
+        error = otBorderRoutingSetOmrConfig(GetInstancePtr(), omrConfig, &customPrefix, preference);
+    }
 
 exit:
     return error;
@@ -258,7 +430,20 @@ template <> otError Br::Process<Cmd("onlinkprefix")>(Arg aArgs[])
     otError    error = OT_ERROR_NONE;
     PrefixType outputPrefixTypes;
 
-    SuccessOrExit(error = ParsePrefixTypeArgs(aArgs, outputPrefixTypes));
+#if OPENTHREAD_CONFIG_BORDER_ROUTING_TESTING_API_ENABLE
+    if (aArgs[0] == "test")
+    {
+        otIp6Prefix prefix;
+
+        SuccessOrExit(error = aArgs[1].ParseAsIp6Prefix(prefix));
+        otBorderRoutingSetOnLinkPrefix(GetInstancePtr(), &prefix);
+        ExitNow();
+    }
+#endif
+
+    error = ParsePrefixTypeArgs(aArgs, outputPrefixTypes);
+
+    SuccessOrExit(error);
 
     /**
      * @cli br onlinkprefix local
@@ -374,14 +559,92 @@ exit:
 
 #endif // OPENTHREAD_CONFIG_NAT64_BORDER_ROUTING_ENABLE
 
+#if OPENTHREAD_CONFIG_BORDER_ROUTING_TRACK_PEER_BR_INFO_ENABLE
+
+template <> otError Br::Process<Cmd("peers")>(Arg aArgs[])
+{
+    otError error = OT_ERROR_NONE;
+
+    /**
+     * @cli br peers
+     * @code
+     * br peers
+     * rloc16:0x5c00 age:00:00:49
+     * rloc16:0xf800 age:00:01:51
+     * Done
+     * @endcode
+     * @par
+     * Get the list of peer BRs found in Network Data entries.
+     * `OPENTHREAD_CONFIG_BORDER_ROUTING_TRACK_PEER_BR_INFO_ENABLE` is required.
+     * Peer BRs are other devices within the Thread mesh that provide external IP connectivity. A device is considered
+     * to provide external IP connectivity if at least one of the following conditions is met regarding its Network
+     * Data entries:
+     * - It has added at least one external route entry.
+     * - It has added at least one prefix entry with both the default-route and on-mesh flags set.
+     * - It has added at least one domain prefix (with both the domain and on-mesh flags set).
+     * The list of peer BRs specifically excludes the current device, even if its is itself acting as a BR.
+     * Info per BR entry:
+     * - RLOC16 of the BR
+     * - Age as the duration interval since this BR appeared in Network Data. It is formatted as `{hh}:{mm}:{ss}` for
+     *   hours, minutes, seconds, if the duration is less than 24 hours. If the duration is 24 hours or more, the
+     *   format is `{dd}d.{hh}:{mm}:{ss}` for days, hours, minutes, seconds.
+     * @sa otBorderRoutingGetNextPrefixTableEntry
+     */
+    if (aArgs[0].IsEmpty())
+    {
+        otBorderRoutingPrefixTableIterator   iterator;
+        otBorderRoutingPeerBorderRouterEntry peerBrEntry;
+        char                                 ageString[OT_DURATION_STRING_SIZE];
+
+        otBorderRoutingPrefixTableInitIterator(GetInstancePtr(), &iterator);
+
+        while (otBorderRoutingGetNextPeerBrEntry(GetInstancePtr(), &iterator, &peerBrEntry) == OT_ERROR_NONE)
+        {
+            otConvertDurationInSecondsToString(peerBrEntry.mAge, ageString, sizeof(ageString));
+            OutputLine("rloc16:0x%04x age:%s", peerBrEntry.mRloc16, ageString);
+        }
+    }
+    /**
+     * @cli br peers count
+     * @code
+     * br peers count
+     * 2 min-age:00:00:47
+     * Done
+     * @endcode
+     * @par api_copy
+     * #otBorderRoutingCountPeerBrs
+     */
+    else if (aArgs[0] == "count")
+    {
+        uint32_t minAge;
+        uint16_t count;
+        char     ageString[OT_DURATION_STRING_SIZE];
+
+        VerifyOrExit(aArgs[1].IsEmpty(), error = OT_ERROR_INVALID_ARGS);
+
+        count = otBorderRoutingCountPeerBrs(GetInstancePtr(), &minAge);
+        otConvertDurationInSecondsToString(minAge, ageString, sizeof(ageString));
+        OutputLine("%u min-age:%s", count, ageString);
+    }
+    else
+    {
+        error = OT_ERROR_INVALID_ARGS;
+    }
+
+exit:
+    return error;
+}
+
+#endif // OPENTHREAD_CONFIG_BORDER_ROUTING_TRACK_PEER_BR_INFO_ENABLE
+
 /**
  * @cli br prefixtable
  * @code
  * br prefixtable
  * prefix:fd00:1234:5678:0::/64, on-link:no, ms-since-rx:29526, lifetime:1800, route-prf:med,
- * router:ff02:0:0:0:0:0:0:1 (M:0 O:0 Stub:1)
+ * router:ff02:0:0:0:0:0:0:1 (M:0 O:0 S:1)
  * prefix:1200:abba:baba:0::/64, on-link:yes, ms-since-rx:29527, lifetime:1800, preferred:1800,
- * router:ff02:0:0:0:0:0:0:1 (M:0 O:0 Stub:1)
+ * router:ff02:0:0:0:0:0:0:1 (M:0 O:0 S:1)
  * Done
  * @endcode
  * @par
@@ -397,7 +660,7 @@ exit:
  * - Flags in received Router Advertisement header:
  *   - M: Managed Address Config flag
  *   - O: Other Config flag
- *   - Stub: Stub Router flag (indicates whether the router is a stub router)
+ *   - S: SNAC Router flag
  * @sa otBorderRoutingGetNextPrefixTableEntry
  */
 template <> otError Br::Process<Cmd("prefixtable")>(Arg aArgs[])
@@ -435,6 +698,51 @@ exit:
     return error;
 }
 
+/**
+ * @cli br rdnsstable
+ * @code
+ * br rdnsstable
+ * fd00:1234:5678::1, lifetime:500, ms-since-rx:29526, router:ff02:0:0:0:0:0:0:1 (M:0 O:0 S:1)
+ * fd00:aaaa::2, lifetime:500, ms-since-rx:107, router:ff02:0:0:0:0:0:0:1 (M:0 O:0 S:1)
+ * Done
+ * @endcode
+ * @par
+ * Get the discovered Recursive DNS Server (RDNSS) address table by Border Routing Manager on the infrastructure link.
+ * Info per entry:
+ * - IPv6 address
+ * - Lifetime in seconds
+ * - Milliseconds since last received Router Advertisement containing this address
+ * - The router IPv6 address which advertised this prefix
+ * - Flags in received Router Advertisement header:
+ *   - M: Managed Address Config flag
+ *   - O: Other Config flag
+ *   - S: SNAC Router flag
+ * @sa otBorderRoutingGetNextRdnssAddrEntry
+ */
+template <> otError Br::Process<Cmd("rdnsstable")>(Arg aArgs[])
+{
+    otError                            error = OT_ERROR_NONE;
+    otBorderRoutingPrefixTableIterator iterator;
+    otBorderRoutingRdnssAddrEntry      entry;
+
+    VerifyOrExit(aArgs[0].IsEmpty(), error = OT_ERROR_INVALID_ARGS);
+
+    otBorderRoutingPrefixTableInitIterator(GetInstancePtr(), &iterator);
+
+    while (otBorderRoutingGetNextRdnssAddrEntry(GetInstancePtr(), &iterator, &entry) == OT_ERROR_NONE)
+    {
+        char string[OT_IP6_ADDRESS_STRING_SIZE];
+
+        otIp6AddressToString(&entry.mAddress, string, sizeof(string));
+        OutputFormat("%s, lifetime:%lu, ms-since-rx:%lu, router:", string, ToUlong(entry.mLifetime),
+                     ToUlong(entry.mMsecSinceLastUpdate));
+        OutputRouterInfo(entry.mRouter, kShortVersion);
+    }
+
+exit:
+    return error;
+}
+
 #if OPENTHREAD_CONFIG_BORDER_ROUTING_DHCP6_PD_ENABLE
 template <> otError Br::Process<Cmd("pd")>(Arg aArgs[])
 {
@@ -453,7 +761,6 @@ template <> otError Br::Process<Cmd("pd")>(Arg aArgs[])
      * @cparam br pd @ca{enable|disable}
      * @par api_copy
      * #otBorderRoutingDhcp6PdSetEnabled
-     *
      */
     if (ProcessEnableDisable(aArgs, otBorderRoutingDhcp6PdSetEnabled) == OT_ERROR_NONE)
     {
@@ -474,6 +781,7 @@ template <> otError Br::Process<Cmd("pd")>(Arg aArgs[])
             "disabled", // (0) OT_BORDER_ROUTING_DHCP6_PD_STATE_DISABLED
             "stopped",  // (1) OT_BORDER_ROUTING_DHCP6_PD_STATE_STOPPED
             "running",  // (2) OT_BORDER_ROUTING_DHCP6_PD_STATE_RUNNING
+            "idle",     // (3) OT_BORDER_ROUTING_DHCP6_PD_STATE_IDLE
         };
 
         static_assert(0 == OT_BORDER_ROUTING_DHCP6_PD_STATE_DISABLED,
@@ -482,6 +790,8 @@ template <> otError Br::Process<Cmd("pd")>(Arg aArgs[])
                       "OT_BORDER_ROUTING_DHCP6_PD_STATE_STOPPED value is not expected!");
         static_assert(2 == OT_BORDER_ROUTING_DHCP6_PD_STATE_RUNNING,
                       "OT_BORDER_ROUTING_DHCP6_PD_STATE_RUNNING value is not expected!");
+        static_assert(3 == OT_BORDER_ROUTING_DHCP6_PD_STATE_IDLE,
+                      "OT_BORDER_ROUTING_DHCP6_PD_STATE_IDLE value is not expected!");
 
         OutputLine("%s", Stringify(otBorderRoutingDhcp6PdGetState(GetInstancePtr()), kDhcpv6PdStateStrings));
     }
@@ -518,7 +828,7 @@ exit:
  * @cli br routers
  * @code
  * br routers
- * ff02:0:0:0:0:0:0:1 (M:0 O:0 Stub:1) ms-since-rx:1505
+ * ff02:0:0:0:0:0:0:1 (M:0 O:0 S:1) ms-since-rx:1505 reachable:yes age:00:18:13
  * Done
  * @endcode
  * @par
@@ -528,8 +838,16 @@ exit:
  * - Flags in received Router Advertisement header:
  *   - M: Managed Address Config flag
  *   - O: Other Config flag
- *   - Stub: Stub Router flag (indicates whether the router is a stub router)
+ *   - S: SNAC Router flag (indicates whether the router is a stub router)
  * - Milliseconds since last received message from this router
+ * - Reachability flag: A router is marked as unreachable if it fails to respond to multiple Neighbor Solicitation
+ *   probes.
+ * - Age: Duration interval since this router was first discovered. It is formatted as `{hh}:{mm}:{ss}` for  hours,
+ *   minutes, seconds, if the duration is less than 24 hours. If the duration is 24 hours or more, the format is
+ *   `{dd}d.{hh}:{mm}:{ss}` for days, hours, minutes, seconds.
+ * - `(this BR)` is appended when the router is the local device itself.
+ * - `(peer BR)` is appended when the router is likely a peer BR connected to the same Thread mesh. This requires
+ *   `OPENTHREAD_CONFIG_BORDER_ROUTING_TRACK_PEER_BR_INFO_ENABLE`.
  * @sa otBorderRoutingGetNextRouterEntry
  */
 template <> otError Br::Process<Cmd("routers")>(Arg aArgs[])
@@ -554,17 +872,29 @@ exit:
 void Br::OutputRouterInfo(const otBorderRoutingRouterEntry &aEntry, RouterOutputMode aMode)
 {
     OutputIp6Address(aEntry.mAddress);
-    OutputFormat(" (M:%u O:%u Stub:%u)", aEntry.mManagedAddressConfigFlag, aEntry.mOtherConfigFlag,
-                 aEntry.mStubRouterFlag);
+    OutputFormat(" (M:%u O:%u S:%u)", aEntry.mManagedAddressConfigFlag, aEntry.mOtherConfigFlag,
+                 aEntry.mSnacRouterFlag);
 
     if (aMode == kLongVersion)
     {
-        OutputFormat(" ms-since-rx:%lu", ToUlong(aEntry.mMsecSinceLastUpdate));
+        char ageString[OT_DURATION_STRING_SIZE];
+
+        otConvertDurationInSecondsToString(aEntry.mAge, ageString, sizeof(ageString));
+
+        OutputFormat(" ms-since-rx:%lu reachable:%s age:%s", ToUlong(aEntry.mMsecSinceLastUpdate),
+                     aEntry.mIsReachable ? "yes" : "no", ageString);
 
         if (aEntry.mIsLocalDevice)
         {
             OutputFormat(" (this BR)");
         }
+
+#if OPENTHREAD_CONFIG_BORDER_ROUTING_TRACK_PEER_BR_INFO_ENABLE
+        if (aEntry.mIsPeerBr)
+        {
+            OutputFormat(" (peer BR)");
+        }
+#endif
     }
 
     OutputNewLine();
@@ -764,16 +1094,24 @@ otError Br::Process(Arg aArgs[])
         CmdEntry("disable"),
         CmdEntry("enable"),
         CmdEntry("init"),
+#if OPENTHREAD_CONFIG_BORDER_ROUTING_MULTI_AIL_DETECTION_ENABLE
+        CmdEntry("multiail"),
+#endif
 #if OPENTHREAD_CONFIG_NAT64_BORDER_ROUTING_ENABLE
         CmdEntry("nat64prefix"),
 #endif
+        CmdEntry("omrconfig"),
         CmdEntry("omrprefix"),
         CmdEntry("onlinkprefix"),
 #if OPENTHREAD_CONFIG_BORDER_ROUTING_DHCP6_PD_ENABLE
         CmdEntry("pd"),
 #endif
+#if OPENTHREAD_CONFIG_BORDER_ROUTING_TRACK_PEER_BR_INFO_ENABLE
+        CmdEntry("peers"),
+#endif
         CmdEntry("prefixtable"),
         CmdEntry("raoptions"),
+        CmdEntry("rdnsstable"),
         CmdEntry("rioprf"),
         CmdEntry("routeprf"),
         CmdEntry("routers"),

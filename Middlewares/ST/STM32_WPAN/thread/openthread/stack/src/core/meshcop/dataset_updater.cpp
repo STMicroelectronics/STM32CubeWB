@@ -29,19 +29,13 @@
 /**
  * @file
  *   This file implements Dataset Updater.
- *
  */
 
 #include "dataset_updater.hpp"
 
 #if (OPENTHREAD_CONFIG_DATASET_UPDATER_ENABLE || OPENTHREAD_CONFIG_CHANNEL_MANAGER_ENABLE) && OPENTHREAD_FTD
 
-#include "common/code_utils.hpp"
-#include "common/locator_getters.hpp"
-#include "common/log.hpp"
-#include "common/random.hpp"
 #include "instance/instance.hpp"
-#include "meshcop/timestamp.hpp"
 
 namespace ot {
 namespace MeshCoP {
@@ -161,14 +155,16 @@ void DatasetUpdater::HandleNotifierEvents(Events aEvents)
 
 void DatasetUpdater::HandleDatasetChanged(Dataset::Type aType)
 {
-    Dataset   requestedDataset;
-    Dataset   newDataset;
-    Timestamp newTimestamp;
-    Timestamp requestedTimestamp;
+    Dataset     requestedDataset;
+    Dataset     newDataset;
+    Timestamp   newTimestamp;
+    Timestamp   requestedTimestamp;
+    OffsetRange offsetRange;
 
     VerifyOrExit(IsUpdateOngoing());
 
-    SuccessOrExit(requestedDataset.SetFrom(*mDataset, /* aOffset */ 0, mDataset->GetLength()));
+    offsetRange.InitFromMessageFullLength(*mDataset);
+    SuccessOrExit(requestedDataset.SetFrom(*mDataset, offsetRange));
 
     if (aType == Dataset::kActive)
     {

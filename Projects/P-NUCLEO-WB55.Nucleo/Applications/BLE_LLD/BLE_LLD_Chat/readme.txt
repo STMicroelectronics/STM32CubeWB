@@ -149,7 +149,8 @@ Baud Rate:115200 / Data:8 bits / Parity:none / Stop:1bit / Flow Control:none
  
 255 max for Payload if Non-Encrypt
 251 max if Encrypt (4 bytes are added by hardware)
-Note: in the implemented project, the message buffer is limited to 200 bytes in all subcases 
+
+Note: In the implemented project, the message buffer is limited to 200 bytes in all cases.
 
  * <h3><center>&copy; COPYRIGHT STMicroelectronics</center></h3>
  */

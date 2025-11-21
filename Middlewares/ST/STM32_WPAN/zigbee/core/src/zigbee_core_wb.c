@@ -28,6 +28,7 @@
 #include "zcl/zcl.h"
 #include "zcl/key/zcl.key.h" /* ZbZclKeWithDevice */
 #include "zcl/general/zcl.diagnostics.h"
+#include "zcl/general/zcl.basic.h" /* struct ZbZclBasicServerCustomAttrInfoT */
 #include "zcl/zcl.touchlink.h"
 #include "ieee802154_crc.h"
 
@@ -56,6 +57,7 @@ unsigned int ZbHeapMaxAlloc(void);
 bool zb_ipc_get_secured_mem_info(uint32_t *unsec_sram2a_sz, uint32_t *unsec_sram2b_sz);
 unsigned int zb_malloc_current_sz(void);
 bool ZbZclDeviceLogCheckAllow(struct ZigBeeT *zb, struct ZbApsdeDataIndT *dataIndPtr, struct ZbZclHeaderT *zclHdrPtr);
+uint8_t MacSetPropStrictDataPollReq(uint8_t val);
 
 #ifdef ZIGBEE_DIRECT_ACTIVATED
 extern void ZbCcmTransform(const void *key, const void *nonce, uint32_t nonce_len, void *m, uint32_t m_len, void *mic);
@@ -72,7 +74,6 @@ int hmacResult(HMACContext *context, uint8_t digest[USHAMaxHashSize]);
 #endif /* ZIGBEE_DIRECT_ACTIVATED */
 /* Touchlink callbacks */
 static struct ZbTouchlinkCallbacks zigbee_m4_tl_callbacks;
-uint8_t MacSetPropStrictDataPollReq(uint8_t val);
 
 void * zb_heap_alloc(struct ZigBeeT *zb, size_t sz, const char *funcname, unsigned int linenum);
 void zb_heap_free(struct ZigBeeT *zb, void *ptr, const char *funcname, unsigned int linenum);
@@ -2505,6 +2506,26 @@ ZbZclBasicWriteDirect(struct ZigBeeT *zb, uint8_t endpoint, uint16_t attributeId
     return rc;
 }
 
+enum ZclStatusCodeT
+ZbZclBasicReadDirect(struct ZigBeeT *zb, uint8_t endpoint, uint16_t attributeId, void *buf, unsigned int max_len)
+{
+    Zigbee_Cmd_Request_t *ipcc_req;
+    enum ZclStatusCodeT rc;
+
+    Pre_ZigbeeCmdProcessing();
+    ipcc_req = ZIGBEE_Get_OTCmdPayloadBuffer();
+    ipcc_req->ID = MSG_M4TOM0_ZCL_BASIC_SERVER_LOCAL_READ;
+    ipcc_req->Size = 4;
+    ipcc_req->Data[0] = (uint32_t)endpoint;
+    ipcc_req->Data[1] = (uint32_t)attributeId;
+    ipcc_req->Data[2] = (uint32_t)buf;
+    ipcc_req->Data[3] = (uint32_t)max_len;
+    ZIGBEE_CmdTransfer();
+    rc = (enum ZclStatusCodeT)zb_ipc_m4_get_retval();
+    Post_ZigbeeCmdProcessing();
+    return rc;
+}
+
 void
 ZbZclBasicServerConfigDefaults(struct ZigBeeT *zb, const struct ZbZclBasicServerDefaults *defaults)
 {
@@ -2517,6 +2538,23 @@ ZbZclBasicServerConfigDefaults(struct ZigBeeT *zb, const struct ZbZclBasicServer
     ipcc_req->Data[0] = (uint32_t)defaults;
     ZIGBEE_CmdTransfer();
     Post_ZigbeeCmdProcessing();
+}
+
+bool
+ZbZclBasicServerAppendCustomAttr(struct ZigBeeT *zb, struct ZbZclBasicServerCustomAttrInfoT *attr)
+{
+    Zigbee_Cmd_Request_t *ipcc_req;
+    bool rc;
+
+    Pre_ZigbeeCmdProcessing();
+    ipcc_req = ZIGBEE_Get_OTCmdPayloadBuffer();
+    ipcc_req->ID = MSG_M4TOM0_ZCL_BASIC_SERVER_APPEND_CUSTOM_ATTR;
+    ipcc_req->Size = 1;
+    ipcc_req->Data[0] = (uint32_t)attr;
+    ZIGBEE_CmdTransfer();
+    rc = (bool)zb_ipc_m4_get_retval();
+    Post_ZigbeeCmdProcessing();
+    return rc;
 }
 
 bool

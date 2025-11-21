@@ -36,32 +36,42 @@
 
 #include "openthread-core-config.h"
 
+#include "common/bit_set.hpp"
 #include "thread/neighbor.hpp"
 
 namespace ot {
 
 #if OPENTHREAD_FTD
 
+#if OPENTHREAD_CONFIG_MLE_IP_ADDRS_PER_CHILD < 2
+#error OPENTHREAD_CONFIG_MLE_IP_ADDRS_PER_CHILD should be at least set to 2.
+#endif
+
 /**
  * Represents a Thread Child.
- *
  */
-class Child : public Neighbor,
-              public IndirectSender::ChildInfo,
-              public DataPollHandler::ChildInfo
-#if OPENTHREAD_CONFIG_MAC_CSL_TRANSMITTER_ENABLE
-    ,
-              public CslTxScheduler::ChildInfo
-#endif
+class Child : public CslNeighbor
 {
-    class AddressIteratorBuilder;
-
 public:
     static constexpr uint8_t kMaxRequestTlvs = 6;
 
     /**
+     * Maximum number of registered IPv6 addresses per child (excluding the mesh-local EID).
+     */
+    static constexpr uint16_t kNumIp6Addresses = OPENTHREAD_CONFIG_MLE_IP_ADDRS_PER_CHILD - 1;
+
+    /**
+     * Represents the iterator for registered IPv6 address list of an MTD child.
+     */
+    typedef otChildIp6AddressIterator AddressIterator;
+
+    /**
+     * The initial value for an `AddressIterator`.
+     */
+    static constexpr AddressIterator kAddressIteratorInit = OT_CHILD_IP6_ADDRESS_ITERATOR_INIT;
+
+    /**
      * Represents diagnostic information for a Thread Child.
-     *
      */
     class Info : public otChildInfo, public Clearable<Info>
     {
@@ -70,169 +80,67 @@ public:
          * Sets the `Info` instance from a given `Child`.
          *
          * @param[in] aChild   A neighbor.
-         *
          */
         void SetFrom(const Child &aChild);
     };
 
     /**
-     * Defines an iterator used to go through IPv6 address entries of a child.
-     *
+     * Represents an IPv6 address entry registered by an MTD child.
      */
-    class AddressIterator : public Unequatable<AddressIterator>
+    class Ip6AddrEntry : public Ip6::Address
     {
-        friend class AddressIteratorBuilder;
-
     public:
         /**
-         * Represents an index indicating the current IPv6 address entry to which the iterator is pointing.
+         * Indicates whether the entry matches a given IPv6 address.
          *
+         * @param[in] aAddress   The IPv6 address.
+         *
+         * @retval TRUE   The entry matches @p aAddress.
+         * @retval FALSE  The entry does not match @p aAddress.
          */
-        typedef otChildIp6AddressIterator Index;
+        bool Matches(const Ip6::Address &aAddress) const { return (*this == aAddress); }
+
+#if OPENTHREAD_CONFIG_TMF_PROXY_MLR_ENABLE
+        /**
+         * Gets the MLR state of the IPv6 address entry.
+         *
+         * @param[in] aChild  The child owning this address entry.
+         *
+         * @returns The MLR state of IPv6 address entry.
+         */
+        MlrState GetMlrState(const Child &aChild) const;
 
         /**
-         * Initializes the iterator associated with a given `Child` starting from beginning of the
-         * IPv6 address list.
+         * Sets the MLR state of the IPv6 address entry.
          *
-         * @param[in] aChild    A reference to a child entry.
-         * @param[in] aFilter   An IPv6 address type filter restricting iterator to certain type of addresses.
-         *
+         * @param[in] aState    The MLR state.
+         * @param[in] aChild    The child owning this address entry.
          */
-        explicit AddressIterator(const Child &aChild, Ip6::Address::TypeFilter aFilter = Ip6::Address::kTypeAny)
-            : AddressIterator(aChild, 0, aFilter)
-        {
-        }
-
-        /**
-         * Initializes the iterator associated with a given `Child` starting from a given index
-         *
-         * @param[in]  aChild   A reference to the child entry.
-         * @param[in]  aIndex   An index (`Index`) with which to initialize the iterator.
-         * @param[in]  aFilter  An IPv6 address type filter restricting iterator to certain type of addresses.
-         *
-         */
-        AddressIterator(const Child &aChild, Index aIndex, Ip6::Address::TypeFilter aFilter = Ip6::Address::kTypeAny)
-            : mChild(aChild)
-            , mFilter(aFilter)
-            , mIndex(aIndex)
-        {
-            Update();
-        }
-
-        /**
-         * Converts the iterator into an index.
-         *
-         * @returns An index corresponding to the iterator.
-         *
-         */
-        Index GetAsIndex(void) const { return mIndex; }
-
-        /**
-         * Gets the iterator's associated `Child` entry.
-         *
-         * @returns The associated child entry.
-         *
-         */
-        const Child &GetChild(void) const { return mChild; }
-
-        /**
-         * Gets the current `Child` IPv6 Address to which the iterator is pointing.
-         *
-         * @returns  A pointer to the associated IPv6 Address, or `nullptr` if iterator is done.
-         *
-         */
-        const Ip6::Address *GetAddress(void) const;
-
-        /**
-         * Indicates whether the iterator has reached end of the list.
-         *
-         * @retval TRUE   There are no more entries in the list (reached end of the list).
-         * @retval FALSE  The current entry is valid.
-         *
-         */
-        bool IsDone(void) const { return (mIndex >= kMaxIndex); }
-
-        /**
-         * Overloads `++` operator (pre-increment) to advance the iterator.
-         *
-         * The iterator is moved to point to the next `Address` entry.  If there are no more `Ip6::Address` entries
-         * `IsDone()` returns `true`.
-         *
-         */
-        void operator++(void) { mIndex++, Update(); }
-
-        /**
-         * Overloads `++` operator (post-increment) to advance the iterator.
-         *
-         * The iterator is moved to point to the next `Address` entry.  If there are no more `Ip6::Address` entries
-         *  `IsDone()` returns `true`.
-         *
-         */
-        void operator++(int) { mIndex++, Update(); }
-
-        /**
-         * Overloads the `*` dereference operator and gets a reference to `Ip6::Address` to which the
-         * iterator is currently pointing.
-         *
-         * MUST be used when the iterator is not done (i.e., `IsDone()` returns `false`).
-         *
-         * @returns A reference to the `Ip6::Address` entry currently pointed by the iterator.
-         *
-         */
-        const Ip6::Address &operator*(void) const { return *GetAddress(); }
-
-        /**
-         * Overloads operator `==` to evaluate whether or not two `Iterator` instances are equal.
-         *
-         * MUST be used when the two iterators are associated with the same `Child` entry.
-         *
-         * @param[in]  aOther  The other `Iterator` to compare with.
-         *
-         * @retval TRUE   If the two `Iterator` objects are equal.
-         * @retval FALSE  If the two `Iterator` objects are not equal.
-         *
-         */
-        bool operator==(const AddressIterator &aOther) const { return (mIndex == aOther.mIndex); }
-
-    private:
-        enum IteratorType : uint8_t
-        {
-            kEndIterator,
-        };
-
-        static constexpr uint16_t kMaxIndex = OPENTHREAD_CONFIG_MLE_IP_ADDRS_PER_CHILD;
-
-        AddressIterator(const Child &aChild, IteratorType)
-            : mChild(aChild)
-            , mIndex(kMaxIndex)
-        {
-        }
-
-        void Update(void);
-
-        const Child             &mChild;
-        Ip6::Address::TypeFilter mFilter;
-        Index                    mIndex;
-        Ip6::Address             mMeshLocalAddress;
+        void SetMlrState(MlrState aState, Child &aChild);
+#endif
     };
+
+    /**
+     * Represents an array of IPv6 address entries registered by an MTD child.
+     *
+     * This array does not include the mesh-local EID.
+     */
+    typedef Array<Ip6AddrEntry, kNumIp6Addresses> Ip6AddressArray;
 
     /**
      * Initializes the `Child` object.
      *
      * @param[in] aInstance  A reference to OpenThread instance.
-     *
      */
     void Init(Instance &aInstance) { Neighbor::Init(aInstance); }
 
     /**
      * Clears the child entry.
-     *
      */
     void Clear(void);
 
     /**
      * Clears the IPv6 address list for the child.
-     *
      */
     void ClearIp6Addresses(void);
 
@@ -240,7 +148,6 @@ public:
      * Sets the device mode flags.
      *
      * @param[in]  aMode  The device mode flags.
-     *
      */
     void SetDeviceMode(Mle::DeviceMode aMode);
 
@@ -251,7 +158,6 @@ public:
      *
      * @retval kErrorNone      Successfully found the mesh-local address and updated @p aAddress.
      * @retval kErrorNotFound  No mesh-local IPv6 address in the IPv6 address list.
-     *
      */
     Error GetMeshLocalIp6Address(Ip6::Address &aAddress) const;
 
@@ -259,31 +165,38 @@ public:
      * Returns the Mesh Local Interface Identifier.
      *
      * @returns The Mesh Local Interface Identifier.
-     *
      */
     const Ip6::InterfaceIdentifier &GetMeshLocalIid(void) const { return mMeshLocalIid; }
 
     /**
-     * Enables range-based `for` loop iteration over all (or a subset of) IPv6 addresses.
+     * Gets an array of registered IPv6 address entries by the child.
      *
-     * Should be used as follows: to iterate over all addresses
+     * The array does not include the mesh-local EID. The ML-EID can retrieved using  `GetMeshLocalIp6Address()`.
      *
-     *     for (const Ip6::Address &address : child.IterateIp6Addresses()) { ... }
-     *
-     * or to iterate over a subset of IPv6 addresses determined by a given address type filter
-     *
-     *     for (const Ip6::Address &address : child.IterateIp6Addresses(Ip6::Address::kTypeMulticast)) { ... }
-     *
-     * @param[in] aFilter  An IPv6 address type filter restricting iteration to certain type of addresses (default is
-     *                     to accept any address type).
-     *
-     * @returns An IteratorBuilder instance.
-     *
+     * @returns The array of registered IPv6 addresses by the child.
      */
-    AddressIteratorBuilder IterateIp6Addresses(Ip6::Address::TypeFilter aFilter = Ip6::Address::kTypeAny) const
-    {
-        return AddressIteratorBuilder(*this, aFilter);
-    }
+    const Ip6AddressArray &GetIp6Addresses(void) const { return mIp6Addresses; }
+
+    /**
+     * Gets an array of registered IPv6 address entries by the child.
+     *
+     * The array does not include the mesh-local EID. The ML-EID can retrieved using  `GetMeshLocalIp6Address()`.
+     *
+     * @returns The array of registered IPv6 addresses by the child.
+     */
+    Ip6AddressArray &GetIp6Addresses(void) { return mIp6Addresses; }
+
+    /**
+     * Iterates over all registered IPv6 addresses (using an iterator).
+     *
+     * @param[in,out]  aIterator  The iterator to use. On success the iterator will be updated.
+     *                            To get the first IPv6 address the iterator should be set to `kAddressIteratorInit`
+     * @param[out]     aAddress   A reference to an IPv6 address to return the address.
+     *
+     * @retval kErrorNone        Successfully got the next IPv6 address. @p aIterator and @p aAddress are updated.
+     * @retval kErrorNotFound    No more address.
+     */
+    Error GetNextIp6Address(AddressIterator &aIterator, Ip6::Address &aAddress) const;
 
     /**
      * Adds an IPv6 address to the list.
@@ -294,7 +207,6 @@ public:
      * @retval kErrorAlready       Address is already in the list.
      * @retval kErrorNoBufs        Already at maximum number of addresses. No entry available to add the new address.
      * @retval kErrorInvalidArgs   Address is invalid (it is the Unspecified Address).
-     *
      */
     Error AddIp6Address(const Ip6::Address &aAddress);
 
@@ -306,7 +218,6 @@ public:
      * @retval kErrorNone             Successfully removed the address.
      * @retval kErrorNotFound         Address was not found in the list.
      * @retval kErrorInvalidArgs      Address is invalid (it is the Unspecified Address).
-     *
      */
     Error RemoveIp6Address(const Ip6::Address &aAddress);
 
@@ -317,7 +228,6 @@ public:
      *
      * @retval TRUE           The address exists on the list.
      * @retval FALSE          Address was not found in the list.
-     *
      */
     bool HasIp6Address(const Ip6::Address &aAddress) const;
 
@@ -329,7 +239,6 @@ public:
      *
      * @retval kErrorNone      Successfully retrieved the DUA address, @p aAddress is updated.
      * @retval kErrorNotFound  Could not find any DUA address.
-     *
      */
     Error GetDomainUnicastAddress(Ip6::Address &aAddress) const;
 #endif
@@ -338,7 +247,6 @@ public:
      * Gets the child timeout.
      *
      * @returns The child timeout.
-     *
      */
     uint32_t GetTimeout(void) const { return mTimeout; }
 
@@ -346,7 +254,6 @@ public:
      * Sets the child timeout.
      *
      * @param[in]  aTimeout  The child timeout.
-     *
      */
     void SetTimeout(uint32_t aTimeout) { mTimeout = aTimeout; }
 
@@ -354,7 +261,6 @@ public:
      * Gets the network data version.
      *
      * @returns The network data version.
-     *
      */
     uint8_t GetNetworkDataVersion(void) const { return mNetworkDataVersion; }
 
@@ -362,13 +268,11 @@ public:
      * Sets the network data version.
      *
      * @param[in]  aVersion  The network data version.
-     *
      */
     void SetNetworkDataVersion(uint8_t aVersion) { mNetworkDataVersion = aVersion; }
 
     /**
      * Generates a new challenge value to use during a child attach.
-     *
      */
     void GenerateChallenge(void) { mAttachChallenge.GenerateRandom(); }
 
@@ -376,13 +280,11 @@ public:
      * Gets the current challenge value used during attach.
      *
      * @returns The current challenge value.
-     *
      */
     const Mle::TxChallenge &GetChallenge(void) const { return mAttachChallenge; }
 
     /**
      * Clears the requested TLV list.
-     *
      */
     void ClearRequestTlvs(void) { memset(mRequestTlvs, Mle::Tlv::kInvalid, sizeof(mRequestTlvs)); }
 
@@ -392,7 +294,6 @@ public:
      * @param[in]  aIndex  The index into the requested TLV list.
      *
      * @returns The requested TLV at index @p aIndex.
-     *
      */
     uint8_t GetRequestTlv(uint8_t aIndex) const { return mRequestTlvs[aIndex]; }
 
@@ -401,7 +302,6 @@ public:
      *
      * @param[in]  aIndex  The index into the requested TLV list.
      * @param[in]  aType   The TLV type.
-     *
      */
     void SetRequestTlv(uint8_t aIndex, uint8_t aType) { mRequestTlvs[aIndex] = aType; }
 
@@ -409,7 +309,6 @@ public:
      * Returns the supervision interval (in seconds).
      *
      * @returns The supervision interval (in seconds).
-     *
      */
     uint16_t GetSupervisionInterval(void) const { return mSupervisionInterval; }
 
@@ -417,13 +316,11 @@ public:
      * Sets the supervision interval.
      *
      * @param[in] aInterval  The supervision interval (in seconds).
-     *
      */
     void SetSupervisionInterval(uint16_t aInterval) { mSupervisionInterval = aInterval; }
 
     /**
      * Increments the number of seconds since last supervision of the child.
-     *
      */
     void IncrementSecondsSinceLastSupervision(void) { mSecondsSinceSupervision++; }
 
@@ -431,40 +328,15 @@ public:
      * Returns the number of seconds since last supervision of the child (last message to the child)
      *
      * @returns Number of seconds since last supervision of the child.
-     *
      */
     uint16_t GetSecondsSinceLastSupervision(void) const { return mSecondsSinceSupervision; }
 
     /**
      * Resets the number of seconds since last supervision of the child to zero.
-     *
      */
     void ResetSecondsSinceLastSupervision(void) { mSecondsSinceSupervision = 0; }
 
-#if OPENTHREAD_FTD && OPENTHREAD_CONFIG_TMF_PROXY_MLR_ENABLE
-    /**
-     * Returns MLR state of an IPv6 multicast address.
-     *
-     * @note The @p aAddress reference MUST be from `IterateIp6Addresses()` or `AddressIterator`.
-     *
-     * @param[in] aAddress  The IPv6 multicast address.
-     *
-     * @returns MLR state of the IPv6 multicast address.
-     *
-     */
-    MlrState GetAddressMlrState(const Ip6::Address &aAddress) const;
-
-    /**
-     * Sets MLR state of an IPv6 multicast address.
-     *
-     * @note The @p aAddress reference MUST be from `IterateIp6Addresses()` or `AddressIterator`.
-     *
-     * @param[in] aAddress  The IPv6 multicast address.
-     * @param[in] aState    The target MLR state.
-     *
-     */
-    void SetAddressMlrState(const Ip6::Address &aAddress, MlrState aState);
-
+#if OPENTHREAD_CONFIG_TMF_PROXY_MLR_ENABLE
     /**
      * Returns if the Child has IPv6 address @p aAddress of MLR state `kMlrStateRegistered`.
      *
@@ -472,7 +344,6 @@ public:
      *
      * @retval true   If the Child has IPv6 address @p aAddress of MLR state `kMlrStateRegistered`.
      * @retval false  If the Child does not have IPv6 address @p aAddress of MLR state `kMlrStateRegistered`.
-     *
      */
     bool HasMlrRegisteredAddress(const Ip6::Address &aAddress) const;
 
@@ -481,67 +352,40 @@ public:
      *
      * @retval true   If the Child has any IPv6 address of MLR state `kMlrStateRegistered`.
      * @retval false  If the Child does not have any IPv6 address of MLR state `kMlrStateRegistered`.
-     *
      */
-    bool HasAnyMlrRegisteredAddress(void) const { return mMlrRegisteredMask.HasAny(); }
+    bool HasAnyMlrRegisteredAddress(void) const { return !mMlrRegisteredSet.IsEmpty(); }
 
     /**
      * Returns if the Child has any IPv6 address of MLR state `kMlrStateToRegister`.
      *
      * @retval true   If the Child has any IPv6 address of MLR state `kMlrStateToRegister`.
      * @retval false  If the Child does not have any IPv6 address of MLR state `kMlrStateToRegister`.
-     *
      */
-    bool HasAnyMlrToRegisterAddress(void) const { return mMlrToRegisterMask.HasAny(); }
-#endif // OPENTHREAD_FTD && OPENTHREAD_CONFIG_TMF_PROXY_MLR_ENABLE
+    bool HasAnyMlrToRegisterAddress(void) const { return !mMlrToRegisterSet.IsEmpty(); }
+#endif // OPENTHREAD_CONFIG_TMF_PROXY_MLR_ENABLE
 
 private:
-#if OPENTHREAD_CONFIG_MLE_IP_ADDRS_PER_CHILD < 2
-#error OPENTHREAD_CONFIG_MLE_IP_ADDRS_PER_CHILD should be at least set to 2.
+    typedef BitSet<kNumIp6Addresses> ChildIp6AddressSet;
+
+    uint32_t mTimeout;
+
+    Ip6::InterfaceIdentifier mMeshLocalIid;
+    Ip6AddressArray          mIp6Addresses;
+#if OPENTHREAD_CONFIG_TMF_PROXY_MLR_ENABLE
+    ChildIp6AddressSet mMlrToRegisterSet;
+    ChildIp6AddressSet mMlrRegisteredSet;
 #endif
 
-    static constexpr uint16_t kNumIp6Addresses = OPENTHREAD_CONFIG_MLE_IP_ADDRS_PER_CHILD - 1;
-
-    typedef BitVector<kNumIp6Addresses> ChildIp6AddressMask;
-
-    class AddressIteratorBuilder
-    {
-    public:
-        AddressIteratorBuilder(const Child &aChild, Ip6::Address::TypeFilter aFilter)
-            : mChild(aChild)
-            , mFilter(aFilter)
-        {
-        }
-
-        AddressIterator begin(void) { return AddressIterator(mChild, mFilter); }
-        AddressIterator end(void) { return AddressIterator(mChild, AddressIterator::kEndIterator); }
-
-    private:
-        const Child             &mChild;
-        Ip6::Address::TypeFilter mFilter;
-    };
-
-    Ip6::InterfaceIdentifier mMeshLocalIid;                 ///< IPv6 address IID for mesh-local address
-    Ip6::Address             mIp6Address[kNumIp6Addresses]; ///< Registered IPv6 addresses
-    uint32_t                 mTimeout;                      ///< Child timeout
-
-#if OPENTHREAD_FTD && OPENTHREAD_CONFIG_TMF_PROXY_MLR_ENABLE
-    ChildIp6AddressMask mMlrToRegisterMask;
-    ChildIp6AddressMask mMlrRegisteredMask;
-#endif
-
-    uint8_t mNetworkDataVersion; ///< Current Network Data version
+    uint8_t mNetworkDataVersion;
 
     union
     {
-        uint8_t          mRequestTlvs[kMaxRequestTlvs]; ///< Requested MLE TLVs
-        Mle::TxChallenge mAttachChallenge;              ///< The challenge value
+        uint8_t          mRequestTlvs[kMaxRequestTlvs];
+        Mle::TxChallenge mAttachChallenge;
     };
 
-    uint16_t mSupervisionInterval;     // Supervision interval for the child (in sec).
-    uint16_t mSecondsSinceSupervision; // Number of seconds since last supervision of the child.
-
-    static_assert(OPENTHREAD_CONFIG_NUM_MESSAGE_BUFFERS < 8192, "mQueuedMessageCount cannot fit max required!");
+    uint16_t mSupervisionInterval;
+    uint16_t mSecondsSinceSupervision;
 };
 
 DefineCoreType(otChildInfo, Child::Info);

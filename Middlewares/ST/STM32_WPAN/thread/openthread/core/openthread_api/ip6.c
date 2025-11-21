@@ -224,6 +224,8 @@ const otNetifMulticastAddress *otIp6GetMulticastAddresses(otInstance *aInstance)
   return rspData;
 }
 
+/* Not required for OT 1.4 */
+#if 0
 bool otIp6IsMulticastPromiscuousEnabled(otInstance *aInstance)
 {
   bool rspData;
@@ -261,6 +263,7 @@ void otIp6SetMulticastPromiscuousEnabled(otInstance *aInstance, bool aEnabled)
 
   Post_OtCmdProcessing();
 }
+#endif
 
 otMessage *otIp6NewMessage(otInstance *aInstance, const otMessageSettings *aSettings)
 {

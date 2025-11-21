@@ -19,11 +19,13 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "cmsis_os.h"
+#include "cmsis_os2.h"
+#include "FreeRTOS.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
+#include "task.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -44,10 +46,32 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-osThreadId MutHighHandle;
-osThreadId MutMediumHandle;
-osThreadId MutLowHandle;
-osMutexId osMutexHandle;
+/* Definitions for MutHigh */
+osThreadId_t MutHighHandle;
+const osThreadAttr_t MutHigh_attributes = {
+  .name = "MutHigh",
+  .priority = (osPriority_t) osPriorityBelowNormal,
+  .stack_size = 128 * 4
+};
+/* Definitions for MutMedium */
+osThreadId_t MutMediumHandle;
+const osThreadAttr_t MutMedium_attributes = {
+  .name = "MutMedium",
+  .priority = (osPriority_t) osPriorityLow,
+  .stack_size = 128 * 4
+};
+/* Definitions for MutLow */
+osThreadId_t MutLowHandle;
+const osThreadAttr_t MutLow_attributes = {
+  .name = "MutLow",
+  .priority = (osPriority_t) osPriorityLow,
+  .stack_size = 128 * 4
+};
+/* Definitions for osMutex */
+osMutexId_t osMutexHandle;
+const osMutexAttr_t osMutex_attributes = {
+  .name = "osMutex"
+};
 /* USER CODE BEGIN PV */
 
 /* Variables used to detect and latch errors */
@@ -57,9 +81,10 @@ __IO uint32_t HighPriorityThreadCycles = 0, MediumPriorityThreadCycles = 0, LowP
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 void PeriphCommonClock_Config(void);
-void MutexHighPriorityThreadr(void const * argument);
-void MutexMediumPriorityThread(void const * argument);
-void MutexLowPriorityThread(void const * argument);
+static void MX_GPIO_Init(void);
+void MutexHighPriorityThreadr(void *argument);
+void MutexMediumPriorityThread(void *argument);
+void MutexLowPriorityThread(void *argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -76,13 +101,14 @@ void MutexLowPriorityThread(void const * argument);
   */
 int main(void)
 {
+
   /* USER CODE BEGIN 1 */
   /* STM32WBxx HAL library initialization:
        - Configure the Flash prefetch
-       - Systick timer is configured by default as source of time base, but user 
-         can eventually implement his proper time base source (a general purpose 
-         timer for example or other time source), keeping in mind that Time base 
-         duration should be kept 1ms since PPP_TIMEOUT_VALUEs are defined and 
+       - Systick timer is configured by default as source of time base, but user
+         can eventually implement his proper time base source (a general purpose
+         timer for example or other time source), keeping in mind that Time base
+         duration should be kept 1ms since PPP_TIMEOUT_VALUEs are defined and
          handled in milliseconds basis.
        - Set NVIC Group Priority to 4
        - Low Level Initialization
@@ -101,28 +127,30 @@ int main(void)
   /* Configure the system clock */
   SystemClock_Config();
 
-/* Configure the peripherals common clocks */
+  /* Configure the peripherals common clocks */
   PeriphCommonClock_Config();
 
   /* USER CODE BEGIN SysInit */
-  /* Initialize LEDs */
-  BSP_LED_Init(LED1);
-  BSP_LED_Init(LED2);
-  BSP_LED_Init(LED3);
+
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
+  MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
 
+  /* Init scheduler */
+  osKernelInitialize();
   /* Create the mutex(es) */
-  /* definition and creation of osMutex */
-  osMutexDef(osMutex);
-  osMutexHandle = osMutexCreate(osMutex(osMutex));
+  /* creation of osMutex */
+  osMutexHandle = osMutexNew(&osMutex_attributes);
 
   /* USER CODE BEGIN RTOS_MUTEX */
-
+  if(osMutexHandle == NULL)
+  {
+    Error_Handler();
+  }
   /* USER CODE END RTOS_MUTEX */
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
@@ -138,26 +166,31 @@ int main(void)
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
-  /* definition and creation of MutHigh */
-  osThreadDef(MutHigh, MutexHighPriorityThreadr, osPriorityBelowNormal, 0, 128);
-  MutHighHandle = osThreadCreate(osThread(MutHigh), NULL);
+  /* creation of MutHigh */
+  MutHighHandle = osThreadNew(MutexHighPriorityThreadr, NULL, &MutHigh_attributes);
 
-  /* definition and creation of MutMedium */
-  osThreadDef(MutMedium, MutexMediumPriorityThread, osPriorityLow, 0, 128);
-  MutMediumHandle = osThreadCreate(osThread(MutMedium), NULL);
+  /* creation of MutMedium */
+  MutMediumHandle = osThreadNew(MutexMediumPriorityThread, NULL, &MutMedium_attributes);
 
-  /* definition and creation of MutLow */
-  osThreadDef(MutLow, MutexLowPriorityThread, osPriorityIdle, 0, 128);
-  MutLowHandle = osThreadCreate(osThread(MutLow), NULL);
+  /* creation of MutLow */
+  MutLowHandle = osThreadNew(MutexLowPriorityThread, NULL, &MutLow_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
-
+  if((MutHighHandle == NULL)||(MutMediumHandle == NULL)||(MutLowHandle == NULL))
+  {
+    Error_Handler();
+  }
   /* USER CODE END RTOS_THREADS */
+
+  /* USER CODE BEGIN RTOS_EVENTS */
+  /* add events, ... */
+  /* USER CODE END RTOS_EVENTS */
 
   /* Start scheduler */
   osKernelStart();
 
   /* We should never get here as control is now taken by the scheduler */
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -198,6 +231,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+
   /** Configure the SYSCLKSource, HCLK, PCLK1 and PCLK2 clocks dividers
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK4|RCC_CLOCKTYPE_HCLK2
@@ -239,6 +273,36 @@ void PeriphCommonClock_Config(void)
   /* USER CODE END Smps */
 }
 
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_GPIO_Init(void)
+{
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+  /* USER CODE BEGIN MX_GPIO_Init_1 */
+
+  /* USER CODE END MX_GPIO_Init_1 */
+
+  /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOB_CLK_ENABLE();
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, LED_GREEN_Pin|LED_RED_Pin|LED_BLUE_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pins : LED_GREEN_Pin LED_RED_Pin LED_BLUE_Pin */
+  GPIO_InitStruct.Pin = LED_GREEN_Pin|LED_RED_Pin|LED_BLUE_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /* USER CODE BEGIN MX_GPIO_Init_2 */
+
+  /* USER CODE END MX_GPIO_Init_2 */
+}
+
 /* USER CODE BEGIN 4 */
 
 /* USER CODE END 4 */
@@ -250,7 +314,7 @@ void PeriphCommonClock_Config(void)
   * @retval None
   */
 /* USER CODE END Header_MutexHighPriorityThreadr */
-void MutexHighPriorityThreadr(void const * argument)
+void MutexHighPriorityThreadr(void *argument)
 {
   /* USER CODE BEGIN 5 */
   /* Just to remove compiler warning */
@@ -261,14 +325,14 @@ void MutexHighPriorityThreadr(void const * argument)
     /* The first time through, the mutex will be immediately available. On
     subsequent times through, the mutex will be held by the low priority thread
     at this point and this will cause the low priority thread to inherit
-    the priority of this thread.  In this case the block time must be
+    the priority of this thread. In this case the block time must be
     long enough to ensure the low priority thread will execute again before the
     block time expires.  If the block time does expire then the error
     flag will be set here */
-    if (osMutexWait(osMutexHandle, mutexTWO_TICK_DELAY) != osOK)
+    if (osMutexAcquire(osMutexHandle, mutexTWO_TICK_DELAY) != osOK)
     {
-      /* Toggle LED3 to indicate error */
-      BSP_LED_Toggle(LED3);
+      /* Toggle LED_RED to indicate error */
+      HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
     }
 
     /* Ensure the other thread attempting to access the mutex
@@ -284,16 +348,16 @@ void MutexHighPriorityThreadr(void const * argument)
     at this point as it too has a lower priority than this thread */
     if (osMutexRelease(osMutexHandle) != osOK)
     {
-      /* Toggle LED3 to indicate error */
-      BSP_LED_Toggle(LED3);
+      /* Toggle LED_RED to indicate error */
+      HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
     }
 
     /* Keep count of the number of cycles this thread has performed */
     HighPriorityThreadCycles++;
-    BSP_LED_Toggle(LED1);
+    HAL_GPIO_TogglePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin);
 
     /* Suspend ourselves to the medium priority thread can execute */
-    osThreadSuspend(NULL);
+    osThreadSuspend(MutHighHandle);
   }
   /* USER CODE END 5 */
 }
@@ -305,7 +369,7 @@ void MutexHighPriorityThreadr(void const * argument)
 * @retval None
 */
 /* USER CODE END Header_MutexMediumPriorityThread */
-void MutexMediumPriorityThread(void const * argument)
+void MutexMediumPriorityThread(void *argument)
 {
   /* USER CODE BEGIN MutexMediumPriorityThread */
   /* Just to remove compiler warning */
@@ -319,14 +383,14 @@ void MutexMediumPriorityThread(void const * argument)
     this call should block until the high-priority thread has given up the
     mutex, and not actually execute past this call until the high-priority
     thread is suspended */
-    if (osMutexWait(osMutexHandle, osWaitForever) == osOK)
+    if (osMutexAcquire(osMutexHandle, osWaitForever) == osOK)
     {
-      if (osThreadGetState(MutHighHandle) != osThreadSuspended)
+      if (osThreadGetState(MutHighHandle) != osThreadBlocked)
       {
         /* Did not expect to execute until the high priority thread was
         suspended.
-        Toggle LED3 to indicate error */
-        BSP_LED_Toggle(LED3);
+        Toggle LED_RED to indicate error */
+        HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
       }
       else
       {
@@ -334,31 +398,31 @@ void MutexMediumPriorityThread(void const * argument)
         the low priority thread to obtain the mutex */
         if (osMutexRelease(osMutexHandle) != osOK)
         {
-          /* Toggle LED3 to indicate error */
-          BSP_LED_Toggle(LED3);
+          /* Toggle LED_RED to indicate error */
+          HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
         }
-        osThreadSuspend(NULL);
+        osThreadSuspend(MutMediumHandle);
       }
     }
     else
     {
       /* We should not leave the osMutexWait() function
       until the mutex was obtained.
-      Toggle LED3 to indicate error */
-      BSP_LED_Toggle(LED3);
+      Toggle LED_RED to indicate error */
+      HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
     }
 
     /* The High and Medium priority threads should be in lock step */
     if (HighPriorityThreadCycles != (MediumPriorityThreadCycles + 1))
     {
-      /* Toggle LED3 to indicate error */
-      BSP_LED_Toggle(LED3);
+      /* Toggle LED_RED to indicate error */
+      HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
     }
 
     /* Keep count of the number of cycles this task has performed so a
     stall can be detected */
     MediumPriorityThreadCycles++;
-    BSP_LED_Toggle(LED2);
+    HAL_GPIO_TogglePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin);
   }
   /* USER CODE END MutexMediumPriorityThread */
 }
@@ -370,7 +434,7 @@ void MutexMediumPriorityThread(void const * argument)
 * @retval None
 */
 /* USER CODE END Header_MutexLowPriorityThread */
-void MutexLowPriorityThread(void const * argument)
+void MutexLowPriorityThread(void *argument)
 {
   /* USER CODE BEGIN MutexLowPriorityThread */
   /* Just to remove compiler warning */
@@ -382,13 +446,13 @@ void MutexLowPriorityThread(void const * argument)
     /* Keep attempting to obtain the mutex.  We should only obtain it when
     the medium-priority thread has suspended itself, which in turn should only
     happen when the high-priority thread is also suspended */
-    if (osMutexWait(osMutexHandle, mutexNO_DELAY) == osOK)
+    if (osMutexAcquire(osMutexHandle, mutexNO_DELAY) == osOK)
     {
       /* Is the haigh and medium-priority threads suspended? */
-      if ((osThreadGetState(MutHighHandle) != osThreadSuspended) || (osThreadGetState(MutMediumHandle) != osThreadSuspended))
+      if ((osThreadGetState(MutHighHandle) != osThreadBlocked) || (osThreadGetState(MutMediumHandle) != osThreadBlocked))
       {
-        /* Toggle LED3 to indicate error */
-        BSP_LED_Toggle(LED3);
+        /* Toggle LED_RED to indicate error */
+        HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
       }
       else
       {
@@ -410,17 +474,17 @@ void MutexLowPriorityThread(void const * argument)
 
         /* The other two tasks should now have executed and no longer
         be suspended */
-        if ((osThreadGetState(MutHighHandle) == osThreadSuspended) || (osThreadGetState(MutMediumHandle) == osThreadSuspended))
+        if ((osThreadGetState(MutHighHandle) == osThreadBlocked) || (osThreadGetState(MutMediumHandle) == osThreadBlocked))
         {
-          /* Toggle LED3 to indicate error */
-          BSP_LED_Toggle(LED3);
+          /* Toggle LED_RED to indicate error */
+          HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
         }
 
         /* Release the mutex, disinheriting the higher priority again */
         if (osMutexRelease(osMutexHandle) != osOK)
         {
-          /* Toggle LED3 to indicate error */
-          BSP_LED_Toggle(LED3);
+          /* Toggle LED_RED to indicate error */
+          HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
         }
       }
     }
@@ -464,11 +528,12 @@ void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
-
+  while (1)
+  {
+  }
   /* USER CODE END Error_Handler_Debug */
 }
-
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.
@@ -480,11 +545,12 @@ void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
-     tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
 
   /* Infinite loop */
   while (1)
-  {}
+  {
+  }
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */

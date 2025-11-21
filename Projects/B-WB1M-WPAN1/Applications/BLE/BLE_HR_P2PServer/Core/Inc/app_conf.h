@@ -70,8 +70,6 @@
  * Define IO Authentication
  */
 #define CFG_BONDING_MODE                 (0)
-#define CFG_FIXED_PIN                    (111111)
-#define CFG_USED_FIXED_PIN               (0)
 #define CFG_ENCRYPTION_KEY_SIZE_MAX      (16)
 #define CFG_ENCRYPTION_KEY_SIZE_MIN      (8)
 

@@ -149,4 +149,19 @@
 /* Define to 1 to enable DNS CLIENT SD mode support */
 #define OPENTHREAD_CONFIG_DNS_CLIENT_SERVICE_DISCOVERY_ENABLE 1
 
+/* Define to 1 to enable Mesh Diagnostic module. */
+#define OPENTHREAD_CONFIG_MESH_DIAG_ENABLE 1
+
+/* Define to 1 to enable vendor info set api */
+#define OPENTHREAD_CONFIG_NET_DIAG_VENDOR_INFO_SET_API_ENABLE 1
+
+/* Define to 1 to enable border agent apis */
+#define OPENTHREAD_CONFIG_BORDER_AGENT_ENABLE 0
+
+/* Define to 1 to enable ephemeral key mechanism and its APIs in Border Agent */
+#define OPENTHREAD_CONFIG_BORDER_AGENT_EPHEMERAL_KEY_ENABLE 0
+
+/* Define to 1 to get the current device properties */
+#define OPENTHREAD_CONFIG_MLE_DEVICE_PROPERTY_LEADER_WEIGHT_ENABLE 0
+
 #endif /* OPENTHREAD_API_CONFIG_LIGHT_NO_TCP_H_ */

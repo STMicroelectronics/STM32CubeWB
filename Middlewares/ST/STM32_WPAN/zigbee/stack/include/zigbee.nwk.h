@@ -2,7 +2,7 @@
  * @file zigbee.nwk.h
  * @brief NWK header file
  * @author Exegin Technologies
- * @copyright Copyright [2009 - 2024] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2025] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZIGBEE_NWK_H
@@ -207,7 +207,6 @@ enum ZbNwkNibAttrIdT {
 /* Possible values for ZbNlmeJoinReqT.rejoinNetwork */
 enum ZbNwkRejoinTypeT {
     ZB_NWK_REJOIN_TYPE_ASSOC = 0x00,
-    ZB_NWK_REJOIN_TYPE_ORPHAN,
     ZB_NWK_REJOIN_TYPE_NWKREJOIN
 };
 
@@ -330,8 +329,7 @@ enum ZbNwkNeighborRelT {
     /* Exegin Custom Values follow here */
     ZB_NWK_NEIGHBOR_REL_UNAUTH_CHILD = 0x05,
     /* Temporary values to use during association. */
-    ZB_NWK_NEIGHBOR_REL_PEND_ASSOCIATE = 0x06,
-    ZB_NWK_NEIGHBOR_REL_PEND_ORPHAN = 0x07
+    ZB_NWK_NEIGHBOR_REL_PEND_ASSOCIATE = 0x06
 };
 
 /* Parent Information is one byte. We extend it to two bytes for internal state. */

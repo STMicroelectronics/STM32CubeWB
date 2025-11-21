@@ -61,7 +61,6 @@ namespace Cli {
 
 /**
  * Implements the DNS CLI interpreter.
- *
  */
 class Dns : private Utils
 {
@@ -71,7 +70,6 @@ public:
      *
      * @param[in]  aInstance            The OpenThread Instance.
      * @param[in]  aOutputImplementer   An `OutputImplementer`.
-     *
      */
     Dns(otInstance *aInstance, OutputImplementer &aOutputImplementer)
         : Utils(aInstance, aOutputImplementer)
@@ -88,13 +86,15 @@ public:
      * @retval OT_ERROR_INVALID_COMMAND   Invalid or unknown CLI command.
      * @retval OT_ERROR_INVALID_ARGS      Invalid arguments.
      * @retval ...                        Error during execution of the CLI command.
-     *
      */
     otError Process(Arg aArgs[]);
 
 private:
     static constexpr uint8_t  kIndentSize     = 4;
     static constexpr uint16_t kMaxTxtDataSize = OPENTHREAD_CONFIG_CLI_TXT_RECORD_MAX_SIZE;
+    static constexpr uint8_t  kMaxRrDataSize  = 128;
+
+    static const char *const kServiceModeStrings[];
 
     using Command = CommandEntry<Dns>;
 
@@ -107,9 +107,8 @@ private:
     otError     ParseDnsServiceMode(const Arg &aArg, otDnsServiceMode &aMode) const;
     static void HandleDnsAddressResponse(otError aError, const otDnsAddressResponse *aResponse, void *aContext);
     void        HandleDnsAddressResponse(otError aError, const otDnsAddressResponse *aResponse);
-#if OPENTHREAD_CONFIG_DNS_CLIENT_SERVICE_DISCOVERY_ENABLE
-    static const char *const kServiceModeStrings[];
 
+#if OPENTHREAD_CONFIG_DNS_CLIENT_SERVICE_DISCOVERY_ENABLE
     typedef otError (&ResolveServiceFn)(otInstance *,
                                         const char *,
                                         const char *,
@@ -124,7 +123,15 @@ private:
     static void HandleDnsServiceResponse(otError aError, const otDnsServiceResponse *aResponse, void *aContext);
     void        HandleDnsServiceResponse(otError aError, const otDnsServiceResponse *aResponse);
 #endif
+
+#if OPENTHREAD_CONFIG_DNS_CLIENT_ARBITRARY_RECORD_QUERY_ENABLE
+    static void HandleDnsRecordResponse(otError aError, const otDnsRecordResponse *aResponse, void *aContext);
+    void        HandleDnsRecordResponse(otError aError, const otDnsRecordResponse *aResponse);
+
+    static const char *RecordSectionToString(otDnsRecordSection aSection);
 #endif
+
+#endif // OPENTHREAD_CONFIG_DNS_CLIENT_ENABLE
 };
 
 } // namespace Cli

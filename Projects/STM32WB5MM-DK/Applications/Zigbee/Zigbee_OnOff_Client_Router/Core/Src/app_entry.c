@@ -141,8 +141,8 @@ void MX_APPE_Init( void )
 
   HW_TS_Init(hw_ts_InitMode_Full, &hrtc); /**< Initialize the TimerServer */
 
-/* USER CODE BEGIN MX_APPE_Init_1 */
   Init_Debug();
+/* USER CODE BEGIN MX_APPE_Init_1 */
   
   LCD_DisplayInit();
 

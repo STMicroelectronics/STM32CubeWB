@@ -65,13 +65,7 @@ uint8_t mitm_mode;
  */
 uint8_t bonding_mode;
 
-/**
- * this variable indicates whether to use a fixed pin
- * during the pairing process or a passkey has to be
- * requested to the application during the pairing process
- * 0 implies use fixed pin and 1 implies request for passkey
- */
-uint8_t Use_Fixed_Pin;
+
 
 /**
  * minimum encryption key size requirement
@@ -83,11 +77,7 @@ uint8_t encryptionKeySizeMin;
  */
 uint8_t encryptionKeySizeMax;
 
-/**
- * fixed pin to be used in the pairing process if
- * Use_Fixed_Pin is set to 1
- */
-uint32_t Fixed_Pin;
+
 
 /**
  * this flag indicates whether the host has to initiate
@@ -189,6 +179,7 @@ typedef enum
 #define INITIAL_ADV_TIMEOUT            (60*1000*1000/CFG_TS_TICK_VAL) /**< 60s */
 
 #define BD_ADDR_SIZE_LOCAL    6
+#define BLE_DEFAULT_PIN                     (111111)
 
 /* USER CODE BEGIN PD */
 #define LP_CONN_ADV_INTERVAL_MIN                            (0x640) /**< 1s */
@@ -482,7 +473,7 @@ void APP_BLE_Init( void )
 SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *p_Pckt )
 {
   hci_event_pckt * p_event_pckt;
-//  tBleStatus ret = BLE_STATUS_INVALID_PARAMS;
+  tBleStatus ret = BLE_STATUS_INVALID_PARAMS;
 
   p_event_pckt = (hci_event_pckt*) ((hci_uart_pckt *) p_Pckt)->data;
 
@@ -862,12 +853,31 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *p_Pckt )
             }
             break;
 
-          case ACI_GAP_PASS_KEY_REQ_VSEVT_CODE:
+        case ACI_GAP_PASS_KEY_REQ_VSEVT_CODE:
+          {
+            uint32_t pin;
+            APP_DBG_MSG(">>== ACI_GAP_PASS_KEY_REQ_VSEVT_CODE \n");
+            pin = BLE_DEFAULT_PIN;
+            /* USER CODE BEGIN ACI_GAP_PASS_KEY_REQ_VSEVT_CODE_0 */
+            
+            /* USER CODE END ACI_GAP_PASS_KEY_REQ_VSEVT_CODE_0 */
+            
+            
+            ret = aci_gap_pass_key_resp(BleApplicationContext.BleApplicationContext_legacy.connectionHandle, pin);
+            if (ret != BLE_STATUS_SUCCESS)
             {
-              APP_DBG_MSG("PAIRING PHASE - PASSKEY REQUEST 111111 \n");
-              aci_gap_pass_key_resp(BleApplicationContext.BleApplicationContext_legacy.connectionHandle, 111111);
+              APP_DBG_MSG("==>> aci_gap_pass_key_resp : Fail, reason: 0x%x\n", ret);
+            } 
+            else 
+            {
+              APP_DBG_MSG("==>> aci_gap_pass_key_resp : Success \n");
             }
+            /* USER CODE BEGIN ACI_GAP_PASS_KEY_REQ_VSEVT_CODE*/
+            
+            /* USER CODE END ACI_GAP_PASS_KEY_REQ_VSEVT_CODE*/
             break;
+          }
+
         
           case (ACI_GAP_NUMERIC_COMPARISON_VALUE_VSEVT_CODE):
             {
@@ -925,6 +935,13 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification( void *p_Pckt )
                 BSP_LED_On(LED_RED);
                 /* USER CODE END BLE_STATUS_SUCCESS */
               }
+            }
+            break;
+            
+          case ACI_GATT_INDICATION_VSEVT_CODE:
+            {
+              APP_DBG_MSG(">>== ACI_GATT_INDICATION_VSEVT_CODE \r");
+              aci_gatt_confirm_indication(BleApplicationContext.BleApplicationContext_legacy.connectionHandle);
             }
             break;
 
@@ -1291,8 +1308,7 @@ static void Ble_Tl_Init( void )
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.mitm_mode = CFG_MITM_PROTECTION;
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMin = CFG_ENCRYPTION_KEY_SIZE_MIN;
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax = CFG_ENCRYPTION_KEY_SIZE_MAX;
-  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin = CFG_USED_FIXED_PIN;
-  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin = CFG_FIXED_PIN;
+
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.bonding_mode = CFG_BONDING_MODE;
   /* USER CODE BEGIN Ble_Hci_Gap_Gatt_Init_1*/
 
@@ -1304,8 +1320,8 @@ static void Ble_Tl_Init( void )
                                                CFG_KEYPRESS_NOTIFICATION_SUPPORT,
                                                BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMin,
                                                BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax,
-                                               BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin,
-                                               BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin,
+                                               USE_FIXED_PIN_FOR_PAIRING_FORBIDDEN, /* deprecated feature */
+                                               0,                                   /* deprecated feature */
                                                CFG_IDENTITY_ADDRESS);
 
   if (ret != BLE_STATUS_SUCCESS)

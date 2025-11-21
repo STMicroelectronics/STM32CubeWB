@@ -97,17 +97,7 @@ typedef struct _tSecurityParams
    */
   uint8_t bonding_mode;
   
-  uint8_t sc_support;
-
-  /**
-   * this variable indicates whether to use a fixed pin
-   * during the pairing process or a passkey has to be
-   * requested to the application during the pairing process
-   * 0 implies use fixed pin and 1 implies request for passkey
-   */
-  uint8_t Use_Fixed_Pin;
-
-  /**
+    /**
    * minimum encryption key size requirement
    */
   uint8_t encryptionKeySizeMin;
@@ -116,12 +106,10 @@ typedef struct _tSecurityParams
    * maximum encryption key size requirement
    */
   uint8_t encryptionKeySizeMax;
+  
+  uint8_t sc_support;
 
-  /**
-   * fixed pin to be used in the pairing process if
-   * Use_Fixed_Pin is set to 1
-   */
-  uint32_t Fixed_Pin;
+
 
   /**
    * this flag indicates whether the host has to initiate

@@ -19,7 +19,8 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "cmsis_os.h"
+#include "cmsis_os2.h"
+#include "FreeRTOS.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -41,16 +42,29 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-osThreadId THREAD1Handle;
-osThreadId THREAD2Handle;
+/* Definitions for THREAD1 */
+osThreadId_t THREAD1Handle;
+const osThreadAttr_t THREAD1_attributes = {
+  .name = "THREAD1",
+  .priority = (osPriority_t) osPriorityNormal,
+  .stack_size = 128 * 4
+};
+/* Definitions for THREAD2 */
+osThreadId_t THREAD2Handle;
+const osThreadAttr_t THREAD2_attributes = {
+  .name = "THREAD2",
+  .priority = (osPriority_t) osPriorityNormal,
+  .stack_size = 128 * 4
+};
 /* USER CODE BEGIN PV */
 __IO uint32_t OsStatus = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-void LED_Thread1(void const * argument);
-void LED_Thread2(void const * argument);
+static void MX_GPIO_Init(void);
+void LED_Thread1(void *argument);
+void LED_Thread2(void *argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -67,13 +81,14 @@ void LED_Thread2(void const * argument);
   */
 int main(void)
 {
+
   /* USER CODE BEGIN 1 */
   /* STM32WBxx HAL library initialization:
        - Configure the Flash prefetch
-       - Systick timer is configured by default as source of time base, but user 
-         can eventually implement his proper time base source (a general purpose 
-         timer for example or other time source), keeping in mind that Time base 
-         duration should be kept 1ms since PPP_TIMEOUT_VALUEs are defined and 
+       - Systick timer is configured by default as source of time base, but user
+         can eventually implement his proper time base source (a general purpose
+         timer for example or other time source), keeping in mind that Time base
+         duration should be kept 1ms since PPP_TIMEOUT_VALUEs are defined and
          handled in milliseconds basis.
        - Set NVIC Group Priority to 4
        - Low Level Initialization
@@ -93,15 +108,17 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-  /* Initialize LEDs */
-  BSP_LED_Init(LED1);
-  BSP_LED_Init(LED2);
+
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
+  MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
- 
+
   /* USER CODE END 2 */
+
+  /* Init scheduler */
+  osKernelInitialize();
 
   /* USER CODE BEGIN RTOS_MUTEX */
 
@@ -120,21 +137,28 @@ int main(void)
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
-  /* definition and creation of THREAD1 */
-  osThreadDef(THREAD1, LED_Thread1, osPriorityNormal, 0, 128);
-  THREAD1Handle = osThreadCreate(osThread(THREAD1), NULL);
+  /* creation of THREAD1 */
+  THREAD1Handle = osThreadNew(LED_Thread1, NULL, &THREAD1_attributes);
 
-  /* definition and creation of THREAD2 */
-  osThreadDef(THREAD2, LED_Thread2, osPriorityNormal, 0, 128);
-  THREAD2Handle = osThreadCreate(osThread(THREAD2), NULL);
+  /* creation of THREAD2 */
+  THREAD2Handle = osThreadNew(LED_Thread2, NULL, &THREAD2_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
+  if((THREAD1Handle == NULL)||(THREAD2Handle == NULL))
+  {
+    Error_Handler();
+  }
   /* USER CODE END RTOS_THREADS */
+
+  /* USER CODE BEGIN RTOS_EVENTS */
+  /* add events, ... */
+  /* USER CODE END RTOS_EVENTS */
 
   /* Start scheduler */
   osKernelStart();
 
   /* We should never get here as control is now taken by the scheduler */
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -158,6 +182,7 @@ void SystemClock_Config(void)
   /** Configure the main internal regulator output voltage
   */
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
@@ -176,6 +201,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+
   /** Configure the SYSCLKSource, HCLK, PCLK1 and PCLK2 clocks dividers
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK4|RCC_CLOCKTYPE_HCLK2
@@ -194,6 +220,36 @@ void SystemClock_Config(void)
   }
 }
 
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_GPIO_Init(void)
+{
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+  /* USER CODE BEGIN MX_GPIO_Init_1 */
+
+  /* USER CODE END MX_GPIO_Init_1 */
+
+  /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOB_CLK_ENABLE();
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, LED_GREEN_Pin|LED_BLUE_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pins : LED_GREEN_Pin LED_BLUE_Pin */
+  GPIO_InitStruct.Pin = LED_GREEN_Pin|LED_BLUE_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /* USER CODE BEGIN MX_GPIO_Init_2 */
+
+  /* USER CODE END MX_GPIO_Init_2 */
+}
+
 /* USER CODE BEGIN 4 */
 
 /* USER CODE END 4 */
@@ -201,11 +257,11 @@ void SystemClock_Config(void)
 /* USER CODE BEGIN Header_LED_Thread1 */
 /**
   * @brief  Function implementing the THREAD1 thread.
-  * @param  argument: Not used 
+  * @param  argument: Not used
   * @retval None
   */
 /* USER CODE END Header_LED_Thread1 */
-void LED_Thread1(void const * argument)
+void LED_Thread1(void *argument)
 {
   /* USER CODE BEGIN 5 */
   uint32_t count = 0;
@@ -213,29 +269,27 @@ void LED_Thread1(void const * argument)
   /* Infinite loop */
   for (;;)
   {
-    count = osKernelSysTick() + 5000;
+    count = osKernelGetTickCount() + 5000;
 
-    /* Toggle LED1 every 200 ms for 5 s */
-    while (count > osKernelSysTick())
+    /* Toggle LED_BLUE every 200 ms for 5 s */
+    while (count > osKernelGetTickCount())
     {
-      BSP_LED_Toggle(LED1);
-
+      HAL_GPIO_TogglePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin);
       osDelay(200);
     }
 
-    /* Turn off LED1 */
-    BSP_LED_Off(LED1);
+    /* Turn off LED_BLUE */
+    HAL_GPIO_WritePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin, GPIO_PIN_RESET);
 
     /* Suspend Thread 1 */
-    OsStatus = osThreadSuspend(NULL);
+    OsStatus = osThreadSuspend(THREAD1Handle);
 
-    count = osKernelSysTick() + 5000;
+    count = osKernelGetTickCount() + 5000;
 
-    /* Toggle LED1 every 500 ms for 5 s */
-    while (count > osKernelSysTick())
+    /* Toggle LED_BLUE every 500 ms for 5 s */
+    while (count > osKernelGetTickCount())
     {
-      BSP_LED_Toggle(LED1);
-
+      HAL_GPIO_TogglePin(LED_BLUE_GPIO_Port, LED_BLUE_Pin);
       osDelay(500);
     }
 
@@ -252,7 +306,7 @@ void LED_Thread1(void const * argument)
 * @retval None
 */
 /* USER CODE END Header_LED_Thread2 */
-void LED_Thread2(void const * argument)
+void LED_Thread2(void *argument)
 {
   /* USER CODE BEGIN LED_Thread2 */
   uint32_t count;
@@ -260,24 +314,23 @@ void LED_Thread2(void const * argument)
   /* Infinite loop */
   for (;;)
   {
-    count = osKernelSysTick() + 10000;
+    count = osKernelGetTickCount() + 10000;
 
-    /* Toggle LED2 every 500 ms for 10 s */
-    while (count > osKernelSysTick())
+    /* Toggle LED_GREEN every 500 ms for 10 s */
+    while (count > osKernelGetTickCount())
     {
-      BSP_LED_Toggle(LED2);
-
+      HAL_GPIO_TogglePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin);
       osDelay(500);
     }
 
-    /* Turn off LED2 */
-    BSP_LED_Off(LED2);
+    /* Turn off LED_GREEN */
+    HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_RESET);
 
     /* Resume Thread 1 */
     OsStatus = osThreadResume(THREAD1Handle);
 
     /* Suspend Thread 2 */
-    OsStatus = osThreadSuspend(NULL);
+    OsStatus = osThreadSuspend(THREAD2Handle);
   }
   /* USER CODE END LED_Thread2 */
 }
@@ -312,11 +365,13 @@ void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
-
+  /* Infinite loop */
+  while (1)
+  {
+  }
   /* USER CODE END Error_Handler_Debug */
 }
-
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.
@@ -332,8 +387,8 @@ void assert_failed(uint8_t *file, uint32_t line)
 
   /* Infinite loop */
   while (1)
-  {}
+  {
+  }
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
-

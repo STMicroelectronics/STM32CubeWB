@@ -62,6 +62,7 @@ typedef enum
 #define INITIAL_ADV_TIMEOUT            (60*1000*1000/CFG_TS_TICK_VAL) /**< 60s */
 
 #define BD_ADDR_SIZE_LOCAL    6
+#define BLE_DEFAULT_PIN         (111111)
 
 /* USER CODE BEGIN PD */
 #define LED_ON_TIMEOUT                 (0.005*1000*1000/CFG_TS_TICK_VAL) /**< 5ms */
@@ -983,8 +984,6 @@ static void Ble_Hci_Gap_Gatt_Init(void){
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.sc_support = global_scsupport;
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMin = CFG_ENCRYPTION_KEY_SIZE_MIN;
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax = CFG_ENCRYPTION_KEY_SIZE_MAX;
-  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin = global_usefixedpin;
-  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin = global_fixedpin;
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.bonding_mode = global_bonding;
 
   aci_gap_set_authentication_requirement(BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.bonding_mode,
@@ -993,8 +992,8 @@ static void Ble_Hci_Gap_Gatt_Init(void){
                                          CFG_KEYPRESS_NOTIFICATION_SUPPORT,
                                          BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMin,
                                          BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax,
-                                         BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin,
-                                         BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin,
+                                         USE_FIXED_PIN_FOR_PAIRING_FORBIDDEN, /* deprecated feature */
+                                         0,                                   /* deprecated feature */
                                          global_ble_addr_type | global_ble_cfg_addr_type
                                          );
 

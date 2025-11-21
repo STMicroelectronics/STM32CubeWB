@@ -52,12 +52,10 @@ extern "C" {
  *   The functions in this module are available only if feature `OPENTHREAD_CONFIG_DNS_CLIENT_ENABLE` is enabled.
  *
  * @{
- *
  */
 
 /**
  * Type represents the "Recursion Desired" (RD) flag in an `otDnsQueryConfig`.
- *
  */
 typedef enum
 {
@@ -71,7 +69,6 @@ typedef enum
  *
  * The NAT64 mode indicates whether to allow or disallow NAT64 address translation during DNS client address resolution.
  * This mode is only used when `OPENTHREAD_CONFIG_DNS_CLIENT_NAT64_ENABLE` is enabled.
- *
  */
 typedef enum
 {
@@ -85,7 +82,6 @@ typedef enum
  *
  * This is only used during DNS client service resolution `otDnsClientResolveService()`. It determines which
  * record types to query.
- *
  */
 typedef enum
 {
@@ -101,7 +97,6 @@ typedef enum
  * Type represents the DNS transport protocol in an `otDnsQueryConfig`.
  *
  * This `OT_DNS_TRANSPORT_TCP` is only supported when `OPENTHREAD_CONFIG_DNS_CLIENT_OVER_TCP_ENABLE` is enabled.
- *
  */
 typedef enum
 {
@@ -115,7 +110,6 @@ typedef enum
  *
  * Any of the fields in this structure can be set to zero to indicate that it is not specified. How the unspecified
  * fields are treated is determined by the function which uses the instance of `otDnsQueryConfig`.
- *
  */
 typedef struct otDnsQueryConfig
 {
@@ -138,7 +132,6 @@ typedef struct otDnsQueryConfig
  * @param[in]  aInstance        A pointer to an OpenThread instance.
  *
  * @returns A pointer to the current default config being used by DNS client.
- *
  */
 const otDnsQueryConfig *otDnsClientGetDefaultConfig(otInstance *aInstance);
 
@@ -164,7 +157,6 @@ const otDnsQueryConfig *otDnsClientGetDefaultConfig(otInstance *aInstance);
  *
  * @param[in]  aInstance   A pointer to an OpenThread instance.
  * @param[in]  aConfig     A pointer to the new query config to use as default.
- *
  */
 void otDnsClientSetDefaultConfig(otInstance *aInstance, const otDnsQueryConfig *aConfig);
 
@@ -172,7 +164,6 @@ void otDnsClientSetDefaultConfig(otInstance *aInstance, const otDnsQueryConfig *
  * An opaque representation of a response to an address resolution DNS query.
  *
  * Pointers to instance of this type are provided from callback `otDnsAddressCallback`.
- *
  */
 typedef struct otDnsAddressResponse otDnsAddressResponse;
 
@@ -212,7 +203,6 @@ typedef struct otDnsAddressResponse otDnsAddressResponse;
  *  - (21) BADALG    Bad algorithm                                   -> OT_ERROR_SECURITY
  *  - (22) BADTRUN   Bad truncation                                  -> OT_ERROR_PARSE
  *  - Other response codes                                           -> OT_ERROR_FAILED
- *
  */
 typedef void (*otDnsAddressCallback)(otError aError, const otDnsAddressResponse *aResponse, void *aContext);
 
@@ -233,7 +223,6 @@ typedef void (*otDnsAddressCallback)(otError aError, const otDnsAddressResponse 
  * @retval OT_ERROR_NO_BUFS       Insufficient buffer to prepare and send query.
  * @retval OT_ERROR_INVALID_ARGS  The host name is not valid format.
  * @retval OT_ERROR_INVALID_STATE Cannot send query since Thread interface is not up.
- *
  */
 otError otDnsClientResolveAddress(otInstance             *aInstance,
                                   const char             *aHostName,
@@ -263,7 +252,6 @@ otError otDnsClientResolveAddress(otInstance             *aInstance,
  * @retval OT_ERROR_NO_BUFS       Insufficient buffer to prepare and send query.
  * @retval OT_ERROR_INVALID_ARGS  The host name is not valid format or NAT64 is not enabled in config.
  * @retval OT_ERROR_INVALID_STATE Cannot send query since Thread interface is not up.
- *
  */
 otError otDnsClientResolveIp4Address(otInstance             *aInstance,
                                      const char             *aHostName,
@@ -282,7 +270,6 @@ otError otDnsClientResolveIp4Address(otInstance             *aInstance,
  *
  * @retval OT_ERROR_NONE     The full host name was read successfully.
  * @retval OT_ERROR_NO_BUFS  The name does not fit in @p aNameBuffer.
- *
  */
 otError otDnsAddressResponseGetHostName(const otDnsAddressResponse *aResponse,
                                         char                       *aNameBuffer,
@@ -307,7 +294,6 @@ otError otDnsAddressResponseGetHostName(const otDnsAddressResponse *aResponse,
  * @retval OT_ERROR_NOT_FOUND      No address record in @p aResponse at @p aIndex.
  * @retval OT_ERROR_PARSE          Could not parse the records in the @p aResponse.
  * @retval OT_ERROR_INVALID_STATE  No NAT64 prefix (applicable only when NAT64 is allowed).
- *
  */
 otError otDnsAddressResponseGetAddress(const otDnsAddressResponse *aResponse,
                                        uint16_t                    aIndex,
@@ -318,7 +304,6 @@ otError otDnsAddressResponseGetAddress(const otDnsAddressResponse *aResponse,
  * An opaque representation of a response to a browse (service instance enumeration) DNS query.
  *
  * Pointers to instance of this type are provided from callback `otDnsBrowseCallback`.
- *
  */
 typedef struct otDnsBrowseResponse otDnsBrowseResponse;
 
@@ -336,13 +321,11 @@ typedef struct otDnsBrowseResponse otDnsBrowseResponse;
  * @param[in]  aContext   A pointer to application-specific context.
  *
  * For the full list of possible values for @p aError, please see `otDnsAddressCallback()`.
- *
  */
 typedef void (*otDnsBrowseCallback)(otError aError, const otDnsBrowseResponse *aResponse, void *aContext);
 
 /**
  * Provides info for a DNS service instance.
- *
  */
 typedef struct otDnsServiceInfo
 {
@@ -377,7 +360,6 @@ typedef struct otDnsServiceInfo
  *
  * @retval OT_ERROR_NONE        Query sent successfully. @p aCallback will be invoked to report the status.
  * @retval OT_ERROR_NO_BUFS     Insufficient buffer to prepare and send query.
- *
  */
 otError otDnsClientBrowse(otInstance             *aInstance,
                           const char             *aServiceName,
@@ -396,7 +378,6 @@ otError otDnsClientBrowse(otInstance             *aInstance,
  *
  * @retval OT_ERROR_NONE     The service name was read successfully.
  * @retval OT_ERROR_NO_BUFS  The name does not fit in @p aNameBuffer.
- *
  */
 otError otDnsBrowseResponseGetServiceName(const otDnsBrowseResponse *aResponse,
                                           char                      *aNameBuffer,
@@ -422,7 +403,6 @@ otError otDnsBrowseResponseGetServiceName(const otDnsBrowseResponse *aResponse,
  * @retval OT_ERROR_NO_BUFS       The name does not fit in @p aNameBuffer.
  * @retval OT_ERROR_NOT_FOUND     No service instance record in @p aResponse at @p aIndex.
  * @retval OT_ERROR_PARSE         Could not parse the records in the @p aResponse.
- *
  */
 otError otDnsBrowseResponseGetServiceInstance(const otDnsBrowseResponse *aResponse,
                                               uint16_t                   aIndex,
@@ -455,7 +435,6 @@ otError otDnsBrowseResponseGetServiceInstance(const otDnsBrowseResponse *aRespon
  * @retval OT_ERROR_NOT_FOUND     Could not find a matching SRV record for @p aInstanceLabel.
  * @retval OT_ERROR_NO_BUFS       The host name and/or TXT data could not fit in the given buffers.
  * @retval OT_ERROR_PARSE         Could not parse the records in the @p aResponse.
- *
  */
 otError otDnsBrowseResponseGetServiceInfo(const otDnsBrowseResponse *aResponse,
                                           const char                *aInstanceLabel,
@@ -480,7 +459,6 @@ otError otDnsBrowseResponseGetServiceInfo(const otDnsBrowseResponse *aResponse,
  * @retval OT_ERROR_NONE       The address was read successfully.
  * @retval OT_ERROR_NOT_FOUND  No address record for @p aHostname in @p aResponse at @p aIndex.
  * @retval OT_ERROR_PARSE      Could not parse the records in the @p aResponse.
- *
  */
 otError otDnsBrowseResponseGetHostAddress(const otDnsBrowseResponse *aResponse,
                                           const char                *aHostName,
@@ -492,7 +470,6 @@ otError otDnsBrowseResponseGetHostAddress(const otDnsBrowseResponse *aResponse,
  * An opaque representation of a response to a service instance resolution DNS query.
  *
  * Pointers to instance of this type are provided from callback `otDnsAddressCallback`.
- *
  */
 typedef struct otDnsServiceResponse otDnsServiceResponse;
 
@@ -510,7 +487,6 @@ typedef struct otDnsServiceResponse otDnsServiceResponse;
  * @param[in]  aContext   A pointer to application-specific context.
  *
  * For the full list of possible values for @p aError, please see `otDnsAddressCallback()`.
- *
  */
 typedef void (*otDnsServiceCallback)(otError aError, const otDnsServiceResponse *aResponse, void *aContext);
 
@@ -545,7 +521,6 @@ typedef void (*otDnsServiceCallback)(otError aError, const otDnsServiceResponse 
  * @retval OT_ERROR_NONE          Query sent successfully. @p aCallback will be invoked to report the status.
  * @retval OT_ERROR_NO_BUFS       Insufficient buffer to prepare and send query.
  * @retval OT_ERROR_INVALID_ARGS  @p aInstanceLabel is NULL.
- *
  */
 otError otDnsClientResolveService(otInstance             *aInstance,
                                   const char             *aInstanceLabel,
@@ -582,7 +557,6 @@ otError otDnsClientResolveService(otInstance             *aInstance,
  * @retval OT_ERROR_NONE          Query sent successfully. @p aCallback will be invoked to report the status.
  * @retval OT_ERROR_NO_BUFS       Insufficient buffer to prepare and send query.
  * @retval OT_ERROR_INVALID_ARGS  @p aInstanceLabel is NULL, or @p aConfig is invalid.
- *
  */
 otError otDnsClientResolveServiceAndHostAddress(otInstance             *aInstance,
                                                 const char             *aInstanceLabel,
@@ -605,7 +579,6 @@ otError otDnsClientResolveServiceAndHostAddress(otInstance             *aInstanc
  *
  * @retval OT_ERROR_NONE     The service name was read successfully.
  * @retval OT_ERROR_NO_BUFS  Either the label or name does not fit in the given buffers.
- *
  */
 otError otDnsServiceResponseGetServiceName(const otDnsServiceResponse *aResponse,
                                            char                       *aLabelBuffer,
@@ -644,7 +617,6 @@ otError otDnsServiceResponseGetServiceName(const otDnsServiceResponse *aResponse
  * @retval OT_ERROR_NOT_FOUND     Could not find a required record in @p aResponse.
  * @retval OT_ERROR_NO_BUFS       The host name and/or TXT data could not fit in the given buffers.
  * @retval OT_ERROR_PARSE         Could not parse the records in the @p aResponse.
- *
  */
 otError otDnsServiceResponseGetServiceInfo(const otDnsServiceResponse *aResponse, otDnsServiceInfo *aServiceInfo);
 
@@ -667,7 +639,6 @@ otError otDnsServiceResponseGetServiceInfo(const otDnsServiceResponse *aResponse
  * @retval OT_ERROR_NONE       The address was read successfully.
  * @retval OT_ERROR_NOT_FOUND  No address record for @p aHostname in @p aResponse at @p aIndex.
  * @retval OT_ERROR_PARSE      Could not parse the records in the @p aResponse.
- *
  */
 otError otDnsServiceResponseGetHostAddress(const otDnsServiceResponse *aResponse,
                                            const char                 *aHostName,
@@ -676,8 +647,140 @@ otError otDnsServiceResponseGetHostAddress(const otDnsServiceResponse *aResponse
                                            uint32_t                   *aTtl);
 
 /**
- * @}
+ * An opaque representation of a response to a query for an arbitrary record type.
  *
+ * Pointers to instance of this type are provided from callback `otDnsRecordCallback`.
+ */
+typedef struct otDnsRecordResponse otDnsRecordResponse;
+
+/**
+ * Pointer is called when a DNS response is received for a DNS query to an arbitrary record type.
+ *
+ * Within this callback the user can use `otDnsRecordResponseGet{Item}()` functions along with the @p aResponse
+ * pointer to get more info about the response.
+ *
+ * The @p aResponse pointer can only be used within this callback and after returning from this function it will not
+ * stay valid, so the user MUST NOT retain the @p aResponse pointer for later use.
+ *
+ * @param[in]  aError     The result of the DNS transaction.
+ * @param[in]  aResponse  A pointer to the response (it is always non-NULL).
+ * @param[in]  aContext   A pointer to application-specific context.
+ *
+ * The @p aError can have the following:
+ *
+ *  - OT_ERROR_NONE              A response was received successfully.
+ *  - OT_ERROR_ABORT             A DNS transaction was aborted by the stack.
+ *  - OT_ERROR_RESPONSE_TIMEOUT  No DNS response has been received within timeout.
+ *
+ */
+typedef void (*otDnsRecordCallback)(otError aError, const otDnsRecordResponse *aResponse, void *aContext);
+
+/**
+ * Represents a section in a DNS query/response message.
+ */
+typedef enum
+{
+    OT_DNS_SECTION_ANSWER,     ///< Answer section.
+    OT_DNS_SECTION_AUTHORITY,  ///< Authority section.
+    OT_DNS_SECTION_ADDITIONAL, ///< Additional section.
+} otDnsRecordSection;
+
+/**
+ * Represents info for a record in an `otDnsRecordResponse`.
+ *
+ * This struct is used as input to `otDnsRecordResponseGetRecordInfo()`.
+ */
+typedef struct otDnsRecordInfo
+{
+    char              *mNameBuffer;     ///< Buffer to output the name (MUST NOT be NULL).
+    uint16_t           mNameBufferSize; ///< Size of `mNameBuffer`.
+    uint16_t           mRecordType;     ///< The record type.
+    uint16_t           mRecordLength;   ///< The record data length (in bytes).
+    uint32_t           mTtl;            ///< Record TTL (in seconds).
+    uint8_t           *mDataBuffer;     ///< Buffer to output the data (Can be NULL if data not needed).
+    uint16_t           mDataBufferSize; ///< On input, size of `mDataBuffer`. On output number of bytes written.
+    otDnsRecordSection mSection;        ///< Indicates the section of the record.
+} otDnsRecordInfo;
+
+/**
+ * Sends a DNS query for a given record type and name.
+ *
+ * Requires `OPENTHREAD_CONFIG_DNS_CLIENT_ARBITRARY_RECORD_QUERY_ENABLE`.
+ *
+ * The @p aConfig can be NULL. In this case the default config (from `otDnsClientGetDefaultConfig()`) will be used as
+ * the config for this query. In a non-NULL @p aConfig, some of the fields can be left unspecified (value zero). The
+ * unspecified fields are then replaced by the values from the default config.
+ *
+ * @param[in]  aInstance        A pointer to an OpenThread instance.
+ * @param[in]  aRecordType      The resource record type to query.
+ * @param[in]  aFirstLabel      The first label of the name to be queried (can be NULL if not needed).
+ * @param[in]  aNextLabels      The next labels of the name to be queried (MUST NOT be NULL).
+ * @param[in]  aCallback        A function pointer that shall be called on response reception or time-out.
+ * @param[in]  aContext         A pointer to arbitrary context information used when @p aCallback is invoked.
+ * @param[in]  aConfig          A pointer to the config to use for this query.
+ *
+ * @retval OT_ERROR_NONE          Query sent successfully. @p aCallback will be invoked to report the outcome.
+ * @retval OT_ERROR_NO_BUFS       Insufficient buffer to prepare and send query.
+ * @retval OT_ERROR_INVALID_STATE Cannot send query since Thread interface is not up.
+ */
+otError otDnsClientQueryRecord(otInstance             *aInstance,
+                               uint16_t                aRecordType,
+                               const char             *aFirstLabel,
+                               const char             *aNextLabels,
+                               otDnsRecordCallback     aCallback,
+                               void                   *aContext,
+                               const otDnsQueryConfig *aConfig);
+
+/**
+ * Gets the query name associated with a record query DNS response.
+ *
+ * MUST only be used from `otDnsRecordCallback`.
+ *
+ * @param[in]  aResponse         A pointer to the response.
+ * @param[out] aNameBuffer       A buffer to char array to output the full query name (MUST NOT be NULL).
+ * @param[in]  aNameBufferSize   The size of @p aNameBuffer.
+ *
+ * @retval OT_ERROR_NONE     The full query name was read successfully.
+ * @retval OT_ERROR_NO_BUFS  The name does not fit in @p aNameBuffer.
+ */
+otError otDnsRecordResponseGetQueryName(const otDnsRecordResponse *aResponse,
+                                        char                      *aNameBuffer,
+                                        uint16_t                   aNameBufferSize);
+
+/**
+ * Reads the records from a DNS query response.
+ *
+ * MUST only be used from `otDnsRecordCallback`.
+ *
+ * The response may include multiple records. @p aIndex can be used to iterate through the list. Index zero gets the
+ * first record and so on. When we reach the end of the list, `OT_ERROR_NOT_FOUND` is returned.
+ *
+ * Upon successful retrieval (`OT_ERROR_NONE`):
+ * - `mRecordLength` is set to the actual length of the record's data.
+ * - The data is copied into `mDataBuffer` (if not `NULL`) up to its capacity specified by `mDataBufferSize`.
+ * - `mDataBufferSize` is then updated to reflect the number of bytes actually written into `mDataBuffer`.
+ *
+ * If the retrieved record type is NS, CNAME, SOA, PTR, MX, RP, AFSDB, RT, PX, SRV, KX, DNAME, or NSEC, the record
+ * data in the received response contains a DNS name which may use DNS name compression. For these specific record
+ * types, the record data is first decompressed such that it contains the full uncompressed DNS name. This decompressed
+ * data is then provided in `mDataBuffer`, and `mRecordDataLength` will indicate the length of this decompressed data.
+ * For all other record types, the record data is read and provided as it appears in the received response message.
+ *
+ * @param[in]  aResponse       A pointer to the response.
+ * @param[in]  aIndex          The record index to retrieve.
+ * @param[out] aRecordInfo     A pointer to a `otDnsRecordInfo` to populate with read record info.
+ *
+ * @retval OT_ERROR_NONE       The record was read successfully.
+ * @retval OT_ERROR_NOT_FOUND  No record in @p aResponse at @p aIndex.
+ * @retval OT_ERROR_PARSE      Could not parse the records in the @p aResponse.
+ * @retval OT_ERROR_NO_BUFS    The record name does not fit in the provided `mNameBufferSize` in @p aRecordInfo, or
+ *                             failed to allocate buffer to decompress a compressed DNS name.
+ */
+otError otDnsRecordResponseGetRecordInfo(const otDnsRecordResponse *aResponse,
+                                         uint16_t                   aIndex,
+                                         otDnsRecordInfo           *aRecordInfo);
+/**
+ * @}
  */
 
 #ifdef __cplusplus

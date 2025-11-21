@@ -19,7 +19,8 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "cmsis_os.h"
+#include "cmsis_os2.h"
+#include "FreeRTOS.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -42,16 +43,27 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-osThreadId LEDThreadHandle;
-osTimerId LEDTimerHandle;
+/* Definitions for LEDThread */
+osThreadId_t LEDThreadHandle;
+const osThreadAttr_t LEDThread_attributes = {
+  .name = "LEDThread",
+  .priority = (osPriority_t) osPriorityNormal,
+  .stack_size = 128 * 4
+};
+/* Definitions for LEDTimer */
+osTimerId_t LEDTimerHandle;
+const osTimerAttr_t LEDTimer_attributes = {
+  .name = "LEDTimer"
+};
 /* USER CODE BEGIN PV */
 __IO uint32_t TimeCounter = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-void ToggleLEDsThread(void const * argument);
-void osTimerCallback(void const * argument);
+static void MX_GPIO_Init(void);
+void ToggleLEDsThread(void *argument);
+void osTimerCallback(void *argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -68,13 +80,14 @@ void osTimerCallback(void const * argument);
   */
 int main(void)
 {
+
   /* USER CODE BEGIN 1 */
   /* STM32WBxx HAL library initialization:
        - Configure the Flash prefetch
-       - Systick timer is configured by default as source of time base, but user 
-         can eventually implement his proper time base source (a general purpose 
-         timer for example or other time source), keeping in mind that Time base 
-         duration should be kept 1ms since PPP_TIMEOUT_VALUEs are defined and 
+       - Systick timer is configured by default as source of time base, but user
+         can eventually implement his proper time base source (a general purpose
+         timer for example or other time source), keeping in mind that Time base
+         duration should be kept 1ms since PPP_TIMEOUT_VALUEs are defined and
          handled in milliseconds basis.
        - Set NVIC Group Priority to 4
        - Low Level Initialization
@@ -94,15 +107,17 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-  /* Initialize LEDs */
-  BSP_LED_Init(LED3);
-  BSP_LED_Init(LED2);
+
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
+  MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
+
+  /* Init scheduler */
+  osKernelInitialize();
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
@@ -113,30 +128,41 @@ int main(void)
   /* USER CODE END RTOS_SEMAPHORES */
 
   /* Create the timer(s) */
-  /* definition and creation of LEDTimer */
-  osTimerDef(LEDTimer, osTimerCallback);
-  LEDTimerHandle = osTimerCreate(osTimer(LEDTimer), osTimerPeriodic, NULL);
+  /* creation of LEDTimer */
+  LEDTimerHandle = osTimerNew(osTimerCallback, osTimerPeriodic, NULL, &LEDTimer_attributes);
 
   /* USER CODE BEGIN RTOS_TIMERS */
+  if(LEDTimerHandle == NULL)
+  {
+    Error_Handler();
+  }
   osTimerStart(LEDTimerHandle, 200);
   /* USER CODE END RTOS_TIMERS */
 
   /* USER CODE BEGIN RTOS_QUEUES */
-  
+
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
-  /* definition and creation of LEDThread */
-  osThreadDef(LEDThread, ToggleLEDsThread, osPriorityNormal, 0, 128);
-  LEDThreadHandle = osThreadCreate(osThread(LEDThread), NULL);
+  /* creation of LEDThread */
+  LEDThreadHandle = osThreadNew(ToggleLEDsThread, NULL, &LEDThread_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
+  if(LEDThreadHandle == NULL)
+  {
+    Error_Handler();
+  }
   /* USER CODE END RTOS_THREADS */
+
+  /* USER CODE BEGIN RTOS_EVENTS */
+  /* add events, ... */
+  /* USER CODE END RTOS_EVENTS */
 
   /* Start scheduler */
   osKernelStart();
 
   /* We should never get here as control is now taken by the scheduler */
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -160,6 +186,7 @@ void SystemClock_Config(void)
   /** Configure the main internal regulator output voltage
   */
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
@@ -178,6 +205,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+
   /** Configure the SYSCLKSource, HCLK, PCLK1 and PCLK2 clocks dividers
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK4|RCC_CLOCKTYPE_HCLK2
@@ -196,6 +224,36 @@ void SystemClock_Config(void)
   }
 }
 
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_GPIO_Init(void)
+{
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+  /* USER CODE BEGIN MX_GPIO_Init_1 */
+
+  /* USER CODE END MX_GPIO_Init_1 */
+
+  /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOB_CLK_ENABLE();
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, LED_GREEN_Pin|LED_RED_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pins : LED_GREEN_Pin LED_RED_Pin */
+  GPIO_InitStruct.Pin = LED_GREEN_Pin|LED_RED_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /* USER CODE BEGIN MX_GPIO_Init_2 */
+
+  /* USER CODE END MX_GPIO_Init_2 */
+}
+
 /* USER CODE BEGIN 4 */
 
 /* USER CODE END 4 */
@@ -203,33 +261,32 @@ void SystemClock_Config(void)
 /* USER CODE BEGIN Header_ToggleLEDsThread */
 /**
   * @brief  Function implementing the LEDThread thread.
-  * @param  argument: Not used 
+  * @param  argument: Not used
   * @retval None
   */
 /* USER CODE END Header_ToggleLEDsThread */
-void ToggleLEDsThread(void const * argument)
+void ToggleLEDsThread(void *argument)
 {
   /* USER CODE BEGIN 5 */
   (void) argument;
   /* Infinite loop */
   for(;;)
   {
-    /* Toggle LED2 each 400ms */
-    BSP_LED_Toggle(LED2);
-
+    /* Toggle LED_GREEN each 400ms */
+    HAL_GPIO_TogglePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin);
     osDelay(400);
   }
   /* USER CODE END 5 */
 }
 
 /* osTimerCallback function */
-void osTimerCallback(void const * argument)
+void osTimerCallback(void *argument)
 {
   /* USER CODE BEGIN osTimerCallback */
   (void) argument;
 
-  /* Toggle LED3*/
-  BSP_LED_Toggle(LED3);
+  /* Toggle LED_RED*/
+  HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
   if (TimeCounter == 25)
   {
       TimeCounter = 0;
@@ -267,11 +324,13 @@ void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
-
+  /* Infinite loop */
+  while (1)
+  {
+  }
   /* USER CODE END Error_Handler_Debug */
 }
-
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.
@@ -287,8 +346,8 @@ void assert_failed(uint8_t *file, uint32_t line)
 
   /* Infinite loop */
   while (1)
-  {}
+  {
+  }
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
-

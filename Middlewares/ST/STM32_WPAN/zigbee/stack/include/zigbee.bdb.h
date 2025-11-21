@@ -2,7 +2,7 @@
  * @file zigbee.bdb.h
  * @brief BDB header file
  * @author Exegin Technologies
- * @copyright Copyright [2009 - 2023] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2025] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZIGBEE_BDB_H
@@ -12,24 +12,41 @@
  * These are not interchangeable with Zigbee Status Codes. */
 /** bdbCommissioningStatus */
 enum ZbBdbCommissioningStatusT {
-    ZB_BDB_COMMISS_STATUS_SUCCESS = 0x00, /**< SUCCESS - The commissioning sub-procedure was successful */
-    ZB_BDB_COMMISS_STATUS_IN_PROGRESS, /**< IN_PROGRESS - One of the commissioning sub-procedures has started but is not yet complete */
-    ZB_BDB_COMMISS_STATUS_NOT_AA_CAPABLE, /**< NOT_AA_CAPABLE - The initiator is not address assignment capable during touchlink */
-    ZB_BDB_COMMISS_STATUS_NO_NETWORK, /**< NO_NETWORK - A network has not been found during network steering or touchlink*/
-    ZB_BDB_COMMISS_STATUS_TARGET_FAILURE, /**< TARGET_FAILURE - A node has not joined a network when requested during touchlink */
-    ZB_BDB_COMMISS_STATUS_FORMATION_FAILURE, /**< FORMATION_FAILURE - A network could not be formed during network formation */
-    ZB_BDB_COMMISS_STATUS_NO_IDENTIFY_QUERY_RESPONSE, /* NO_IDENTIFY_QUERY_RESPONSE - No response to an identify query command has been received during finding & binding */
-    ZB_BDB_COMMISS_STATUS_BINDING_TABLE_FULL, /**< BINDING_TABLE_FULL - A binding table entry could not be created due to insufficient space in the binding table during finding & binding */
-    ZB_BDB_COMMISS_STATUS_NO_SCAN_RESPONSE, /**< NO_SCAN_RESPONSE - No response to a scan request inter-PAN command has been received during touchlink */
-    ZB_BDB_COMMISS_STATUS_NOT_PERMITTED, /**< NOT_PERMITTED - A touchlink (steal) attempt was made when a node is already connected to a centralized security network or when end node attempts to form network */
-    ZB_BDB_COMMISS_STATUS_TCLK_EX_FAILURE, /**< TCLK_EX_FAILURE - The Trust Center link key exchange procedure has failed attempting to join a centralized security network */
-    ZB_BDB_COMMISS_STATUS_NOT_ON_A_NETWORK, /**< NOT_ON_A_NETWORK - A commissioning procedure was forbidden since the node was not currently on a network. */
-    ZB_BDB_COMMISS_STATUS_ON_A_NETWORK /**< ON_A_NETWORK - A commissioning procedure was forbidden since the node was currently on a network. */
+    ZB_BDB_COMMISS_STATUS_SUCCESS = 0x00,
+    /**< SUCCESS - The commissioning sub-procedure was successful */
+    ZB_BDB_COMMISS_STATUS_IN_PROGRESS,
+    /**< IN_PROGRESS - One of the commissioning sub-procedures has started but is not yet complete */
+    ZB_BDB_COMMISS_STATUS_NOT_AA_CAPABLE,
+    /**< NOT_AA_CAPABLE - The initiator is not address assignment capable during touchlink */
+    ZB_BDB_COMMISS_STATUS_NO_NETWORK,
+    /**< NO_NETWORK - A network has not been found during network steering or touchlink*/
+    ZB_BDB_COMMISS_STATUS_TARGET_FAILURE,
+    /**< TARGET_FAILURE - A node has not joined a network when requested during touchlink */
+    ZB_BDB_COMMISS_STATUS_FORMATION_FAILURE,
+    /**< FORMATION_FAILURE - A network could not be formed during network formation */
+    ZB_BDB_COMMISS_STATUS_NO_IDENTIFY_QUERY_RESPONSE,
+    /* NO_IDENTIFY_QUERY_RESPONSE - No response to an identify query command has been received
+     * during finding & binding */
+    ZB_BDB_COMMISS_STATUS_BINDING_TABLE_FULL,
+    /**< BINDING_TABLE_FULL - A binding table entry could not be created due to insufficient space
+     * in the binding table during finding & binding */
+    ZB_BDB_COMMISS_STATUS_NO_SCAN_RESPONSE,
+    /**< NO_SCAN_RESPONSE - No response to a scan request inter-PAN command has been received during touchlink */
+    ZB_BDB_COMMISS_STATUS_NOT_PERMITTED,
+    /**< NOT_PERMITTED - A touchlink (steal) attempt was made when a node is already connected to a centralized
+     * security network or when end node attempts to form network */
+    ZB_BDB_COMMISS_STATUS_TCLK_EX_FAILURE,
+    /**< TCLK_EX_FAILURE - The Trust Center link key exchange procedure has failed attempting to join a
+     * centralized security network */
+    ZB_BDB_COMMISS_STATUS_NOT_ON_A_NETWORK,
+    /**< NOT_ON_A_NETWORK - A commissioning procedure was forbidden since the node was not currently on a network. */
+    ZB_BDB_COMMISS_STATUS_ON_A_NETWORK
+    /**< ON_A_NETWORK - A commissioning procedure was forbidden since the node was currently on a network. */
 };
 
 #define BDB_DEFAULT_TC_NODE_JOIN_TIMEOUT        15 /* seconds */
 
-#define DEFAULT_EP_BDB_COMMISSION_GRP_ID     0xffffU
+#define BDB_COMMISSION_EP_GROUP_ID_DEFAULT     0xffffU
 
 /* Bits for ZB_BDB_CommissioningMode */
 #define BDB_COMMISSION_MODE_MASK                0x0FU
@@ -148,72 +165,132 @@ enum ZbBdbTouchlinkKeyIndexT {
  * which can cause further network problems. */
 #define ZB_BDB_FLAG_ZDO_NWK_UPDATE_SCAN_DISABLE         0x00000100U
 
-/* Used for debugging APS layer (Deprecated) */
-#define ZB_BDB_FLAG_DEBUG_APS                           0x00000200U
+/* If set, disables PANID conflict reporting and resolution from R22 stack. I.e, a
+ * a device that is not the network manager, stops sending the Network-Report command
+ * on detecting PANID conflicts during processing solicited or unsolicited beacons.
+ * Whereas, a device that is the network manager drops any Network-Report command(s)
+ * with 'Report command identifier' field indicating a PANID conflict. By default, this
+ * behavior is disabled and application shall set this bit explicitly to enable it. */
+#define ZB_BDB_FLAG_PANID_CONFLICT_HANDLING_DISABLE     0x00000200U
 
 /** BDB IB Attributes */
 enum ZbBdbAttrIdT {
     /* EXEGIN ZB_BDB_CommissioningGroupID ? = 0x1000 */
-    ZB_BDB_CommissioningMode = 0x1001, /**< bdbCommissioningMode - BDB_COMMISSION_MODE_MASK */
+    ZB_BDB_CommissioningMode = 0x1001,
+    /**< bdbCommissioningMode - BDB_COMMISSION_MODE_MASK */
     ZB_BDB_JoiningNodeEui64 = 0x1002,
     ZB_BDB_JoiningNodeNewTCLinkKey = 0x1003,
-    ZB_BDB_JoinUsesInstallCodeKey = 0x1004, /**< bdbJoinUsesInstallCodeKey */
-    ZB_BDB_NodeCommissioningCapability = 0x1005, /**< bdbNodeCommissioningCapability - BDB_COMMISSION_CAP_MASK */
-    ZB_BDB_NodeIsOnANetwork = 0x1006, /* bdbNodeIsOnANetwork - Checks nwkExtendedPanId if non-zero */
-    ZB_BDB_NodeJoinLinkKeyType = 0x1007, /* bdbNodeJoinLinkKeyType - BDB_JOINLINK_KEYTYPE_FLAG, Link key with which the node was able to decrypt the network key */
-    ZB_BDB_PrimaryChannelSet = 0x1008, /**< bdbPrimaryChannelSet */
-    ZB_BDB_ScanDuration = 0x1009, /**< bdbScanDuration */
-    ZB_BDB_SecondaryChannelSet = 0x100a, /**< bdbSecondaryChannelSet */
-    ZB_BDB_TCLK_ExchangeAttempts = 0x100b, /**< bdbTCLinkKeyExchangeAttempts */
-    ZB_BDB_TCLK_ExchangeAttemptsMax = 0x100c, /**< bdbTCLinkKeyExchangeAttemptsMax */
-    ZB_BDB_TCLinkKeyExchangeMethod = 0x100d, /**< bdbTCLinkKeyExchangeMethod - enum ZbBdbLinkKeyExchMethodT */
-    ZB_BDB_TrustCenterNodeJoinTimeout = 0x100e, /**< bdbTrustCenterNodeJoinTimeout */
-    ZB_BDB_TrustCenterRequiresKeyExchange = 0x100f, /**< bdbTrustCenterRequireKey-Exchange - Modifies ZB_APSME_POLICY_TCLK_UPDATE_REQUIRED bit in ZB_APS_IB_ID_TRUST_CENTER_POLICY */
-    ZB_BDB_AcceptNewUnsolicitedTCLinkKey = 0x1010, /**< acceptNewUnsolicitedTrustCenterLinkKey */ /* uint8_t */
-    ZB_BDB_AcceptNewUnsolicitedApplicationLinkKey = 0x1011, /**< acceptNewUnsolicitedApplicationLinkKey */ /* uint8_t*/
+    ZB_BDB_JoinUsesInstallCodeKey = 0x1004,
+    /**< bdbJoinUsesInstallCodeKey */
+    ZB_BDB_NodeCommissioningCapability = 0x1005,
+    /**< bdbNodeCommissioningCapability - BDB_COMMISSION_CAP_MASK */
+    ZB_BDB_NodeIsOnANetwork = 0x1006,
+    /* bdbNodeIsOnANetwork - Checks nwkExtendedPanId if non-zero */
+    ZB_BDB_NodeJoinLinkKeyType = 0x1007,
+    /* bdbNodeJoinLinkKeyType - BDB_JOINLINK_KEYTYPE_FLAG, Link key with which the node
+     * was able to decrypt the network key */
+    ZB_BDB_PrimaryChannelSet = 0x1008,
+    /**< bdbPrimaryChannelSet */
+    ZB_BDB_ScanDuration = 0x1009,
+    /**< bdbScanDuration */
+    ZB_BDB_SecondaryChannelSet = 0x100a,
+    /**< bdbSecondaryChannelSet */
+    ZB_BDB_TCLK_ExchangeAttempts = 0x100b,
+    /**< bdbTCLinkKeyExchangeAttempts */
+    ZB_BDB_TCLK_ExchangeAttemptsMax = 0x100c,
+    /**< bdbTCLinkKeyExchangeAttemptsMax */
+    ZB_BDB_TCLinkKeyExchangeMethod = 0x100d,
+    /**< bdbTCLinkKeyExchangeMethod - enum ZbBdbLinkKeyExchMethodT */
+    ZB_BDB_TrustCenterNodeJoinTimeout = 0x100e,
+    /**< bdbTrustCenterNodeJoinTimeout */
+    ZB_BDB_TrustCenterRequiresKeyExchange = 0x100f,
+    /**< bdbTrustCenterRequireKey-Exchange - Modifies ZB_APSME_POLICY_TCLK_UPDATE_REQUIRED
+     * bit in ZB_APS_IB_ID_TRUST_CENTER_POLICY */
+    ZB_BDB_AcceptNewUnsolicitedTCLinkKey = 0x1010,
+    /**< acceptNewUnsolicitedTrustCenterLinkKey */ /* uint8_t */
+    ZB_BDB_AcceptNewUnsolicitedApplicationLinkKey = 0x1011,
+    /**< acceptNewUnsolicitedApplicationLinkKey */ /* uint8_t*/
 
     /* Extra stuff not explicitly covered by the BDB spec. */
-    ZB_BDB_JoiningNodeParent = 0x1100, /* EUI of parent of joining device (where to send APS Remove Request if necessary) */
-    ZB_BDB_vDoPrimaryScan = 0x1101, /* boolean whether to use ZB_BDB_PrimaryChannelSet or ZB_BDB_SecondaryChannelSet */
+    ZB_BDB_JoiningNodeParent = 0x1100,
+    /* EUI of parent of joining device (where to send APS Remove Request if necessary) */
+    ZB_BDB_vDoPrimaryScan = 0x1101,
+    /* boolean whether to use ZB_BDB_PrimaryChannelSet or ZB_BDB_SecondaryChannelSet */
     /* Address assignment */
     ZB_BDB_FreeNetAddrBegin = 0x1102,
     ZB_BDB_FreeNetAddrCurrent = 0x1103,
     ZB_BDB_FreeNetAddrEnd = 0x1104,
+
     /* discontinuity */
-    ZB_BDB_TLRssiMin = 0x1107, /**< Minimum RSSI threshold for Touchlink commissioning */ /* int8_t value */
-    ZB_BDB_TLTestFlags = 0x1108, /* Touchlink test flags, enum ZbTlTestFlagsT) */
-    ZB_BDB_UpdateDeviceKeyId = 0x1109, /**< enum ZbSecHdrKeyIdT (e.g. ZB_SEC_KEYID_NETWORK (default) or ZB_SEC_KEYID_LINK) */
-    ZB_BDB_JoinScanType = 0x110a, /**< MCP_SCAN_ACTIVE (default) or MCP_SCAN_ENHANCED */ /* uint8_t */
+
+    ZB_BDB_TLRssiMin = 0x1107,
+    /**< Minimum RSSI threshold for Touchlink commissioning */ /* int8_t value */
+    ZB_BDB_TLTestFlags = 0x1108,
+    /* Touchlink test flags, enum ZbTlTestFlagsT) */
+    ZB_BDB_UpdateDeviceKeyId = 0x1109,
+    /**< enum ZbSecHdrKeyIdT (e.g. ZB_SEC_KEYID_NETWORK (default) or ZB_SEC_KEYID_LINK) */
+    ZB_BDB_JoinScanType = 0x110a,
+    /**< MCP_SCAN_ACTIVE (default) or MCP_SCAN_ENHANCED */ /* uint8_t */
+
     /* discontinuity */
+
     ZB_BDB_NlmeSyncFailNumBeforeError = 0x110c,
-    /**< Number of consecutive NLME-SYNC failures before reporting ZB_NWK_STATUS_CODE_PARENT_LINK_FAILURE */ /* uint8_t */
-    ZB_BDB_ZdoTimeout = 0x110d, /**< ZDO response wait timeout in milliseconds - default is 6000 mS */
-    ZB_BDB_TLStealFlags = 0x110e, /**< Touchlink Stealing Flags (TOUCHLINK_STEAL_* defines) */
-    ZB_BDB_JoinTclkNodeDescReqDelay = 0x110f, /* mS */
-    ZB_BDB_JoinTclkRequestKeyDelay = 0x1110, /* mS */
+    /**< Number of consecutive NLME-SYNC failures before reporting
+     * ZB_NWK_STATUS_CODE_PARENT_LINK_FAILURE */ /* uint8_t */
+    ZB_BDB_ZdoTimeout = 0x110d,
+    /**< ZDO response wait timeout in milliseconds - default is 6000 mS */
+    ZB_BDB_TLStealFlags = 0x110e,
+    /**< Touchlink Stealing Flags (TOUCHLINK_STEAL_* defines) */
+    ZB_BDB_JoinTclkNodeDescReqDelay = 0x110f,
+    /**< mS */
+    ZB_BDB_JoinTclkRequestKeyDelay = 0x1110,
+    /**< mS */
+
     /* discontinuity */
-    ZB_BDB_TLKey = 0x1112, /**< Touchlink preconfigured link key */
-    ZB_BDB_TLKeyIndex = 0x1113, /**< enum ZbBdbTouchlinkKeyIndexT - Touchlink key encryption algorithm key index */
+
+    ZB_BDB_TLKey = 0x1112,
+    /**< Touchlink preconfigured link key */
+    ZB_BDB_TLKeyIndex = 0x1113,
+    /**< enum ZbBdbTouchlinkKeyIndexT - Touchlink key encryption algorithm key index */
     /* discontinuity */
-    ZB_BDB_ZdoZigbeeProtocolRevision = 0x1115, /**< Default 23 (R23) */
+    ZB_BDB_ZdoZigbeeProtocolRevision = 0x1115,
+    /**< Default 23 (R23) */
     /* discontinuity */
-    ZB_BDB_PersistTimeoutMs = 0x1117, /**< Minimum delay between persistence updates */ /* uint32_t */
+    ZB_BDB_PersistTimeoutMs = 0x1117,
+    /**< Minimum delay between persistence updates */ /* uint32_t */
     ZB_BDB_JoinAttemptsMax = 0x1118,
     /**< Maximum number attempts to join a network. If an attempt fails,
      * the EPID is added to a blacklist before the next attempt */ /* uint8_t */
-    ZB_BDB_MaxConcurrentJoiners = 0x1119, /**< Maximum number of concurrent joiners the coordinator supports */ /* uint8_t  */
+    ZB_BDB_MaxConcurrentJoiners = 0x1119,
+    /**< Maximum number of concurrent joiners the coordinator supports */ /* uint8_t  */
     /* discontinuity */
-    ZB_BDB_Uptime = 0x111d, /**< Returns the current stack uptime in milliseconds (ZbUptime) */
-    ZB_BDB_Flags = 0x111e, /**< e.g. ZB_BDB_FLAG_IGNORE_COST_DURING_JOIN */ /* uint32_t  */
+    ZB_BDB_Uptime = 0x111d,
+    /**< Returns the current stack uptime in milliseconds (ZbUptime) */
+    ZB_BDB_Flags = 0x111e,
+    /**< These flags enable special, but potentially non-compliant Zigbee behaviour.
+     * These flags should be left cleared for normal operation. Use at your own risk.
+     * Example flag: ZB_BDB_FLAG_IGNORE_COST_DURING_JOIN */ /* uint32_t  */
+
+    /* discontinuity */
+
+    ZB_BDB_TLIdentifyTime = 0x1122,
+    /**< Touchlink Indentify Time Duration - default is 7 seconds.
+     * Setting the IB to zero will disable sending the TL identify request.
+     * (type: uint16_t, reset: no, persist: no) */
 
     /* Constants which are accessible through a BDB GET IB request. */
     ZB_BDBC_MaxSameNetworkRetryAttempts = 0x1200,
-    ZB_BDBC_MinCommissioningTime = 0x1201, /**< Seconds */
+    ZB_BDBC_MinCommissioningTime = 0x1201,
+    /**< Seconds */
     ZB_BDBC_RecSameNetworkRetryAttempts = 0x1202,
-    ZB_BDBC_TLInterPANTransIdLifetime = 0x1203, /**< Seconds */
-    ZB_BDBC_TLMinStartupDelayTime = 0x1204, /**< Seconds */
-    ZB_BDBC_TLRxWindowDuration = 0x1205, /**< Seconds */
-    ZB_BDBC_TLScanTimeBaseDuration = 0x1206 /**< Milliseconds */ /* uint8_t  */
+    ZB_BDBC_TLInterPANTransIdLifetime = 0x1203,
+    /**< Seconds */
+    ZB_BDBC_TLMinStartupDelayTime = 0x1204,
+    /**< Seconds */
+    ZB_BDBC_TLRxWindowDuration = 0x1205,
+    /**< Seconds */
+    ZB_BDBC_TLScanTimeBaseDuration = 0x1206
+    /**< Milliseconds */ /* uint8_t  */
 };
 
 /** BDB-GET.request */
@@ -256,7 +333,8 @@ struct ZbBdbSetConfT {
  * @param attrIndex Index attribute
  * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
  */
-enum ZbStatusCodeT ZbBdbGetIndex(struct ZigBeeT *zb, enum ZbBdbAttrIdT attrId, void *attrPtr, unsigned int attrSz, unsigned int attrIndex);
+enum ZbStatusCodeT ZbBdbGetIndex(struct ZigBeeT *zb, enum ZbBdbAttrIdT attrId, void *attrPtr,
+    unsigned int attrSz, unsigned int attrIndex);
 
 /**
  * Write a BDB IB attribute.
@@ -267,7 +345,8 @@ enum ZbStatusCodeT ZbBdbGetIndex(struct ZigBeeT *zb, enum ZbBdbAttrIdT attrId, v
  * @param attrIndex Index attribute
  * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
  */
-enum ZbStatusCodeT ZbBdbSetIndex(struct ZigBeeT *zb, enum ZbBdbAttrIdT attrId, const void *attrPtr, unsigned int attrSz, unsigned int attrIndex);
+enum ZbStatusCodeT ZbBdbSetIndex(struct ZigBeeT *zb, enum ZbBdbAttrIdT attrId, const void *attrPtr,
+    unsigned int attrSz, unsigned int attrIndex);
 
 /**
  * Send a BDB-GET.request.

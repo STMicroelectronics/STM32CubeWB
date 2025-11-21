@@ -31,7 +31,7 @@
 #endif
 
 #if ((TSLPRM_TOTAL_BANKS < 1) || (TSLPRM_TOTAL_BANKS > 8))
-#error "TSLPRM_TOTAL_BANKS is out of range (1 .. 8)."
+#warning "TSLPRM_TOTAL_BANKS is out of range (1 .. 8)."
 #endif
 
 #if ((TSLPRM_TOTAL_TOUCHKEYS < 0) || (TSLPRM_TOTAL_TOUCHKEYS > 24))

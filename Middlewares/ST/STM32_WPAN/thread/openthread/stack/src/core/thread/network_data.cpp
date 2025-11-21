@@ -33,17 +33,7 @@
 
 #include "network_data.hpp"
 
-#include "coap/coap_message.hpp"
-#include "common/array.hpp"
-#include "common/code_utils.hpp"
-#include "common/debug.hpp"
-#include "common/locator_getters.hpp"
-#include "common/log.hpp"
 #include "instance/instance.hpp"
-#include "mac/mac_types.hpp"
-#include "thread/thread_netif.hpp"
-#include "thread/thread_tlvs.hpp"
-#include "thread/uri_paths.hpp"
 
 namespace ot {
 namespace NetworkData {
@@ -160,6 +150,10 @@ Error NetworkData::Iterate(Iterator &aIterator, uint16_t aRloc16, Config &aConfi
 
     Error               error = kErrorNotFound;
     NetworkDataIterator iterator(aIterator);
+    bool                shouldIterateOverPrefixTlvs;
+
+    shouldIterateOverPrefixTlvs = ((aConfig.mOnMeshPrefix != nullptr) || (aConfig.mExternalRoute != nullptr) ||
+                                   (aConfig.mLowpanContext != nullptr));
 
     for (const NetworkDataTlv *cur;
          cur = iterator.GetTlv(mTlvs), (cur + 1 <= GetTlvsEnd()) && (cur->GetNext() <= GetTlvsEnd());
@@ -170,14 +164,13 @@ Error NetworkData::Iterate(Iterator &aIterator, uint16_t aRloc16, Config &aConfi
         switch (cur->GetType())
         {
         case NetworkDataTlv::kTypePrefix:
-            if ((aConfig.mOnMeshPrefix != nullptr) || (aConfig.mExternalRoute != nullptr) ||
-                (aConfig.mLowpanContext != nullptr))
+            if (shouldIterateOverPrefixTlvs && As<PrefixTlv>(cur)->IsValid())
             {
                 subTlvs = As<PrefixTlv>(cur)->GetSubTlvs();
             }
             break;
         case NetworkDataTlv::kTypeService:
-            if (aConfig.mService != nullptr)
+            if ((aConfig.mService != nullptr) && As<ServiceTlv>(cur)->IsValid())
             {
                 subTlvs = As<ServiceTlv>(cur)->GetSubTlvs();
             }
@@ -259,7 +252,7 @@ Error NetworkData::Iterate(Iterator &aIterator, uint16_t aRloc16, Config &aConfi
                 {
                     const ContextTlv *contextTlv = As<ContextTlv>(subCur);
 
-                    if (aConfig.mLowpanContext == nullptr)
+                    if ((aConfig.mLowpanContext == nullptr) || !contextTlv->IsValid())
                     {
                         continue;
                     }
@@ -295,7 +288,7 @@ Error NetworkData::Iterate(Iterator &aIterator, uint16_t aRloc16, Config &aConfi
                 {
                     const ServerTlv *server = As<ServerTlv>(subCur);
 
-                    if (!iterator.IsNewEntry())
+                    if (!iterator.IsNewEntry() || !server->IsValid())
                     {
                         continue;
                     }
@@ -579,11 +572,11 @@ void NetworkData::AddRloc16ToRlocs(uint16_t aRloc16, Rlocs &aRlocs, RoleFilter a
         break;
 
     case kRouterRoleOnly:
-        VerifyOrExit(Mle::IsActiveRouter(aRloc16));
+        VerifyOrExit(Mle::IsRouterRloc16(aRloc16));
         break;
 
     case kChildRoleOnly:
-        VerifyOrExit(!Mle::IsActiveRouter(aRloc16));
+        VerifyOrExit(Mle::IsChildRloc16(aRloc16));
         break;
     }
 

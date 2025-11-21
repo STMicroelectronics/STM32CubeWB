@@ -117,10 +117,10 @@ void APPE_Init( void )
   
   /* Initialize the TimerServer */
   HW_TS_Init(hw_ts_InitMode_Full, &hrtc);
-  
-/* USER CODE BEGIN APPE_Init_1 */
+
   /* initialize debugger module if supported and debug trace if activated */
   Init_Debug();
+/* USER CODE BEGIN APPE_Init_1 */
 
   /* Display concurrent mode (BLE or Thread) that will start first */
   displayConcurrentMode();

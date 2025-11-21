@@ -59,7 +59,7 @@
 #define HCI_ENCRYPTION_KEY_REFRESH_COMPLETE_EVT_CODE                   0x30U
 #define HCI_LE_META_EVT_CODE                                           0x3EU
 #define HCI_AUTHENTICATED_PAYLOAD_TIMEOUT_EXPIRED_EVT_CODE             0x57U
-#define HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE                             0xFFU
+#define HCI_VENDOR_SPECIFIC_EVT_CODE                                   0xFFU
 
 /* HCI LE subevent code */
 #define HCI_LE_CONNECTION_COMPLETE_SUBEVT_CODE                            0x01U

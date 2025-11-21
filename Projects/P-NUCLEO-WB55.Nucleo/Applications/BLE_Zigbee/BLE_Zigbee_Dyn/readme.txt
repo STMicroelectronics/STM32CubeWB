@@ -26,7 +26,7 @@ How to use BLE application and Zigbee application (acting as router) in dynamic 
 The idea is to present a demo with a Zigbee Network (at least 2 Nucleo Boards, Zb coordinator
 running Zigbee_OnOff_Server_Coord application[1] and router running BLE_Zigbee_Dyn application[2]),
 and a BLE connection between 1 Nucleo board running BLE_Zigbee_Dyn application [2] with either a 
-smartphone running "ST BLE Sensor" Application (available on App Store and Google Play), or another
+smartphone running "ST BLE Sensor classic" or "ST BLE Toolbox" Application, or another
 Nucleo board running a BLE_p2pClient application[3].
 The STM32WB55xx-Nucleo board running BLE_Zigbee_Dyn application is capable of switching
 dynamically and transparently from BLE network to Zigbee network and vice-versa.
@@ -90,10 +90,15 @@ Minimum requirements for the demo:
   (see example Zigbee_OnOff_Server_Coord and Zigbee_OnOff_Client_Router for more details on how to use it)
 - 1 STM32WB55xx-Nucleo board running a BLE_p2pClient application[3]
 -- OR
-- 1 Smartphone (Android/IOS) with "ST BLE Sensor" Phone Application (available on App Store and Google Play)
-  Install the "ST BLE Sensor" application on the ios/android device
-  https://play.google.com/store/apps/details?id=com.st.bluems
-  https://itunes.apple.com/us/App/st-bluems/id993670214?mt=8
+- 1 Smartphone (Android/IOS) with "ST BLE Sensor classic " Phone Application (available on App Store and Google Play)
+  Install the "ST BLE Sensor classic" application on the ios/android device
+  https://play.google.com/store/apps/details?id=com.st.bluemsclassic
+  NOTE:Warning: ST BLE Sensor classic not ST BLE Sensor	
+-- OR
+- 1 Smartphone (Android/IOS) with "ST BLE Toolbox " Phone Application (available on App Store and Google Play)
+- Install the ST BLE Toolbox application on the android device:
+  https://play.google.com/store/apps/details?id=com.st.dit.stbletoolbox
+  https://apps.apple.com/us/app/st-ble-toolbox/id1531295550
 
 In order to make the program work, you must do the following: 
  - Connect 1 STM32WB55xx-Nucleo boards to your PC 
@@ -113,7 +118,7 @@ The blue led turns ON when the Zigbee join is successful.
 3- When the Zigbee connection is established, the Zigbee router will send every second a ZB ON_OFF toggle to the ZB coordinator [1]
 -- The RED Led toggles on the coordinator [1]. It is also possible to force the toggling of the RED Led on the coordinator [1] via the push button SW1 on Board [2].
 4- The BLE connection will be started as follows, depending if your BLE device is a smartphone or a 3rd Nucleo board:
-4.1 If using a smartphone, then the ST BLE Sensor App (smart Phone Application) scans and can connect to the P2P Server 
+4.1 If using a smartphone, then the ST BLE Sensor classic or ST BLE Toolbox Application scans and can connect to the P2P Server 
 by selecting = "P2PZBSRV1" entry.
 -- Once connected, the application starts to search the P2P Services & Characteristics.
 -- Led Button service, Led Characteristic and Button Characteristic are discovered at this stage (this service is ST specific).

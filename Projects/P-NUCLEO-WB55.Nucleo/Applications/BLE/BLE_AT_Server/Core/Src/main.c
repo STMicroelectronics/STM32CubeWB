@@ -216,8 +216,6 @@ int main(void)
 
   global_mitm = CFG_MITM_PROTECTION;
   global_scsupport = CFG_SC_SUPPORT;
-  global_usefixedpin = CFG_USED_FIXED_PIN;
-  global_fixedpin = CFG_FIXED_PIN;
   global_bonding = CFG_BONDING_MODE;
 
   /* Infinite loop */

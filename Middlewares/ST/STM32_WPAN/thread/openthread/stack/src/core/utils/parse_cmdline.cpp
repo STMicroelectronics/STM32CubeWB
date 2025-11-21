@@ -108,16 +108,13 @@ Error ParseAsUint32(const char *aString, uint32_t &aUint32) { return ParseUint<u
 
 Error ParseAsUint64(const char *aString, uint64_t &aUint64)
 {
+    static constexpr uint64_t kMaxHexBeforeOverflow = (0xffffffffffffffffULL / 16);
+    static constexpr uint64_t kMaxDecBeforeOverflow = (0xffffffffffffffffULL / 10);
+
     Error       error = kErrorNone;
     uint64_t    value = 0;
     const char *cur   = aString;
     bool        isHex = false;
-
-    enum : uint64_t
-    {
-        kMaxHexBeforeOverflow = (0xffffffffffffffffULL / 16),
-        kMaxDecBeforeOverflow = (0xffffffffffffffffULL / 10),
-    };
 
     VerifyOrExit(aString != nullptr, error = kErrorInvalidArgs);
 
@@ -317,7 +314,7 @@ Error ParseAsHexStringSegment(const char *&aString, uint16_t &aSize, uint8_t *aB
 
 uint16_t Arg::GetLength(void) const { return IsEmpty() ? 0 : static_cast<uint16_t>(strlen(mString)); }
 
-bool Arg::operator==(const char *aString) const { return !IsEmpty() && (strcmp(mString, aString) == 0); }
+bool Arg::operator==(const char *aString) const { return !IsEmpty() && StringMatch(mString, aString); }
 
 void Arg::CopyArgsToStringArray(Arg aArgs[], char *aStrings[])
 {

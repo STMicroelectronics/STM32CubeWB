@@ -134,6 +134,12 @@ const Dataset::ComponentMapper *Dataset::LookupMapper(const char *aName) const
             &Dataset::OutputSecurityPolicy,
             &Dataset::ParseSecurityPolicy,
         },
+        {
+            "wakeupchannel",
+            &Components::mIsWakeupChannelPresent,
+            &Dataset::OutputWakeupChannel,
+            &Dataset::ParseWakeupChannel,
+        },
     };
 
     static_assert(BinarySearch::IsSorted(kMappers), "kMappers is not sorted");
@@ -181,6 +187,24 @@ void Dataset::OutputActiveTimestamp(const otOperationalDataset &aDataset)
  * Gets or sets #otOperationalDataset::mChannel.
  */
 void Dataset::OutputChannel(const otOperationalDataset &aDataset) { OutputLine("%u", aDataset.mChannel); }
+
+/**
+ * @cli dataset wakeupchannel (get,set)
+ * @code
+ * dataset wakeupchannel
+ * 13
+ * Done
+ * @endcode
+ * @code
+ * dataset wakeupchannel 13
+ * Done
+ * @endcode
+ * @cparam dataset wakeupchannel [@ca{channel-num}]
+ * Use the optional `channel-num` argument to set the wake-up channel.
+ * @par
+ * Gets or sets #otOperationalDataset::mWakeupChannel.
+ */
+void Dataset::OutputWakeupChannel(const otOperationalDataset &aDataset) { OutputLine("%u", aDataset.mWakeupChannel); }
 
 /**
  * @cli dataset channelmask (get,set)
@@ -412,6 +436,11 @@ otError Dataset::ParseChannel(Arg *&aArgs, otOperationalDataset &aDataset)
     return aArgs++->ParseAsUint16(aDataset.mChannel);
 }
 
+otError Dataset::ParseWakeupChannel(Arg *&aArgs, otOperationalDataset &aDataset)
+{
+    return aArgs++->ParseAsUint16(aDataset.mWakeupChannel);
+}
+
 otError Dataset::ParseChannelMask(Arg *&aArgs, otOperationalDataset &aDataset)
 {
     return aArgs++->ParseAsUint32(aDataset.mChannelMask);
@@ -508,6 +537,19 @@ otError Dataset::ParseSecurityPolicy(Arg *&aArgs, otOperationalDataset &aDataset
     return ParseSecurityPolicy(aDataset.mSecurityPolicy, aArgs);
 }
 
+otError Dataset::ParseTlvs(Arg &aArg, otOperationalDatasetTlvs &aDatasetTlvs)
+{
+    otError  error;
+    uint16_t length;
+
+    length = sizeof(aDatasetTlvs.mTlvs);
+    SuccessOrExit(error = aArg.ParseAsHexString(length, aDatasetTlvs.mTlvs));
+    aDatasetTlvs.mLength = static_cast<uint8_t>(length);
+
+exit:
+    return error;
+}
+
 //---------------------------------------------------------------------------------------------------------------------
 
 otError Dataset::ProcessCommand(const ComponentMapper &aMapper, Arg aArgs[])
@@ -536,27 +578,29 @@ exit:
     return error;
 }
 
-otError Dataset::Print(otOperationalDatasetTlvs &aDatasetTlvs)
+otError Dataset::Print(otOperationalDatasetTlvs &aDatasetTlvs, bool aNonsensitiveOnly)
 {
     struct ComponentTitle
     {
-        const char *mTitle; // Title to output.
-        const char *mName;  // To use with `LookupMapper()`.
+        const char *mTitle;       // Title to output.
+        const char *mName;        // To use with `LookupMapper()`.
+        bool        mIsSensitive; // Whether the field is sensitive.
     };
 
     static const ComponentTitle kTitles[] = {
-        {"Pending Timestamp", "pendingtimestamp"},
-        {"Active Timestamp", "activetimestamp"},
-        {"Channel", "channel"},
-        {"Channel Mask", "channelmask"},
-        {"Delay", "delay"},
-        {"Ext PAN ID", "extpanid"},
-        {"Mesh Local Prefix", "meshlocalprefix"},
-        {"Network Key", "networkkey"},
-        {"Network Name", "networkname"},
-        {"PAN ID", "panid"},
-        {"PSKc", "pskc"},
-        {"Security Policy", "securitypolicy"},
+        {"Pending Timestamp", "pendingtimestamp", false},
+        {"Active Timestamp", "activetimestamp", false},
+        {"Channel", "channel", false},
+        {"Wake-up Channel", "wakeupchannel", false},
+        {"Channel Mask", "channelmask", false},
+        {"Delay", "delay", false},
+        {"Ext PAN ID", "extpanid", false},
+        {"Mesh Local Prefix", "meshlocalprefix", false},
+        {"Network Key", "networkkey", true},
+        {"Network Name", "networkname", false},
+        {"PAN ID", "panid", false},
+        {"PSKc", "pskc", true},
+        {"Security Policy", "securitypolicy", false},
     };
 
     otError              error;
@@ -566,12 +610,21 @@ otError Dataset::Print(otOperationalDatasetTlvs &aDatasetTlvs)
 
     for (const ComponentTitle &title : kTitles)
     {
-        const ComponentMapper *mapper = LookupMapper(title.mName);
+        const ComponentMapper *mapper;
+
+        mapper = LookupMapper(title.mName);
 
         if (dataset.mComponents.*mapper->mIsPresentPtr)
         {
             OutputFormat("%s: ", title.mTitle);
-            (this->*mapper->mOutput)(dataset);
+            if (aNonsensitiveOnly && title.mIsSensitive)
+            {
+                OutputLine("[Redacted]");
+            }
+            else
+            {
+                (this->*mapper->mOutput)(dataset);
+            }
         }
     }
 
@@ -617,10 +670,7 @@ template <> otError Dataset::Process<Cmd("init")>(Arg aArgs[])
 #endif
     else if (aArgs[0] == "tlvs")
     {
-        uint16_t size = sizeof(sDatasetTlvs.mTlvs);
-
-        SuccessOrExit(error = aArgs[1].ParseAsHexString(size, sDatasetTlvs.mTlvs));
-        sDatasetTlvs.mLength = static_cast<uint8_t>(size);
+        ExitNow(error = ParseTlvs(aArgs[1], sDatasetTlvs));
     }
 
 exit:
@@ -648,8 +698,24 @@ exit:
  * 0e08000000000001000000030000103506000...3023d82c841eff0e68db86f35740c030000ff
  * Done
  * @endcode
- * @cparam dataset active [-x]
- * The optional `-x` argument prints the Active Operational %Dataset values as hex-encoded TLVs.
+ * @code
+ * dataset active -ns
+ * Active Timestamp: 1
+ * Channel: 13
+ * Channel Mask: 0x07fff800
+ * Ext PAN ID: d63e8e3e495ebbc3
+ * Mesh Local Prefix: fd3d:b50b:f96d:722d::/64
+ * Network Key: [Redacted]
+ * Network Name: OpenThread-8f28
+ * PAN ID: 0x8f28
+ * PSKc: [Redacted]
+ * Security Policy: 0, onrcb
+ * Done
+ * @endcode
+ * @cparam dataset active [-x|-ns]
+ * * The optional `-x` argument prints the Active Operational Dataset values as hex-encoded TLVs.
+ * * The optional `-ns` argument prints the Active Operational Dataset values and redact the sensitive values, including
+ * the network key and PSKc fields.
  * @par api_copy
  * #otDatasetGetActive
  * @par
@@ -664,11 +730,15 @@ template <> otError Dataset::Process<Cmd("active")>(Arg aArgs[])
 
     if (aArgs[0].IsEmpty())
     {
-        error = Print(dataset);
+        error = Print(dataset, /* aNonsensitiveOnly */ false);
     }
     else if (aArgs[0] == "-x")
     {
         OutputBytesLine(dataset.mTlvs, dataset.mLength);
+    }
+    else if (aArgs[0] == "-ns")
+    {
+        error = Print(dataset, /* aNonsensitiveOnly */ true);
     }
     else
     {
@@ -688,11 +758,15 @@ template <> otError Dataset::Process<Cmd("pending")>(Arg aArgs[])
 
     if (aArgs[0].IsEmpty())
     {
-        error = Print(datasetTlvs);
+        error = Print(datasetTlvs, /* aNonsensitiveOnly */ false);
     }
     else if (aArgs[0] == "-x")
     {
         OutputBytesLine(datasetTlvs.mTlvs, datasetTlvs.mLength);
+    }
+    else if (aArgs[0] == "-ns")
+    {
+        error = Print(datasetTlvs, /* aNonsensitiveOnly */ true);
     }
     else
     {
@@ -760,12 +834,12 @@ template <> otError Dataset::Process<Cmd("commit")>(Arg aArgs[])
 
 template <> otError Dataset::Process<Cmd("mgmtsetcommand")>(Arg aArgs[])
 {
-    otError              error = OT_ERROR_NONE;
-    otOperationalDataset dataset;
-    uint8_t              tlvs[128];
-    uint8_t              tlvsLength = 0;
+    otError                  error = OT_ERROR_NONE;
+    otOperationalDataset     dataset;
+    otOperationalDatasetTlvs tlvs;
 
     ClearAllBytes(dataset);
+    ClearAllBytes(tlvs);
 
     for (Arg *arg = &aArgs[1]; !arg->IsEmpty();)
     {
@@ -779,12 +853,8 @@ template <> otError Dataset::Process<Cmd("mgmtsetcommand")>(Arg aArgs[])
         }
         else if (*arg == "-x")
         {
-            uint16_t length;
-
             arg++;
-            length = sizeof(tlvs);
-            SuccessOrExit(error = arg->ParseAsHexString(length, tlvs));
-            tlvsLength = static_cast<uint8_t>(length);
+            SuccessOrExit(error = ParseTlvs(*arg, tlvs));
             arg++;
         }
         else
@@ -811,8 +881,9 @@ template <> otError Dataset::Process<Cmd("mgmtsetcommand")>(Arg aArgs[])
      */
     if (aArgs[0] == "active")
     {
-        error = otDatasetSendMgmtActiveSet(GetInstancePtr(), &dataset, tlvs, tlvsLength, /* aCallback */ nullptr,
-                                           /* aContext */ nullptr);
+        error =
+            otDatasetSendMgmtActiveSet(GetInstancePtr(), &dataset, tlvs.mTlvs, tlvs.mLength, /* aCallback */ nullptr,
+                                       /* aContext */ nullptr);
     }
     /**
      * @cli dataset mgmtsetcommand pending
@@ -832,8 +903,9 @@ template <> otError Dataset::Process<Cmd("mgmtsetcommand")>(Arg aArgs[])
      */
     else if (aArgs[0] == "pending")
     {
-        error = otDatasetSendMgmtPendingSet(GetInstancePtr(), &dataset, tlvs, tlvsLength, /* aCallback */ nullptr,
-                                            /* aContext */ nullptr);
+        error =
+            otDatasetSendMgmtPendingSet(GetInstancePtr(), &dataset, tlvs.mTlvs, tlvs.mLength, /* aCallback */ nullptr,
+                                        /* aContext */ nullptr);
     }
     else
     {
@@ -848,12 +920,12 @@ template <> otError Dataset::Process<Cmd("mgmtgetcommand")>(Arg aArgs[])
 {
     otError                        error = OT_ERROR_NONE;
     otOperationalDatasetComponents datasetComponents;
-    uint8_t                        tlvs[32];
-    uint8_t                        tlvsLength        = 0;
+    otOperationalDatasetTlvs       tlvs;
     bool                           destAddrSpecified = false;
     otIp6Address                   address;
 
     ClearAllBytes(datasetComponents);
+    ClearAllBytes(tlvs);
 
     for (Arg *arg = &aArgs[1]; !arg->IsEmpty(); arg++)
     {
@@ -865,12 +937,8 @@ template <> otError Dataset::Process<Cmd("mgmtgetcommand")>(Arg aArgs[])
         }
         else if (*arg == "-x")
         {
-            uint16_t length;
-
             arg++;
-            length = sizeof(tlvs);
-            SuccessOrExit(error = arg->ParseAsHexString(length, tlvs));
-            tlvsLength = static_cast<uint8_t>(length);
+            SuccessOrExit(error = ParseTlvs(*arg, tlvs));
         }
         else if (*arg == "address")
         {
@@ -911,7 +979,7 @@ template <> otError Dataset::Process<Cmd("mgmtgetcommand")>(Arg aArgs[])
      */
     if (aArgs[0] == "active")
     {
-        error = otDatasetSendMgmtActiveGet(GetInstancePtr(), &datasetComponents, tlvs, tlvsLength,
+        error = otDatasetSendMgmtActiveGet(GetInstancePtr(), &datasetComponents, tlvs.mTlvs, tlvs.mLength,
                                            destAddrSpecified ? &address : nullptr);
     }
     /**
@@ -936,7 +1004,7 @@ template <> otError Dataset::Process<Cmd("mgmtgetcommand")>(Arg aArgs[])
      */
     else if (aArgs[0] == "pending")
     {
-        error = otDatasetSendMgmtPendingGet(GetInstancePtr(), &datasetComponents, tlvs, tlvsLength,
+        error = otDatasetSendMgmtPendingGet(GetInstancePtr(), &datasetComponents, tlvs.mTlvs, tlvs.mLength,
                                             destAddrSpecified ? &address : nullptr);
     }
     else
@@ -1086,41 +1154,22 @@ exit:
  */
 template <> otError Dataset::Process<Cmd("set")>(Arg aArgs[])
 {
-    otError                error = OT_ERROR_NONE;
-    MeshCoP::Dataset::Type datasetType;
+    otError                  error = OT_ERROR_NONE;
+    otOperationalDatasetTlvs datasetTlvs;
+
+    SuccessOrExit(error = ParseTlvs(aArgs[1], datasetTlvs));
 
     if (aArgs[0] == "active")
     {
-        datasetType = MeshCoP::Dataset::Type::kActive;
+        error = otDatasetSetActiveTlvs(GetInstancePtr(), &datasetTlvs);
     }
     else if (aArgs[0] == "pending")
     {
-        datasetType = MeshCoP::Dataset::Type::kPending;
+        error = otDatasetSetPendingTlvs(GetInstancePtr(), &datasetTlvs);
     }
     else
     {
-        ExitNow(error = OT_ERROR_INVALID_ARGS);
-    }
-
-    {
-        otOperationalDataset     dataset;
-        otOperationalDatasetTlvs datasetTlvs;
-        uint16_t                 tlvsLength = OT_OPERATIONAL_DATASET_MAX_LENGTH;
-
-        SuccessOrExit(error = aArgs[1].ParseAsHexString(tlvsLength, datasetTlvs.mTlvs));
-        datasetTlvs.mLength = static_cast<uint8_t>(tlvsLength);
-
-        SuccessOrExit(error = otDatasetParseTlvs(&datasetTlvs, &dataset));
-
-        switch (datasetType)
-        {
-        case MeshCoP::Dataset::Type::kActive:
-            SuccessOrExit(error = otDatasetSetActiveTlvs(GetInstancePtr(), &datasetTlvs));
-            break;
-        case MeshCoP::Dataset::Type::kPending:
-            SuccessOrExit(error = otDatasetSetPendingTlvs(GetInstancePtr(), &datasetTlvs));
-            break;
-        }
+        error = OT_ERROR_INVALID_ARGS;
     }
 
 exit:
@@ -1268,7 +1317,7 @@ otError Dataset::Process(Arg aArgs[])
 
     if (aArgs[0].IsEmpty())
     {
-        ExitNow(error = Print(sDatasetTlvs));
+        ExitNow(error = Print(sDatasetTlvs, /* aNonsensitiveOnly */ false));
     }
 
     /**

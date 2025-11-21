@@ -1,6 +1,6 @@
 /**
   @page FreeRTOS_SemaphoreFromISR FreeRTOS semaphore from ISR example
- 
+
   @verbatim
   ******************************************************************************
   * @file    FreeRTOS/FreeRTOS_SemaphoreFromISR/readme.txt
@@ -23,9 +23,9 @@
 How to use semaphore from ISR with CMSIS RTOS API.
 
 This application creates a thread that toggle a LED through semaphore given from ISR.
- 
-Each time the user pushes the User push-button (SW1) of the P-NUCLEO-WB55 board the semaphore 
-is given to the SemaphoreTest thread to toggle the LED2.
+
+Each time the user pushes the User push-button (SW1) of the P-NUCLEO-WB55 board the semaphore
+is given to the SemaphoreTest thread to toggle the LED_GREEN.
 
 @note Care must be taken when using HAL_Delay(), this function provides accurate
       delay (in milliseconds) based on variable incremented in HAL time base ISR.
@@ -34,14 +34,14 @@ is given to the SemaphoreTest thread to toggle the LED2.
       the peripheral interrupt. Otherwise the caller ISR process will be blocked.
       To change the HAL time base interrupt priority you have to use HAL_NVIC_SetPriority()
       function.
- 
+
 @note The application needs to ensure that the HAL time base is always set to 1 millisecond
       to have correct HAL operation.
 
-@note The FreeRTOS heap size configTOTAL_HEAP_SIZE defined in FreeRTOSConfig.h is set accordingly to the 
+@note The FreeRTOS heap size configTOTAL_HEAP_SIZE defined in FreeRTOSConfig.h is set accordingly to the
       OS resources memory requirements of the application with +10% margin and rounded to the upper Kbyte boundary.
 
-For more details about FreeRTOS implementation on STM32Cube, please refer to UM1722 "Developing Applications 
+For more details about FreeRTOS implementation on STM32Cube, please refer to UM1722 "Developing Applications
 on STM32Cube with RTOS".
 
 @par Keywords
@@ -66,14 +66,14 @@ RTOS, FreeRTOS, Threading, Semaphore, Priorities, ISR, Interrupt
 
   - This application has been tested with P-NUCLEO-WB55 board and can be
     easily tailored to any other supported device and development board.
-    
+
 
 @par How to use it ?
 
 In order to make the program work, you must do the following:
- - Open your preferred toolchain 
+ - Open your preferred toolchain
  - Rebuild all files and load your image into target memory
  - Run the example
-  
+
  * <h3><center>&copy; COPYRIGHT STMicroelectronics</center></h3>
  */

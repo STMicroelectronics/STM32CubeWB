@@ -75,6 +75,9 @@ typedef enum
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static TL_CmdPacket_t BleCmdBuffer;
 PLACE_IN_SECTION("MB_MEM2") ALIGN(4) static uint8_t HciAclDataBuffer[sizeof(TL_PacketHeader_t) + 5 + 251];
 
+/* extra_data_buffer for Host command extension defined in SRAM1 with buffer size also sent to FW M0 */
+PLACE_IN_SECTION("EXTRA_BUF") ALIGN(4) static uint8_t ExtraDataBuffer[CFG_BLE_EXTRA_DATA_BUFFER_SIZE];
+ 
 static uint8_t RxHostData[5];
 static HciReceiveStatus_t HciReceiveStatus;
 ALIGN(4) static TL_CmdPacket_t SysLocalCmd;
@@ -96,6 +99,7 @@ static void TM_SysLocalCmd(void);
 static void TM_TxToHost(void);
 static void TM_BleEvtRx(TL_EvtPacket_t *phcievt);
 static void TM_AclDataAck(void);
+static void TM_InitExtraDataBuffer(void);
 extern void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
 
@@ -114,39 +118,48 @@ void TM_Init(void)
   SHCI_C2_CONFIG_Cmd_Param_t config_param = {0};
   uint32_t RevisionID=0;
   uint32_t DeviceID=0;
-
+  
+  /* Mandatory if the CPU2 needs to access SRAM1 (where ExtraDataBuffer is defined) */
+  LL_C2_AHB1_GRP1_EnableClock( LL_C2_AHB1_GRP1_PERIPH_SRAM1 );
+  
+  /* Fill ExtraDataBuffer with sample data values as example */
+  TM_InitExtraDataBuffer();
+    
   SHCI_C2_Ble_Init_Cmd_Packet_t ble_init_cmd_packet =
   {
     {{0,0,0}},                          /**< Header unused */
     {0,                                 /** pBleBufferAddress not used */
-     0,                                  /** BleBufferSize not used */
-     CFG_BLE_NUM_GATT_ATTRIBUTES,
-     CFG_BLE_NUM_GATT_SERVICES,
-     CFG_BLE_ATT_VALUE_ARRAY_SIZE,
-     CFG_BLE_NUM_LINK,
-     CFG_BLE_DATA_LENGTH_EXTENSION,
-     CFG_BLE_PREPARE_WRITE_LIST_SIZE,
-     CFG_BLE_MBLOCK_COUNT,
-     CFG_BLE_MAX_ATT_MTU,
-     CFG_BLE_PERIPHERAL_SCA,
-     CFG_BLE_CENTRAL_SCA,
-     CFG_BLE_LS_SOURCE,
-     CFG_BLE_MAX_CONN_EVENT_LENGTH,
-     CFG_BLE_HSE_STARTUP_TIME,
-     CFG_BLE_VITERBI_MODE,
-     CFG_BLE_OPTIONS,
-     0,
-     CFG_BLE_MAX_COC_INITIATOR_NBR,
-     CFG_BLE_MIN_TX_POWER,
-     CFG_BLE_MAX_TX_POWER,
-     CFG_BLE_RX_MODEL_CONFIG,
-     CFG_BLE_MAX_ADV_SET_NBR,
-     CFG_BLE_MAX_ADV_DATA_LEN,
-     CFG_BLE_TX_PATH_COMPENS,
-     CFG_BLE_RX_PATH_COMPENS,
-     CFG_BLE_CORE_VERSION,
-     CFG_BLE_OPTIONS_EXT,
-     CFG_BLE_MAX_ADD_EATT_BEARERS
+    0,                                  /** BleBufferSize not used */
+    CFG_BLE_NUM_GATT_ATTRIBUTES,
+    CFG_BLE_NUM_GATT_SERVICES,
+    CFG_BLE_ATT_VALUE_ARRAY_SIZE,
+    CFG_BLE_NUM_LINK,
+    CFG_BLE_DATA_LENGTH_EXTENSION,
+    CFG_BLE_PREPARE_WRITE_LIST_SIZE,
+    CFG_BLE_MBLOCK_COUNT,
+    CFG_BLE_MAX_ATT_MTU,
+    CFG_BLE_PERIPHERAL_SCA,
+    CFG_BLE_CENTRAL_SCA,
+    CFG_BLE_LS_SOURCE,
+    CFG_BLE_MAX_CONN_EVENT_LENGTH,
+    CFG_BLE_HSE_STARTUP_TIME,
+    CFG_BLE_VITERBI_MODE,
+    CFG_BLE_OPTIONS,
+    0,
+    CFG_BLE_MAX_COC_INITIATOR_NBR,
+    CFG_BLE_MIN_TX_POWER,
+    CFG_BLE_MAX_TX_POWER,
+    CFG_BLE_RX_MODEL_CONFIG,
+    CFG_BLE_MAX_ADV_SET_NBR,
+    CFG_BLE_MAX_ADV_DATA_LEN,
+    CFG_BLE_TX_PATH_COMPENS,
+    CFG_BLE_RX_PATH_COMPENS,
+    CFG_BLE_CORE_VERSION,
+    CFG_BLE_OPTIONS_EXT,
+    CFG_BLE_MAX_ADD_EATT_BEARERS,
+    ExtraDataBuffer,
+    CFG_BLE_EXTRA_DATA_BUFFER_SIZE,
+    
     }
   };
 
@@ -515,6 +528,13 @@ static void TM_AclDataAck(void)
   /* USER CODE END TM_AclDataAck*/
 
   return;
+}
+
+static void TM_InitExtraDataBuffer(void) {
+    for (uint16_t i = 0; i < CFG_BLE_EXTRA_DATA_BUFFER_SIZE; i++) {
+        /* extra_data_buffer filled with values in range 0..255 */
+        ExtraDataBuffer[i] = (uint8_t)(i & 0xFF);  
+    }
 }
 
 /* USER CODE BEGIN FD_LOCAL_FUNCTIONS*/

@@ -619,6 +619,11 @@
 			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/cli/cli_mac_filter.cpp</locationURI>
 		</link>
 		<link>
+			<name>Middlewares/STM32_WPAN/thread/openthread/stack/src/cli/cli_mesh_diag.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/cli/cli_mesh_diag.cpp</locationURI>
+		</link>
+		<link>
 			<name>Middlewares/STM32_WPAN/thread/openthread/stack/src/cli/cli_network_data.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/cli/cli_network_data.cpp</locationURI>

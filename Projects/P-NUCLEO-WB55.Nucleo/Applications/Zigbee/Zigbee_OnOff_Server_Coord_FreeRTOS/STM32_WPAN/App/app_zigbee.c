@@ -30,7 +30,7 @@
 #include "app_conf.h"
 #include "stm32wbxx_core_interface_def.h"
 #include "zigbee_types.h"
-#include "cmsis_os.h"
+#include "cmsis_os2.h"
 
 /* Private includes -----------------------------------------------------------*/
 #include <assert.h>

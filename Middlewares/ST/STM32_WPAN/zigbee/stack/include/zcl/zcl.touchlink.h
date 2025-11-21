@@ -2,7 +2,7 @@
  * @file zcl.touchlink.h
  * @heading Touchlink
  * @brief  Touchlink API
- * @copyright Copyright [2009 - 2021] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2025] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_TOUCHLINK_H
@@ -53,7 +53,7 @@
  *
  * Commands Generated
  * TC.C.C00.Tx | Scan request | True
- * TC.C.C02.Tx | Device information request | True
+ * TC.C.C02.Tx | Device information request | False
  * TC.C.C06.Tx | Identify request | True
  * TC.C.C07.Tx | Reset to factory new request | True
  * TC.C.C10.Tx | Network start request | True
@@ -67,10 +67,15 @@
 #include "zcl/zcl.enum.h"
 
 /* Zigbee Information Field
- * See Figure 13-10. Format of the ZigBee Information Field */
+ * See ZCL7 Figure 13-9. Format of the ZigBee Information Field */
 /* Logical Type */
 #define ZCL_TL_ZBINFO_TYPE_MASK                     0x03U
-#define ZCL_TL_ZBINFO_TYPE_COORD                    0x00U
+/* NOTE: 0x00 (Coord) is never used with TL. Set to 0x01 (Router) in those cases
+ * instead. The BDB Spec for Touchlink has checks for only Router or End Device,
+ * and never includes Coord. This might be because Touchlink operates as or along
+ * side a distributed security network, where there is no Coordinator at address
+ * 0x0000. */
+/* #define ZCL_TL_ZBINFO_TYPE_COORD                    0x00U */
 #define ZCL_TL_ZBINFO_TYPE_ROUTER                   0x01U
 #define ZCL_TL_ZBINFO_TYPE_END_DEVICE               0x02U
 /* Rx on when idle */
@@ -84,6 +89,27 @@
 #define ZCL_TL_FLAGS_IS_TARGET                      0x10U
 #define ZCL_TL_FLAGS_USE_PERSIST                    0x20U
 #define ZCL_TL_FLAGS_FACTORY_RESET                  0x40U
+
+/* Touchlink client/server Commands */
+enum ZbTLCmd {
+    ZB_TL_COMMAND_SCAN_REQ = 0x00,
+    ZB_TL_COMMAND_SCAN_RSP = 0x01,
+    ZB_TL_COMMAND_DEV_INFO_REQ = 0x02,
+    ZB_TL_COMMAND_DEV_INFO_RSP = 0x03,
+    ZB_TL_COMMAND_IDENTIFY_REQ = 0x06,
+    ZB_TL_COMMAND_RESET_FACTORY = 0x07,
+    ZB_TL_COMMAND_NET_START_REQ = 0x10,
+    ZB_TL_COMMAND_NET_START_RSP = 0x11,
+    ZB_TL_COMMAND_NET_JOIN_RTR_REQ = 0x12,
+    ZB_TL_COMMAND_NET_JOIN_RTR_RSP = 0x13,
+    ZB_TL_COMMAND_NET_JOIN_END_REQ = 0x14,
+    ZB_TL_COMMAND_NET_JOIN_END_RSP = 0x15,
+    ZB_TL_COMMAND_UPDATE_REQ = 0x16,
+    /* Utility Commands */
+    ZB_TL_COMMAND_EP_INFO = 0x40, /**< Endpoint information */
+    ZB_TL_COMMAND_GET_GRP_ID = 0x41, /**< Get group identifiers request */
+    ZB_TL_COMMAND_GET_EP_LIST = 0x42 /**< Get endpoint list request */
+};
 
 /*-----------------------------------------------------------------------------
  * Touchlink Utility Commands
@@ -164,8 +190,8 @@ struct ZbTouchlinkCallbacks {
  * @param zb Zigbee stack instance
  * @param dst Destination address
  * @param cmd Get Group Identifiers Request structure
- * @param callback Callback function that will be invoked later when the response is received
- * @param arg Pointer to application data that will later be provided back to the callback functions when invoked
+ * @param callback Callback function that will be invoked when the response is received.
+ * @param arg Pointer to application data that will be included in the callback when invoked.
  * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
  */
 enum ZclStatusCodeT ZbZclTouchlinkInitiatorGetGrpIdReq(struct ZigBeeT *zb, struct ZbTlGetGroupIdsReqCmd *cmd,
@@ -176,8 +202,8 @@ enum ZclStatusCodeT ZbZclTouchlinkInitiatorGetGrpIdReq(struct ZigBeeT *zb, struc
  * @param zb Zigbee stack instance
  * @param dst Destination address
  * @param cmd Get Endpoint List Request Command structure
- * @param callback Callback function that will be invoked later when the response is received
- * @param arg Pointer to application data that will later be provided back to the callback functions when invoked
+ * @param callback Callback function that will be invoked when the response is received.
+ * @param arg Pointer to application data that will be included in the callback when invoked.
  * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
  */
 enum ZclStatusCodeT ZbZclTouchlinkInitiatorGetEpListReq(struct ZigBeeT *zb, struct ZbTlGetEpListReqCmd *cmd,
@@ -186,10 +212,11 @@ enum ZclStatusCodeT ZbZclTouchlinkInitiatorGetEpListReq(struct ZigBeeT *zb, stru
 /**
  * Sends a Touchlink Utility Endpoint Information Command
  * @param zb Zigbee stack instance
- * @param endpoint Endpoint identifier. Must match the endpoint already registered with Touchlink
- * through the ZbStartup configuration, otherwise an error is returned.
+ * @param endpoint Endpoint identifier. NOTE - This is dummy parameter with the latest updates to Touchlink
+ * and only retained to ensure the API is still compatible with the earlier version of Touchlink.
  * @param dst Destination address
- * @param callback Callback function that will be invoked later when the response is received
+ * @param callback Callback function that will be invoked when the response is received.
+ * @param arg Pointer to application data that will be included in the callback when invoked.
  * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
  */
 enum ZclStatusCodeT ZbZclTouchlinkTargetSendEpInfoCmd(struct ZigBeeT *zb, uint8_t endpoint,

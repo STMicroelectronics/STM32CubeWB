@@ -31,7 +31,7 @@
  * connections on a physical link should be disconnected before the ACL
  * connection on the same physical connection is disconnected.
  * See Core Specification [Vol 4, Part E, 7.1.6].
- * 
+ *
  * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
@@ -54,7 +54,7 @@ tBleStatus hci_disconnect( uint16_t Connection_Handle,
  * remote device identified by the Connection_Handle parameter. The
  * Connection_Handle must be a Connection_Handle for an ACL or LE connection.
  * See Core Specification [Vol 4, Part E, 7.1.23].
- * 
+ *
  * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
@@ -71,7 +71,7 @@ tBleStatus hci_read_remote_version_information( uint16_t Connection_Handle );
  * the LE Meta Event. The Host has to deal with each event that occurs. The
  * event mask allows the Host to control how much it is interrupted.
  * See Core Specification [Vol 4, Part E, 7.3.1].
- * 
+ *
  * @param Event_Mask Event mask. Default: 0x2000FFFFFFFFFFFF
  *        Flags:
  *        - 0x0000000000000000: No events specified
@@ -99,7 +99,7 @@ tBleStatus hci_set_event_mask( const uint8_t* Event_Mask );
  * The Host shall not send additional HCI commands before the Command Complete
  * event related to the Reset command has been received.
  * See Core Specification [Vol 4, Part E, 7.3.2].
- * 
+ *
  * @return Value indicating success or error code.
  */
 tBleStatus hci_reset( void );
@@ -110,7 +110,7 @@ tBleStatus hci_reset( void );
  * specified Connection_Handle. The Connection_Handle shall be a
  * Connection_Handle for an ACL connection.
  * See Core Specification [Vol 4, Part E, 7.3.35].
- * 
+ *
  * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
@@ -130,24 +130,12 @@ tBleStatus hci_read_transmit_power_level( uint16_t Connection_Handle,
 
 /**
  * @brief HCI_SET_CONTROLLER_TO_HOST_FLOW_CONTROL
- * This command is used by the Host to turn flow control on or off for data
- * and/or voice sent in the direction from the Controller to the Host. If flow
- * control is turned off, the Host should not send the
- * Host_Number_Of_Completed_Packets command. That command will be ignored by
- * the Controller if it is sent by the Host and flow control is off. If flow
- * control is turned on for HCI ACL Data Packets and off for HCI synchronous
- * Data Packets, Host_Number_Of_Completed_Packets commands sent by the Host
- * should only contain Connection_Handles for ACL connections. If flow control
- * is turned off for HCI ACL Data Packets and on for HCI synchronous Data
- * Packets, Host_Number_Of_Completed_Packets commands sent by the Host should
- * only contain Connection_Handles for synchronous connections. If flow control
- * is turned on for HCI ACL Data Packets and HCI synchronous Data Packets, the
- * Host will send Host_Number_Of_Completed_Packets commands both for ACL
- * connections and synchronous connections.
+ * This command is used by the Host to turn flow control on or off for ACL data
+ * sent in the direction from the Controller to the Host.
  * The Flow_Control_Enable parameter shall only be changed if no connections
  * exist.
  * See Core Specification [Vol 4, Part E, 7.3.38].
- * 
+ *
  * @param Flow_Control_Enable Enable/Disable the Flow Control
  *        Values:
  *        - 0x00: Flow control off in direction from Controller to Host.
@@ -155,50 +143,41 @@ tBleStatus hci_read_transmit_power_level( uint16_t Connection_Handle,
  *        - 0x01: Flow control on for HCI ACL Data Packets and off for HCI
  *          synchronous.Data Packets in direction from Controller to Host.
  *        - 0x02: Flow control off for HCI ACL Data Packets and on for HCI
- *          synchronous.Data Packets in direction from Controller to Host.
+ *          synchronous.Data Packets in direction from Controller to Host. Not
+ *          supported.
  *        - 0x03: Flow control on both for HCI ACL Data Packets and HCI
- *          synchronous.Data Packets in direction from Controller to Host.
+ *          synchronous.Data Packets in direction from Controller to Host. Not
+ *          supported.
  * @return Value indicating success or error code.
  */
 tBleStatus hci_set_controller_to_host_flow_control( uint8_t Flow_Control_Enable );
 
 /**
  * @brief HCI_HOST_BUFFER_SIZE
- * The Host_Buffer_Size command is used by the Host to notify the Controller
- * about the maximum size of the data portion of HCI ACL and synchronous Data
- * Packets sent from the Controller to the Host. The Controller shall segment
- * the data to be transmitted from the Controller to the Host according to
- * these sizes, so that the HCI Data Packets will contain data with up to these
- * sizes. The Host_Buffer_Size command also notifies the Controller about the
- * total number of HCI ACL and synchronous Data Packets that can be stored in
- * the data buffers of the Host. If flow control from the Controller to the
- * Host is turned off, and the Host_Buffer_Size command has not been issued by
- * the Host, this means that the Controller will send HCI Data Packets to the
- * Host with any lengths the Controller wants to use, and it is assumed that
- * the data buffer sizes of the Host are unlimited. If flow control from the
- * Controller to the Host is turned on, the Host_Buffer_Size command shall
- * after a power-on or a reset always be sent by the Host before the first
- * Host_Number_Of_Completed_Packets command is sent.
- * The Set Controller To Host Flow Control Command is used to turn flow control
- * on or off.
- * The Host_ACL_Data_Packet_Length command parameter will be used to determine
- * the size of the L2CAP segments contained in ACL Data Packets, which are
- * transferred from the Controller to the Host.
- * The Host_Synchronous_Data_Packet_Length command parameter is used to
- * determine the maximum size of HCI synchronous Data Packets. Both the Host
- * and the Controller shall support command and event packets, where the data
- * portion (excluding header) contained in the packets is 255 octets in size.
- * The Host_Total_Num_ACL_Data_Packets command parameter contains the total
- * number of HCI ACL Data Packets that can be stored in the data buffers of the
- * Host. The Controller will determine how the buffers are to be divided
- * between different Connection_Handles.
- * The Host_Total_Num_Synchronous_Data_Packets command parameter gives the same
- * information for HCI synchronous Data Packets.
- * Note: The Host_ACL_Data_Packet_Length and
- * Host_Synchronous_Data_Packet_Length command parameters do not include the
- * length of the HCI Data Packet header.
+ * This command notifies the Controller about the total number of HCI ACL Data
+ * Packets that can be stored in the data buffers of the Host. If flow control
+ * from the Controller to the Host is turned off, and this command has not been
+ * issued by the Host, it is assumed that the data buffer sizes of the Host are
+ * unlimited. If flow control from the Controller to the Host is turned on,
+ * this command shall after a power-on or a reset always be sent by the Host
+ * before the first HCI_HOST_NUMBER_OF_COMPLETED_PACKETS command is sent.
+ * The HCI_SET_CONTROLLER_TO_HOST_FLOW_CONTROL command is used to turn flow
+ * control on or off.
+ * The Host_ACL_Data_Packet_Length parameter will be used to determine the size
+ * of the L2CAP segments contained in ACL Data Packets, which are transferred
+ * from the Controller to the Host. Both the Host and the Controller shall
+ * support command and event packets, where the data portion (excluding header)
+ * contained in the packets is 255 octets in size.
+ * The Host_Total_Num_ACL_Data_Packets parameter contains the total number of
+ * HCI ACL Data Packets that can be stored in the data buffers of the Host. The
+ * Controller will determine how the buffers are to be divided between
+ * different Connection_Handles.
+ * The Host_Synchronous_Data_Packet_Length and
+ * Host_Total_Num_Synchronous_Data_Packets parameters are not used.
+ * Note: The Host_ACL_Data_Packet_Length parameter does not include the length
+ * of the HCI Data Packet header.
  * See Core Specification [Vol 4, Part E, 7.3.39].
- * 
+ *
  * @param Host_ACL_Data_Packet_Length Maximum length (in octets) of the data
  *        portion of each HCI ACL Data Packet that the Host is able to accept.
  *        Values:
@@ -222,41 +201,31 @@ tBleStatus hci_host_buffer_size( uint16_t Host_ACL_Data_Packet_Length,
 
 /**
  * @brief HCI_HOST_NUMBER_OF_COMPLETED_PACKETS
- * The Host_Number_Of_Completed_Packets command is used by the Host to indicate
- * to the Controller the number of HCI Data Packets that have been completed
- * for each Connection_Handle since the previous
- * Host_Number_Of_Completed_Packets command was sent to the Controller. This
- * means that the corresponding buffer space has been freed in the Host. Based
- * on this information, and the Host_Total_Num_ACL_Data_Packets and
- * Host_Total_Num_Synchronous_Data_Packets command parameters of the
- * Host_Buffer_Size command, the Controller can determine for which
- * Connection_Handles the following HCI Data Packets should be sent to the
- * Host. The command should only be issued by the Host if flow control in the
- * direction from the Controller to the Host is on and there is at least one
- * connection, or if the Controller is in local loopback mode. Otherwise, the
- * command will be ignored by the Controller. When the Host has completed one
- * or more HCI Data Packet(s) it shall send a Host_Number_Of_Completed_Packets
- * command to the Controller, until it finally reports that all pending HCI
- * Data Packets have been completed. The frequency at which this command is
- * sent is manufacturer specific.
- * The Set Controller To Host Flow Control Command is used to turn flow control
- * on or off. If flow control from the Controller to the Host is turned on, the
- * Host_Buffer_Size command shall always be sent by the Host after a power-on
- * or a reset before the first Host_Number_Of_Completed_Packets command is
- * sent.
- * Note: The Host_Number_Of_Completed_Packets command is a special command in
- * the sense that no event is normally generated after the command has
- * completed. The command may be sent at any time by the Host when there is at
- * least one connection, or if the Controller is in local loopback mode
- * independent of other commands. The normal flow control for commands is not
- * used for the Host_Number_Of_Completed_Packets command.
+ * This command is used by the Host to indicate to the Controller the number of
+ * HCI Data Packets that have been completed for each Connection_Handle since
+ * the previous HCI_HOST_NUMBER_OF_COMPLETED_PACKETS command was sent to the
+ * Controller. This means that the corresponding buffer space has been freed in
+ * the Host. Based on this information, and the Host_Total_Num_ACL_Data_Packets
+ * parameter of the HCI_HOST_BUFFER_SIZE command, the Controller can determine
+ * for which Connection_Handles the following HCI Data Packets should be sent
+ * to the Host. The command should only be issued by the Host if flow control
+ * in the direction from the Controller to the Host is on and there is at least
+ * one connection. Otherwise, the command will be ignored by the Controller.
+ * When the Host has completed one or more HCI Data Packet(s) it shall send a
+ * HCI_HOST_NUMBER_OF_COMPLETED_PACKETS command to the Controller, until it
+ * finally reports that all pending HCI Data Packets have been completed. The
+ * frequency at which this command is sent is manufacturer specific.
+ * Note: This command is a special command in the sense that no event is
+ * normally generated after the command has completed. The command may be sent
+ * at any time by the Host independent of other commands. The normal flow
+ * control for commands is not used for this command.
  * See Core Specification [Vol 4, Part E, 7.3.40].
- * 
+ *
  * @param Number_Of_Handles The number of Connection_Handles and
  *        Host_Num_Of_Completed_Packets parameters pairs contained in this
  *        command.
  *        Values:
- *        - 0 ... 255
+ *        - 0 ... 63
  * @param Host_Nb_Of_Completed_Pkt_Pair See @ref
  *        Host_Nb_Of_Completed_Pkt_Pair_t
  * @return Value indicating success or error code.
@@ -269,17 +238,22 @@ tBleStatus hci_host_number_of_completed_packets( uint8_t Number_Of_Handles,
  * This command reads the values for the version information for the local
  * Controller.
  * See Core Specification [Vol 4, Part E, 7.4.1].
- * 
+ *
  * @param[out] HCI_Version Version of the HCI Specification supported by the
  *        Controller. See Bluetooth Assigned Numbers.
  * @param[out] HCI_Subversion Revision of the HCI implementation in the
  *        Controller. This value is vendor-specific.
+ *        This parameter gives the BLE stack reduced version number.
  * @param[out] LMP_Version Version of the Current LMP supported by the
  *        Controller. See Bluetooth Assigned Numbers.
  * @param[out] Company_Identifier Company identifier for the manufacturer of
  *        the Controller. See Bluetooth Assigned Numbers.
+ *        Values:
+ *        - 0x0030: STMicroelectronics
  * @param[out] LMP_Subversion Subversion of the Current LMP in the Controller.
  *        This value is vendor-specific.
+ *        The most significant byte gives the HW version.
+ *        The least significant byte gives the FW version.
  * @return Value indicating success or error code.
  */
 tBleStatus hci_read_local_version_information( uint8_t* HCI_Version,
@@ -295,7 +269,7 @@ tBleStatus hci_read_local_version_information( uint8_t* HCI_Version,
  * parameter. It is implied that if a command is listed as supported, the
  * feature underlying that command is also supported.
  * See Core Specification [Vol 4, Part E, 7.4.2].
- * 
+ *
  * @param[out] Supported_Commands Bit mask for each HCI Command. If a bit is 1,
  *        the Controller supports the corresponding command and the features
  *        required for the command.
@@ -310,7 +284,7 @@ tBleStatus hci_read_local_supported_commands( uint8_t* Supported_Commands );
  * Controller. This command will return a list of the LMP features. For details
  * see Part C, Link Manager Protocol Specification.
  * See Core Specification [Vol 4, Part E, 7.4.3].
- * 
+ *
  * @param[out] LMP_Features Bit Mask List of LMP features.
  * @return Value indicating success or error code.
  */
@@ -320,7 +294,7 @@ tBleStatus hci_read_local_supported_features( uint8_t* LMP_Features );
  * @brief HCI_READ_BD_ADDR
  * On an LE Controller, this command shall read the Public Device Address.
  * See Core Specification [Vol 4, Part E, 7.4.6].
- * 
+ *
  * @param[out] BD_ADDR BD_ADDR (Bluetooth Device Address) of the device.
  * @return Value indicating success or error code.
  */
@@ -334,7 +308,7 @@ tBleStatus hci_read_bd_addr( uint8_t* BD_ADDR );
  * absolute receiver signal strength value in dBm to +/- 6 dB accuracy. If the
  * RSSI cannot be read, the RSSI metric shall be set to 127.
  * See Core Specification [Vol 4, Part E, 7.5.4].
- * 
+ *
  * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
@@ -359,7 +333,7 @@ tBleStatus hci_read_rssi( uint16_t Connection_Handle,
  * also be set. If that bit is not set, then LE events shall not be generated,
  * regardless of how the LE_Event_Mask is set.
  * See Core Specification [Vol 4, Part E, 7.8.1].
- * 
+ *
  * @param LE_Event_Mask LE event mask. Default: 0x000000C7FFF7F85F. Note that
  *        the BLE stack ignores the bits which represent events it does not
  *        support (according to its variant).
@@ -453,7 +427,7 @@ tBleStatus hci_le_set_event_mask( const uint8_t* LE_Event_Mask );
  * Note: The HC_LE_ACL_Data_Packet_Length return parameter does not include the
  * length of the HCI Data Packet header.
  * See Core Specification [Vol 4, Part E, 7.8.2].
- * 
+ *
  * @param[out] HC_LE_ACL_Data_Packet_Length Used to determine the maximum size
  *        of the L2CAP PDU segments that are contained in ACL data packets, and
  *        which are transferred from the Host to the Controller to be broken up
@@ -479,7 +453,7 @@ tBleStatus hci_le_read_buffer_size( uint16_t* HC_LE_ACL_Data_Packet_Length,
  * This command requests page 0 of the list of the supported LE features for
  * the Controller.
  * See Core Specification [Vol 4, Part E, 7.8.3].
- * 
+ *
  * @param[out] LE_Features Bit Mask List of page 0 of the supported LE
  *        features. See Core Specification [Vol 6, Part B, 4.6].
  * @return Value indicating success or error code.
@@ -491,7 +465,7 @@ tBleStatus hci_le_read_local_supported_features_page_0( uint8_t* LE_Features );
  * The LE_Set_Random_Address command is used by the Host to set the LE Random
  * Device Address in the Controller (see [Vol 6] Part B, Section 1.3).
  * See Core Specification [Vol 4, Part E, 7.8.4].
- * 
+ *
  * @param Random_Address Random Device Address.
  * @return Value indicating success or error code.
  */
@@ -529,7 +503,7 @@ tBleStatus hci_le_set_random_address( const uint8_t* Random_Address );
  * The Host shall not issue this command when advertising is enabled in the
  * Controller; if it is the Command Disallowed error code shall be used.
  * See Core Specification [Vol 4, Part E, 7.8.5].
- * 
+ *
  * @param Advertising_Interval_Min Minimum advertising interval.
  *        Time = N * 0.625 ms.
  *        Values:
@@ -593,7 +567,7 @@ tBleStatus hci_le_set_advertising_parameters( uint16_t Advertising_Interval_Min,
  * Host to read the transmit power level used for LE advertising physical
  * channel packets.
  * See Core Specification [Vol 4, Part E, 7.8.6].
- * 
+ *
  * @param[out] Transmit_Power_Level Size: 1 Octet (signed integer)
  *        Units: dBm
  *        Accuracy: +/- 4 dBm
@@ -610,7 +584,7 @@ tBleStatus hci_le_read_advertising_physical_channel_tx_power( uint8_t* Transmit_
  * Only the significant part of the Advertising_Data is transmitted in the
  * advertising packets, as defined in [Vol 3] Part C, Section 11.,
  * See Core Specification [Vol 4, Part E, 7.8.7].
- * 
+ *
  * @param Advertising_Data_Length The number of significant octets in the
  *        following data field
  * @param Advertising_Data 31 octets of data formatted as defined in [Vol 3]
@@ -627,7 +601,7 @@ tBleStatus hci_le_set_advertising_data( uint8_t Advertising_Data_Length,
  * Only the significant part of the Scan_Response_Data is transmitted in the
  * Scanning Packets, as defined in [Vol 3] Part C, Section 11.
  * See Core Specification [Vol 4, Part E, 7.8.8].
- * 
+ *
  * @param Scan_Response_Data_Length The number of significant octets in the
  *        following data field
  * @param Scan_Response_Data 31 octets of data formatted as defined in [Vol 3]
@@ -649,7 +623,7 @@ tBleStatus hci_le_set_scan_response_data( uint8_t Scan_Response_Data_Length,
  * Advertising is timed out due to high duty cycle Directed Advertising. In
  * these cases, advertising is then disabled.
  * See Core Specification [Vol 4, Part E, 7.8.9].
- * 
+ *
  * @param Advertising_Enable Enable/disable advertising.
  *        Values:
  *        - 0x00: Advertising is disabled
@@ -673,7 +647,7 @@ tBleStatus hci_le_set_advertising_enable( uint8_t Advertising_Enable );
  * The Host shall not issue this command when scanning is enabled in the
  * Controller; if it is the Command Disallowed error code shall be used.
  * See Core Specification [Vol 4, Part E, 7.8.10].
- * 
+ *
  * @param LE_Scan_Type Passive or active scanning. With passive scanning, no
  *        scan request PDUs are sent.
  *        Values:
@@ -731,7 +705,7 @@ tBleStatus hci_le_set_scan_parameters( uint8_t LE_Scan_Type,
  * duplicate advertising reports to the Host, or if the Link Layer should
  * generate advertising reports for each packet received.
  * See Core Specification [Vol 4, Part E, 7.8.11].
- * 
+ *
  * @param LE_Scan_Enable Enable/disable scan.
  *        Values:
  *        - 0x00: Scanning disabled
@@ -777,7 +751,7 @@ tBleStatus hci_le_set_scan_enable( uint8_t LE_Scan_Enable,
  * pending in the Controller; if this does occur the Controller shall return
  * the Command Disallowed error code shall be used.
  * See Core Specification [Vol 4, Part E, 7.8.12].
- * 
+ *
  * @param LE_Scan_Interval This is defined as the time interval from when the
  *        Controller started its last LE scan until it begins the subsequent LE
  *        scan.
@@ -864,7 +838,7 @@ tBleStatus hci_le_create_connection( uint16_t LE_Scan_Interval,
  * been received for the LE Create Connection command and before the LE
  * Connection Complete event.
  * See Core Specification [Vol 4, Part E, 7.8.13].
- * 
+ *
  * @return Value indicating success or error code.
  */
 tBleStatus hci_le_create_connection_cancel( void );
@@ -874,7 +848,7 @@ tBleStatus hci_le_create_connection_cancel( void );
  * This command is used to read the total number of Filter Accept List entries
  * that can be stored in the Controller.
  * See Core Specification [Vol 4, Part E, 7.8.14].
- * 
+ *
  * @param[out] Filter_Accept_List_Size Total number of Filter Accept List
  *        entries that can be stored in the Controller.
  * @return Value indicating success or error code.
@@ -894,7 +868,7 @@ tBleStatus hci_le_read_filter_accept_list_size( uint8_t* Filter_Accept_List_Size
  * HCI_LE_Create_Connection or HCI_LE_Extended_Create_Connection command is
  * pending.
  * See Core Specification [Vol 4, Part E, 7.8.15].
- * 
+ *
  * @return Value indicating success or error code.
  */
 tBleStatus hci_le_clear_filter_accept_list( void );
@@ -912,7 +886,7 @@ tBleStatus hci_le_clear_filter_accept_list( void );
  * HCI_LE_Create_Connection or HCI_LE_Extended_Create_Connection command is
  * pending.
  * See Core Specification [Vol 4, Part E, 7.8.16].
- * 
+ *
  * @param Address_Type Address type.
  *        Values:
  *        - 0x00: Public Device Address
@@ -937,7 +911,7 @@ tBleStatus hci_le_add_device_to_filter_accept_list( uint8_t Address_Type,
  * HCI_LE_Create_Connection or HCI_LE_Extended_Create_Connection command is
  * pending.
  * See Core Specification [Vol 4, Part E, 7.8.17].
- * 
+ *
  * @param Address_Type Address type.
  *        Values:
  *        - 0x00: Public Device Address
@@ -969,7 +943,7 @@ tBleStatus hci_le_remove_device_from_filter_accept_list( uint8_t Address_Type,
  * The actual parameter values selected by the Link Layer may be different from
  * the parameter values provided by the Host through this command.
  * See Core Specification [Vol 4, Part E, 7.8.18].
- * 
+ *
  * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
@@ -1024,7 +998,7 @@ tBleStatus hci_le_connection_update( uint16_t Connection_Handle,
  * This command shall only be used when the local device supports the Central
  * role.
  * See Core Specification [Vol 4, Part E, 7.8.19].
- * 
+ *
  * @param LE_Channel_Map This parameter contains 37 1-bit fields.
  *        The nth such field (in the range 0 to 36) contains the value for the
  *        link layer channel index n.
@@ -1045,7 +1019,7 @@ tBleStatus hci_le_set_host_channel_classification( const uint8_t* LE_Channel_Map
  * Connection_Handle, regardless of whether the Central has received an
  * acknowledgment.
  * See Core Specification [Vol 4, Part E, 7.8.20].
- * 
+ *
  * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
@@ -1067,7 +1041,7 @@ tBleStatus hci_le_read_channel_map( uint16_t Connection_Handle,
  * features supported by the remote device.
  * This command may be issued on both the Central and Peripheral.
  * See Core Specification [Vol 4, Part E, 7.8.21].
- * 
+ *
  * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
@@ -1083,7 +1057,7 @@ tBleStatus hci_le_read_remote_features_page_0( uint16_t Connection_Handle );
  * NIST Publication FIPS-197
  * (http://csrc.nist.gov/publications/fips/fips197/fips-197.pdf).
  * See Core Specification [Vol 4, Part E, 7.8.22].
- * 
+ *
  * @param Key 128 bit key for the encryption of the data given in the command.
  * @param Plaintext_Data 128 bit data block that is requested to be encrypted.
  * @param[out] Encrypted_Data 128 bit encrypted data block.
@@ -1100,7 +1074,7 @@ tBleStatus hci_le_encrypt( const uint8_t* Key,
  * according to [Vol 2] Part H, Section 2 if the LE Feature (LL Encryption) is
  * supported.
  * See Core Specification [Vol 4, Part E, 7.8.23].
- * 
+ *
  * @param[out] Random_Number Random Number
  * @return Value indicating success or error code.
  */
@@ -1121,7 +1095,7 @@ tBleStatus hci_le_rand( uint8_t* Random_Number );
  * connection shall be encrypted.
  * This command shall only be used when the local device's role is Central.
  * See Core Specification [Vol 4, Part E, 7.8.24].
- * 
+ *
  * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
@@ -1142,7 +1116,7 @@ tBleStatus hci_le_enable_encryption( uint16_t Connection_Handle,
  * parameter that shall be used for this Connection_Handle. The Long_Term_Key
  * is used as defined in [Vol 6] Part B, Section 5.1.3.
  * See Core Specification [Vol 4, Part E, 7.8.25].
- * 
+ *
  * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
@@ -1158,7 +1132,7 @@ tBleStatus hci_le_long_term_key_request_reply( uint16_t Connection_Handle,
  * LE Long Term Key Request event from the Controller if the Host cannot
  * provide a Long Term Key for this Connection_Handle.
  * See Core Specification [Vol 4, Part E, 7.8.26].
- * 
+ *
  * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
@@ -1180,7 +1154,7 @@ tBleStatus hci_le_long_term_key_request_negative_reply( uint16_t Connection_Hand
  * All the Scanning types and the Initiate State combinations shall be set only
  * if the corresponding Scanning types and Central role combination are set.
  * See Core Specification [Vol 4, Part E, 7.8.27].
- * 
+ *
  * @param[out] LE_States State or state combination is supported by the
  *        Controller.
  * @return Value indicating success or error code.
@@ -1193,7 +1167,7 @@ tBleStatus hci_le_read_supported_states( uint8_t* LE_States );
  * packets at a fixed interval. The tester generates the test reference
  * packets.
  * See Core Specification [Vol 4, Part E, 7.8.28].
- * 
+ *
  * @param RX_Frequency N = (F - 2402) / 2
  *        Frequency Range : 2402 MHz to 2480 MHz
  *        Values:
@@ -1207,7 +1181,7 @@ tBleStatus hci_le_receiver_test( uint8_t RX_Frequency );
  * This command is used to start a test where the DUT generates test reference
  * packets at a fixed interval.
  * See Core Specification [Vol 4, Part E, 7.8.29].
- * 
+ *
  * @param TX_Frequency N = (F - 2402) / 2
  *        Frequency Range : 2402 MHz to 2480 MHz
  *        Values:
@@ -1239,7 +1213,7 @@ tBleStatus hci_le_transmitter_test( uint8_t TX_Frequency,
  * Number_Of_Packets is an unsigned number and contains the number of received
  * packets.
  * See Core Specification [Vol 4, Part E, 7.8.30].
- * 
+ *
  * @param[out] Number_Of_Packets Number of packets received
  * @return Value indicating success or error code.
  */
@@ -1253,7 +1227,7 @@ tBleStatus hci_le_test_end( uint16_t* Number_Of_Packets );
  * 4.5.10]) to be used for a given connection. The Controller may use smaller
  * or larger values based on local information.
  * See Core Specification [Vol 4, Part E, 7.8.33].
- * 
+ *
  * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
@@ -1280,7 +1254,7 @@ tBleStatus hci_le_set_data_length( uint16_t Connection_Handle,
  * transmitted number of payload octets and maximum packet transmission time to
  * be used for new connections.
  * See Core Specification [Vol 4, Part E, 7.8.34].
- * 
+ *
  * @param[out] SuggestedMaxTxOctets The Host's suggested value for the
  *        Controller's maximum transmitted number of payload octets to be used
  *        for new connections.
@@ -1304,7 +1278,7 @@ tBleStatus hci_le_read_suggested_default_data_length( uint16_t* SuggestedMaxTxOc
  * use smaller or larger values for connInitialMaxTxOctets and
  * connInitialMaxTxTime based on local information.
  * See Core Specification [Vol 4, Part E, 7.8.35].
- * 
+ *
  * @param SuggestedMaxTxOctets The Host's suggested value for the Controller's
  *        maximum transmitted number of payload octets to be used for new
  *        connections.
@@ -1325,7 +1299,7 @@ tBleStatus hci_le_write_suggested_default_data_length( uint16_t SuggestedMaxTxOc
  * Controller. The Controller shall generate a new P-256 public/private key
  * pair upon receipt of this command.
  * See Core Specification [Vol 4, Part E, 7.8.36].
- * 
+ *
  * @return Value indicating success or error code.
  */
 tBleStatus hci_le_read_local_p256_public_key( void );
@@ -1337,7 +1311,7 @@ tBleStatus hci_le_read_local_p256_public_key( void );
  * P-256 public key as input. The Diffie-Hellman key generation uses the
  * private key generated by LE_Read_Local_P256_Public_Key command.
  * See Core Specification [Vol 4, Part E, 7.8.37].
- * 
+ *
  * @param Remote_P256_Public_Key The remote P-256 public key in X, Y format:
  *        Octets 31-0: X coordinate
  *        Octets 63-32: Y coordinate
@@ -1360,7 +1334,7 @@ tBleStatus hci_le_generate_dhkey( const uint8_t* Remote_P256_Public_Key );
  * When a Controller cannot add a device to the resolving list because the list
  * is full, it shall respond with error code 0x07 (Memory Capacity Exceeded).
  * See Core Specification [Vol 4, Part E, 7.8.38].
- * 
+ *
  * @param Peer_Identity_Address_Type Identity address type
  *        Values:
  *        - 0x00: Public Identity Address
@@ -1391,7 +1365,7 @@ tBleStatus hci_le_add_device_to_resolving_list( uint8_t Peer_Identity_Address_Ty
  * is not found, it shall respond with error code 0x02 (Unknown Connection
  * Identifier).
  * See Core Specification [Vol 4, Part E, 7.8.39].
- * 
+ *
  * @param Peer_Identity_Address_Type Identity address type
  *        Values:
  *        - 0x00: Public Identity Address
@@ -1415,7 +1389,7 @@ tBleStatus hci_le_remove_device_from_resolving_list( uint8_t Peer_Identity_Addre
  * This command can be used at any time when address translation is disabled in
  * the Controller.
  * See Core Specification [Vol 4, Part E, 7.8.40].
- * 
+ *
  * @return Value indicating success or error code.
  */
 tBleStatus hci_le_clear_resolving_list( void );
@@ -1425,7 +1399,7 @@ tBleStatus hci_le_clear_resolving_list( void );
  * This command is used to read the total number of address translation entries
  * in the resolving list that can be stored in the Controller.
  * See Core Specification [Vol 4, Part E, 7.8.41].
- * 
+ *
  * @param[out] Resolving_List_Size Number of address translation entries in the
  *        resolving list
  * @return Value indicating success or error code.
@@ -1443,7 +1417,7 @@ tBleStatus hci_le_read_resolving_list_size( uint8_t* Resolving_List_Size );
  * the Peer Identity Address, it shall respond with error code 0x02 (Unknown
  * Connection Identifier).
  * See Core Specification [Vol 4, Part E, 7.8.42].
- * 
+ *
  * @param Peer_Identity_Address_Type Identity address type
  *        Values:
  *        - 0x00: Public Identity Address
@@ -1468,7 +1442,7 @@ tBleStatus hci_le_read_peer_resolvable_address( uint8_t Peer_Identity_Address_Ty
  * the Peer Identity Address, it shall respond with error code 0x02 (Unknown
  * Connection Identifier).
  * See Core Specification [Vol 4, Part E, 7.8.43].
- * 
+ *
  * @param Peer_Identity_Address_Type Identity address type
  *        Values:
  *        - 0x00: Public Identity Address
@@ -1493,7 +1467,7 @@ tBleStatus hci_le_read_local_resolvable_address( uint8_t Peer_Identity_Address_T
  * - Scanning is enabled
  * - Create connection command is outstanding
  * See Core Specification [Vol 4, Part E, 7.8.44].
- * 
+ *
  * @param Address_Resolution_Enable Enable/disable address resolution in the
  *        controller.
  *        0x00: Address Resolution in controller disabled (default),
@@ -1512,7 +1486,7 @@ tBleStatus hci_le_set_address_resolution_enable( uint8_t Address_Resolution_Enab
  * starts being used. This timeout applies to all resolvable private addresses
  * generated by the Controller.
  * See Core Specification [Vol 4, Part E, 7.8.45].
- * 
+ *
  * @param RPA_Timeout RPA_Timeout in seconds.
  *        Time range: 1 s to 1 hour.
  *        Default: 0x0384 (900 s or 15 minutes)
@@ -1529,7 +1503,7 @@ tBleStatus hci_le_set_resolvable_private_address_timeout( uint16_t RPA_Timeout )
  * (supportedMaxTxOctets and supportedMaxTxTime, supportedMaxRxOctets, and
  * supportedMaxRxTime.
  * See Core Specification [Vol 4, Part E, 7.8.46].
- * 
+ *
  * @param[out] supportedMaxTxOctets Maximum number of payload octets that the
  *        local Controller supports for transmission of a single Link Layer
  *        packet on a data connection.
@@ -1562,7 +1536,7 @@ tBleStatus hci_le_read_maximum_data_length( uint16_t* supportedMaxTxOctets,
  * This command is used to read the current transmitter PHY and receiver PHY on
  * the connection identified by the Connection_Handle.
  * See Core Specification [Vol 4, Part E, 7.8.47].
- * 
+ *
  * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
@@ -1599,7 +1573,7 @@ tBleStatus hci_le_read_phy( uint16_t Connection_Handle,
  * that the Host has no preference, the RX_PHYS parameter is ignored; otherwise
  * at least one bit shall be set to 1.
  * See Core Specification [Vol 4, Part E, 7.8.48].
- * 
+ *
  * @param ALL_PHYS Preferences for TX PHY and RX PHY.
  *        Flags:
  *        - 0x01: The Host has no preference among the transmitter PHYs
@@ -1656,7 +1630,7 @@ tBleStatus hci_le_set_default_phy( uint8_t ALL_PHYS,
  * The Host may specify a preferred coding even if it prefers not to use the LE
  * Coded transmitter PHY since the Controller may override the PHY preference.
  * See Core Specification [Vol 4, Part E, 7.8.49].
- * 
+ *
  * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
@@ -1700,7 +1674,7 @@ tBleStatus hci_le_set_phy( uint16_t Connection_Handle,
  * packets at a fixed interval. The tester generates the test reference
  * packets.
  * See Core Specification [Vol 4, Part E, 7.8.28].
- * 
+ *
  * @param RX_Frequency N = (F - 2402) / 2
  *        Frequency Range : 2402 MHz to 2480 MHz
  *        Values:
@@ -1724,7 +1698,7 @@ tBleStatus hci_le_receiver_test_v2( uint8_t RX_Frequency,
  * This command is used to start a test where the DUT generates test reference
  * packets at a fixed interval.
  * See Core Specification [Vol 4, Part E, 7.8.29].
- * 
+ *
  * @param TX_Frequency N = (F - 2402) / 2
  *        Frequency Range : 2402 MHz to 2480 MHz
  *        Values:
@@ -1759,7 +1733,7 @@ tBleStatus hci_le_transmitter_test_v2( uint8_t TX_Frequency,
  * This command is used by the Host to set the random device address specified
  * by the Random_Address parameter.
  * See Core Specification [Vol 4, Part E, 7.8.52].
- * 
+ *
  * @param Advertising_Handle Used to identify an advertising set.
  *        Values:
  *        - 0x00 ... 0xEF
@@ -1773,7 +1747,7 @@ tBleStatus hci_le_set_advertising_set_random_address( uint8_t Advertising_Handle
  * @brief HCI_LE_SET_EXTENDED_ADVERTISING_PARAMETERS
  * This command is used by the Host to set the extended advertising parameters.
  * See Core Specification [Vol 4, Part E, 7.8.53].
- * 
+ *
  * @param Advertising_Handle Used to identify an advertising set.
  *        Values:
  *        - 0x00 ... 0xEF
@@ -1877,7 +1851,7 @@ tBleStatus hci_le_set_extended_advertising_parameters( uint8_t Advertising_Handl
  * This command is used to set the data used in extended advertising PDUs that
  * have a data field.
  * See Core Specification [Vol 4, Part E, 7.8.54].
- * 
+ *
  * @param Advertising_Handle Used to identify an advertising set.
  *        Values:
  *        - 0x00 ... 0xEF
@@ -1909,7 +1883,7 @@ tBleStatus hci_le_set_extended_advertising_data( uint8_t Advertising_Handle,
  * This command is used to provide scan response data used in scanning response
  * PDUs during extended advertising.
  * See Core Specification [Vol 4, Part E, 7.8.55].
- * 
+ *
  * @param Advertising_Handle Used to identify an advertising set.
  *        Values:
  *        - 0x00 ... 0xEF
@@ -1941,7 +1915,7 @@ tBleStatus hci_le_set_extended_scan_response_data( uint8_t Advertising_Handle,
  * more advertising sets using the advertising sets identified by the
  * Advertising_Handle[i] parameter.
  * See Core Specification [Vol 4, Part E, 7.8.56].
- * 
+ *
  * @param Enable Enable/disable advertising.
  *        Values:
  *        - 0x00: Advertising is disabled
@@ -1963,7 +1937,7 @@ tBleStatus hci_le_set_extended_advertising_enable( uint8_t Enable,
  * Controller for use as advertisement data or scan response data in an
  * extended advertising event.
  * See Core Specification [Vol 4, Part E, 7.8.57].
- * 
+ *
  * @param[out] Max_Advertising_Data_Length Maximum supported advertising data
  *        length.
  *        Values:
@@ -1977,7 +1951,7 @@ tBleStatus hci_le_read_maximum_advertising_data_length( uint16_t* Max_Advertisin
  * This command is used to read the maximum number of advertising sets
  * supported by the Controller at the same time during extended advertising.
  * See Core Specification [Vol 4, Part E, 7.8.58].
- * 
+ *
  * @param[out] Num_Supported_Advertising_Sets Number of advertising sets
  *        supported at the same time.
  *        Values:
@@ -1990,7 +1964,7 @@ tBleStatus hci_le_read_number_of_supported_advertising_sets( uint8_t* Num_Suppor
  * @brief HCI_LE_REMOVE_ADVERTISING_SET
  * This command is used to remove an advertising set from the Controller.
  * See Core Specification [Vol 4, Part E, 7.8.59].
- * 
+ *
  * @param Advertising_Handle Used to identify an advertising set.
  *        Values:
  *        - 0x00 ... 0xEF
@@ -2003,7 +1977,7 @@ tBleStatus hci_le_remove_advertising_set( uint8_t Advertising_Handle );
  * This command is used to remove all existing advertising sets from the
  * Controller.
  * See Core Specification [Vol 4, Part E, 7.8.60].
- * 
+ *
  * @return Value indicating success or error code.
  */
 tBleStatus hci_le_clear_advertising_sets( void );
@@ -2013,7 +1987,7 @@ tBleStatus hci_le_clear_advertising_sets( void );
  * This command is used to set the extended scan parameters to be used on the
  * advertising physical channels.
  * See Core Specification [Vol 4, Part E, 7.8.64].
- * 
+ *
  * @param Own_Address_Type Own address type.
  *        Values:
  *        - 0x00: Public Device Address
@@ -2054,7 +2028,7 @@ tBleStatus hci_le_set_extended_scan_parameters( uint8_t Own_Address_Type,
  * @brief HCI_LE_SET_EXTENDED_SCAN_ENABLE
  * This command is used to enable or disable extended scanning.
  * See Core Specification [Vol 4, Part E, 7.8.65].
- * 
+ *
  * @param Enable Enable/disable scan.
  *        Values:
  *        - 0x00: Scanning disabled
@@ -2088,7 +2062,7 @@ tBleStatus hci_le_set_extended_scan_enable( uint8_t Enable,
  * This command is used to create an ACL connection to a connectable advertiser
  * by means of extended scanning.
  * See Core Specification [Vol 4, Part E, 7.8.66].
- * 
+ *
  * @param Initiator_Filter_Policy Initiator filter policy.
  *        Values:
  *        - 0x00: Filter Accept List is not used to determine which advertiser
@@ -2130,7 +2104,7 @@ tBleStatus hci_le_extended_create_connection( uint8_t Initiator_Filter_Policy,
  * This command is used to read the minimum and maximum transmit powers
  * supported by the Controller.
  * See Core Specification [Vol 4, Part E, 7.8.74].
- * 
+ *
  * @param[out] Min_TX_Power Signed integer.
  *        Units: dBm.
  *        Values:
@@ -2149,7 +2123,7 @@ tBleStatus hci_le_read_transmit_power( uint8_t* Min_TX_Power,
  * This command is used to read the RF path compensation value parameters used
  * in the Tx power level and RSSI calculation.
  * See Core Specification [Vol 4, Part E, 7.8.75].
- * 
+ *
  * @param[out] RF_TX_Path_Compensation RF TX Path Compensation Value (16-bit
  *        signed integer).
  *        Units: 0.1 dB.
@@ -2172,7 +2146,7 @@ tBleStatus hci_le_read_rf_path_compensation( uint16_t* RF_TX_Path_Compensation,
  * positive value means a net RF path gain and a negative value means a net RF
  * path loss.
  * See Core Specification [Vol 4, Part E, 7.8.76].
- * 
+ *
  * @param RF_TX_Path_Compensation RF TX Path Compensation Value (16-bit signed
  *        integer).
  *        Units: 0.1 dB.
@@ -2193,7 +2167,7 @@ tBleStatus hci_le_write_rf_path_compensation( uint16_t RF_TX_Path_Compensation,
  * This command is used to allow the Host to specify the privacy mode to be
  * used for a given entry on the resolving list.
  * See Core Specification [Vol 4, Part E, 7.8.77].
- * 
+ *
  * @param Peer_Identity_Address_Type Identity address type
  *        Values:
  *        - 0x00: Public Identity Address
@@ -2218,7 +2192,7 @@ tBleStatus hci_le_set_privacy_mode( uint8_t Peer_Identity_Address_Type,
  * private key generated by the HCI_LE_Read_Local_P-256_Public_Key command or
  * the private debug key.
  * See Core Specification [Vol 4, Part E, 7.8.37].
- * 
+ *
  * @param Remote_P256_Public_Key The remote P-256 public key in X, Y format:
  *        Octets 31-0: X coordinate
  *        Octets 63-32: Y coordinate
@@ -2243,7 +2217,7 @@ tBleStatus hci_le_generate_dhkey_v2( const uint8_t* Remote_P256_Public_Key,
  * expires), the new timeout is set as a random value between RPA_Timeout_Min
  * and RPA_Timeout_Max.
  * See Core Specification [Vol 4, Part E, 7.8.45].
- * 
+ *
  * @param RPA_Timeout_Min Minimum RPA timeout, in seconds.
  *        Time range: 1 s to 1 hour.
  *        Default: 0x01E0 (480 s or 8 minutes)

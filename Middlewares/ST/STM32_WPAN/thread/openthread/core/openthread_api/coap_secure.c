@@ -461,9 +461,10 @@ void otCoapSecureRemoveResource(otInstance *aInstance, otCoapResource *aResource
   Post_OtCmdProcessing();
 }
 
-void otCoapSecureSetClientConnectedCallback(otInstance *                    aInstance,
-                                            otHandleCoapSecureClientConnect aHandler,
-                                            void *                          aContext)
+/* OT 1.4 Prototype changed, before otCoapSecureSetClientConnectedCallback, after otCoapSecureSetClientConnectEventCallback */
+void otCoapSecureSetClientConnectEventCallback(otInstance *                    aInstance,
+                                               otHandleCoapSecureClientConnect aHandler,
+                                               void *                          aContext)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */

@@ -29,22 +29,11 @@
 /**
  * @file
  *   This file implements common methods for manipulating MeshCoP Datasets.
- *
  */
 
 #include "dataset.hpp"
 
-#include <stdio.h>
-
-#include "common/code_utils.hpp"
-#include "common/encoding.hpp"
-#include "common/locator_getters.hpp"
-#include "common/log.hpp"
 #include "instance/instance.hpp"
-#include "mac/mac_types.hpp"
-#include "meshcop/meshcop_tlvs.hpp"
-#include "meshcop/timestamp.hpp"
-#include "thread/mle_tlvs.hpp"
 
 namespace ot {
 namespace MeshCoP {
@@ -76,6 +65,7 @@ Error Dataset::Info::GenerateRandom(Instance &aInstance)
     mActiveTimestamp.mAuthoritative = false;
     mChannel                        = preferredChannels.ChooseRandomChannel();
     mChannelMask                    = supportedChannels.GetMask();
+    mWakeupChannel                  = supportedChannels.ChooseRandomChannel();
     mPanId                          = Mac::GenerateRandomPanId();
     AsCoreType(&mSecurityPolicy).SetToDefault();
 
@@ -93,6 +83,7 @@ Error Dataset::Info::GenerateRandom(Instance &aInstance)
     mComponents.mIsMeshLocalPrefixPresent = true;
     mComponents.mIsPanIdPresent           = true;
     mComponents.mIsChannelPresent         = true;
+    mComponents.mIsWakeupChannelPresent   = true;
     mComponents.mIsPskcPresent            = true;
     mComponents.mIsSecurityPolicyPresent  = true;
     mComponents.mIsChannelMaskPresent     = true;
@@ -139,6 +130,15 @@ bool Dataset::IsTlvValid(const Tlv &aTlv)
 
     switch (aTlv.GetType())
     {
+    case Tlv::kActiveTimestamp:
+        minLength = sizeof(ActiveTimestampTlv::ValueType);
+        break;
+    case Tlv::kPendingTimestamp:
+        minLength = sizeof(PendingTimestampTlv::ValueType);
+        break;
+    case Tlv::kDelayTimer:
+        minLength = sizeof(DelayTimerTlv::UintValueType);
+        break;
     case Tlv::kPanId:
         minLength = sizeof(PanIdTlv::UintValueType);
         break;
@@ -157,6 +157,10 @@ bool Dataset::IsTlvValid(const Tlv &aTlv)
     case Tlv::kChannel:
         VerifyOrExit(aTlv.GetLength() >= sizeof(ChannelTlvValue), isValid = false);
         isValid = aTlv.ReadValueAs<ChannelTlv>().IsValid();
+        break;
+    case Tlv::kWakeupChannel:
+        VerifyOrExit(aTlv.GetLength() >= sizeof(ChannelTlvValue), isValid = false);
+        isValid = aTlv.ReadValueAs<WakeupChannelTlv>().IsValid();
         break;
     case Tlv::kNetworkName:
         isValid = As<NetworkNameTlv>(aTlv).IsValid();
@@ -243,6 +247,10 @@ void Dataset::ConvertTo(Info &aDatasetInfo) const
 
         case Tlv::kChannel:
             aDatasetInfo.Set<kChannel>(cur->ReadValueAs<ChannelTlv>().GetChannel());
+            break;
+
+        case Tlv::kWakeupChannel:
+            aDatasetInfo.Set<kWakeupChannel>(cur->ReadValueAs<WakeupChannelTlv>().GetChannel());
             break;
 
         case Tlv::kChannelMask:
@@ -337,14 +345,14 @@ void Dataset::SetFrom(const Info &aDatasetInfo)
     // `mUpdateTime` is already set by `WriteTlvsFrom()`.
 }
 
-Error Dataset::SetFrom(const Message &aMessage, uint16_t aOffset, uint16_t aLength)
+Error Dataset::SetFrom(const Message &aMessage, const OffsetRange &aOffsetRange)
 {
     Error error = kErrorNone;
 
-    VerifyOrExit(aLength <= kMaxLength, error = kErrorInvalidArgs);
+    VerifyOrExit(aOffsetRange.GetLength() <= kMaxLength, error = kErrorInvalidArgs);
 
-    SuccessOrExit(error = aMessage.Read(aOffset, mTlvs, aLength));
-    mLength = static_cast<uint8_t>(aLength);
+    SuccessOrExit(error = aMessage.Read(aOffsetRange, mTlvs, aOffsetRange.GetLength()));
+    mLength = static_cast<uint8_t>(aOffsetRange.GetLength());
 
     mUpdateTime = TimerMilli::GetNow();
 
@@ -441,6 +449,14 @@ Error Dataset::WriteTlvsFrom(const Dataset::Info &aDatasetInfo)
 
         channelValue.SetChannelAndPage(aDatasetInfo.Get<kChannel>());
         SuccessOrExit(error = Write<ChannelTlv>(channelValue));
+    }
+
+    if (aDatasetInfo.IsPresent<kWakeupChannel>())
+    {
+        ChannelTlvValue channelValue;
+
+        channelValue.SetChannelAndPage(aDatasetInfo.Get<kWakeupChannel>());
+        SuccessOrExit(error = Write<WakeupChannelTlv>(channelValue));
     }
 
     if (aDatasetInfo.IsPresent<kChannelMask>())
@@ -575,46 +591,6 @@ exit:
 }
 
 const char *Dataset::TypeToString(Type aType) { return (aType == kActive) ? "Active" : "Pending"; }
-
-#if OPENTHREAD_CONFIG_PLATFORM_KEY_REFERENCES_ENABLE
-
-void Dataset::SaveTlvInSecureStorageAndClearValue(Tlv::Type aTlvType, Crypto::Storage::KeyRef aKeyRef)
-{
-    using namespace ot::Crypto::Storage;
-
-    Tlv *tlv = FindTlv(aTlvType);
-
-    VerifyOrExit(tlv != nullptr);
-    VerifyOrExit(tlv->GetLength() > 0);
-
-    SuccessOrAssert(ImportKey(aKeyRef, kKeyTypeRaw, kKeyAlgorithmVendor, kUsageExport, kTypePersistent, tlv->GetValue(),
-                              tlv->GetLength()));
-
-    memset(tlv->GetValue(), 0, tlv->GetLength());
-
-exit:
-    return;
-}
-
-Error Dataset::ReadTlvFromSecureStorage(Tlv::Type aTlvType, Crypto::Storage::KeyRef aKeyRef)
-{
-    using namespace ot::Crypto::Storage;
-
-    Error  error = kErrorNone;
-    Tlv   *tlv   = FindTlv(aTlvType);
-    size_t readLength;
-
-    VerifyOrExit(tlv != nullptr);
-    VerifyOrExit(tlv->GetLength() > 0);
-
-    SuccessOrExit(error = ExportKey(aKeyRef, tlv->GetValue(), tlv->GetLength(), readLength));
-    VerifyOrExit(readLength == tlv->GetLength(), error = OT_ERROR_FAILED);
-
-exit:
-    return error;
-}
-
-#endif // OPENTHREAD_CONFIG_PLATFORM_KEY_REFERENCES_ENABLE
 
 } // namespace MeshCoP
 } // namespace ot

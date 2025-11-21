@@ -596,4 +596,94 @@ otError otDnsServiceResponseGetHostAddress(const otDnsServiceResponse *aResponse
 
 #endif // OPENTHREAD_CONFIG_DNS_CLIENT_SERVICE_DISCOVERY_ENABLE
 
+otError otDnsClientQueryRecord(otInstance             *aInstance,
+                               uint16_t                aRecordType,
+                               const char             *aFirstLabel,
+                               const char             *aNextLabels,
+                               otDnsRecordCallback     aCallback,
+                               void                   *aContext,
+                               const otDnsQueryConfig *aConfig)
+{
+  otError rspData;
+  
+  Pre_OtCmdProcessing();
+
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4ToM0_OT_DNS_CLIENT_QUERY_RECORD;
+
+  p_ot_req->Size=6;
+  p_ot_req->Data[0] = (uint32_t) aRecordType;
+  p_ot_req->Data[1] = (uint32_t) aFirstLabel;
+  p_ot_req->Data[2] = (uint32_t) aNextLabels;
+  p_ot_req->Data[3] = (uint32_t) aCallback;
+  p_ot_req->Data[4] = (uint32_t) aContext;
+  p_ot_req->Data[5] = (uint32_t) aConfig;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
+}
+
+otError otDnsRecordResponseGetQueryName(const otDnsRecordResponse *aResponse,
+                                        char                      *aNameBuffer,
+                                        uint16_t                   aNameBufferSize)
+{
+  otError rspData;
+  
+  Pre_OtCmdProcessing();
+
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4ToM0_OT_DNS_RECORD_RESPONSE_GET_QUERY_NAME;
+
+  p_ot_req->Size=3;
+  p_ot_req->Data[0] = (uint32_t) aResponse;
+  p_ot_req->Data[1] = (uint32_t) aNameBuffer;
+  p_ot_req->Data[2] = (uint32_t) aNameBufferSize;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
+}
+
+otError otDnsRecordResponseGetRecordInfo(const otDnsRecordResponse *aResponse,
+                                         uint16_t                   aIndex,
+                                         otDnsRecordInfo           *aRecordInfo)
+{
+  otError rspData;
+  
+  Pre_OtCmdProcessing();
+
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4ToM0_OT_DNS_RECORD_RESPONSE_GET_RECORD_INFO;
+
+  p_ot_req->Size=3;
+  p_ot_req->Data[0] = (uint32_t) aResponse;
+  p_ot_req->Data[1] = (uint32_t) aIndex;
+  p_ot_req->Data[2] = (uint32_t) aRecordInfo;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
+}
 #endif // OPENTHREAD_CONFIG_DNS_CLIENT_ENABLE

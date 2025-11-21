@@ -56,7 +56,6 @@ namespace NetworkDiagnostic {
 
 /**
  * Implements Network Diagnostic TLV generation and parsing.
- *
  */
 OT_TOOL_PACKED_BEGIN
 class Tlv : public ot::Tlv
@@ -64,68 +63,64 @@ class Tlv : public ot::Tlv
 public:
     /**
      * Network Diagnostic TLV Types.
-     *
      */
     enum Type : uint8_t
     {
-        kExtMacAddress       = OT_NETWORK_DIAGNOSTIC_TLV_EXT_ADDRESS,
-        kAddress16           = OT_NETWORK_DIAGNOSTIC_TLV_SHORT_ADDRESS,
-        kMode                = OT_NETWORK_DIAGNOSTIC_TLV_MODE,
-        kTimeout             = OT_NETWORK_DIAGNOSTIC_TLV_TIMEOUT,
-        kConnectivity        = OT_NETWORK_DIAGNOSTIC_TLV_CONNECTIVITY,
-        kRoute               = OT_NETWORK_DIAGNOSTIC_TLV_ROUTE,
-        kLeaderData          = OT_NETWORK_DIAGNOSTIC_TLV_LEADER_DATA,
-        kNetworkData         = OT_NETWORK_DIAGNOSTIC_TLV_NETWORK_DATA,
-        kIp6AddressList      = OT_NETWORK_DIAGNOSTIC_TLV_IP6_ADDR_LIST,
-        kMacCounters         = OT_NETWORK_DIAGNOSTIC_TLV_MAC_COUNTERS,
-        kBatteryLevel        = OT_NETWORK_DIAGNOSTIC_TLV_BATTERY_LEVEL,
-        kSupplyVoltage       = OT_NETWORK_DIAGNOSTIC_TLV_SUPPLY_VOLTAGE,
-        kChildTable          = OT_NETWORK_DIAGNOSTIC_TLV_CHILD_TABLE,
-        kChannelPages        = OT_NETWORK_DIAGNOSTIC_TLV_CHANNEL_PAGES,
-        kTypeList            = OT_NETWORK_DIAGNOSTIC_TLV_TYPE_LIST,
-        kMaxChildTimeout     = OT_NETWORK_DIAGNOSTIC_TLV_MAX_CHILD_TIMEOUT,
-        kEui64               = OT_NETWORK_DIAGNOSTIC_TLV_EUI64,
-        kVersion             = OT_NETWORK_DIAGNOSTIC_TLV_VERSION,
-        kVendorName          = OT_NETWORK_DIAGNOSTIC_TLV_VENDOR_NAME,
-        kVendorModel         = OT_NETWORK_DIAGNOSTIC_TLV_VENDOR_MODEL,
-        kVendorSwVersion     = OT_NETWORK_DIAGNOSTIC_TLV_VENDOR_SW_VERSION,
-        kThreadStackVersion  = OT_NETWORK_DIAGNOSTIC_TLV_THREAD_STACK_VERSION,
-        kChild               = OT_NETWORK_DIAGNOSTIC_TLV_CHILD,
-        kChildIp6AddressList = OT_NETWORK_DIAGNOSTIC_TLV_CHILD_IP6_ADDR_LIST,
-        kRouterNeighbor      = OT_NETWORK_DIAGNOSTIC_TLV_ROUTER_NEIGHBOR,
-        kAnswer              = OT_NETWORK_DIAGNOSTIC_TLV_ANSWER,
-        kQueryId             = OT_NETWORK_DIAGNOSTIC_TLV_QUERY_ID,
-        kMleCounters         = OT_NETWORK_DIAGNOSTIC_TLV_MLE_COUNTERS,
-        kVendorAppUrl        = OT_NETWORK_DIAGNOSTIC_TLV_VENDOR_APP_URL,
+        kExtMacAddress        = OT_NETWORK_DIAGNOSTIC_TLV_EXT_ADDRESS,
+        kAddress16            = OT_NETWORK_DIAGNOSTIC_TLV_SHORT_ADDRESS,
+        kMode                 = OT_NETWORK_DIAGNOSTIC_TLV_MODE,
+        kTimeout              = OT_NETWORK_DIAGNOSTIC_TLV_TIMEOUT,
+        kConnectivity         = OT_NETWORK_DIAGNOSTIC_TLV_CONNECTIVITY,
+        kRoute                = OT_NETWORK_DIAGNOSTIC_TLV_ROUTE,
+        kLeaderData           = OT_NETWORK_DIAGNOSTIC_TLV_LEADER_DATA,
+        kNetworkData          = OT_NETWORK_DIAGNOSTIC_TLV_NETWORK_DATA,
+        kIp6AddressList       = OT_NETWORK_DIAGNOSTIC_TLV_IP6_ADDR_LIST,
+        kMacCounters          = OT_NETWORK_DIAGNOSTIC_TLV_MAC_COUNTERS,
+        kBatteryLevel         = OT_NETWORK_DIAGNOSTIC_TLV_BATTERY_LEVEL,
+        kSupplyVoltage        = OT_NETWORK_DIAGNOSTIC_TLV_SUPPLY_VOLTAGE,
+        kChildTable           = OT_NETWORK_DIAGNOSTIC_TLV_CHILD_TABLE,
+        kChannelPages         = OT_NETWORK_DIAGNOSTIC_TLV_CHANNEL_PAGES,
+        kTypeList             = OT_NETWORK_DIAGNOSTIC_TLV_TYPE_LIST,
+        kMaxChildTimeout      = OT_NETWORK_DIAGNOSTIC_TLV_MAX_CHILD_TIMEOUT,
+        kEui64                = OT_NETWORK_DIAGNOSTIC_TLV_EUI64,
+        kVersion              = OT_NETWORK_DIAGNOSTIC_TLV_VERSION,
+        kVendorName           = OT_NETWORK_DIAGNOSTIC_TLV_VENDOR_NAME,
+        kVendorModel          = OT_NETWORK_DIAGNOSTIC_TLV_VENDOR_MODEL,
+        kVendorSwVersion      = OT_NETWORK_DIAGNOSTIC_TLV_VENDOR_SW_VERSION,
+        kThreadStackVersion   = OT_NETWORK_DIAGNOSTIC_TLV_THREAD_STACK_VERSION,
+        kChild                = OT_NETWORK_DIAGNOSTIC_TLV_CHILD,
+        kChildIp6AddressList  = OT_NETWORK_DIAGNOSTIC_TLV_CHILD_IP6_ADDR_LIST,
+        kRouterNeighbor       = OT_NETWORK_DIAGNOSTIC_TLV_ROUTER_NEIGHBOR,
+        kAnswer               = OT_NETWORK_DIAGNOSTIC_TLV_ANSWER,
+        kQueryId              = OT_NETWORK_DIAGNOSTIC_TLV_QUERY_ID,
+        kMleCounters          = OT_NETWORK_DIAGNOSTIC_TLV_MLE_COUNTERS,
+        kVendorAppUrl         = OT_NETWORK_DIAGNOSTIC_TLV_VENDOR_APP_URL,
+        kNonPreferredChannels = OT_NETWORK_DIAGNOSTIC_TLV_NON_PREFERRED_CHANNELS,
+        kEnhancedRoute        = OT_NETWORK_DIAGNOSTIC_TLV_ENHANCED_ROUTE,
     };
 
     /**
      * Maximum length of Vendor Name TLV.
-     *
      */
     static constexpr uint8_t kMaxVendorNameLength = OT_NETWORK_DIAGNOSTIC_MAX_VENDOR_NAME_TLV_LENGTH;
 
     /**
      * Maximum length of Vendor Model TLV.
-     *
      */
     static constexpr uint8_t kMaxVendorModelLength = OT_NETWORK_DIAGNOSTIC_MAX_VENDOR_MODEL_TLV_LENGTH;
 
     /**
      * Maximum length of Vendor SW Version TLV.
-     *
      */
     static constexpr uint8_t kMaxVendorSwVersionLength = OT_NETWORK_DIAGNOSTIC_MAX_VENDOR_SW_VERSION_TLV_LENGTH;
 
     /**
      * Maximum length of Vendor SW Version TLV.
-     *
      */
     static constexpr uint8_t kMaxThreadStackVersionLength = OT_NETWORK_DIAGNOSTIC_MAX_THREAD_STACK_VERSION_TLV_LENGTH;
 
     /**
      * Maximum length of Vendor SW Version TLV.
-     *
      */
     static constexpr uint8_t kMaxVendorAppUrlLength = OT_NETWORK_DIAGNOSTIC_MAX_VENDOR_APP_URL_TLV_LENGTH;
 
@@ -133,7 +128,6 @@ public:
      * Returns the Type value.
      *
      * @returns The Type value.
-     *
      */
     Type GetType(void) const { return static_cast<Type>(ot::Tlv::GetType()); }
 
@@ -141,7 +135,6 @@ public:
      * Sets the Type value.
      *
      * @param[in]  aType  The Type value.
-     *
      */
     void SetType(Type aType) { ot::Tlv::SetType(static_cast<uint8_t>(aType)); }
 
@@ -149,115 +142,96 @@ public:
 
 /**
  * Defines Extended MAC Address TLV constants and types.
- *
  */
 typedef SimpleTlvInfo<Tlv::kExtMacAddress, Mac::ExtAddress> ExtMacAddressTlv;
 
 /**
  * Defines Address16 TLV constants and types.
- *
  */
 typedef UintTlvInfo<Tlv::kAddress16, uint16_t> Address16Tlv;
 
 /**
  * Defines Mode TLV constants and types.
- *
  */
 typedef UintTlvInfo<Tlv::kMode, uint8_t> ModeTlv;
 
 /**
  * Defines Timeout TLV constants and types.
- *
  */
 typedef UintTlvInfo<Tlv::kTimeout, uint32_t> TimeoutTlv;
 
 /**
  * Defines Network Data TLV constants and types.
- *
  */
 typedef TlvInfo<Tlv::kNetworkData> NetworkDataTlv;
 
 /**
  * Defines IPv6 Address List TLV constants and types.
- *
  */
 typedef TlvInfo<Tlv::kIp6AddressList> Ip6AddressListTlv;
 
 /**
  * Defines Battery Level TLV constants and types.
- *
  */
 typedef UintTlvInfo<Tlv::kBatteryLevel, uint8_t> BatteryLevelTlv;
 
 /**
  * Defines Supply Voltage TLV constants and types.
- *
  */
 typedef UintTlvInfo<Tlv::kSupplyVoltage, uint16_t> SupplyVoltageTlv;
 
 /**
  * Defines Child Table TLV constants and types.
- *
  */
 typedef TlvInfo<Tlv::kChildTable> ChildTableTlv;
 
 /**
  * Defines Max Child Timeout TLV constants and types.
- *
  */
 typedef UintTlvInfo<Tlv::kMaxChildTimeout, uint32_t> MaxChildTimeoutTlv;
 
 /**
  * Defines Eui64 TLV constants and types.
- *
  */
 typedef SimpleTlvInfo<Tlv::kEui64, Mac::ExtAddress> Eui64Tlv;
 
 /**
  * Defines Version TLV constants and types.
- *
  */
 typedef UintTlvInfo<Tlv::kVersion, uint16_t> VersionTlv;
 
 /**
  * Defines Vendor Name TLV constants and types.
- *
  */
 typedef StringTlvInfo<Tlv::kVendorName, Tlv::kMaxVendorNameLength> VendorNameTlv;
 
 /**
  * Defines Vendor Model TLV constants and types.
- *
  */
 typedef StringTlvInfo<Tlv::kVendorModel, Tlv::kMaxVendorModelLength> VendorModelTlv;
 
 /**
  * Defines Vendor SW Version TLV constants and types.
- *
  */
 typedef StringTlvInfo<Tlv::kVendorSwVersion, Tlv::kMaxVendorSwVersionLength> VendorSwVersionTlv;
 
 /**
  * Defines Thread Stack Version TLV constants and types.
- *
  */
 typedef StringTlvInfo<Tlv::kThreadStackVersion, Tlv::kMaxThreadStackVersionLength> ThreadStackVersionTlv;
 
 /**
  * Defines Vendor App URL TLV constants and types.
- *
  */
 typedef StringTlvInfo<Tlv::kVendorAppUrl, Tlv::kMaxVendorAppUrlLength> VendorAppUrlTlv;
 
 /**
  * Defines Child IPv6 Address List TLV constants and types.
- *
  */
 typedef TlvInfo<Tlv::kChildIp6AddressList> ChildIp6AddressListTlv;
 
 /**
  * Defines Query ID TLV constants and types.
- *
  */
 typedef UintTlvInfo<Tlv::kQueryId, uint16_t> QueryIdTlv;
 
@@ -265,7 +239,6 @@ typedef otNetworkDiagConnectivity Connectivity; ///< Network Diagnostic Connecti
 
 /**
  * Implements Connectivity TLV generation and parsing.
- *
  */
 OT_TOOL_PACKED_BEGIN
 class ConnectivityTlv : public Mle::ConnectivityTlv
@@ -275,7 +248,6 @@ public:
 
     /**
      * Initializes the TLV.
-     *
      */
     void Init(void)
     {
@@ -287,7 +259,6 @@ public:
      * Retrieves the `Connectivity` value.
      *
      * @param[out] aConnectivity   A reference to `Connectivity` to populate.
-     *
      */
     void GetConnectivity(Connectivity &aConnectivity) const
     {
@@ -306,7 +277,6 @@ public:
 
 /**
  * Implements Route TLV generation and parsing.
- *
  */
 OT_TOOL_PACKED_BEGIN
 class RouteTlv : public Mle::RouteTlv
@@ -316,7 +286,6 @@ public:
 
     /**
      * Initializes the TLV.
-     *
      */
     void Init(void)
     {
@@ -327,7 +296,6 @@ public:
 
 /**
  * Implements Leader Data TLV generation and parsing.
- *
  */
 OT_TOOL_PACKED_BEGIN
 class LeaderDataTlv : public Mle::LeaderDataTlv
@@ -337,7 +305,6 @@ public:
 
     /**
      * Initializes the TLV.
-     *
      */
     void Init(void)
     {
@@ -348,7 +315,6 @@ public:
 
 /**
  * Implements Mac Counters TLV generation and parsing.
- *
  */
 OT_TOOL_PACKED_BEGIN
 class MacCountersTlv : public Tlv, public TlvInfo<Tlv::kMacCounters>
@@ -356,7 +322,6 @@ class MacCountersTlv : public Tlv, public TlvInfo<Tlv::kMacCounters>
 public:
     /**
      * Initializes the TLV.
-     *
      */
     void Init(void)
     {
@@ -369,7 +334,6 @@ public:
      *
      * @retval TRUE   If the TLV appears to be well-formed.
      * @retval FALSE  If the TLV does not appear to be well-formed.
-     *
      */
     bool IsValid(void) const { return GetLength() >= sizeof(*this) - sizeof(Tlv); }
 
@@ -377,7 +341,6 @@ public:
      * Returns the IfInUnknownProtos counter.
      *
      * @returns The IfInUnknownProtos counter
-     *
      */
     uint32_t GetIfInUnknownProtos(void) const { return BigEndian::HostSwap32(mIfInUnknownProtos); }
 
@@ -385,7 +348,6 @@ public:
      * Sets the IfInUnknownProtos counter.
      *
      * @param[in]  aIfInUnknownProtos The IfInUnknownProtos counter
-     *
      */
     void SetIfInUnknownProtos(const uint32_t aIfInUnknownProtos)
     {
@@ -396,7 +358,6 @@ public:
      * Returns the IfInErrors counter.
      *
      * @returns The IfInErrors counter
-     *
      */
     uint32_t GetIfInErrors(void) const { return BigEndian::HostSwap32(mIfInErrors); }
 
@@ -404,7 +365,6 @@ public:
      * Sets the IfInErrors counter.
      *
      * @param[in]  aIfInErrors The IfInErrors counter
-     *
      */
     void SetIfInErrors(const uint32_t aIfInErrors) { mIfInErrors = BigEndian::HostSwap32(aIfInErrors); }
 
@@ -412,7 +372,6 @@ public:
      * Returns the IfOutErrors counter.
      *
      * @returns The IfOutErrors counter
-     *
      */
     uint32_t GetIfOutErrors(void) const { return BigEndian::HostSwap32(mIfOutErrors); }
 
@@ -420,7 +379,6 @@ public:
      * Sets the IfOutErrors counter.
      *
      * @param[in]  aIfOutErrors The IfOutErrors counter.
-     *
      */
     void SetIfOutErrors(const uint32_t aIfOutErrors) { mIfOutErrors = BigEndian::HostSwap32(aIfOutErrors); }
 
@@ -428,7 +386,6 @@ public:
      * Returns the IfInUcastPkts counter.
      *
      * @returns The IfInUcastPkts counter
-     *
      */
     uint32_t GetIfInUcastPkts(void) const { return BigEndian::HostSwap32(mIfInUcastPkts); }
 
@@ -436,14 +393,12 @@ public:
      * Sets the IfInUcastPkts counter.
      *
      * @param[in]  aIfInUcastPkts The IfInUcastPkts counter.
-     *
      */
     void SetIfInUcastPkts(const uint32_t aIfInUcastPkts) { mIfInUcastPkts = BigEndian::HostSwap32(aIfInUcastPkts); }
     /**
      * Returns the IfInBroadcastPkts counter.
      *
      * @returns The IfInBroadcastPkts counter
-     *
      */
     uint32_t GetIfInBroadcastPkts(void) const { return BigEndian::HostSwap32(mIfInBroadcastPkts); }
 
@@ -451,7 +406,6 @@ public:
      * Sets the IfInBroadcastPkts counter.
      *
      * @param[in]  aIfInBroadcastPkts The IfInBroadcastPkts counter.
-     *
      */
     void SetIfInBroadcastPkts(const uint32_t aIfInBroadcastPkts)
     {
@@ -462,7 +416,6 @@ public:
      * Returns the IfInDiscards counter.
      *
      * @returns The IfInDiscards counter
-     *
      */
     uint32_t GetIfInDiscards(void) const { return BigEndian::HostSwap32(mIfInDiscards); }
 
@@ -470,7 +423,6 @@ public:
      * Sets the IfInDiscards counter.
      *
      * @param[in]  aIfInDiscards The IfInDiscards counter.
-     *
      */
     void SetIfInDiscards(const uint32_t aIfInDiscards) { mIfInDiscards = BigEndian::HostSwap32(aIfInDiscards); }
 
@@ -478,7 +430,6 @@ public:
      * Returns the IfOutUcastPkts counter.
      *
      * @returns The IfOutUcastPkts counter
-     *
      */
     uint32_t GetIfOutUcastPkts(void) const { return BigEndian::HostSwap32(mIfOutUcastPkts); }
 
@@ -486,7 +437,6 @@ public:
      * Sets the IfOutUcastPkts counter.
      *
      * @param[in]  aIfOutUcastPkts The IfOutUcastPkts counter.
-     *
      */
     void SetIfOutUcastPkts(const uint32_t aIfOutUcastPkts) { mIfOutUcastPkts = BigEndian::HostSwap32(aIfOutUcastPkts); }
 
@@ -494,7 +444,6 @@ public:
      * Returns the IfOutBroadcastPkts counter.
      *
      * @returns The IfOutBroadcastPkts counter
-     *
      */
     uint32_t GetIfOutBroadcastPkts(void) const { return BigEndian::HostSwap32(mIfOutBroadcastPkts); }
 
@@ -502,7 +451,6 @@ public:
      * Sets the IfOutBroadcastPkts counter.
      *
      * @param[in]  aIfOutBroadcastPkts The IfOutBroadcastPkts counter.
-     *
      */
     void SetIfOutBroadcastPkts(const uint32_t aIfOutBroadcastPkts)
     {
@@ -513,7 +461,6 @@ public:
      * Returns the IfOutDiscards counter.
      *
      * @returns The IfOutDiscards counter
-     *
      */
     uint32_t GetIfOutDiscards(void) const { return BigEndian::HostSwap32(mIfOutDiscards); }
 
@@ -521,7 +468,6 @@ public:
      * Sets the IfOutDiscards counter.
      *
      * @param[in]  aIfOutDiscards The IfOutDiscards counter.
-     *
      */
     void SetIfOutDiscards(const uint32_t aIfOutDiscards) { mIfOutDiscards = BigEndian::HostSwap32(aIfOutDiscards); }
 
@@ -539,7 +485,6 @@ private:
 
 /**
  * Implements Child Table Entry generation and parsing.
- *
  */
 OT_TOOL_PACKED_BEGIN
 class ChildTableEntry : public Clearable<ChildTableEntry>
@@ -549,67 +494,60 @@ public:
      * Returns the Timeout value.
      *
      * @returns The Timeout value.
-     *
      */
-    uint8_t GetTimeout(void) const { return (GetTimeoutChildId() & kTimeoutMask) >> kTimeoutOffset; }
+    uint8_t GetTimeout(void) const { return ReadBits<uint16_t, kTimeoutMask>(GetTimeoutChildId()); }
 
     /**
      * Sets the Timeout value.
      *
      * @param[in]  aTimeout  The Timeout value.
-     *
      */
     void SetTimeout(uint8_t aTimeout)
     {
-        SetTimeoutChildId((GetTimeoutChildId() & ~kTimeoutMask) | ((aTimeout << kTimeoutOffset) & kTimeoutMask));
+        SetTimeoutChildId(UpdateBits<uint16_t, kTimeoutMask>(GetTimeoutChildId(), aTimeout));
     }
 
     /**
      * The Link Quality value.
      *
      * @returns The Link Quality value.
-     *
      */
     LinkQuality GetLinkQuality(void) const
     {
-        return static_cast<LinkQuality>((GetTimeoutChildId() & kLqiMask) >> kLqiOffset);
+        return static_cast<LinkQuality>(ReadBits<uint16_t, kLqiMask>(GetTimeoutChildId()));
     }
 
     /**
      * Set the Link Quality value.
      *
      * @param[in] aLinkQuality  The Link Quality value.
-     *
      */
     void SetLinkQuality(LinkQuality aLinkQuality)
     {
-        SetTimeoutChildId((GetTimeoutChildId() & ~kLqiMask) | ((aLinkQuality << kLqiOffset) & kLqiMask));
+        SetTimeoutChildId(UpdateBits<uint16_t, kLqiMask>(GetTimeoutChildId(), aLinkQuality));
     }
 
     /**
      * Returns the Child ID value.
      *
      * @returns The Child ID value.
-     *
      */
-    uint16_t GetChildId(void) const { return (GetTimeoutChildId() & kChildIdMask) >> kChildIdOffset; }
+    uint16_t GetChildId(void) const { return ReadBits<uint16_t, kChildIdMask>(GetTimeoutChildId()); }
 
     /**
      * Sets the Child ID value.
      *
      * @param[in]  aChildId  The Child ID value.
-     *
      */
     void SetChildId(uint16_t aChildId)
     {
-        SetTimeoutChildId((GetTimeoutChildId() & ~kChildIdMask) | ((aChildId << kChildIdOffset) & kChildIdMask));
+        SetTimeoutChildId(UpdateBits<uint16_t, kChildIdMask>(GetTimeoutChildId(), aChildId));
     }
 
     /**
      * Returns the Device Mode
      *
      * @returns The Device Mode
-     *
      */
     Mle::DeviceMode GetMode(void) const { return Mle::DeviceMode(mMode); }
 
@@ -617,7 +555,6 @@ public:
      * Sets the Device Mode.
      *
      * @param[in]  aMode  The Device Mode.
-     *
      */
     void SetMode(Mle::DeviceMode aMode) { mMode = aMode.Get(); }
 
@@ -644,7 +581,6 @@ private:
 
 /**
  * Implements Channel Pages TLV generation and parsing.
- *
  */
 OT_TOOL_PACKED_BEGIN
 class ChannelPagesTlv : public Tlv, public TlvInfo<Tlv::kChannelPages>
@@ -652,7 +588,6 @@ class ChannelPagesTlv : public Tlv, public TlvInfo<Tlv::kChannelPages>
 public:
     /**
      * Initializes the TLV.
-     *
      */
     void Init(void)
     {
@@ -665,7 +600,6 @@ public:
      *
      * @retval TRUE   If the TLV appears to be well-formed.
      * @retval FALSE  If the TLV does not appear to be well-formed.
-     *
      */
     bool IsValid(void) const
     {
@@ -677,7 +611,6 @@ public:
      * Returns a pointer to the list of Channel Pages.
      *
      * @returns A pointer to the list of Channel Pages.
-     *
      */
     uint8_t *GetChannelPages(void) { return mChannelPages; }
 
@@ -687,7 +620,6 @@ private:
 
 /**
  * Implements IPv6 Address List TLV generation and parsing.
- *
  */
 OT_TOOL_PACKED_BEGIN
 class TypeListTlv : public Tlv, public TlvInfo<Tlv::kTypeList>
@@ -695,7 +627,6 @@ class TypeListTlv : public Tlv, public TlvInfo<Tlv::kTypeList>
 public:
     /**
      * Initializes the TLV.
-     *
      */
     void Init(void)
     {
@@ -708,7 +639,6 @@ public:
 
 /**
  * Implements Child TLV generation and parsing.
- *
  */
 OT_TOOL_PACKED_BEGIN
 class ChildTlv : public Tlv, public TlvInfo<Tlv::kChild>, public Clearable<ChildTlv>
@@ -724,13 +654,11 @@ public:
      * Initializes the TLV using information from a given `Child`.
      *
      * @param[in] aChild   The child to initialize the TLV from.
-     *
      */
     void InitFrom(const Child &aChild);
 
     /**
      * Initializes the TLV as empty (zero length).
-     *
      */
     void InitAsEmpty(void)
     {
@@ -742,7 +670,6 @@ public:
      * Returns the Flags field (`kFlags*` constants define bits in flags).
      *
      * @returns The Flags field.
-     *
      */
     uint8_t GetFlags(void) const { return mFlags; }
 
@@ -750,7 +677,6 @@ public:
      * Returns the RLOC16 field.
      *
      * @returns The RLOC16 of the child.
-     *
      */
     uint16_t GetRloc16(void) const { return BigEndian::HostSwap16(mRloc16); }
 
@@ -758,7 +684,6 @@ public:
      * Returns the Extended Address.
      *
      * @returns The Extended Address of the child.
-     *
      */
     const Mac::ExtAddress &GetExtAddress(void) const { return mExtAddress; }
 
@@ -766,7 +691,6 @@ public:
      * Returns the Version field.
      *
      * @returns The Version of the child.
-     *
      */
     uint16_t GetVersion(void) const { return BigEndian::HostSwap16(mVersion); }
 
@@ -774,7 +698,6 @@ public:
      * Returns the Timeout field
      *
      * @returns The Timeout value in seconds.
-     *
      */
     uint32_t GetTimeout(void) const { return BigEndian::HostSwap32(mTimeout); }
 
@@ -782,7 +705,6 @@ public:
      * Returns the Age field.
      *
      * @returns The Age field (seconds since last heard from the child).
-     *
      */
     uint32_t GetAge(void) const { return BigEndian::HostSwap32(mAge); }
 
@@ -790,7 +712,6 @@ public:
      * Returns the Connection Time field.
      *
      * @returns The Connection Time field (seconds since attach).
-     *
      */
     uint32_t GetConnectionTime(void) const { return BigEndian::HostSwap32(mConnectionTime); }
 
@@ -798,7 +719,6 @@ public:
      * Returns the Supervision Interval field
      *
      * @returns The Supervision Interval in seconds. Zero indicates not used.
-     *
      */
     uint16_t GetSupervisionInterval(void) const { return BigEndian::HostSwap16(mSupervisionInterval); }
 
@@ -806,7 +726,6 @@ public:
      * Returns the Link Margin field.
      *
      * @returns The Link Margin in dB.
-     *
      */
     uint8_t GetLinkMargin(void) const { return mLinkMargin; }
 
@@ -814,7 +733,6 @@ public:
      * Returns the Average RSSI field.
      *
      * @returns The Average RSSI in dBm. 127 if not available or unknown.
-     *
      */
     int8_t GetAverageRssi(void) const { return mAverageRssi; }
 
@@ -822,7 +740,6 @@ public:
      * Returns the Last RSSI field (RSSI of last received frame from child).
      *
      * @returns The Last RSSI field in dBm. 127 if not available or unknown.
-     *
      */
     int8_t GetLastRssi(void) const { return mLastRssi; }
 
@@ -833,7 +750,6 @@ public:
      * rates and whether or not the value in this field is valid.
      *
      * @returns The Frame Error Rate (0x0000->0%, 0xffff->100%).
-     *
      */
     uint16_t GetFrameErrorRate(void) const { return BigEndian::HostSwap16(mFrameErrorRate); }
 
@@ -844,7 +760,6 @@ public:
      * rates and whether or not the value in this field is valid.
      *
      * @returns The Message Error Rate (0x0000->0%, 0xffff->100%).
-     *
      */
     uint16_t GetMessageErrorRate(void) const { return BigEndian::HostSwap16(mMessageErrorRate); }
 
@@ -852,7 +767,6 @@ public:
      * Returns the Queued Message Count field.
      *
      * @returns The Queued Message Count (number of queued messages for indirect tx to child).
-     *
      */
     uint16_t GetQueuedMessageCount(void) const { return BigEndian::HostSwap16(mQueuedMessageCount); }
 
@@ -860,7 +774,6 @@ public:
      * Returns the CSL Period in unit of 10 symbols.
      *
      * @returns The CSL Period in unit of 10-symbols-time. Zero if CSL is not supported.
-     *
      */
     uint16_t GetCslPeriod(void) const { return BigEndian::HostSwap16(mCslPeriod); }
 
@@ -868,7 +781,6 @@ public:
      * Returns the CSL Timeout in seconds.
      *
      * @returns The CSL Timeout in seconds. Zero if unknown on parent of if CSL Is not supported.
-     *
      */
     uint32_t GetCslTimeout(void) const { return BigEndian::HostSwap32(mCslTimeout); }
 
@@ -876,7 +788,6 @@ public:
      * Returns the CSL Channel.
      *
      * @returns The CSL channel.
-     *
      */
     uint8_t GetCslChannel(void) const { return mCslChannel; }
 
@@ -904,7 +815,6 @@ private:
  * Implements Child IPv6 Address List Value generation and parsing.
  *
  * This TLV can use extended or normal format depending on the number of IPv6 addresses.
- *
  */
 OT_TOOL_PACKED_BEGIN
 class ChildIp6AddressListTlvValue
@@ -914,7 +824,6 @@ public:
      * Returns the RLOC16 of the child.
      *
      * @returns The RLOC16 of the child.
-     *
      */
     uint16_t GetRloc16(void) const { return BigEndian::HostSwap16(mRloc16); }
 
@@ -922,7 +831,6 @@ public:
      * Sets the RLOC16.
      *
      * @param[in] aRloc16   The RLOC16 value.
-     *
      */
     void SetRloc16(uint16_t aRloc16) { mRloc16 = BigEndian::HostSwap16(aRloc16); }
 
@@ -934,7 +842,6 @@ private:
 
 /**
  * Implements Router Neighbor TLV generation and parsing.
- *
  */
 OT_TOOL_PACKED_BEGIN
 class RouterNeighborTlv : public Tlv, public TlvInfo<Tlv::kRouterNeighbor>, public Clearable<RouterNeighborTlv>
@@ -946,13 +853,11 @@ public:
      * Initializes the TLV using information from a given `Router`.
      *
      * @param[in] aRouter   The router to initialize the TLV from.
-     *
      */
     void InitFrom(const Router &aRouter);
 
     /**
      * Initializes the TLV as empty (zero length).
-     *
      */
     void InitAsEmpty(void)
     {
@@ -964,7 +869,6 @@ public:
      * Returns the Flags field (`kFlags*` constants define bits in flags).
      *
      * @returns The Flags field.
-     *
      */
     uint8_t GetFlags(void) const { return mFlags; }
 
@@ -972,7 +876,6 @@ public:
      * Returns the RLOC16 field.
      *
      * @returns The RLOC16 of the router.
-     *
      */
     uint16_t GetRloc16(void) const { return BigEndian::HostSwap16(mRloc16); }
 
@@ -980,7 +883,6 @@ public:
      * Returns the Extended Address.
      *
      * @returns The Extended Address of the router.
-     *
      */
     const Mac::ExtAddress &GetExtAddress(void) const { return mExtAddress; }
 
@@ -988,7 +890,6 @@ public:
      * Returns the Version field.
      *
      * @returns The Version of the router.
-     *
      */
     uint16_t GetVersion(void) const { return BigEndian::HostSwap16(mVersion); }
 
@@ -996,7 +897,6 @@ public:
      * Returns the Connection Time field.
      *
      * @returns The Connection Time field (seconds since link establishment).
-     *
      */
     uint32_t GetConnectionTime(void) const { return BigEndian::HostSwap32(mConnectionTime); }
 
@@ -1004,7 +904,6 @@ public:
      * Returns the Link Margin field.
      *
      * @returns The Link Margin in dB.
-     *
      */
     uint8_t GetLinkMargin(void) const { return mLinkMargin; }
 
@@ -1012,7 +911,6 @@ public:
      * Returns the Average RSSI field.
      *
      * @returns The Average RSSI in dBm. 127 if not available or unknown.
-     *
      */
     int8_t GetAverageRssi(void) const { return mAverageRssi; }
 
@@ -1020,7 +918,6 @@ public:
      * Returns the Last RSSI field (RSSI of last received frame from router).
      *
      * @returns The Last RSSI field in dBm. 127 if not available or unknown.
-     *
      */
     int8_t GetLastRssi(void) const { return mLastRssi; }
 
@@ -1031,7 +928,6 @@ public:
      * rates and whether or not the value in this field is valid.
      *
      * @returns The Frame Error Rate (0x0000->0%, 0xffff->100%).
-     *
      */
     uint16_t GetFrameErrorRate(void) const { return BigEndian::HostSwap16(mFrameErrorRate); }
 
@@ -1042,7 +938,6 @@ public:
      * rates and whether or not the value in this field is valid.
      *
      * @returns The Message Error Rate (0x0000->0%, 0xffff->100%).
-     *
      */
     uint16_t GetMessageErrorRate(void) const { return BigEndian::HostSwap16(mMessageErrorRate); }
 
@@ -1062,8 +957,60 @@ private:
 #endif // OPENTHREAD_FTD
 
 /**
+ * Represents an Enhanced Route TLV Entry
+ */
+OT_TOOL_PACKED_BEGIN
+class EnhancedRouteTlvEntry
+{
+public:
+    typedef otNetworkDiagEnhRouteData ParseInfo; ///< Parse entry info
+
+    /**
+     * Initializes the entry as self (associated with device itself).
+     */
+    void InitAsSelf(void) { SetRouteData(kSelfFlag); }
+
+    /**
+     * Initializes the entry from given `router`.
+     *
+     * @param[in] aRouter  Router entry to use for initialization.
+     */
+    void InitFrom(const Router &aRouter);
+
+    /**
+     * Parses the entry and populate the information in given `ParseInfo` struct.
+     *
+     * @parma[out] aParseInfo   The `ParseInfo` structure to populate.
+     */
+    void Parse(ParseInfo &aParseInfo) const;
+
+private:
+    // Format:
+    //
+    //  15  14  13   12  11  10  9   8   7   6   5   4   3   2   1   0
+    // +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+    // | S | L | LQOut | LQIn  |     NextHop (6-bit)   | NHCost(4 bits)|
+    // +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+
+    static constexpr uint16_t kSelfFlag             = 1 << 15;
+    static constexpr uint16_t kLinkFlag             = 1 << 14;
+    static constexpr uint8_t  kLinkQualityOutOffset = 12;
+    static constexpr uint8_t  kLinkQualityInOffset  = 10;
+    static constexpr uint8_t  kNextHopOffset        = 4;
+    static constexpr uint8_t  kNextHopCostOffset    = 0;
+
+    static constexpr uint16_t kLinkQualityMask = 0x3;
+    static constexpr uint16_t kNextHopMask     = 0x3f;
+    static constexpr uint16_t kCostMask        = 0xf;
+
+    uint16_t GetRouteData(void) const { return BigEndian::HostSwap16(mRouteData); }
+    void     SetRouteData(uint16_t aRouteData) { mRouteData = BigEndian::HostSwap16(aRouteData); }
+
+    uint16_t mRouteData;
+} OT_TOOL_PACKED_END;
+
+/**
  * Implements Answer TLV generation and parsing.
- *
  */
 OT_TOOL_PACKED_BEGIN
 class AnswerTlv : public Tlv, public TlvInfo<Tlv::kAnswer>
@@ -1074,7 +1021,6 @@ public:
      *
      * @param[in] aIndex   The index value.
      * @param[in] aIsLast  The "IsLast" flag value.
-     *
      */
     void Init(uint16_t aIndex, bool aIsLast);
 
@@ -1083,7 +1029,6 @@ public:
      *
      * @retval TRUE   "IsLast" flag si set (this is the last answer for this query).
      * @retval FALSE  "IsLast" flag is not set (more answer messages are expected for this query).
-     *
      */
     bool IsLast(void) const { return GetFlagsIndex() & kIsLastFlag; }
 
@@ -1091,7 +1036,6 @@ public:
      * Gets the index.
      *
      * @returns The index.
-     *
      */
     uint16_t GetIndex(void) const { return GetFlagsIndex() & kIndexMask; }
 
@@ -1107,13 +1051,11 @@ private:
 
 /**
  * Represents the MLE Counters.
- *
  */
 typedef otNetworkDiagMleCounters MleCounters;
 
 /**
  * Implements MLE Counters TLV generation and parsing.
- *
  */
 OT_TOOL_PACKED_BEGIN
 class MleCountersTlv : public Tlv, public TlvInfo<Tlv::kMleCounters>
@@ -1123,7 +1065,6 @@ public:
      * Initializes the TLV.
      *
      * @param[in] aMleCounters    The MLE counters to initialize the TLV with.
-     *
      */
     void Init(const Mle::Counters &aMleCounters);
 
@@ -1132,7 +1073,6 @@ public:
      *
      * @retval TRUE   If the TLV appears to be well-formed.
      * @retval FALSE  If the TLV does not appear to be well-formed.
-     *
      */
     bool IsValid(void) const { return GetLength() >= sizeof(*this) - sizeof(Tlv); }
 
@@ -1141,7 +1081,6 @@ public:
      * Reads the counters from TLV.
      *
      * @param[out] aDiagMleCounters   A reference to `NetworkDiagnostic::MleCounters` to populate.
-     *
      */
     void Read(MleCounters &aDiagMleCounters) const;
 

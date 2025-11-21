@@ -33,16 +33,7 @@
 
 #include "lowpan.hpp"
 
-#include "common/code_utils.hpp"
-#include "common/debug.hpp"
-#include "common/encoding.hpp"
-#include "common/locator_getters.hpp"
-#include "common/numeric_limits.hpp"
 #include "instance/instance.hpp"
-#include "net/ip6.hpp"
-#include "net/udp6.hpp"
-#include "thread/network_data_leader.hpp"
-#include "thread/thread_netif.hpp"
 
 namespace ot {
 namespace Lowpan {
@@ -345,7 +336,7 @@ Error Lowpan::Compress(Message              &aMessage,
     {
         hcCtl |= kHcSrcAddrContext;
     }
-    else if (ip6Header.GetSource().IsLinkLocal())
+    else if (ip6Header.GetSource().IsLinkLocalUnicast())
     {
         SuccessOrExit(
             error = CompressSourceIid(aMacAddrs.mSource, ip6Header.GetSource(), srcContext, hcCtl, aFrameBuilder));
@@ -366,7 +357,7 @@ Error Lowpan::Compress(Message              &aMessage,
     {
         SuccessOrExit(error = CompressMulticast(ip6Header.GetDestination(), hcCtl, aFrameBuilder));
     }
-    else if (ip6Header.GetDestination().IsLinkLocal())
+    else if (ip6Header.GetDestination().IsLinkLocalUnicast())
     {
         SuccessOrExit(error = CompressDestinationIid(aMacAddrs.mDestination, ip6Header.GetDestination(), dstContext,
                                                      hcCtl, aFrameBuilder));
@@ -470,14 +461,15 @@ Error Lowpan::CompressExtensionHeader(Message &aMessage, FrameBuilder &aFrameBui
     // Pad1 or PadN option MAY be elided by the compressor."
     if (aNextHeader == Ip6::kProtoHopOpts || aNextHeader == Ip6::kProtoDstOpts)
     {
-        uint16_t    offset    = aMessage.GetOffset();
-        uint16_t    endOffset = offset + len;
+        OffsetRange offsetRange;
         bool        hasOption = false;
         Ip6::Option option;
 
-        for (; offset < endOffset; offset += option.GetSize())
+        offsetRange.Init(aMessage.GetOffset(), len);
+
+        for (; !offsetRange.IsEmpty(); offsetRange.AdvanceOffset(option.GetSize()))
         {
-            SuccessOrExit(error = option.ParseFrom(aMessage, offset, endOffset));
+            SuccessOrExit(error = option.ParseFrom(aMessage, offsetRange));
             hasOption = true;
         }
 

@@ -30,7 +30,7 @@ MutexHighPriorityThread() has the highest priority so executes
 first and grabs the mutex and sleeps for a short period to let the lower
 priority threads execute.  When it has completed its demo functionality
 it gives the mutex back before suspending itself.
-At that point, LED1 toggles.
+At that point, LED_BLUE toggles every 20 ms.
 
 MutexMediumPriorityThread() attempts to access the mutex by performing
 a blocking 'wait'.  This thread blocks when the mutex is already taken
@@ -39,16 +39,16 @@ priority thread  has released the mutex, and it does not actually run until
 the highest priority thread has suspended itself.
 When it eventually does obtain the mutex all it does is give the mutex back
 prior to also suspending itself.
-At this point both the high and medium priority threads are suspended and LED2 toggles.
+At this point both the high and medium priority threads are suspended and LED_GREEN toggles every 20 ms.
 
-MutexLowPriorityThread() runs at the idle priority.  It spins round
-a tight loop attempting to obtain the mutex with a non-blocking call.  As
+MutexLowPriorityThread() runs at the idle priority. It spins round
+a tight loop attempting to obtain the mutex with a non-blocking call. As
 the lowest priority thread it will not successfully obtain the mutex until
-both high and medium priority threads are suspended.  Once it eventually
+both high and medium priority threads are suspended. Once it eventually
 does obtains the mutex, it first resumes both suspended threads prior to giving the mutex back,
 resulting in the low priority thread temporarily inheriting the highest thread priority.
 
-In case of error, LED3 toggles.
+In case of error, LED_RED toggles.
 
 The following variables can be displayed on the debugger via LiveWatch:
  - HighPriorityThreadCycles

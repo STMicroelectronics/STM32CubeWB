@@ -29,7 +29,7 @@
 #include "stm_logging.h"
 #include "app_conf.h"
 #include "stm32_lpm.h"
-#include "cmsis_os.h"
+#include "cmsis_os2.h"
 #if (CFG_USB_INTERFACE_ENABLE != 0)
 #include "vcp.h"
 #include "vcp_conf.h"

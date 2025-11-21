@@ -81,19 +81,16 @@ namespace Ip6 {
  *   This module includes definitions for TCP/IPv6 sockets.
  *
  * @{
- *
  */
 
 /**
  * Implements TCP message handling.
- *
  */
 class Tcp : public InstanceLocator, private NonCopyable
 {
 public:
     /**
      * Represents an endpoint of a TCP/IPv6 connection.
-     *
      */
     class Endpoint : public otTcpEndpoint, public LinkedListEntry<Endpoint>, public GetProvider<Endpoint>
     {
@@ -117,7 +114,6 @@ public:
          *
          * @retval kErrorNone    Successfully opened the TCP endpoint.
          * @retval kErrorFailed  Failed to open the TCP endpoint.
-         *
          */
         Error Initialize(Instance &aInstance, const otTcpEndpointInitializeArgs &aArgs);
 
@@ -128,7 +124,6 @@ public:
          * @sa otTcpEndpointGetInstance
          *
          * @returns  The Instance pointer associated with this Endpoint.
-         *
          */
         Instance &GetInstance(void) const;
 
@@ -139,7 +134,6 @@ public:
          * @sa otTcpEndpointGetContext
          *
          * @returns  The context pointer associated with this Endpoint.
-         *
          */
         void *GetContext(void) { return mContext; }
 
@@ -152,7 +146,6 @@ public:
          * @sa otTcpGetLocalAddress
          *
          * @returns  The local host and port of this Endpoint.
-         *
          */
         const SockAddr &GetLocalAddress(void) const;
 
@@ -165,7 +158,6 @@ public:
          * @sa otTcpGetPeerAddress
          *
          * @returns  The host and port of the connection peer of this Endpoint.
-         *
          */
         const SockAddr &GetPeerAddress(void) const;
 
@@ -178,7 +170,6 @@ public:
          *
          * @retval kErrorNone    Successfully bound the TCP endpoint.
          * @retval kErrorFailed  Failed to bind the TCP endpoint.
-         *
          */
         Error Bind(const SockAddr &aSockName);
 
@@ -198,7 +189,6 @@ public:
          *
          * @retval kErrorNone    Successfully completed the operation.
          * @retval kErrorFailed  Failed to complete the operation.
-         *
          */
         Error Connect(const SockAddr &aSockName, uint32_t aFlags);
 
@@ -225,7 +215,6 @@ public:
          *
          * @retval kErrorNone    Successfully added data to the send buffer.
          * @retval kErrorFailed  Failed to add data to the send buffer.
-         *
          */
         Error SendByReference(otLinkedBuffer &aBuffer, uint32_t aFlags);
 
@@ -242,7 +231,6 @@ public:
          *
          * @retval kErrorNone    Successfully added data to the send buffer.
          * @retval kErrorFailed  Failed to add data to the send buffer.
-         *
          */
         Error SendByExtension(size_t aNumBytes, uint32_t aFlags);
 
@@ -277,7 +265,6 @@ public:
          *
          * @retval kErrorNone    Successfully completed the operation.
          * @retval kErrorFailed  Failed to complete the operation.
-         *
          */
         Error ReceiveContiguify(void);
 
@@ -293,7 +280,6 @@ public:
          *
          * @retval kErrorNone    Successfully completed the receive operation.
          * @retval kErrorFailed  Failed to complete the receive operation.
-         *
          */
         Error CommitReceive(size_t aNumBytes, uint32_t aFlags);
 
@@ -313,7 +299,6 @@ public:
          *
          * @retval kErrorNone    Successfully queued the "end of stream" condition for transmission.
          * @retval kErrorFailed  Failed to queue the "end of stream" condition for transmission.
-         *
          */
         Error SendEndOfStream(void);
 
@@ -330,7 +315,6 @@ public:
          *
          * @retval kErrorNone    Successfully aborted the TCP endpoint's connection.
          * @retval kErrorFailed  Failed to abort the TCP endpoint's connection.
-         *
          */
         Error Abort(void);
 
@@ -351,7 +335,6 @@ public:
          *
          * @retval kErrorNone    Successfully deinitialized the TCP endpoint.
          * @retval kErrorFailed  Failed to deinitialize the TCP endpoint.
-         *
          */
         Error Deinitialize(void);
 
@@ -380,14 +363,11 @@ public:
         friend void ::tcplp_sys_set_timer(struct tcpcb *aTcb, uint8_t aTimerFlag, uint32_t aDelay);
         friend void ::tcplp_sys_stop_timer(struct tcpcb *aTcb, uint8_t aTimerFlag);
 
-        enum : uint8_t
-        {
-            kTimerDelack       = 0,
-            kTimerRexmtPersist = 1,
-            kTimerKeep         = 2,
-            kTimer2Msl         = 3,
-            kNumTimers         = 4,
-        };
+        static constexpr uint8_t kTimerDelack       = 0;
+        static constexpr uint8_t kTimerRexmtPersist = 1;
+        static constexpr uint8_t kTimerKeep         = 2;
+        static constexpr uint8_t kTimer2Msl         = 3;
+        static constexpr uint8_t kNumTimers         = 4;
 
         static uint8_t TimerFlagToIndex(uint8_t aTimerFlag);
 
@@ -412,7 +392,6 @@ public:
 
     /**
      * Represents a TCP/IPv6 listener.
-     *
      */
     class Listener : public otTcpListener, public LinkedListEntry<Listener>, public GetProvider<Listener>
     {
@@ -435,7 +414,6 @@ public:
          *
          * @retval kErrorNone    Successfully opened the TCP listener.
          * @retval kErrorFailed  Failed to open the TCP listener.
-         *
          */
         Error Initialize(Instance &aInstance, const otTcpListenerInitializeArgs &aArgs);
 
@@ -446,7 +424,6 @@ public:
          * @sa otTcpListenerGetInstance
          *
          * @returns  The otInstance pointer associated with this Listener.
-         *
          */
         Instance &GetInstance(void) const;
 
@@ -457,7 +434,6 @@ public:
          * @sa otTcpListenerGetContext
          *
          * @returns  The context pointer associated with this Listener.
-         *
          */
         void *GetContext(void) { return mContext; }
 
@@ -471,7 +447,6 @@ public:
          *
          * @retval kErrorNone    Successfully initiated listening on the TCP listener.
          * @retval kErrorFailed  Failed to initiate listening on the TCP listener.
-         *
          */
         Error Listen(const SockAddr &aSockName);
 
@@ -482,7 +457,6 @@ public:
          *
          * @retval kErrorNone    Successfully stopped listening on the TCP listener.
          * @retval kErrorFailed  Failed to stop listening on the TCP listener.
-         *
          */
         Error StopListening(void);
 
@@ -500,7 +474,6 @@ public:
          *
          * @retval kErrorNone    Successfully deinitialized the TCP listener.
          * @retval kErrorFailed  Failed to deinitialize the TCP listener.
-         *
          */
         Error Deinitialize(void);
 
@@ -539,7 +512,6 @@ public:
 
     /**
      * Implements TCP header parsing.
-     *
      */
     OT_TOOL_PACKED_BEGIN
     class Header : public Clearable<Header>
@@ -551,7 +523,6 @@ public:
          * Returns the TCP Source Port.
          *
          * @returns The TCP Source Port.
-         *
          */
         uint16_t GetSourcePort(void) const { return BigEndian::HostSwap16(mSource); }
 
@@ -559,15 +530,27 @@ public:
          * Returns the TCP Destination Port.
          *
          * @returns The TCP Destination Port.
-         *
          */
         uint16_t GetDestinationPort(void) const { return BigEndian::HostSwap16(mDestination); }
+
+        /**
+         * Sets the TCP Source Port.
+         *
+         * @param[in]  aPort  The TCP Source Port.
+         */
+        void SetSourcePort(uint16_t aPort) { mSource = BigEndian::HostSwap16(aPort); }
+
+        /**
+         * Sets the TCP Destination Port.
+         *
+         * @param[in]  aPort  The TCP Destination Port.
+         */
+        void SetDestinationPort(uint16_t aPort) { mDestination = BigEndian::HostSwap16(aPort); }
 
         /**
          * Returns the TCP Sequence Number.
          *
          * @returns The TCP Sequence Number.
-         *
          */
         uint32_t GetSequenceNumber(void) const { return BigEndian::HostSwap32(mSequenceNumber); }
 
@@ -575,7 +558,6 @@ public:
          * Returns the TCP Acknowledgment Sequence Number.
          *
          * @returns The TCP Acknowledgment Sequence Number.
-         *
          */
         uint32_t GetAcknowledgmentNumber(void) const { return BigEndian::HostSwap32(mAckNumber); }
 
@@ -583,7 +565,6 @@ public:
          * Returns the TCP Flags.
          *
          * @returns The TCP Flags.
-         *
          */
         uint16_t GetFlags(void) const { return BigEndian::HostSwap16(mFlags); }
 
@@ -591,7 +572,6 @@ public:
          * Returns the TCP Window.
          *
          * @returns The TCP Window.
-         *
          */
         uint16_t GetWindow(void) const { return BigEndian::HostSwap16(mWindow); }
 
@@ -599,7 +579,6 @@ public:
          * Returns the TCP Checksum.
          *
          * @returns The TCP Checksum.
-         *
          */
         uint16_t GetChecksum(void) const { return BigEndian::HostSwap16(mChecksum); }
 
@@ -607,7 +586,6 @@ public:
          * Returns the TCP Urgent Pointer.
          *
          * @returns The TCP Urgent Pointer.
-         *
          */
         uint16_t GetUrgentPointer(void) const { return BigEndian::HostSwap16(mUrgentPointer); }
 
@@ -626,7 +604,6 @@ public:
      * Initializes the object.
      *
      * @param[in] aInstance  A reference to the OpenThread instance.
-     *
      */
     explicit Tcp(Instance &aInstance);
 
@@ -639,7 +616,6 @@ public:
      *
      * @retval kErrorNone  Successfully processed the TCP segment.
      * @retval kErrorDrop  Dropped the TCP segment due to an invalid checksum.
-     *
      */
     Error HandleMessage(ot::Ip6::Header &aIp6Header, Message &aMessage, MessageInfo &aMessageInfo);
 
@@ -654,7 +630,6 @@ public:
      *                          @p aToBind is treated as a given.
      *
      * @returns  True if successful, false otherwise.
-     *
      */
     bool AutoBind(const SockAddr &aPeer, SockAddr &aToBind, bool aBindAddress, bool aBindPort);
 

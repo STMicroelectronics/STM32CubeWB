@@ -152,11 +152,19 @@ uint8_t USBD_MTP_STORAGE_ReadData(USBD_HandleTypeDef  *pdev)
         /* Start USB data transmission to the host */
         (void)USBD_MTP_STORAGE_SendData(pdev, (uint8_t *)data_buff, MIN(MTP_DataLength.readbytes, buffer_size));
 
-        /* Move to response phase */
-        hmtp->MTP_ResponsePhase = MTP_RESPONSE_PHASE;
+        if (((MTP_DataLength.totallen + MTP_CONT_HEADER_SIZE) % hmtp->MaxPcktLen) == 0U)
+        {
+          /* Send ZLP Packet */
+          ReadDataStatus = READ_SEND_ZLP_DATA;
+        }
+        else
+        {
+          /* Move to response phase */
+          hmtp->MTP_ResponsePhase = MTP_RESPONSE_PHASE;
 
-        /* Reset the state machine */
-        ReadDataStatus = READ_FIRST_DATA;
+          /* Reset the state machine */
+          ReadDataStatus = READ_FIRST_DATA;
+        }
       }
       else
       {
@@ -166,6 +174,19 @@ uint8_t USBD_MTP_STORAGE_ReadData(USBD_HandleTypeDef  *pdev)
         /* Keep the state machine into sending next packet of data */
         ReadDataStatus = READ_REST_OF_DATA;
       }
+      break;
+
+    case READ_SEND_ZLP_DATA:
+
+      /* Send ZLP to the host */
+      (void)USBD_MTP_STORAGE_SendData(pdev, (uint8_t *)data_buff, 0U);
+
+      /* Move to response phase */
+      hmtp->MTP_ResponsePhase = MTP_RESPONSE_PHASE;
+
+      /* Reset the state machine */
+      ReadDataStatus = READ_FIRST_DATA;
+
       break;
 
     default:

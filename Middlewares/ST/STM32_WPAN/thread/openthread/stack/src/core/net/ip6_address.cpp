@@ -33,18 +33,7 @@
 
 #include "ip6_address.hpp"
 
-#include <stdio.h>
-
-#include "common/array.hpp"
-#include "common/as_core_type.hpp"
-#include "common/code_utils.hpp"
-#include "common/encoding.hpp"
-#include "common/num_utils.hpp"
-#include "common/numeric_limits.hpp"
-#include "common/random.hpp"
 #include "instance/instance.hpp"
-#include "net/ip4_types.hpp"
-#include "net/netif.hpp"
 
 namespace ot {
 namespace Ip6 {
@@ -215,7 +204,7 @@ void Prefix::ToString(char *aBuffer, uint16_t aSize) const
 
 void Prefix::ToString(StringWriter &aWriter) const
 {
-    uint8_t sizeInUint16 = (GetBytesSize() + sizeof(uint16_t) - 1) / sizeof(uint16_t);
+    uint8_t sizeInUint16 = DivideAndRoundUp<uint8_t>(GetBytesSize(), sizeof(uint16_t));
     Prefix  tidyPrefix   = *this;
 
     tidyPrefix.Tidy();
@@ -265,18 +254,6 @@ void InterfaceIdentifier::SetFromExtAddress(const Mac::ExtAddress &aExtAddress)
     addr = aExtAddress;
     addr.ToggleLocal();
     addr.CopyTo(mFields.m8);
-}
-
-void InterfaceIdentifier::ConvertToExtAddress(Mac::ExtAddress &aExtAddress) const
-{
-    aExtAddress.Set(mFields.m8);
-    aExtAddress.ToggleLocal();
-}
-
-void InterfaceIdentifier::ConvertToMacAddress(Mac::Address &aMacAddress) const
-{
-    aMacAddress.SetExtended(mFields.m8);
-    aMacAddress.GetExtended().ToggleLocal();
 }
 
 void InterfaceIdentifier::SetToLocator(uint16_t aLocator)
@@ -343,7 +320,7 @@ bool Address::IsLoopback(void) const
             mFields.m32[3] == BigEndian::HostSwap32(1));
 }
 
-bool Address::IsLinkLocal(void) const
+bool Address::IsLinkLocalUnicast(void) const
 {
     return (mFields.m16[0] & BigEndian::HostSwap16(0xffc0)) == BigEndian::HostSwap16(0xfe80);
 }
@@ -363,6 +340,8 @@ void Address::SetToLinkLocalAddress(const InterfaceIdentifier &aIid)
 }
 
 bool Address::IsLinkLocalMulticast(void) const { return IsMulticast() && (GetScope() == kLinkLocalScope); }
+
+bool Address::IsLinkLocalUnicastOrMulticast(void) const { return IsLinkLocalUnicast() || IsLinkLocalMulticast(); }
 
 bool Address::IsLinkLocalAllNodesMulticast(void) const { return (*this == GetLinkLocalAllNodesMulticast()); }
 
@@ -458,7 +437,7 @@ uint8_t Address::GetScope(void) const
     {
         rval = mFields.m8[1] & 0xf;
     }
-    else if (IsLinkLocal())
+    else if (IsLinkLocalUnicast())
     {
         rval = kLinkLocalScope;
     }

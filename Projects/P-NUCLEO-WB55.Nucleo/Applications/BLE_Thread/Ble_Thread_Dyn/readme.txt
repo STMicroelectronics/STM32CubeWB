@@ -28,8 +28,8 @@ Dynamic means that application can perform at the same time BLE or Thread activi
 
 The idea is to present a demo with a Thread Network (at least 2 Nucleo Boards
 running Ble_Thread_Dynamic application),and a a BLE connection between 1 Nucleo board running Ble_Zigbee_Dynamic application [2] with either a 
-smartphone running "ST BLE Sensor" Application (available on App Store and Google Play), or another
-Nucleo board running a BLE_p2pClient application.
+smartphone running "ST BLE Sensor" Application (available on App Store and Google Play), or "ST BLE Toolbox" Application (available on App Store and Google Play)
+or another Nucleo board running a BLE_p2pClient application.
 
 The STM32WB55xx-Nucleo board running Ble_Thread_Dynamic application is capable 
 of BLE and OpenThread activity at the same time.
@@ -104,10 +104,9 @@ Minimum requirements for the demo:
 - 1 STM32WB55xx-Nucleo board running a BLE_p2pClient application
 -- OR 
 - 2 STM32WB55xx-Nucleo board in BLE Thread Dynamic Concurrent mode 
-- 1 Smartphone (Android/IOS) with "ST BLE Sensor" Phone Application (available on App Store and Google Play)
-  Install the "ST BLE Sensor" application on the ios/android device
-  https://play.google.com/store/apps/details?id=com.st.bluems
-  https://itunes.apple.com/us/App/st-bluems/id993670214?mt=8
+- 1 Smartphone (Android/IOS) with "ST BLE Sensor" or "ST BLE Toolbox" Phone Application (available on App Store and Google Play)
+  Install the "ST BLE Sensor" or "ST BLE Toolbox" application on the ios/android device
+
 
 In order to make the program work, you must do the following: 
  - Connect each STM32WB55xx-Nucleo boards to your PC 
@@ -144,7 +143,7 @@ pressing the SW1 button the BLUE LED will light up on. After scanning complete, 
 P2P server on BLE/Thread dynamic node, and sends a BLE toggle when pressing SW1.
 As a result the RED LED toggles on the BLE/Thread device, each time the SW1 button is pressed on BLE_p2pClient board.
 
-b) If using a smartphone, then the ST BLE Sensor App (smart Phone Application) scans and can connect to the P2P Server 
+b) If using a smartphone, then the ST BLE Sensor App or the ST BLE Toolbox App (smart Phone Application) scans and can connect to the P2P Server 
 by selecting = "P2PZBSRV1" entry. Once connected, the application starts to search the P2P Services & Characteristics.
 Led Button service, Led Characteristic and Button Characteristic are discovered at this stage 
 (this service is ST specific).

@@ -320,6 +320,12 @@ typedef enum {
     MSG_M4TOM0_ZCL_DEVICE_LOG_ENABLE =, /* ZbZclDeviceLogEnable */
     MSG_M4TOM0_ZCL_DEVICE_LOG_REMOVE =, /* ZbZclDeviceLogRemove */
 #endif
+    /* discontinuity */
+
+    /* ZCL Basic Server (cont'd, custom attributes) */
+    MSG_M4TOM0_ZCL_BASIC_SERVER_LOCAL_READ = 0x0430, /* ZbZclBasicReadDirect */
+    MSG_M4TOM0_ZCL_BASIC_SERVER_APPEND_CUSTOM_ATTR = 0x0431, /* ZbZclBasicServerAppendCustomAttr */
+
     /* Reserved to 0x04ff for Future Use */
 
     /* Reserved to 0x0fff for Future Use */

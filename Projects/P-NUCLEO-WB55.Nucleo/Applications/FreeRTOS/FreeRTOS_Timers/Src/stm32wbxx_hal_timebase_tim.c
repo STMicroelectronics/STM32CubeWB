@@ -13,8 +13,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) STMicroelectronics</center></h2>
-(-2021) STMicroelectronics.
+  * Copyright (c) 2021 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -83,8 +82,7 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
   RCC_ClkInitTypeDef    clkconfig;
   uint32_t              uwTimclock = 0;
   uint32_t              uwPrescalerValue = 0;
- uint32_t              pFLatency;
-
+  uint32_t              pFLatency;
   HAL_StatusTypeDef     status = HAL_OK;
 
   /*Configure the TIM17 IRQ priority */
@@ -95,7 +93,7 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
   /* Enable TIM17 clock */
   __HAL_RCC_TIM17_CLK_ENABLE();
 
-/* Get clock configuration */
+  /* Get clock configuration */
   HAL_RCC_GetClockConfig(&clkconfig, &pFLatency);
 
   /* Compute TIM17 clock */

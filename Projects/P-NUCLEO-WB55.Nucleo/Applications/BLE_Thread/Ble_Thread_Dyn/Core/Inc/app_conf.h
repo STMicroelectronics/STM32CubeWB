@@ -308,8 +308,13 @@
 /******************************************************************************
  * UART interfaces
  ******************************************************************************/
+#ifndef GRL_TEST
 #define CFG_DEBUG_TRACE_UART      hw_uart1 
 #define CFG_CLI_UART              hw_lpuart1
+#else
+#define CFG_DEBUG_TRACE_UART      hw_lpuart1 
+#define CFG_CLI_UART              hw_uart1
+#endif
 
 /******************************************************************************
  * USB interface

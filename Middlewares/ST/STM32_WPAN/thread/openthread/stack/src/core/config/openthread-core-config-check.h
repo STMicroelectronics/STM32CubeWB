@@ -35,7 +35,6 @@
  * the error message is only intended to give a hint of what the possible new
  * configuration name may be. Please check the documentation of the new
  * configuration parameter for details about behavior of each option before use.
- *
  */
 
 #ifndef OPENTHREAD_CORE_CONFIG_CHECK_H_
@@ -678,4 +677,25 @@
        "OPENTHREAD_LIB_SPINEL_RX_FRAME_BUFFER_SIZE. Pass the macro to source code under"\
        "src/lib/spinel."
 #endif
+
+#ifdef OPENTHREAD_CONFIG_SRP_CLIENT_UPDATE_TX_MIN_DELAY
+#error "OPENTHREAD_CONFIG_SRP_CLIENT_UPDATE_TX_MIN_DELAY was removed."
+#endif
+
+#ifdef OPENTHREAD_CONFIG_SRP_CLIENT_UPDATE_TX_MAX_DELAY
+#error "OPENTHREAD_CONFIG_SRP_CLIENT_UPDATE_TX_MAX_DELAY was removed."
+#endif
+
+#ifdef OPENTHREAD_CONFIG_BORDER_ROUTING_STUB_ROUTER_FLAG_IN_EMITTED_RA_ENABLE
+#error "OPENTHREAD_CONFIG_BORDER_ROUTING_STUB_ROUTER_FLAG_IN_EMITTED_RA_ENABLE is removed"
+#endif
+
+#ifdef OPENTHREAD_CONFIG_MLE_SEND_LINK_REQUEST_ON_ADV_TIMEOUT
+#error "OPENTHREAD_CONFIG_MLE_SEND_LINK_REQUEST_ON_ADV_TIMEOUT is removed, behavior is always applied"
+#endif
+
+#ifdef OPENTHREAD_CONFIG_DTLS_ENABLE
+#error "OPENTHREAD_CONFIG_DTLS_ENABLE was replaced by OPENTHREAD_CONFIG_SECURE_TRANSPORT_ENABLE"
+#endif
+
 #endif // OPENTHREAD_CORE_CONFIG_CHECK_H_

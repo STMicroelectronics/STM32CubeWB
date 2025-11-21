@@ -29,11 +29,11 @@ network is created, the user can start the demo scenario on the server through p
 
 For this application it is requested to have:
 
-- 1 STM32WB55xx board (Nucleo or USB dongle) loaded with: 
+- 1 STM32WB55xx board (Nucleo) loaded with: 
     - wireless coprocessor : stm32wb5x_Zigbee_FFD_fw.bin
     - application : Zigbee_PowerProfile_Client_Coord
     
-- 1 or more STM32WB55xx board loaded with: 
+- 1 or more STM32WB55xx board (USB dongle or Nucleo) loaded with: 
     - wireless coprocessor : stm32wb5x_Zigbee_FFD_fw.bin
     - application : Zigbee_PowerProfile_Server_Router
     

@@ -48,7 +48,6 @@ namespace Cli {
 
 /**
  * Implements the mDNS CLI interpreter.
- *
  */
 class Mdns : private Utils
 {
@@ -58,7 +57,6 @@ public:
      *
      * @param[in]  aInstance            The OpenThread Instance.
      * @param[in]  aOutputImplementer   An `OutputImplementer`.
-     *
      */
     Mdns(otInstance *aInstance, OutputImplementer &aOutputImplementer)
         : Utils(aInstance, aOutputImplementer)
@@ -78,7 +76,6 @@ public:
      * @retval OT_ERROR_INVALID_COMMAND   Invalid or unknown CLI command.
      * @retval OT_ERROR_INVALID_ARGS      Invalid arguments.
      * @retval ...                        Error during execution of the CLI command.
-     *
      */
     otError Process(Arg aArgs[]);
 
@@ -120,6 +117,7 @@ private:
     void    HandleSrvResult(const otMdnsSrvResult &aResult);
     void    HandleTxtResult(const otMdnsTxtResult &aResult);
     void    HandleAddressResult(const otMdnsAddressResult &aResult, IpAddressType aType);
+    void    HandleRecordResult(const otMdnsRecordResult &aResult);
 
     static otError ParseStartOrStop(const Arg &aArg, bool &aIsStart);
     static void    HandleRegisterationDone(otInstance *aInstance, otMdnsRequestId aRequestId, otError aError);
@@ -128,6 +126,7 @@ private:
     static void    HandleTxtResult(otInstance *aInstance, const otMdnsTxtResult *aResult);
     static void    HandleIp6AddressResult(otInstance *aInstance, const otMdnsAddressResult *aResult);
     static void    HandleIp4AddressResult(otInstance *aInstance, const otMdnsAddressResult *aResult);
+    static void    HandleRecordResult(otInstance *aInstance, const otMdnsRecordResult *aResult);
 
     static otError ParseServiceArgs(Arg aArgs[], otMdnsService &aService, Buffers &aBuffers);
 

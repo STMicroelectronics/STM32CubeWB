@@ -19,7 +19,8 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "cmsis_os.h"
+#include "cmsis_os2.h"
+#include "FreeRTOS.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -38,19 +39,30 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-#define semtstSTACK_SIZE      configMINIMAL_STACK_SIZE
+
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-osThreadId SEM_ThreadHandle;
-osSemaphoreId osSemaphoreHandle;
+/* Definitions for SEM_Thread */
+osThreadId_t SEM_ThreadHandle;
+const osThreadAttr_t SEM_Thread_attributes = {
+  .name = "SEM_Thread",
+  .priority = (osPriority_t) osPriorityNormal,
+  .stack_size = 128 * 4
+};
+/* Definitions for osSemaphore */
+osSemaphoreId_t osSemaphoreHandle;
+const osSemaphoreAttr_t osSemaphore_attributes = {
+  .name = "osSemaphore"
+};
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-void SemaphoreTest(void const * argument);
+static void MX_GPIO_Init(void);
+void SemaphoreTest(void *argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -67,13 +79,14 @@ void SemaphoreTest(void const * argument);
   */
 int main(void)
 {
+
   /* USER CODE BEGIN 1 */
   /* STM32WBxx HAL library initialization:
        - Configure the Flash prefetch
-       - Systick timer is configured by default as source of time base, but user 
-         can eventually implement his proper time base source (a general purpose 
-         timer for example or other time source), keeping in mind that Time base 
-         duration should be kept 1ms since PPP_TIMEOUT_VALUEs are defined and 
+       - Systick timer is configured by default as source of time base, but user
+         can eventually implement his proper time base source (a general purpose
+         timer for example or other time source), keeping in mind that Time base
+         duration should be kept 1ms since PPP_TIMEOUT_VALUEs are defined and
          handled in milliseconds basis.
        - Set NVIC Group Priority to 4
        - Low Level Initialization
@@ -93,30 +106,31 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-  /* Initialize LED */
-  BSP_LED_Init(LED2);
-
-  /* Initialize buttons */
-  BSP_PB_Init(BUTTON_SW1, BUTTON_MODE_EXTI);
 
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
+  MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
 
+  /* Init scheduler */
+  osKernelInitialize();
+
   /* USER CODE BEGIN RTOS_MUTEX */
- 
+
   /* USER CODE END RTOS_MUTEX */
 
   /* Create the semaphores(s) */
-  /* definition and creation of osSemaphore */
-  osSemaphoreDef(osSemaphore);
-  osSemaphoreHandle = osSemaphoreCreate(osSemaphore(osSemaphore), 1);
+  /* creation of osSemaphore */
+  osSemaphoreHandle = osSemaphoreNew(1, 1, &osSemaphore_attributes);
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
-
+  if(osSemaphoreHandle == NULL)
+  {
+    Error_Handler();
+  }
   /* USER CODE END RTOS_SEMAPHORES */
 
   /* USER CODE BEGIN RTOS_TIMERS */
@@ -124,22 +138,29 @@ int main(void)
   /* USER CODE END RTOS_TIMERS */
 
   /* USER CODE BEGIN RTOS_QUEUES */
- 
+
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
-  /* definition and creation of SEM_Thread */
-  osThreadDef(SEM_Thread, SemaphoreTest, osPriorityNormal, 0, 128);
-  SEM_ThreadHandle = osThreadCreate(osThread(SEM_Thread), NULL);
+  /* creation of SEM_Thread */
+  SEM_ThreadHandle = osThreadNew(SemaphoreTest, NULL, &SEM_Thread_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
- 
+  if(SEM_ThreadHandle == NULL)
+  {
+    Error_Handler();
+  }
   /* USER CODE END RTOS_THREADS */
+
+  /* USER CODE BEGIN RTOS_EVENTS */
+  /* add events, ... */
+  /* USER CODE END RTOS_EVENTS */
 
   /* Start scheduler */
   osKernelStart();
 
   /* We should never get here as control is now taken by the scheduler */
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -163,6 +184,7 @@ void SystemClock_Config(void)
   /** Configure the main internal regulator output voltage
   */
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
@@ -181,6 +203,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+
   /** Configure the SYSCLKSource, HCLK, PCLK1 and PCLK2 clocks dividers
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK4|RCC_CLOCKTYPE_HCLK2
@@ -199,39 +222,83 @@ void SystemClock_Config(void)
   }
 }
 
-/* USER CODE BEGIN 4 */
 /**
-  * @brief  EXTI line detection callbacks
-  * @param  GPIO_Pin: Specifies the pins connected EXTI line
+  * @brief GPIO Initialization Function
+  * @param None
   * @retval None
   */
+static void MX_GPIO_Init(void)
+{
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+  /* USER CODE BEGIN MX_GPIO_Init_1 */
 
+  /* USER CODE END MX_GPIO_Init_1 */
+
+  /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOC_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin : BUTTON_USER_Pin */
+  GPIO_InitStruct.Pin = BUTTON_USER_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(BUTTON_USER_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : LED_GREEN_Pin */
+  GPIO_InitStruct.Pin = LED_GREEN_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(LED_GREEN_GPIO_Port, &GPIO_InitStruct);
+
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI4_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(EXTI4_IRQn);
+
+  /* USER CODE BEGIN MX_GPIO_Init_2 */
+
+  /* USER CODE END MX_GPIO_Init_2 */
+}
+
+/* USER CODE BEGIN 4 */
+
+/**
+  * @brief EXTI line detection callbacks
+  * @param GPIO_Pin: Specifies the pins connected EXTI line
+  * @retval None
+  */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-  osSemaphoreRelease(osSemaphoreHandle);
+  if (GPIO_Pin == BUTTON_USER_Pin)
+  {
+  	osSemaphoreRelease(osSemaphoreHandle);
+  }
 }
+
 /* USER CODE END 4 */
 
 /* USER CODE BEGIN Header_SemaphoreTest */
 /**
   * @brief  Function implementing the SEM_Thread thread.
-  * @param  argument: Not used 
+  * @param  argument: Not used
   * @retval None
   */
 /* USER CODE END Header_SemaphoreTest */
-void SemaphoreTest(void const * argument)
+void SemaphoreTest(void *argument)
 {
   /* USER CODE BEGIN 5 */
   /* Infinite loop */
   for (;;)
   {
-
     if (osSemaphoreHandle != NULL)
     {
       /* Try to obtain the semaphore */
-      if (osSemaphoreWait(osSemaphoreHandle , 0) == osOK)
+      if (osSemaphoreAcquire(osSemaphoreHandle , 0) == osOK)
       {
-        BSP_LED_Toggle(LED2);
+        HAL_GPIO_TogglePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin);
 
       }
     }
@@ -269,11 +336,13 @@ void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
-
+  /* Infinite loop */
+  while (1)
+  {
+  }
   /* USER CODE END Error_Handler_Debug */
 }
-
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.
@@ -289,8 +358,8 @@ void assert_failed(uint8_t *file, uint32_t line)
 
   /* Infinite loop */
   while (1)
-  {}
+  {
+  }
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
-

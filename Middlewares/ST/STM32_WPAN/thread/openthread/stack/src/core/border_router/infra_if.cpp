@@ -35,12 +35,7 @@
 
 #if OPENTHREAD_CONFIG_BORDER_ROUTING_ENABLE
 
-#include "border_router/routing_manager.hpp"
-#include "common/as_core_type.hpp"
-#include "common/locator_getters.hpp"
-#include "common/logging.hpp"
 #include "instance/instance.hpp"
-#include "net/icmp6.hpp"
 
 namespace ot {
 namespace BorderRouter {
@@ -115,7 +110,11 @@ Error InfraIf::DiscoverNat64Prefix(void) const
 {
     OT_ASSERT(mInitialized);
 
+#if OPENTHREAD_CONFIG_NAT64_BORDER_ROUTING_ENABLE
     return otPlatInfraIfDiscoverNat64Prefix(mIfIndex);
+#else
+    return kErrorNotImplemented;
+#endif
 }
 
 void InfraIf::DiscoverNat64PrefixDone(uint32_t aIfIndex, const Ip6::Prefix &aPrefix)
@@ -136,6 +135,11 @@ exit:
     {
         LogDebg("Failed to handle discovered NAT64 synthetic addresses: %s", ErrorToString(error));
     }
+}
+
+Error InfraIf::GetLinkLayerAddress(LinkLayerAddress &aLinkLayerAddress)
+{
+    return otPlatGetInfraIfLinkLayerAddress(&GetInstance(), mIfIndex, &aLinkLayerAddress);
 }
 
 Error InfraIf::HandleStateChanged(uint32_t aIfIndex, bool aIsRunning)
@@ -217,5 +221,12 @@ OT_TOOL_WEAK otError otPlatInfraIfSendIcmp6Nd(uint32_t, const otIp6Address *, co
 
 OT_TOOL_WEAK otError otPlatInfraIfDiscoverNat64Prefix(uint32_t) { return OT_ERROR_FAILED; }
 #endif
+
+extern "C" OT_TOOL_WEAK otError otPlatGetInfraIfLinkLayerAddress(otInstance *,
+                                                                 uint32_t,
+                                                                 otPlatInfraIfLinkLayerAddress *)
+{
+    return OT_ERROR_FAILED;
+}
 
 #endif // OPENTHREAD_CONFIG_BORDER_ROUTING_ENABLE

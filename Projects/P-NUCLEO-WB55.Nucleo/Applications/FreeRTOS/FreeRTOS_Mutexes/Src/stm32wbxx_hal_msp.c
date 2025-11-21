@@ -3,8 +3,8 @@
   ******************************************************************************
   * @file    FreeRTOS/FreeRTOS_Mutexes/Src/stm32wbxx_hal_msp.c
   * @author  MCD Application Team
-  * @brief   This file provides code for the MSP Initialization 
-  *                      and de-Initialization codes.
+  * @brief   This file provides code for the MSP Initialization
+  *          and de-Initialization codes.
   ******************************************************************************
   * @attention
   *
@@ -32,7 +32,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN Define */
- 
+
 /* USER CODE END Define */
 
 /* Private macro -------------------------------------------------------------*/
@@ -63,6 +63,7 @@
   */
 void HAL_MspInit(void)
 {
+
   /* USER CODE BEGIN MspInit 0 */
 
   /* USER CODE END MspInit 0 */
@@ -79,4 +80,3 @@ void HAL_MspInit(void)
 /* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */
-

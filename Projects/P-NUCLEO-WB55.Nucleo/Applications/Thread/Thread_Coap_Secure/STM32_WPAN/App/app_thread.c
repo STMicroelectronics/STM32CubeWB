@@ -136,7 +136,7 @@ static void APP_THREAD_SendCoapSecureMsg(void);
 static void APP_THREAD_TimingElapsed(void);
 static bool APP_THREAD_CheckMsgValidity(void);
 
-static void APP_THREAD_CoapSecureConnected(bool aConnected, void *aContext);
+static void APP_THREAD_CoapSecureConnected(otCoapSecureConnectEvent aEvent, void *aContext);
 /* USER CODE END PFP */
 
 /* Private variables -----------------------------------------------*/
@@ -386,7 +386,7 @@ static void APP_THREAD_DeviceConfig(void)
   /* CoAP Secure Start */
   bool verifyPeerCert = FALSE;
   otCoapSecureSetSslAuthMode(NULL, verifyPeerCert);
-  otCoapSecureSetClientConnectedCallback(NULL, APP_THREAD_CoapSecureConnected, "Context");
+  otCoapSecureSetClientConnectEventCallback(NULL, APP_THREAD_CoapSecureConnected, "Context");
 
   /* Start the COAP Secure server */
   error = otCoapSecureStart(NULL, OT_DEFAULT_COAP_SECURE_PORT);
@@ -707,9 +707,9 @@ static void APP_THREAD_AskProvisioning(void)
  * @param None
  * @retval None
  */
-static void APP_THREAD_CoapSecureConnected(bool aConnected, void *aContext)
+static void APP_THREAD_CoapSecureConnected(otCoapSecureConnectEvent aEvent, void *aContext)
 {
-  if (aConnected)
+  if (aEvent == OT_COAP_SECURE_CONNECTED)
   {
       APP_DBG("CoAP Connected");
 

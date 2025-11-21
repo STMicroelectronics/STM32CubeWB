@@ -46,7 +46,7 @@ Note: Optionally, a voltage can be supplied to the analog input pin (cf pin belo
 
 Other peripherals used:
   1 GPIO for LED
-  1 GPIO for analog input: PA1 (Arduino connector CN10 pin A2, Morpho connector CN9 pin 32)
+  1 GPIO for analog input: PA1 (Arduino connector CN8 pin A2, Morpho connector CN7 pin 32)
 
 Board settings:
  - ADC is configured to convert ADC_CHANNEL_6 (Arduino connector CN10 pin A2, Morpho connector CN9 pin 32).

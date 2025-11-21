@@ -48,7 +48,6 @@ namespace Cli {
 
 /**
  * Implements the Border Router CLI interpreter.
- *
  */
 class Br : private Utils
 {
@@ -58,7 +57,6 @@ public:
      *
      * @param[in]  aInstance            The OpenThread Instance.
      * @param[in]  aOutputImplementer   An `OutputImplementer`.
-     *
      */
     Br(otInstance *aInstance, OutputImplementer &aOutputImplementer)
         : Utils(aInstance, aOutputImplementer)
@@ -75,19 +73,15 @@ public:
      * @retval OT_ERROR_INVALID_COMMAND   Invalid or unknown CLI command.
      * @retval OT_ERROR_INVALID_ARGS      Invalid arguments.
      * @retval ...                        Error during execution of the CLI command.
-     *
      */
     otError Process(Arg aArgs[]);
 
 private:
-    using Command = CommandEntry<Br>;
-
+    using Command    = CommandEntry<Br>;
     using PrefixType = uint8_t;
-    enum : PrefixType
-    {
-        kPrefixTypeLocal   = 1u << 0,
-        kPrefixTypeFavored = 1u << 1,
-    };
+
+    static constexpr PrefixType kPrefixTypeLocal   = 1u << 0;
+    static constexpr PrefixType kPrefixTypeFavored = 1u << 1;
 
     enum RouterOutputMode : uint8_t
     {
@@ -99,6 +93,11 @@ private:
 
     otError ParsePrefixTypeArgs(Arg aArgs[], PrefixType &aFlags);
     void    OutputRouterInfo(const otBorderRoutingRouterEntry &aEntry, RouterOutputMode aMode);
+
+#if OPENTHREAD_CONFIG_BORDER_ROUTING_MULTI_AIL_DETECTION_ENABLE
+    static void HandleMultiAilDetected(bool aDetected, void *aContext);
+    void        HandleMultiAilDetected(bool aDetected);
+#endif
 };
 
 } // namespace Cli

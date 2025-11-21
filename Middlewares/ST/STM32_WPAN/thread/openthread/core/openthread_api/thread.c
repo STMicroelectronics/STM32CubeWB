@@ -17,16 +17,14 @@
  ******************************************************************************
  */
 
-
 /* Includes ------------------------------------------------------------------*/
 #include "stm32wbxx_hal.h"
-
+#include <openthread-core-config.h>
 #include "stm32wbxx_core_interface_def.h"
 #include "tl_thread_hci.h"
 
 /* Include definition of compilation flags requested for OpenThread configuration */
 #include OPENTHREAD_CONFIG_FILE
-#include "thread.h"
 
 extern otHandleActiveScanResult otHandleActiveScanResultCb;
 #if OPENTHREAD_CONFIG_MLE_PARENT_RESPONSE_CALLBACK_API_ENABLE
@@ -1197,6 +1195,26 @@ void otThreadResetMleCounters(otInstance *aInstance)
   
   Post_OtCmdProcessing();
 }
+
+#if OPENTHREAD_CONFIG_UPTIME_ENABLE
+uint32_t otThreadGetCurrentAttachDuration(otInstance *aInstance)
+{
+  uint32_t rspData;
+
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_GET_ATTACH_DURATION;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+  rspData = (uint32_t)p_ot_req->Data[0]; 
+  Post_OtCmdProcessing();
+  return rspData;
+}
+#endif
 
 #if OPENTHREAD_CONFIG_MLE_PARENT_RESPONSE_CALLBACK_API_ENABLE
 void otThreadRegisterParentResponseCallback(otInstance *                   aInstance,

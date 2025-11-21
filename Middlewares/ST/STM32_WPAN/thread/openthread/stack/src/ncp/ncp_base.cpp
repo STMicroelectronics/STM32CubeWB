@@ -35,6 +35,8 @@
 #include <stdarg.h>
 #include <stdlib.h>
 
+#include <openthread/border_agent.h>
+#include <openthread/cli.h>
 #include <openthread/diag.h>
 #include <openthread/icmp6.h>
 #include <openthread/link.h>
@@ -46,6 +48,7 @@
 
 #include "common/code_utils.hpp"
 #include "common/debug.hpp"
+#include "lib/spinel/spinel.h"
 #include "radio/radio.hpp"
 
 namespace ot {
@@ -258,6 +261,9 @@ NcpBase::NcpBase(Instance **aInstances, uint8_t aCount)
 
         OT_ASSERT(i + skipped <= SPINEL_HEADER_IID_MAX);
         mInstances[i + skipped] = aInstances[i];
+#if OPENTHREAD_CONFIG_DIAG_ENABLE
+        otDiagSetOutputCallback(mInstances[i + skipped], &NcpBase::HandleDiagOutput_Jump, this);
+#endif
     }
 }
 #endif // OPENTHREAD_CONFIG_MULTIPAN_RCP_ENABLE  && OPENTHREAD_RADIO
@@ -312,7 +318,21 @@ NcpBase::NcpBase(Instance *aInstance)
     , mRxSpinelOutOfOrderTidCounter(0)
     , mTxSpinelFrameCounter(0)
     , mDidInitialUpdates(false)
+    , mDatasetSendMgmtPendingSetResult(SPINEL_STATUS_OK)
     , mLogTimestampBase(0)
+#if OPENTHREAD_FTD
+#if OPENTHREAD_CONFIG_NCP_INFRA_IF_ENABLE
+    , mInfraIfAddrCount(0)
+    , mInfraIfIndex(0)
+#endif
+#if OPENTHREAD_CONFIG_NCP_DNSSD_ENABLE && OPENTHREAD_CONFIG_PLATFORM_DNSSD_ENABLE
+    , mDnssdState(OT_PLAT_DNSSD_STOPPED)
+#endif
+#endif
+#if OPENTHREAD_CONFIG_DIAG_ENABLE
+    , mDiagOutput(nullptr)
+    , mDiagOutputLen(0)
+#endif
 {
     OT_ASSERT(mInstance != nullptr);
 
@@ -334,6 +354,9 @@ NcpBase::NcpBase(Instance *aInstance)
     IgnoreError(otSetStateChangedCallback(mInstance, &NcpBase::HandleStateChanged, this));
     otIp6SetReceiveCallback(mInstance, &NcpBase::HandleDatagramFromStack, this);
     otIp6SetReceiveFilterEnabled(mInstance, true);
+#if OPENTHREAD_CONFIG_NCP_CLI_STREAM_ENABLE
+    otCliInit(mInstance, &NcpBase::HandleCliOutput, this);
+#endif
 #if OPENTHREAD_CONFIG_TIME_SYNC_ENABLE
     otNetworkTimeSyncSetCallback(mInstance, &NcpBase::HandleTimeSyncUpdate, this);
 #endif // OPENTHREAD_CONFIG_TIME_SYNC_ENABLE
@@ -349,11 +372,17 @@ NcpBase::NcpBase(Instance *aInstance)
 #if OPENTHREAD_CONFIG_MLE_PARENT_RESPONSE_CALLBACK_API_ENABLE
     otThreadRegisterParentResponseCallback(mInstance, &NcpBase::HandleParentResponseInfo, static_cast<void *>(this));
 #endif
+#if OPENTHREAD_CONFIG_BORDER_AGENT_ENABLE
+    otBorderAgentSetMeshCoPServiceChangedCallback(mInstance, HandleBorderAgentMeshCoPServiceChanged, this);
+#endif
 #endif // OPENTHREAD_FTD
 #if OPENTHREAD_CONFIG_SRP_CLIENT_ENABLE
     otSrpClientSetCallback(mInstance, HandleSrpClientCallback, this);
 #endif
 #endif // OPENTHREAD_MTD || OPENTHREAD_FTD
+#if OPENTHREAD_CONFIG_DIAG_ENABLE
+    otDiagSetOutputCallback(mInstance, &NcpBase::HandleDiagOutput_Jump, this);
+#endif
     mChangedPropsSet.AddLastStatus(SPINEL_STATUS_RESET_UNKNOWN);
     mUpdateChangedPropsTask.Post();
 
@@ -1418,12 +1447,11 @@ exit:
 // ----------------------------------------------------------------------------
 
 #if OPENTHREAD_CONFIG_DIAG_ENABLE
-
 otError NcpBase::HandlePropertySet_SPINEL_PROP_NEST_STREAM_MFG(uint8_t aHeader)
 {
-    const char *string = nullptr;
-    char        output[OPENTHREAD_CONFIG_DIAG_OUTPUT_BUFFER_SIZE];
-    otError     error = OT_ERROR_NONE;
+    const char *string                                            = nullptr;
+    char        output[OPENTHREAD_CONFIG_DIAG_OUTPUT_BUFFER_SIZE] = {0};
+    otError     error                                             = OT_ERROR_NONE;
 
     error = mDecoder.ReadUtf8(string);
 
@@ -1438,7 +1466,10 @@ otError NcpBase::HandlePropertySet_SPINEL_PROP_NEST_STREAM_MFG(uint8_t aHeader)
     }
 #endif
 
-    SuccessOrExit(error = otDiagProcessCmdLine(mInstance, string, output, sizeof(output)));
+    mDiagOutput    = output;
+    mDiagOutputLen = sizeof(output);
+
+    SuccessOrExit(error = otDiagProcessCmdLine(mInstance, string));
 
     // Prepare the response
     SuccessOrExit(error = mEncoder.BeginFrame(aHeader, SPINEL_CMD_PROP_VALUE_IS, SPINEL_PROP_NEST_STREAM_MFG));
@@ -1446,7 +1477,44 @@ otError NcpBase::HandlePropertySet_SPINEL_PROP_NEST_STREAM_MFG(uint8_t aHeader)
     SuccessOrExit(error = mEncoder.EndFrame());
 
 exit:
+    mDiagOutput    = nullptr;
+    mDiagOutputLen = 0;
+
     return error;
+}
+
+void NcpBase::HandleDiagOutput_Jump(const char *aFormat, va_list aArguments, void *aContext)
+{
+    static_cast<NcpBase *>(aContext)->HandleDiagOutput(aFormat, aArguments);
+}
+
+void NcpBase::HandleDiagOutput(const char *aFormat, va_list aArguments)
+{
+    int charsWritten;
+
+    if (mDiagOutput != nullptr)
+    {
+        charsWritten = vsnprintf(mDiagOutput, mDiagOutputLen, aFormat, aArguments);
+        VerifyOrExit(charsWritten > 0);
+        charsWritten = (mDiagOutputLen <= charsWritten) ? mDiagOutputLen : charsWritten;
+        mDiagOutput += charsWritten;
+        mDiagOutputLen -= charsWritten;
+    }
+    else
+    {
+        uint8_t header = SPINEL_HEADER_FLAG | SPINEL_HEADER_IID_0;
+        char    output[OPENTHREAD_CONFIG_DIAG_OUTPUT_BUFFER_SIZE];
+
+        charsWritten = vsnprintf(output, sizeof(output), aFormat, aArguments);
+        VerifyOrExit(charsWritten >= 0);
+
+        SuccessOrExit(mEncoder.BeginFrame(header, SPINEL_CMD_PROP_VALUE_IS, SPINEL_PROP_NEST_STREAM_MFG));
+        SuccessOrExit(mEncoder.WriteUtf8(output));
+        SuccessOrExit(mEncoder.EndFrame());
+    }
+
+exit:
+    return;
 }
 
 #endif // OPENTHREAD_CONFIG_DIAG_ENABLE
@@ -1545,7 +1613,7 @@ template <> otError NcpBase::HandlePropertySet<SPINEL_PROP_MAC_RX_ON_WHEN_IDLE_M
     otError error = OT_ERROR_NONE;
 
     SuccessOrExit(error = mDecoder.ReadBool(enabled));
-    otPlatRadioSetRxOnWhenIdle(mInstance, enabled);
+    SuccessOrExit(error = otLinkSetRxOnWhenIdle(mInstance, enabled));
 
 exit:
     return error;
@@ -1621,6 +1689,31 @@ template <> otError NcpBase::HandlePropertySet<SPINEL_PROP_MAC_RAW_STREAM_ENABLE
 #endif // OPENTHREAD_RADIO || OPENTHREAD_CONFIG_LINK_RAW_ENABLE
 
     mIsRawStreamEnabled[mCurCommandIid] = enabled;
+
+exit:
+    return error;
+}
+
+template <> otError NcpBase::HandlePropertySet<SPINEL_PROP_MAC_RX_AT>(void)
+{
+    otError  error = OT_ERROR_NONE;
+    uint64_t when;
+    uint32_t duration;
+    uint8_t  channel;
+
+    SuccessOrExit(error = mDecoder.ReadUint64(when));
+    SuccessOrExit(error = mDecoder.ReadUint32(duration));
+    SuccessOrExit(error = mDecoder.ReadUint8(channel));
+
+    {
+        uint64_t now = otPlatRadioGetNow(mInstance);
+        uint32_t start;
+
+        VerifyOrExit(when > now && (when - now) < UINT32_MAX, error = OT_ERROR_INVALID_ARGS);
+
+        start = when - now;
+        error = otPlatRadioReceiveAt(mInstance, channel, start, duration);
+    }
 
 exit:
     return error;

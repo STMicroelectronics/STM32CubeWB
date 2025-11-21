@@ -6,7 +6,7 @@
  * @brief ZCL Basic cluster header
  * ZCL 7 section 3.2
  * ZCL 8 section 3.2
- * @copyright Copyright [2009 - 2022] Exegin Technologies Limited. All rights reserved.
+ * @copyright Copyright [2009 - 2025] Exegin Technologies Limited. All rights reserved.
  */
 
 #ifndef ZCL_BASIC_H
@@ -29,6 +29,9 @@
  * B.S.A0009 | GenericDevice-Type | False | Optional
  * B.S.A000a | ProductCode | False | Optional
  * B.S.A000b | ProductURL | False | Optional
+ * B.S.A000c | ManufacturerVersionDetails | False | Optional
+ * B.S.A000d | SerialNumber | False | Optional
+ * B.S.A000e | ProductLabel | False | Optional
  * B.S.A0010 | LocationDescription | True | Optional
  * B.S.A0011 | PhysicalEnvironment | True | Optional
  * B.S.A0012 | DeviceEnabled | False | Optional
@@ -54,46 +57,57 @@
 /** Basic Server Attribute IDs */
 enum ZbZclBasicSvrAttrT {
     ZCL_BASIC_ATTR_ZCL_VERSION = 0x0000, /**< ZCLVersion */
-    ZCL_BASIC_ATTR_APP_VERSION, /**< ApplicationVersion (Optional) */
-    ZCL_BASIC_ATTR_STACK_VERSION, /**< StackVersion (Optional) */
-    ZCL_BASIC_ATTR_HARDWARE_VERSION, /**< HWVersion (Optional) */
-    ZCL_BASIC_ATTR_MFR_NAME, /**< ManufacturerName (Optional) */
-    ZCL_BASIC_ATTR_MODEL_NAME, /**< ModelIdentifier (Optional) */
-    ZCL_BASIC_ATTR_DATE_CODE, /**< DateCode (Optional) */
-    ZCL_BASIC_ATTR_POWER_SOURCE, /**< PowerSource */
+
+    /* Below optional version attributes were added with CCB 1584 */
+    ZCL_BASIC_ATTR_APP_VERSION = 0x0001, /**< ApplicationVersion (Optional) */
+    ZCL_BASIC_ATTR_STACK_VERSION = 0x0002, /**< StackVersion (Optional) */
+    ZCL_BASIC_ATTR_HARDWARE_VERSION = 0x0003, /**< HWVersion (Optional) */
+
+    ZCL_BASIC_ATTR_MFR_NAME = 0x0004, /**< ManufacturerName (Optional) */
+    ZCL_BASIC_ATTR_MODEL_NAME = 0x0005, /**< ModelIdentifier (Optional) */
+    ZCL_BASIC_ATTR_DATE_CODE = 0x0006, /**< DateCode (Optional) */
+    ZCL_BASIC_ATTR_POWER_SOURCE = 0x0007, /**< PowerSource */
+    ZCL_BASIC_ATTR_GENERIC_DEVICE_CLASS = 0x0008, /**< GenericDeviceClass (Optional) */
+    ZCL_BASIC_ATTR_GENERIC_DEVICE_TYPE = 0x0009, /**< GenericDeviceType (Optional) */
+
+    ZCL_BASIC_ATTR_PRODUCT_CODE = 0x000a, /**< ProductCode (Optional) */
+    ZCL_BASIC_ATTR_PRODUCT_URL = 0x000b, /**< ProductURL (Optional) */
+    ZCL_BASIC_ATTR_MFR_VERSION_DETAILS = 0x000c, /**< ManufacturerVersionDetails (Optional) */
+    ZCL_BASIC_ATTR_SERIAL_NUMBER = 0x000d, /**< SerialNumber (Optional) */
+    ZCL_BASIC_ATTR_PRODUCT_LABEL = 0x000e, /**< ProductLabel (Optional) */
 
     ZCL_BASIC_ATTR_LOCATION = 0x0010, /**< LocationDescription (Optional) */
-    ZCL_BASIC_ATTR_ENVIRONMENT, /**< PhysicalEnvironment (Optional) */
-    ZCL_BASIC_ATTR_ENABLED, /**< DeviceEnabled (Optional) */
-    ZCL_BASIC_ATTR_ALARM_MASK, /**< AlarmMask (Optional) */
-    ZCL_BASIC_ATTR_DISABLE_LOCAL_CONFIG, /**< DisableLocalConfig (Optional) */
+    ZCL_BASIC_ATTR_ENVIRONMENT = 0x0011, /**< PhysicalEnvironment (Optional) */
+    ZCL_BASIC_ATTR_ENABLED = 0x0012, /**< DeviceEnabled (Optional) */
+    ZCL_BASIC_ATTR_ALARM_MASK = 0x0013, /**< AlarmMask (Optional) */
+    ZCL_BASIC_ATTR_DISABLE_LOCAL_CONFIG = 0x0014, /**< DisableLocalConfig (Optional) */
 
     ZCL_BASIC_ATTR_SW_BUILD_ID = 0x4000 /**< SWBuildID (Optional) */
 };
 
 /* Power Source Enumerations */
-#define ZCL_BASIC_POWER_UNKNOWN                  0x00
-#define ZCL_BASIC_POWER_SINGLE_PHASE             0x01
-#define ZCL_BASIC_POWER_THREE_PHASE              0x02
-#define ZCL_BASIC_POWER_BATTERY                  0x03
-#define ZCL_BASIC_POWER_DC                       0x04
-#define ZCL_BASIC_POWER_EMERGENCY_CONSTANT       0x05
-#define ZCL_BASIC_POWER_EMERGENCY_TRANSFER       0x06
-#define ZCL_BASIC_POWER_BATTERY_BACKUP_BIT       0x80
+#define ZCL_BASIC_POWER_UNKNOWN                     0x00
+#define ZCL_BASIC_POWER_SINGLE_PHASE                0x01
+#define ZCL_BASIC_POWER_THREE_PHASE                 0x02
+#define ZCL_BASIC_POWER_BATTERY                     0x03
+#define ZCL_BASIC_POWER_DC                          0x04
+#define ZCL_BASIC_POWER_EMERGENCY_CONSTANT          0x05
+#define ZCL_BASIC_POWER_EMERGENCY_TRANSFER          0x06
+#define ZCL_BASIC_POWER_BATTERY_BACKUP_BIT          0x80
 
 /* Physical Environment Enumerations */
-#define ZCL_BASIC_ENVIRONMENT_UNSPECIFIED        0x00
-#define ZCL_BASIC_ENVIRONMENT_MIRROR_SUPPORT     0x01
-#define ZCL_BASIC_ENVIRONMENT_UNKNOWN            0xff
+#define ZCL_BASIC_ENVIRONMENT_UNSPECIFIED           0x00
+#define ZCL_BASIC_ENVIRONMENT_MIRROR_SUPPORT        0x01
+#define ZCL_BASIC_ENVIRONMENT_UNKNOWN               0xff
 
 /* Alarm Codes */
-#define ZCL_BASIC_ALARM_CODE_HARDWARE            0x00
-#define ZCL_BASIC_ALARM_CODE_SOFTWARE            0x01
+#define ZCL_BASIC_ALARM_CODE_HARDWARE               0x00
+#define ZCL_BASIC_ALARM_CODE_SOFTWARE               0x01
 
 /* Alarm Mask */
-#define ZCL_BASIC_ALARM_MASK_ALL                 0x03U
-#define ZCL_BASIC_ALARM_MASK_HARDWARE            0x01U
-#define ZCL_BASIC_ALARM_MASK_SOFTWARE            0x02U
+#define ZCL_BASIC_ALARM_MASK_ALL                    0x03U
+#define ZCL_BASIC_ALARM_MASK_HARDWARE               0x01U
+#define ZCL_BASIC_ALARM_MASK_SOFTWARE               0x02U
 
 /* ZCL_BASIC_ATTR_ZCL_VERSION */
 enum {
@@ -129,5 +143,34 @@ struct ZbZclClusterT * ZbZclBasicClientAlloc(struct ZigBeeT *zb, uint8_t endpoin
  * @return ZCL_STATUS_SUCCESS if successful, or other ZclStatusCodeT value on error
  */
 enum ZclStatusCodeT ZbZclBasicClientResetReq(struct ZbZclClusterT *cluster, const struct ZbApsAddrT *dst);
+
+struct ZbZclBasicServerCustomAttrInfoT {
+    uint16_t attributeId; /**< The attribute ID */
+
+    enum ZclDataTypeT dataType;
+    /**< The attribute data type. Following datatypes are not supported for a custom attribute.
+     *    ZCL_DATATYPE_NULL
+     *    ZCL_DATATYPE_ARRAY
+     *    ZCL_DATATYPE_STRUCT
+     *    ZCL_DATATYPE_SET
+     *    ZCL_DATATYPE_BAG
+     *    ZCL_DATATYPE_UNKNOWN */
+
+    uint16_t val_sz_max;
+    /**< Maximum size of the attribute value, it should not exceed ZB_APS_CONST_MAX_FRAG_SIZE. */
+
+    uint8_t *val;
+    /**< Optional default value for the attribute. */
+};
+
+/**
+ * Append a custom attribute to all the ZCL Basic Server instances created by the stack.
+ * NOTE - Custom attribute type is assumed to be read-only, non-reportable and
+ * non-persistable i.e, ZCL_ATTR_FLAG_NONE.
+ * @param zb Pointer to Zigbee stack instance
+ * @param attr Pointer to the custom attribute information structure.
+ * @return Returns true on success, false otherwise
+ */
+bool ZbZclBasicServerAppendCustomAttr(struct ZigBeeT *zb, struct ZbZclBasicServerCustomAttrInfoT *attr);
 
 #endif /* __ZCL_BASIC_H */

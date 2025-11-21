@@ -27,7 +27,7 @@
  * the Central.
  * An ACI_L2CAP_CONNECTION_UPDATE_RESP_EVENT event is raised when the Central
  * responds to the request (accepts or rejects).
- * 
+ *
  * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
@@ -59,7 +59,7 @@ tBleStatus aci_l2cap_connection_parameter_update_req( uint16_t Connection_Handle
  * response to an ACI_L2CAP_CONNECTION_UPDATE_REQ_EVENT event from the
  * controller. The accept parameter has to be set if the connection parameters
  * given in the event are acceptable.
- * 
+ *
  * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
@@ -108,7 +108,7 @@ tBleStatus aci_l2cap_connection_parameter_update_resp( uint16_t Connection_Handl
  * @brief ACI_L2CAP_COC_CONNECT
  * This command sends a Credit Based Connection Request packet on the specified
  * connection. See Core Specification [Vol 3, Part A].
- * 
+ *
  * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
@@ -156,7 +156,7 @@ tBleStatus aci_l2cap_coc_connect( uint16_t Connection_Handle,
  * refuse all connections. The Result value shall then be one of the
  * "Connection refused" or "All connections refused" values.
  * See Core Specification [Vol 3, Part A].
- * 
+ *
  * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
@@ -203,7 +203,7 @@ tBleStatus aci_l2cap_coc_connect_confirm( uint16_t Connection_Handle,
  * @brief ACI_L2CAP_COC_RECONF
  * This command sends a Credit Based Reconfigure Request packet on the
  * specified connection. See Core Specification [Vol 3, Part A].
- * 
+ *
  * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
@@ -236,7 +236,7 @@ tBleStatus aci_l2cap_coc_reconf( uint16_t Connection_Handle,
  * ACI_L2CAP_COC_RECONF_EVENT event. A Result value of 0x0000 indicates success
  * while a non-zero value indicates the request is refused.
  * See Core Specification [Vol 3, Part A].
- * 
+ *
  * @param Connection_Handle Connection handle for which the command applies.
  *        Values:
  *        - 0x0000 ... 0x0EFF
@@ -255,7 +255,7 @@ tBleStatus aci_l2cap_coc_reconf_confirm( uint16_t Connection_Handle,
  * connection-oriented channel. See Core Specification [Vol 3, Part A].
  * The ACI_L2CAP_COC_DISCONNECT_EVENT event is received when the disconnection
  * of the channel is effective.
- * 
+ *
  * @param Channel_Index Index of the connection-oriented channel for which the
  *        primitive applies.
  * @return Value indicating success or error code.
@@ -266,7 +266,7 @@ tBleStatus aci_l2cap_coc_disconnect( uint8_t Channel_Index );
  * @brief ACI_L2CAP_COC_FLOW_CONTROL
  * This command sends a Flow Control Credit signaling packet on the specified
  * connection-oriented channel. See Core Specification [Vol 3, Part A].
- * 
+ *
  * @param Channel_Index Index of the connection-oriented channel for which the
  *        primitive applies.
  * @param Credits Number of credits the receiving device can increment,
@@ -289,7 +289,7 @@ tBleStatus aci_l2cap_coc_flow_control( uint8_t Channel_Index,
  * contain the K-frame information payload.
  * The Length value must not exceed (BLE_CMD_MAX_PARAM_LEN - 3) i.e. 252 for
  * BLE_CMD_MAX_PARAM_LEN default value.
- * 
+ *
  * @param Channel_Index Index of the connection-oriented channel for which the
  *        primitive applies.
  * @param Length Length of Data (in octets)

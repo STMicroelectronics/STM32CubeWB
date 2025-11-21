@@ -47,6 +47,9 @@
 /* Define to 1 to enable Service feature. */
 #define OPENTHREAD_CONFIG_TMF_NETDATA_SERVICE_ENABLE 1
 
+/* Define to 1 to enable tracking the uptime of OpenThread instance. */
+#define OPENTHREAD_CONFIG_UPTIME_ENABLE 1
+
 /* Define to 1 to enable logging on the platform */
 #define OPENTHREAD_CONFIG_LOG_PLATFORM 1
 
@@ -115,5 +118,20 @@
 
 /* Define to 1 to enable DNS CLIENT SD mode support */
 #define OPENTHREAD_CONFIG_DNS_CLIENT_SERVICE_DISCOVERY_ENABLE 1
+
+/* Define to 1 to enable Mesh Diagnostic module. */
+#define OPENTHREAD_CONFIG_MESH_DIAG_ENABLE 1
+
+/* Define to 1 to enable vendor info set api */
+#define OPENTHREAD_CONFIG_NET_DIAG_VENDOR_INFO_SET_API_ENABLE 1
+
+/* Define to 1 to enable border agent apis */
+#define OPENTHREAD_CONFIG_BORDER_AGENT_ENABLE 0
+
+/* Define to 1 to enable ephemeral key mechanism and its APIs in Border Agent */
+#define OPENTHREAD_CONFIG_BORDER_AGENT_EPHEMERAL_KEY_ENABLE 0
+
+/* Define to 1 to get the current device properties */
+#define OPENTHREAD_CONFIG_MLE_DEVICE_PROPERTY_LEADER_WEIGHT_ENABLE 0
 
 #endif /* OPENTHREAD_API_CONFIG_MTD_H_ */

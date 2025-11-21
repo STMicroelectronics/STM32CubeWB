@@ -26,7 +26,7 @@ How to use BLE application and Zigbee application (acting as sleep end device) i
 The idea is to present a demo with a Zigbee Network (at least 2 Nucleo Boards, Zb coordinator
 running Zigbee_OnOff_Server_Coord application[1] and Zb SED running BLE_Zigbee_Dyn_SED application[2]),
 and a BLE connection between 1 Nucleo board running BLE_Zigbee_Dyn_SED application [2] with either a 
-smartphone running "ST BLE Sensor" Application (available on App Store and Google Play), or another
+smartphone running "ST BLE Sensor classic" or "ST BLE Toolbox" Application, or another
 Nucleo board running a BLE_p2pClient application[3].
 The STM32WB55xx-Nucleo board running BLE_Zigbee_Dyn_SED application is capable of switching
 dynamically and transparently from BLE network to Zigbee network and vice-versa.
@@ -52,10 +52,10 @@ The demo architecture is summarized in the following figure:
   (in app_conf.h) 
   The define CFG_FULL_LOW_POWER when set to 1 will not configure resources that have impact on consumption 
   (LED, Traces, Access to Debugger, etc...). If you want to use and see the LEDs, the define CFG_FULL_LOW_POWER 
-  must be set to 0.
+  must be set to 0 or the ALLOWED flag for the LEDs should be set to 1.
 
 
-@par Keywords
+ @par Keywords
 
 Zigbee, BLE
 
@@ -102,10 +102,10 @@ Minimum requirements for the demo:
   (see example Zigbee_OnOff_Server_Coord and Zigbee_OnOff_Client_Router for more details on how to use it)
 - 1 STM32WB55xx-Nucleo board running a BLE_p2pClient application[3]
 -- OR
-- 1 Smartphone (Android/IOS) with "ST BLE Sensor" Phone Application (available on App Store and Google Play)
-  Install the "ST BLE Sensor" application on the ios/android device
-  https://play.google.com/store/apps/details?id=com.st.bluems
-  https://itunes.apple.com/us/App/st-bluems/id993670214?mt=8
+- 1 Smartphone (Android/IOS) with "ST BLE Sensor classic " or "ST BLE Toolbox" Phone Application (available on App Store and Google Play)
+  Install the "ST BLE Sensor classic" or "ST BLE Toolbox" application on the ios/android device
+  https://play.google.com/store/apps/details?id=com.st.bluemsclassic
+  NOTE:Warning: ST BLE Sensor classic not ST BLE Sensor	
 
 In order to make the program work, you must do the following: 
  - Connect 1 STM32WB55xx-Nucleo boards to your PC 
@@ -124,10 +124,11 @@ The BLE example implements Point-to-Point communication using BLE component.
 3- When the Zigbee connection is established, the Zigbee SED will send every second a ZB ON_OFF toggle to the ZB coordinator [1]
 -- The RED Led toggles on the coordinator [1].  
 4- The BLE connection will be started as follows, depending if your BLE device is a smartphone or a 3rd Nucleo board:
-4.1 If using a smartphone, then the ST BLE Sensor App (smart Phone Application) scans and can connect to the P2P Server 
+4.1 If using a smartphone, then the ST BLE Sensor classic or ST BLE Toolbox Application scans and can connect to the P2P Server 
 by selecting = "P2PZBSRV1" entry.
 -- Once connected, the application starts to search the P2P Services & Characteristics.
 -- Led Button service, Led Characteristic and Button Characteristic are discovered at this stage (this service is ST specific).
+-- Pressing the LED button on the App will turn On or Off the RED Led on the ZB/BLE device [2] if the LEDs are enabled on this device (default is disable).
 4.2 If using a 3rd Nucleo board (running a BLE_p2pClient application [3]), you can start scanning by pressing the SW1 button
 -- the BLUE LED will light up on [3]
 -- After scanning complete, the 3rd Nucleo board [3] connects to the P2P server on BLE/ZB [2] dynamic node, and sends a BLE toggle when pressing SW1.

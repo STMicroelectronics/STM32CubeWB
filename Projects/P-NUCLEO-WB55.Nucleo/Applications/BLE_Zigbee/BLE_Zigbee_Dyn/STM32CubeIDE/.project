@@ -232,6 +232,11 @@
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/ble/core/auto/ble_gap_aci.c</locationURI>
 		</link>
 		<link>
+			<name>Middlewares/STM32_WPAN/ble/core/ble_gen_aci.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/ble/core/auto/ble_gen_aci.c</locationURI>
+		</link>
+		<link>
 			<name>Middlewares/STM32_WPAN/ble/core/ble_gatt_aci.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/ble/core/auto/ble_gatt_aci.c</locationURI>

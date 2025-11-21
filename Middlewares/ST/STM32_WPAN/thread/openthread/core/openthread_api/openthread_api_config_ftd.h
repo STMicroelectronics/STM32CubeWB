@@ -26,6 +26,7 @@
 #define OPENTHREAD_FTD 1
 #endif
 
+
 /* Define to 1 if you want to enable default log output. */
 #define OPENTHREAD_CONFIG_LOG_OUTPUT  OPENTHREAD_CONFIG_LOG_OUTPUT_APP
 
@@ -40,6 +41,9 @@
 
 /* Define to 1 to enable DHCPv6 Client. */
 #define OPENTHREAD_CONFIG_DHCP6_CLIENT_ENABLE 1
+
+/* Define to 1 to enable DHCPv6 SERVER. */
+#define OPENTHREAD_CONFIG_DHCP6_SERVER_ENABLE 0
 
 /* Define to 1 to enable MAC whitelist/blacklist feature. */
 #define OPENTHREAD_CONFIG_MAC_FILTER_ENABLE 1
@@ -136,5 +140,17 @@
 
 /* Define to 1 to enable Mesh Diagnostic module. */
 #define OPENTHREAD_CONFIG_MESH_DIAG_ENABLE 1
+
+/* Define to 1 to enable vendor info set api */
+#define OPENTHREAD_CONFIG_NET_DIAG_VENDOR_INFO_SET_API_ENABLE 1
+
+/* Define to 1 to enable border agent apis */
+#define OPENTHREAD_CONFIG_BORDER_AGENT_ENABLE 0
+
+/* Define to 1 to enable ephemeral key mechanism and its APIs in Border Agent */
+#define OPENTHREAD_CONFIG_BORDER_AGENT_EPHEMERAL_KEY_ENABLE 0
+
+/* Define to 1 to get the current device properties */
+#define OPENTHREAD_CONFIG_MLE_DEVICE_PROPERTY_LEADER_WEIGHT_ENABLE 0
 
 #endif /* OPENTHREAD_API_CONFIG_FTD_H_ */

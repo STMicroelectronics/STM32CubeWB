@@ -52,6 +52,7 @@
 #define APPBLE_GAP_DEVICE_NAME_LENGTH 7
    
 #define BD_ADDR_SIZE_LOCAL    6
+#define BLE_DEFAULT_PIN         (111111)
    
 /* USER CODE BEGIN PD */
 /* USER CODE END PD */
@@ -634,8 +635,8 @@ static void Ble_Hci_Gap_Gatt_Init(void)
                                          0,
                                          CFG_ENCRYPTION_KEY_SIZE_MIN,
                                          CFG_ENCRYPTION_KEY_SIZE_MAX,
-                                         CFG_USED_FIXED_PIN,
-                                         CFG_FIXED_PIN,
+                                         USE_FIXED_PIN_FOR_PAIRING_FORBIDDEN, /* deprecated feature */
+                                         0,                                   /* deprecated feature */
                                          0);
   if (ret != BLE_STATUS_SUCCESS)
   {

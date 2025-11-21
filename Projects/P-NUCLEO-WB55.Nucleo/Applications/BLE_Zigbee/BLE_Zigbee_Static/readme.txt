@@ -29,7 +29,8 @@ Static means that application can perform alternatively BLE or Zigbee activities
 The idea is to present a demo with a Zigbee Network (at least 2 Nucleo Boards
 running Zigbee_OnOff_Server_Coord and Zigbee_OnOff_Client_Router application) and a BLE connection between 1 Nucleo
 board running BLE_Zigbee_Static application with a smartphone running 
-"ST BLE Sensor" Application (available on App Store and Google Play)
+"ST BLE Sensor" Application (available on App Store and Google Play) or "ST BLE Toolbox" Application (available on App Store and Google Play), 
+or another Nucleo board running a BLE_p2pClient application.
 The STM32WB55xx-Nucleo board running BLE_Zigbee_Static application is capable 
 of switching from BLE network to Zigbee network and vice-versa.
 
@@ -81,8 +82,8 @@ Minimum requirements for the demo:
   (This device will be referred as NODE1)
 - 2 STM32WB55xx-Nucleo board or more for creating Zigbee Network 
   (see example Zigbee_OnOff_Server_Coord and Zigbee_OnOff_Client_Router for more details on how to use it)
-- 1 Smartphone (Android/IOS) with "ST BLE Sensor" Phone Application (available on App Store and Google Play)
-  Install the "ST BLE Sensor" application on the ios/android device
+- 1 Smartphone (Android/IOS) with "ST BLE Sensor" or "ST BLE Toolbox" Phone Application (available on App Store and Google Play)
+  Install the "ST BLE Sensor" or "ST BLE Toolbox" application on the ios/android device
   https://play.google.com/store/apps/details?id=com.st.bluems
   https://itunes.apple.com/us/App/st-bluems/id993670214?mt=8
 

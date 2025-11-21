@@ -1002,124 +1002,6 @@ tBleStatus aci_gatt_write_char_reliable( uint16_t Connection_Handle,
   return status;
 }
 
-tBleStatus aci_gatt_write_long_char_desc( uint16_t Connection_Handle,
-                                          uint16_t Attr_Handle,
-                                          uint16_t Val_Offset,
-                                          uint8_t Attribute_Val_Length,
-                                          const uint8_t* Attribute_Val )
-{
-  struct hci_request rq;
-  uint8_t cmd_buffer[BLE_CMD_MAX_PARAM_LEN];
-  aci_gatt_write_long_char_desc_cp0 *cp0 = (aci_gatt_write_long_char_desc_cp0*)(cmd_buffer);
-  tBleStatus status = 0;
-  int index_input = 0;
-  cp0->Connection_Handle = Connection_Handle;
-  index_input += 2;
-  cp0->Attr_Handle = Attr_Handle;
-  index_input += 2;
-  cp0->Val_Offset = Val_Offset;
-  index_input += 2;
-  cp0->Attribute_Val_Length = Attribute_Val_Length;
-  index_input += 1;
-  Osal_MemCpy( (void*)&cp0->Attribute_Val, (const void*)Attribute_Val, Attribute_Val_Length );
-  index_input += Attribute_Val_Length;
-  Osal_MemSet( &rq, 0, sizeof(rq) );
-  rq.ogf = 0x3f;
-  rq.ocf = 0x11f;
-  rq.event = 0x0F;
-  rq.cparam = cmd_buffer;
-  rq.clen = index_input;
-  rq.rparam = &status;
-  rq.rlen = 1;
-  if ( hci_send_req(&rq, FALSE) < 0 )
-    return BLE_STATUS_TIMEOUT;
-  return status;
-}
-
-tBleStatus aci_gatt_read_long_char_desc( uint16_t Connection_Handle,
-                                         uint16_t Attr_Handle,
-                                         uint16_t Val_Offset )
-{
-  struct hci_request rq;
-  uint8_t cmd_buffer[BLE_CMD_MAX_PARAM_LEN];
-  aci_gatt_read_long_char_desc_cp0 *cp0 = (aci_gatt_read_long_char_desc_cp0*)(cmd_buffer);
-  tBleStatus status = 0;
-  int index_input = 0;
-  cp0->Connection_Handle = Connection_Handle;
-  index_input += 2;
-  cp0->Attr_Handle = Attr_Handle;
-  index_input += 2;
-  cp0->Val_Offset = Val_Offset;
-  index_input += 2;
-  Osal_MemSet( &rq, 0, sizeof(rq) );
-  rq.ogf = 0x3f;
-  rq.ocf = 0x120;
-  rq.event = 0x0F;
-  rq.cparam = cmd_buffer;
-  rq.clen = index_input;
-  rq.rparam = &status;
-  rq.rlen = 1;
-  if ( hci_send_req(&rq, FALSE) < 0 )
-    return BLE_STATUS_TIMEOUT;
-  return status;
-}
-
-tBleStatus aci_gatt_write_char_desc( uint16_t Connection_Handle,
-                                     uint16_t Attr_Handle,
-                                     uint8_t Attribute_Val_Length,
-                                     const uint8_t* Attribute_Val )
-{
-  struct hci_request rq;
-  uint8_t cmd_buffer[BLE_CMD_MAX_PARAM_LEN];
-  aci_gatt_write_char_desc_cp0 *cp0 = (aci_gatt_write_char_desc_cp0*)(cmd_buffer);
-  tBleStatus status = 0;
-  int index_input = 0;
-  cp0->Connection_Handle = Connection_Handle;
-  index_input += 2;
-  cp0->Attr_Handle = Attr_Handle;
-  index_input += 2;
-  cp0->Attribute_Val_Length = Attribute_Val_Length;
-  index_input += 1;
-  Osal_MemCpy( (void*)&cp0->Attribute_Val, (const void*)Attribute_Val, Attribute_Val_Length );
-  index_input += Attribute_Val_Length;
-  Osal_MemSet( &rq, 0, sizeof(rq) );
-  rq.ogf = 0x3f;
-  rq.ocf = 0x121;
-  rq.event = 0x0F;
-  rq.cparam = cmd_buffer;
-  rq.clen = index_input;
-  rq.rparam = &status;
-  rq.rlen = 1;
-  if ( hci_send_req(&rq, FALSE) < 0 )
-    return BLE_STATUS_TIMEOUT;
-  return status;
-}
-
-tBleStatus aci_gatt_read_char_desc( uint16_t Connection_Handle,
-                                    uint16_t Attr_Handle )
-{
-  struct hci_request rq;
-  uint8_t cmd_buffer[BLE_CMD_MAX_PARAM_LEN];
-  aci_gatt_read_char_desc_cp0 *cp0 = (aci_gatt_read_char_desc_cp0*)(cmd_buffer);
-  tBleStatus status = 0;
-  int index_input = 0;
-  cp0->Connection_Handle = Connection_Handle;
-  index_input += 2;
-  cp0->Attr_Handle = Attr_Handle;
-  index_input += 2;
-  Osal_MemSet( &rq, 0, sizeof(rq) );
-  rq.ogf = 0x3f;
-  rq.ocf = 0x122;
-  rq.event = 0x0F;
-  rq.cparam = cmd_buffer;
-  rq.clen = index_input;
-  rq.rparam = &status;
-  rq.rlen = 1;
-  if ( hci_send_req(&rq, FALSE) < 0 )
-    return BLE_STATUS_TIMEOUT;
-  return status;
-}
-
 tBleStatus aci_gatt_write_without_resp( uint16_t Connection_Handle,
                                         uint16_t Attr_Handle,
                                         uint8_t Attribute_Val_Length,
@@ -1201,16 +1083,16 @@ tBleStatus aci_gatt_confirm_indication( uint16_t Connection_Handle )
   return status;
 }
 
-tBleStatus aci_gatt_write_resp( uint16_t Connection_Handle,
-                                uint16_t Attr_Handle,
-                                uint8_t Write_status,
-                                uint8_t Error_Code,
-                                uint8_t Attribute_Val_Length,
-                                const uint8_t* Attribute_Val )
+tBleStatus aci_gatt_permit_write( uint16_t Connection_Handle,
+                                  uint16_t Attr_Handle,
+                                  uint8_t Write_status,
+                                  uint8_t Error_Code,
+                                  uint8_t Attribute_Val_Length,
+                                  const uint8_t* Attribute_Val )
 {
   struct hci_request rq;
   uint8_t cmd_buffer[BLE_CMD_MAX_PARAM_LEN];
-  aci_gatt_write_resp_cp0 *cp0 = (aci_gatt_write_resp_cp0*)(cmd_buffer);
+  aci_gatt_permit_write_cp0 *cp0 = (aci_gatt_permit_write_cp0*)(cmd_buffer);
   tBleStatus status = 0;
   int index_input = 0;
   cp0->Connection_Handle = Connection_Handle;
@@ -1237,14 +1119,23 @@ tBleStatus aci_gatt_write_resp( uint16_t Connection_Handle,
   return status;
 }
 
-tBleStatus aci_gatt_allow_read( uint16_t Connection_Handle )
+tBleStatus aci_gatt_permit_read( uint16_t Connection_Handle,
+                                 uint8_t Read_status,
+                                 uint8_t Error_Code,
+                                 uint16_t Attr_Handle )
 {
   struct hci_request rq;
   uint8_t cmd_buffer[BLE_CMD_MAX_PARAM_LEN];
-  aci_gatt_allow_read_cp0 *cp0 = (aci_gatt_allow_read_cp0*)(cmd_buffer);
+  aci_gatt_permit_read_cp0 *cp0 = (aci_gatt_permit_read_cp0*)(cmd_buffer);
   tBleStatus status = 0;
   int index_input = 0;
   cp0->Connection_Handle = Connection_Handle;
+  index_input += 2;
+  cp0->Read_status = Read_status;
+  index_input += 1;
+  cp0->Error_Code = Error_Code;
+  index_input += 1;
+  cp0->Attr_Handle = Attr_Handle;
   index_input += 2;
   Osal_MemSet( &rq, 0, sizeof(rq) );
   rq.ogf = 0x3f;
@@ -1399,30 +1290,6 @@ tBleStatus aci_gatt_update_char_value_ext( uint16_t Conn_Handle_To_Notify,
   return status;
 }
 
-tBleStatus aci_gatt_deny_read( uint16_t Connection_Handle,
-                               uint8_t Error_Code )
-{
-  struct hci_request rq;
-  uint8_t cmd_buffer[BLE_CMD_MAX_PARAM_LEN];
-  aci_gatt_deny_read_cp0 *cp0 = (aci_gatt_deny_read_cp0*)(cmd_buffer);
-  tBleStatus status = 0;
-  int index_input = 0;
-  cp0->Connection_Handle = Connection_Handle;
-  index_input += 2;
-  cp0->Error_Code = Error_Code;
-  index_input += 1;
-  Osal_MemSet( &rq, 0, sizeof(rq) );
-  rq.ogf = 0x3f;
-  rq.ocf = 0x12d;
-  rq.cparam = cmd_buffer;
-  rq.clen = index_input;
-  rq.rparam = &status;
-  rq.rlen = 1;
-  if ( hci_send_req(&rq, FALSE) < 0 )
-    return BLE_STATUS_TIMEOUT;
-  return status;
-}
-
 tBleStatus aci_gatt_set_access_permission( uint16_t Serv_Handle,
                                            uint16_t Attr_Handle,
                                            uint8_t Access_Permissions )
@@ -1509,6 +1376,76 @@ tBleStatus aci_gatt_read_multiple_var_char_value( uint16_t Connection_Handle,
   Osal_MemSet( &rq, 0, sizeof(rq) );
   rq.ogf = 0x3f;
   rq.ocf = 0x132;
+  rq.event = 0x0F;
+  rq.cparam = cmd_buffer;
+  rq.clen = index_input;
+  rq.rparam = &status;
+  rq.rlen = 1;
+  if ( hci_send_req(&rq, FALSE) < 0 )
+    return BLE_STATUS_TIMEOUT;
+  return status;
+}
+
+tBleStatus aci_gatt_write_without_resp_ext( uint16_t Connection_Handle,
+                                            uint16_t Attr_Handle,
+                                            uint8_t Signed_Mode,
+                                            uint16_t Data_Length,
+                                            uint32_t Data_Pointer )
+{
+  struct hci_request rq;
+  uint8_t cmd_buffer[BLE_CMD_MAX_PARAM_LEN];
+  aci_gatt_write_without_resp_ext_cp0 *cp0 = (aci_gatt_write_without_resp_ext_cp0*)(cmd_buffer);
+  tBleStatus status = 0;
+  int index_input = 0;
+  cp0->Connection_Handle = Connection_Handle;
+  index_input += 2;
+  cp0->Attr_Handle = Attr_Handle;
+  index_input += 2;
+  cp0->Signed_Mode = Signed_Mode;
+  index_input += 1;
+  cp0->Data_Length = Data_Length;
+  index_input += 2;
+  cp0->Data_Pointer = Data_Pointer;
+  index_input += 4;
+  Osal_MemSet( &rq, 0, sizeof(rq) );
+  rq.ogf = 0x3f;
+  rq.ocf = 0x140;
+  rq.cparam = cmd_buffer;
+  rq.clen = index_input;
+  rq.rparam = &status;
+  rq.rlen = 1;
+  if ( hci_send_req(&rq, FALSE) < 0 )
+    return BLE_STATUS_TIMEOUT;
+  return status;
+}
+
+tBleStatus aci_gatt_write_with_resp_ext( uint16_t Connection_Handle,
+                                         uint16_t Attr_Handle,
+                                         uint8_t Write_Mode,
+                                         uint16_t Val_Offset,
+                                         uint16_t Data_Length,
+                                         uint32_t Data_Pointer )
+{
+  struct hci_request rq;
+  uint8_t cmd_buffer[BLE_CMD_MAX_PARAM_LEN];
+  aci_gatt_write_with_resp_ext_cp0 *cp0 = (aci_gatt_write_with_resp_ext_cp0*)(cmd_buffer);
+  tBleStatus status = 0;
+  int index_input = 0;
+  cp0->Connection_Handle = Connection_Handle;
+  index_input += 2;
+  cp0->Attr_Handle = Attr_Handle;
+  index_input += 2;
+  cp0->Write_Mode = Write_Mode;
+  index_input += 1;
+  cp0->Val_Offset = Val_Offset;
+  index_input += 2;
+  cp0->Data_Length = Data_Length;
+  index_input += 2;
+  cp0->Data_Pointer = Data_Pointer;
+  index_input += 4;
+  Osal_MemSet( &rq, 0, sizeof(rq) );
+  rq.ogf = 0x3f;
+  rq.ocf = 0x141;
   rq.event = 0x0F;
   rq.cparam = cmd_buffer;
   rq.clen = index_input;

@@ -123,6 +123,7 @@ otError otThreadSendDiagnosticReset(otInstance *        aInstance,
 
 #endif // OPENTHREAD_CONFIG_TMF_NETDIAG_CLIENT_ENABLE
 
+#ifndef OPENTHREAD_RCP
 const char *otThreadGetVendorName(otInstance *aInstance)
 {
   const char * rspData;
@@ -209,4 +210,143 @@ const char *otThreadGetVendorAppUrl(otInstance *aInstance)
   Post_OtCmdProcessing();
   
   return rspData;
+}
+#endif
+#ifdef OPENTHREAD_CONFIG_NET_DIAG_VENDOR_INFO_SET_API_ENABLE
+
+otError otThreadSetVendorName(otInstance *aInstance, const char *aVendorName)
+{
+  otError rspData;
+  
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_SET_VENDOR_NAME;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t) aVendorName;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
+}
+
+otError otThreadSetVendorModel(otInstance *aInstance, const char *aVendorModel)
+{
+  otError rspData;
+  
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_SET_VENDOR_MODEL;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t) aVendorModel;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
+}
+
+otError otThreadSetVendorSwVersion(otInstance *aInstance, const char *aVendorSwVersion)
+{
+  otError rspData;
+  
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_SET_VENDOR_SW_VERSION;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t) aVendorSwVersion;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
+}
+
+
+otError otThreadSetVendorAppUrl(otInstance *aInstance, const char *aVendorAppUrl)
+{
+  otError rspData;
+  
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_THREAD_SET_VENDOR_APP_URL;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t) aVendorAppUrl;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  rspData = (otError)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
+}
+
+#endif
+
+otChannelMask otThreadGetNonPreferredChannels(otInstance *aInstance)
+{
+  
+  otChannelMask rspData;
+  
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4ToM0_OT_THREAD_GET_NON_PREFERED_CHANNEL;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  rspData = (otChannelMask)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
+}
+
+void otThreadSetNonPreferredChannels(otInstance *aInstance, otChannelMask aChannelMask)
+{
+  
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4ToM0_OT_THREAD_GET_NON_PREFERED_CHANNEL;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  
+  Post_OtCmdProcessing();
+  
 }

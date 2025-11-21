@@ -47,7 +47,6 @@ namespace Cli {
 
 /**
  * Implements the Dataset CLI interpreter.
- *
  */
 class Dataset : private Utils
 {
@@ -67,7 +66,6 @@ public:
      * @retval OT_ERROR_INVALID_COMMAND   Invalid or unknown CLI command.
      * @retval OT_ERROR_INVALID_ARGS      Invalid arguments.
      * @retval ...                        Error during execution of the CLI command.
-     *
      */
     otError Process(Arg aArgs[]);
 
@@ -94,6 +92,7 @@ private:
 
     void OutputActiveTimestamp(const otOperationalDataset &aDataset);
     void OutputChannel(const otOperationalDataset &aDataset);
+    void OutputWakeupChannel(const otOperationalDataset &aDataset);
     void OutputChannelMask(const otOperationalDataset &aDataset);
     void OutputDelay(const otOperationalDataset &aDataset);
     void OutputExtendedPanId(const otOperationalDataset &aDataset);
@@ -107,6 +106,7 @@ private:
 
     otError ParseActiveTimestamp(Arg *&aArgs, otOperationalDataset &aDataset);
     otError ParseChannel(Arg *&aArgs, otOperationalDataset &aDataset);
+    otError ParseWakeupChannel(Arg *&aArgs, otOperationalDataset &aDataset);
     otError ParseChannelMask(Arg *&aArgs, otOperationalDataset &aDataset);
     otError ParseDelay(Arg *&aArgs, otOperationalDataset &aDataset);
     otError ParseExtendedPanId(Arg *&aArgs, otOperationalDataset &aDataset);
@@ -118,11 +118,13 @@ private:
     otError ParsePskc(Arg *&aArgs, otOperationalDataset &aDataset);
     otError ParseSecurityPolicy(Arg *&aArgs, otOperationalDataset &aDataset);
 
+    otError ParseTlvs(Arg &aArg, otOperationalDatasetTlvs &aDatasetTlvs);
+
     otError ProcessCommand(const ComponentMapper &aMapper, Arg aArgs[]);
 
     template <CommandId kCommandId> otError Process(Arg aArgs[]);
 
-    otError Print(otOperationalDatasetTlvs &aDatasetTlvs);
+    otError Print(otOperationalDatasetTlvs &aDatasetTlvs, bool aNonsensitiveOnly);
 
 #if OPENTHREAD_CONFIG_DATASET_UPDATER_ENABLE && OPENTHREAD_FTD
     otError     ProcessUpdater(Arg aArgs[]);

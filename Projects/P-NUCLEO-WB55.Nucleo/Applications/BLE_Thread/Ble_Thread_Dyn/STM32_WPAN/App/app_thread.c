@@ -60,7 +60,6 @@
 #define THREAD_CHANGE_MODE_TIMEOUT      (1*1000*1000/CFG_TS_TICK_VAL) /**< 1s */
 #define THREAD_LINK_POLL_PERIOD         (5*1000*1000/CFG_TS_TICK_VAL) /**< 5s */
 
-#define OT_AUTOSTART_MODE 1 // Automatic OT start and COAP after reset, set it to 0 for GRL testing
 /* USER CODE END PD */
 
 /* Private macros ------------------------------------------------------------*/
@@ -337,7 +336,7 @@ static void APP_THREAD_DeviceConfig(void)
   {
     APP_THREAD_Error(ERR_THREAD_SET_STATE_CB,error);
   }
-#if OT_AUTOSTART_MODE
+#ifndef GRL_TEST
   error = otLinkSetChannel(NULL, C_CHANNEL_NB);
   if (error != OT_ERROR_NONE)
   {
@@ -375,6 +374,7 @@ static void APP_THREAD_DeviceConfig(void)
   otCoapAddResource(NULL, &OT_Ressource);
 #endif
 #endif
+
 }
 
 /**
@@ -415,7 +415,7 @@ static void APP_THREAD_StateNotif(uint32_t NotifFlags, void *pContext)
       /* USER CODE BEGIN OT_DEVICE_ROLE_CHILD */
       BSP_LED_Off(LED2);
       BSP_LED_On(LED3);
-#if OT_AUTOSTART_MODE
+#ifndef GRL_TEST
       HW_TS_Start(sedCoapTimerID, (uint32_t)COAP_SEND_TIMEOUT);
 #endif
       /* USER CODE END OT_DEVICE_ROLE_CHILD */
@@ -424,7 +424,7 @@ static void APP_THREAD_StateNotif(uint32_t NotifFlags, void *pContext)
       /* USER CODE BEGIN OT_DEVICE_ROLE_ROUTER */
       BSP_LED_Off(LED2);
       BSP_LED_On(LED3);
-#if OT_AUTOSTART_MODE
+#ifndef GRL_TEST
       HW_TS_Start(sedCoapTimerID, (uint32_t)COAP_SEND_TIMEOUT);
 #endif
       /* USER CODE END OT_DEVICE_ROLE_ROUTER */
@@ -433,7 +433,7 @@ static void APP_THREAD_StateNotif(uint32_t NotifFlags, void *pContext)
       /* USER CODE BEGIN OT_DEVICE_ROLE_LEADER */
       BSP_LED_On(LED2);
       BSP_LED_Off(LED3);
-#if OT_AUTOSTART_MODE
+#ifndef GRL_TEST
       HW_TS_Start(sedCoapTimerID, (uint32_t)COAP_SEND_TIMEOUT);
 #endif
       /* USER CODE END OT_DEVICE_ROLE_LEADER */

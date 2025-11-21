@@ -93,4 +93,19 @@
 /* Define to 1 to enable Mle Link Metrics Subject */
 #define OPENTHREAD_CONFIG_MLE_LINK_METRICS_SUBJECT_ENABLE 1
 
+/* Define to 1 to enable Thread Test Harness reference device support. */
+#define OPENTHREAD_CONFIG_REFERENCE_DEVICE_ENABLE 0
+
+/* Define to 1 to enable vendor info set api */
+#define OPENTHREAD_CONFIG_NET_DIAG_VENDOR_INFO_SET_API_ENABLE 0
+
+/* Define to 1 to enable border agent apis */
+#define OPENTHREAD_CONFIG_BORDER_AGENT_ENABLE 0
+
+/* Define to 1 to enable ephemeral key mechanism and its APIs in Border Agent */
+#define OPENTHREAD_CONFIG_BORDER_AGENT_EPHEMERAL_KEY_ENABLE 0
+
+/* Define to 1 to get the current device properties */
+#define OPENTHREAD_CONFIG_MLE_DEVICE_PROPERTY_LEADER_WEIGHT_ENABLE 0
+
 #endif /* OPENTHREAD_API_CONFIG_RCP_H_ */

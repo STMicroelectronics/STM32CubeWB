@@ -30,7 +30,7 @@ Dynamic means that application can perform at the same time BLE or Thread activi
 
 The idea is to present a demo with a Thread Network (1 Nucleo Boards
 running Ble_Thread_Dyn_SED application and at least 1 Nucleo Boards running Thread_FTD_Coap_Multicast Application),
-and a a BLE connection between a smartphone running "ST BLE Sensor" Application (available on App Store and Google Play), 
+and a a BLE connection between a smartphone running "ST BLE Sensor" or "ST BLE Toolbox" Application (available on App Store and Google Play), or "ST BLE Toolbox" Application (available on App Store and Google Play)
 or another Nucleo board running a BLE_p2pClient application.
 
 The STM32WB55xx-Nucleo board running Ble_Thread_Dyn_SED application is capable of BLE and OpenThread activity at the same time.
@@ -105,8 +105,8 @@ Minimum requirements for the demo:
       (Copro wireless :stm32wb5x_BLE_Thread_dynamic_fw.bin + Ble_Thread_Dyn_SED application)  
 - 1 STM32WB55xx-Nucleo board running Thread FTD COAP Generic Application
        (Copro wireless :stm32wb5x_Thread_FTD_fw.bin + Thread_FTD_Coap_Multicast application)  
-- 1 Smartphone (Android/IOS) with "ST BLE Sensor" Phone Application (available on App Store and Google Play)
-  Install the "ST BLE Sensor" application on the ios/android device
+- 1 Smartphone (Android/IOS) with "ST BLE Sensor" or "ST BLE Toolbox" Phone Application (available on App Store and Google Play)
+  Install the "ST BLE Sensor" or "ST BLE Toolbox" application on the ios/android device
   https://play.google.com/store/apps/details?id=com.st.bluems
   https://itunes.apple.com/us/App/st-bluems/id993670214?mt=8
 
@@ -145,7 +145,7 @@ The BLE activity demonstrates a Point-to-Point communication using BLE component
 The Peripheral device (P2P Server) starts advertising after reset.
 
 
-If using a smartphone, then the ST BLE Sensor App (smart Phone Application) scans and can connect to the P2P Server 
+If using a smartphone, then the ST BLE Sensor App  or the ST BLE Toolbox (smart Phone Application) scans and can connect to the P2P Server 
 by selecting = "P2PZBSRV1" entry. Once connected, the application starts to search the P2P Services & Characteristics.
 Led Button service, Led Characteristic and Button Characteristic are discovered at this stage 
 (this service is ST specific).

@@ -535,7 +535,7 @@ static otError UdpBind(uint16_t aPort)
 {
     otError    error;
     otSockAddr sockaddr;
-    otNetifIdentifier netif = OT_NETIF_THREAD;
+    otNetifIdentifier netif = OT_NETIF_THREAD_HOST;
 
     memset(&sockaddr, 0, sizeof(sockaddr));
 

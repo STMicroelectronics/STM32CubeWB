@@ -1,6 +1,6 @@
 /**
   @page FreeRTOS_Mutexes FreeRTOS Mutexes example
- 
+
   @verbatim
   ******************************************************************************
   * @file    FreeRTOS/FreeRTOS_Mutexes/readme.txt
@@ -22,32 +22,32 @@
 
 How to use mutexes with CMSIS RTOS API.
 
-This application creates three threads, with different priorities, that access the 
+This application creates three threads, with different priorities, that access the
 same mutex, as described below:
 
-MutexHighPriorityThread() has the highest priority so executes 
-first and grabs the mutex and sleeps for a short period to let the lower 
+MutexHighPriorityThread() has the highest priority so executes
+first and grabs the mutex and sleeps for a short period to let the lower
 priority threads execute.  When it has completed its demo functionality
-it gives the mutex back before suspending itself. 
-At that point, LED1 toggles.
- 
+it gives the mutex back before suspending itself.
+At that point, LED_BLUE toggles every 20 ms.
+
 MutexMediumPriorityThread() attempts to access the mutex by performing
-a blocking 'wait'.  This thread blocks when the mutex is already taken 
-by the high priority thread. It does not unblock until the highest 
-priority thread  has released the mutex, and it does not actually run until 
+a blocking 'wait'.  This thread blocks when the mutex is already taken
+by the high priority thread. It does not unblock until the highest
+priority thread  has released the mutex, and it does not actually run until
 the highest priority thread has suspended itself.
 When it eventually does obtain the mutex all it does is give the mutex back
 prior to also suspending itself.
-At this point both the high and medium priority threads are suspended and LED2 toggles.
+At this point both the high and medium priority threads are suspended and LED_GREEN toggles every 20 ms.
 
 MutexLowPriorityThread() runs at the idle priority.  It spins round
-a tight loop attempting to obtain the mutex with a non-blocking call.  As
+a tight loop attempting to obtain the mutex with a non-blocking call. As
 the lowest priority thread it will not successfully obtain the mutex until
-both high and medium priority threads are suspended.  Once it eventually 
+both high and medium priority threads are suspended.  Once it eventually
 does obtains the mutex, it first resumes both suspended threads prior to giving the mutex back,
-resulting in the low priority thread temporarily inheriting the highest thread priority.       
+resulting in the low priority thread temporarily inheriting the highest thread priority.
 
-In case of error, LED3 toggles.
+In case of error, LED_RED toggles.
 
 The following variables can be displayed on the debugger via LiveWatch:
  - HighPriorityThreadCycles
@@ -62,14 +62,14 @@ The following variables can be displayed on the debugger via LiveWatch:
       the peripheral interrupt. Otherwise the caller ISR process will be blocked.
       To change the HAL time base interrupt priority you have to use HAL_NVIC_SetPriority()
       function.
- 
+
 @note The application needs to ensure that the HAL time base is always set to 1 millisecond
       to have correct HAL operation.
 
-@note The FreeRTOS heap size configTOTAL_HEAP_SIZE defined in FreeRTOSConfig.h is set accordingly to the 
+@note The FreeRTOS heap size configTOTAL_HEAP_SIZE defined in FreeRTOSConfig.h is set accordingly to the
       OS resources memory requirements of the application with +10% margin and rounded to the upper Kbyte boundary.
 
-For more details about FreeRTOS implementation on STM32Cube, please refer to UM1722 "Developing Applications 
+For more details about FreeRTOS implementation on STM32Cube, please refer to UM1722 "Developing Applications
 on STM32Cube with RTOS".
 
 @par Keywords
@@ -99,9 +99,9 @@ RTOS, FreeRTOS, Threading, Mutexes
 @par How to use it ?
 
 In order to make the program work, you must do the following:
- - Open your preferred toolchain 
+ - Open your preferred toolchain
  - Rebuild all files and load your image into target memory
  - Run the example
- 
+
  * <h3><center>&copy; COPYRIGHT STMicroelectronics</center></h3>
  */

@@ -1082,19 +1082,19 @@ td.gsib_a {padding:0px;padding-top:4px;padding-left:3px;}
 </td><td><p>Size: 1 Octet (signed integer).
 Units: dBm.</p>
 </td><td><li>-30 ... 20</li></td></tr>
-</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_SET_CONTROLLER_TO_HOST_FLOW_CONTROL_anchor">HCI_SET_CONTROLLER_TO_HOST_FLOW_CONTROL</a></h2><h3>Description</h3><p>This command is used by the Host to turn flow control on or off for data and/or voice sent in the direction from the Controller to the Host. If flow control is turned off, the Host should not send the Host_Number_Of_Completed_Packets command. That command will be ignored by the Controller if it is sent by the Host and flow control is off. If flow control is turned on for HCI ACL Data Packets and off for HCI synchronous Data Packets, Host_Number_Of_Completed_Packets commands sent by the Host should only contain Connection_Handles for ACL connections. If flow control is turned off for HCI ACL Data Packets and on for HCI synchronous Data Packets, Host_Number_Of_Completed_Packets commands sent by the Host should only contain Connection_Handles for synchronous connections. If flow control is turned on for HCI ACL Data Packets and HCI synchronous Data Packets, the Host will send Host_Number_Of_Completed_Packets commands both for ACL connections and synchronous connections.<br>The Flow_Control_Enable parameter shall only be changed if no connections exist.<br>See Core Specification [Vol 4, Part E, 7.3.38].</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_SET_CONTROLLER_TO_HOST_FLOW_CONTROL_anchor">HCI_SET_CONTROLLER_TO_HOST_FLOW_CONTROL</a></h2><h3>Description</h3><p>This command is used by the Host to turn flow control on or off for ACL data sent in the direction from the Controller to the Host.<br>The Flow_Control_Enable parameter shall only be changed if no connections exist.<br>See Core Specification [Vol 4, Part E, 7.3.38].</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Flow_Control_Enable</p>
 </td><td><p>1</p>
 </td><td><p>Enable/Disable the Flow Control</p>
-</td><td><li>0x00: Flow control off in direction from Controller to Host. Default.</li><li>0x01: Flow control on for HCI ACL Data Packets and off for HCI synchronous.Data Packets in direction from Controller to Host.</li><li>0x02: Flow control off for HCI ACL Data Packets and on for HCI synchronous.Data Packets in direction from Controller to Host.</li><li>0x03: Flow control on both for HCI ACL Data Packets and HCI synchronous.Data Packets in direction from Controller to Host.</li></td></tr>
+</td><td><li>0x00: Flow control off in direction from Controller to Host. Default.</li><li>0x01: Flow control on for HCI ACL Data Packets and off for HCI synchronous.Data Packets in direction from Controller to Host.</li><li>0x02: Flow control off for HCI ACL Data Packets and on for HCI synchronous.Data Packets in direction from Controller to Host. Not supported.</li><li>0x03: Flow control on both for HCI ACL Data Packets and HCI synchronous.Data Packets in direction from Controller to Host. Not supported.</li></td></tr>
 </table><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
 </td><td><p>Status error code.</p>
 </td><td></td></tr>
-</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_HOST_BUFFER_SIZE_anchor">HCI_HOST_BUFFER_SIZE</a></h2><h3>Description</h3><p>The Host_Buffer_Size command is used by the Host to notify the Controller about the maximum size of the data portion of HCI ACL and synchronous Data Packets sent from the Controller to the Host. The Controller shall segment the data to be transmitted from the Controller to the Host according to these sizes, so that the HCI Data Packets will contain data with up to these sizes. The Host_Buffer_Size command also notifies the Controller about the total number of HCI ACL and synchronous Data Packets that can be stored in the data buffers of the Host. If flow control from the Controller to the Host is turned off, and the Host_Buffer_Size command has not been issued by the Host, this means that the Controller will send HCI Data Packets to the Host with any lengths the Controller wants to use, and it is assumed that the data buffer sizes of the Host are unlimited. If flow control from the Controller to the Host is turned on, the Host_Buffer_Size command shall after a power-on or a reset always be sent by the Host before the first Host_Number_Of_Completed_Packets command is sent.<br>The Set Controller To Host Flow Control Command is used to turn flow control on or off.<br>The Host_ACL_Data_Packet_Length command parameter will be used to determine the size of the L2CAP segments contained in ACL Data Packets, which are transferred from the Controller to the Host.<br>The Host_Synchronous_Data_Packet_Length command parameter is used to determine the maximum size of HCI synchronous Data Packets. Both the Host and the Controller shall support command and event packets, where the data portion (excluding header) contained in the packets is 255 octets in size.<br>The Host_Total_Num_ACL_Data_Packets command parameter contains the total number of HCI ACL Data Packets that can be stored in the data buffers of the Host. The Controller will determine how the buffers are to be divided between different Connection_Handles.<br>The Host_Total_Num_Synchronous_Data_Packets command parameter gives the same information for HCI synchronous Data Packets.<br>Note: The Host_ACL_Data_Packet_Length and Host_Synchronous_Data_Packet_Length command parameters do not include the length of the HCI Data Packet header.<br>See Core Specification [Vol 4, Part E, 7.3.39].</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_HOST_BUFFER_SIZE_anchor">HCI_HOST_BUFFER_SIZE</a></h2><h3>Description</h3><p>This command notifies the Controller about the total number of HCI ACL Data Packets that can be stored in the data buffers of the Host. If flow control from the Controller to the Host is turned off, and this command has not been issued by the Host, it is assumed that the data buffer sizes of the Host are unlimited. If flow control from the Controller to the Host is turned on, this command shall after a power-on or a reset always be sent by the Host before the first <a href="#HCI_HOST_NUMBER_OF_COMPLETED_PACKETS_anchor">HCI_HOST_NUMBER_OF_COMPLETED_PACKETS</a> command is sent.<br>The <a href="#HCI_SET_CONTROLLER_TO_HOST_FLOW_CONTROL_anchor">HCI_SET_CONTROLLER_TO_HOST_FLOW_CONTROL</a> command is used to turn flow control on or off.<br>The Host_ACL_Data_Packet_Length parameter will be used to determine the size of the L2CAP segments contained in ACL Data Packets, which are transferred from the Controller to the Host. Both the Host and the Controller shall support command and event packets, where the data portion (excluding header) contained in the packets is 255 octets in size.<br>The Host_Total_Num_ACL_Data_Packets parameter contains the total number of HCI ACL Data Packets that can be stored in the data buffers of the Host. The Controller will determine how the buffers are to be divided between different Connection_Handles.<br>The Host_Synchronous_Data_Packet_Length and Host_Total_Num_Synchronous_Data_Packets parameters are not used.<br>Note: The Host_ACL_Data_Packet_Length parameter does not include the length of the HCI Data Packet header.<br>See Core Specification [Vol 4, Part E, 7.3.39].</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Host_ACL_Data_Packet_Length</p>
 </td><td><p>2</p>
@@ -1118,7 +1118,7 @@ Units: dBm.</p>
 </td><td><p>1</p>
 </td><td><p>Status error code.</p>
 </td><td></td></tr>
-</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_HOST_NUMBER_OF_COMPLETED_PACKETS_anchor">HCI_HOST_NUMBER_OF_COMPLETED_PACKETS</a></h2><h3>Description</h3><p>The Host_Number_Of_Completed_Packets command is used by the Host to indicate to the Controller the number of HCI Data Packets that have been completed for each Connection_Handle since the previous Host_Number_Of_Completed_Packets command was sent to the Controller. This means that the corresponding buffer space has been freed in the Host. Based on this information, and the Host_Total_Num_ACL_Data_Packets and Host_Total_Num_Synchronous_Data_Packets command parameters of the Host_Buffer_Size command, the Controller can determine for which Connection_Handles the following HCI Data Packets should be sent to the Host. The command should only be issued by the Host if flow control in the direction from the Controller to the Host is on and there is at least one connection, or if the Controller is in local loopback mode. Otherwise, the command will be ignored by the Controller. When the Host has completed one or more HCI Data Packet(s) it shall send a Host_Number_Of_Completed_Packets command to the Controller, until it finally reports that all pending HCI Data Packets have been completed. The frequency at which this command is sent is manufacturer specific.<br>The Set Controller To Host Flow Control Command is used to turn flow control on or off. If flow control from the Controller to the Host is turned on, the Host_Buffer_Size command shall always be sent by the Host after a power-on or a reset before the first Host_Number_Of_Completed_Packets command is sent.<br>Note: The Host_Number_Of_Completed_Packets command is a special command in the sense that no event is normally generated after the command has completed. The command may be sent at any time by the Host when there is at least one connection, or if the Controller is in local loopback mode independent of other commands. The normal flow control for commands is not used for the Host_Number_Of_Completed_Packets command.<br>See Core Specification [Vol 4, Part E, 7.3.40].</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_HOST_NUMBER_OF_COMPLETED_PACKETS_anchor">HCI_HOST_NUMBER_OF_COMPLETED_PACKETS</a></h2><h3>Description</h3><p>This command is used by the Host to indicate to the Controller the number of HCI Data Packets that have been completed for each Connection_Handle since the previous <a href="#HCI_HOST_NUMBER_OF_COMPLETED_PACKETS_anchor">HCI_HOST_NUMBER_OF_COMPLETED_PACKETS</a> command was sent to the Controller. This means that the corresponding buffer space has been freed in the Host. Based on this information, and the Host_Total_Num_ACL_Data_Packets parameter of the <a href="#HCI_HOST_BUFFER_SIZE_anchor">HCI_HOST_BUFFER_SIZE</a> command, the Controller can determine for which Connection_Handles the following HCI Data Packets should be sent to the Host. The command should only be issued by the Host if flow control in the direction from the Controller to the Host is on and there is at least one connection. Otherwise, the command will be ignored by the Controller. When the Host has completed one or more HCI Data Packet(s) it shall send a <a href="#HCI_HOST_NUMBER_OF_COMPLETED_PACKETS_anchor">HCI_HOST_NUMBER_OF_COMPLETED_PACKETS</a> command to the Controller, until it finally reports that all pending HCI Data Packets have been completed. The frequency at which this command is sent is manufacturer specific.<br>Note: This command is a special command in the sense that no event is normally generated after the command has completed. The command may be sent at any time by the Host independent of other commands. The normal flow control for commands is not used for this command.<br>See Core Specification [Vol 4, Part E, 7.3.40].</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Number_Of_Handles</p>
 </td><td><p>1</p>
@@ -1135,7 +1135,7 @@ Units: dBm.</p>
 </td><td><p>The number of HCI Data Packets         that have been completed for the associated Connection_Handle since the previous time the event was returned.</p>
 </td><td><p>0x0000-0xFFFF</p>
 </td></tr>
-</table><h3>Output parameters</h3><p>None</p><h3>Events generated</h3><p>Normally, no event is generated after the Host_Number_Of_Completed_Packets command has completed. However, if the Host_Number_Of_Completed_Packets command contains one or more invalid parameters, the Controller shall return a Command Complete event with a failure status indicating the Invalid HCI Command Parameters error code. The Host may send the Host_Number_Of_Completed_Packets command at any time when there is at least one connection, or if the Controller is in local loopback mode. The normal flow control for commands is not used for this command.</p><h2><a name="HCI_READ_LOCAL_VERSION_INFORMATION_anchor">HCI_READ_LOCAL_VERSION_INFORMATION</a></h2><h3>Description</h3><p>This command reads the values for the version information for the local Controller.<br>See Core Specification [Vol 4, Part E, 7.4.1].</p><h3>Input parameters</h3><p>None</p><h3>Output parameters</h3><table width="800" border="1" class="reference">
+</table><h3>Output parameters</h3><p>None</p><h3>Events generated</h3><p>Normally, no event is generated after this command has completed. However, if this command contains one or more invalid parameters, the Controller returns a Command Complete event with a failure status indicating the Invalid HCI Command Parameters error code.</p><h2><a name="HCI_READ_LOCAL_VERSION_INFORMATION_anchor">HCI_READ_LOCAL_VERSION_INFORMATION</a></h2><h3>Description</h3><p>This command reads the values for the version information for the local Controller.<br>See Core Specification [Vol 4, Part E, 7.4.1].</p><h3>Input parameters</h3><p>None</p><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
 </td><td><p>1</p>
@@ -1147,7 +1147,8 @@ Units: dBm.</p>
 </td><td></tr>
 <tr><td><p>HCI_Subversion</p>
 </td><td><p>2</p>
-</td><td><p>Revision of the HCI implementation in the Controller. This value is vendor-specific.</p>
+</td><td><p>Revision of the HCI implementation in the Controller. This value is vendor-specific.
+This parameter gives the BLE stack reduced version number.</p>
 </td><td></tr>
 <tr><td><p>LMP_Version</p>
 </td><td><p>1</p>
@@ -1156,10 +1157,12 @@ Units: dBm.</p>
 <tr><td><p>Company_Identifier</p>
 </td><td><p>2</p>
 </td><td><p>Company identifier for the manufacturer of the Controller. See Bluetooth Assigned Numbers.</p>
-</td><td></tr>
+</td><td><li>0x0030: STMicroelectronics</li></td></tr>
 <tr><td><p>LMP_Subversion</p>
 </td><td><p>2</p>
-</td><td><p>Subversion of the Current LMP in the Controller. This value is vendor-specific.</p>
+</td><td><p>Subversion of the Current LMP in the Controller. This value is vendor-specific.
+The most significant byte gives the HW version.
+The least significant byte gives the FW version.</p>
 </td><td></tr>
 </table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="HCI_READ_LOCAL_SUPPORTED_COMMANDS_anchor">HCI_READ_LOCAL_SUPPORTED_COMMANDS</a></h2><h3>Description</h3><p>This command reads the list of HCI commands supported for the local Controller. This command shall return the Supported_Commands configuration parameter. It is implied that if a command is listed as supported, the feature underlying that command is also supported.<br>See Core Specification [Vol 4, Part E, 7.4.2].</p><h3>Input parameters</h3><p>None</p><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -3086,7 +3089,7 @@ Only if bonding is enabled (0x01), the bonding information is stored in flash</p
 <tr><td><p>MITM_Mode</p>
 </td><td><p>1</p>
 </td><td><p>MITM mode.</p>
-</td><td><li>0x00: MITM protection not required</li><li>0x01: MITM protection required</li></td></tr>
+</td><td><li>0x00: MITM protection not required</li><li>0x01: MITM protection required as mandatory</li><li>0x02: MITM protection required as optional</li></td></tr>
 <tr><td><p>SC_Support</p>
 </td><td><p>1</p>
 </td><td><p>LE Secure connections support</p>
@@ -3105,13 +3108,12 @@ Only if bonding is enabled (0x01), the bonding information is stored in flash</p
 </td><td></tr>
 <tr><td><p>Use_Fixed_Pin</p>
 </td><td><p>1</p>
-</td><td><p>Use or not fixed pin. If set to 0x00, then during the pairing process the application will not be requested for a pin (Fixed_Pin will be used).
-If set to 0x01, then during pairing process if a passkey is required the application will be notified</p>
-</td><td><li>0x00: use a fixed pin</li><li>0x01: do not use a fixed pin</li></td></tr>
+</td><td><p>Use or not fixed pin.
+If set to 0x00, then during the pairing process the application will not be requested for a pin (Fixed_Pin will be used). If set to 0x01, then during pairing process if a passkey is required the application will be notified</p>
+</td><td><li>0x00: use a fixed pin (deprecated option that should not be used)</li><li>0x01: do not use a fixed pin</li></td></tr>
 <tr><td><p>Fixed_Pin</p>
 </td><td><p>4</p>
-</td><td><p>Fixed pin to be used during pairing if MITM protection is enabled.
-Any random value between 0 to 999999</p>
+</td><td><p>Fixed pin to be used during pairing (deprecated parameter).</p>
 </td><td><li>0 ... 999999</li></td></tr>
 <tr><td><p>Identity_Address_Type</p>
 </td><td><p>1</p>
@@ -4461,18 +4463,6 @@ Time = N * 0.625 ms.</p>
 <tr><td><a href="#ACI_GATT_WRITE_CHAR_RELIABLE_anchor">ACI_GATT_WRITE_CHAR_RELIABLE</a></td><td><p>0xFD1E</p>
 </td><td><p>Y</p>
 </td><td></td><td></td><td></td><td></td></tr>
-<tr><td><a href="#ACI_GATT_WRITE_LONG_CHAR_DESC_anchor">ACI_GATT_WRITE_LONG_CHAR_DESC</a></td><td><p>0xFD1F</p>
-</td><td><p>Y</p>
-</td><td></td><td></td><td></td><td></td></tr>
-<tr><td><a href="#ACI_GATT_READ_LONG_CHAR_DESC_anchor">ACI_GATT_READ_LONG_CHAR_DESC</a></td><td><p>0xFD20</p>
-</td><td><p>Y</p>
-</td><td></td><td></td><td></td><td></td></tr>
-<tr><td><a href="#ACI_GATT_WRITE_CHAR_DESC_anchor">ACI_GATT_WRITE_CHAR_DESC</a></td><td><p>0xFD21</p>
-</td><td><p>Y</p>
-</td><td></td><td></td><td></td><td></td></tr>
-<tr><td><a href="#ACI_GATT_READ_CHAR_DESC_anchor">ACI_GATT_READ_CHAR_DESC</a></td><td><p>0xFD22</p>
-</td><td><p>Y</p>
-</td><td></td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_WRITE_WITHOUT_RESP_anchor">ACI_GATT_WRITE_WITHOUT_RESP</a></td><td><p>0xFD23</p>
 </td><td><p>Y</p>
 </td><td></td><td></td><td></td><td></td></tr>
@@ -4482,11 +4472,11 @@ Time = N * 0.625 ms.</p>
 <tr><td><a href="#ACI_GATT_CONFIRM_INDICATION_anchor">ACI_GATT_CONFIRM_INDICATION</a></td><td><p>0xFD25</p>
 </td><td><p>Y</p>
 </td><td></td><td></td><td></td><td></td></tr>
-<tr><td><a href="#ACI_GATT_WRITE_RESP_anchor">ACI_GATT_WRITE_RESP</a></td><td><p>0xFD26</p>
+<tr><td><a href="#ACI_GATT_PERMIT_WRITE_anchor">ACI_GATT_PERMIT_WRITE</a></td><td><p>0xFD26</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
-<tr><td><a href="#ACI_GATT_ALLOW_READ_anchor">ACI_GATT_ALLOW_READ</a></td><td><p>0xFD27</p>
+<tr><td><a href="#ACI_GATT_PERMIT_READ_anchor">ACI_GATT_PERMIT_READ</a></td><td><p>0xFD27</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
@@ -4506,10 +4496,6 @@ Time = N * 0.625 ms.</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td></td><td></td><td></td></tr>
-<tr><td><a href="#ACI_GATT_DENY_READ_anchor">ACI_GATT_DENY_READ</a></td><td><p>0xFD2D</p>
-</td><td><p>Y</p>
-</td><td><p>Y</p>
-</td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_SET_ACCESS_PERMISSION_anchor">ACI_GATT_SET_ACCESS_PERMISSION</a></td><td><p>0xFD2E</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
@@ -4522,6 +4508,12 @@ Time = N * 0.625 ms.</p>
 </td><td></td><td></td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_GATT_READ_MULTIPLE_VAR_CHAR_VALUE_anchor">ACI_GATT_READ_MULTIPLE_VAR_CHAR_VALUE</a></td><td><p>0xFD32</p>
 </td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td><a href="#ACI_GATT_WRITE_WITHOUT_RESP_EXT_anchor">ACI_GATT_WRITE_WITHOUT_RESP_EXT</a></td><td><p>0xFD40</p>
+</td><td><p>Y</p>
+</td><td></td><td></td><td></td><td></td></tr>
+<tr><td><a href="#ACI_GATT_WRITE_WITH_RESP_EXT_anchor">ACI_GATT_WRITE_WITH_RESP_EXT</a></td><td><p>0xFD41</p>
+</td><td><p>Y</p>
+</td><td></td><td></td><td></td><td></td></tr>
 </table><h2><a name="ACI_GATT_INIT_anchor">ACI_GATT_INIT</a></h2><h3>Description</h3><p>Initializes the GATT layer for server and client roles. It also adds the GATT service with Service Changed Characteristic.<br>Until this command is issued the GATT channel does not process any commands even if the connection is opened. This command has to be given before using any of the GAP features.</p><h3>Input parameters</h3><p>None</p><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
@@ -4615,7 +4607,7 @@ Server also allocates a range of handles for this service from serviceHandle to 
 <tr><td><p>Security_Permissions</p>
 </td><td><p>1</p>
 </td><td><p>Security permission flags.</p>
-</td><td><p>Bitmask of:</p><li>0x00: None</li><li>0x01: AUTHEN_READ (Need authentication to read)</li><li>0x02: AUTHOR_READ (Need authorization to read)</li><li>0x04: ENCRY_READ (Need encryption to read)</li><li>0x08: AUTHEN_WRITE (need authentication to write)</li><li>0x10: AUTHOR_WRITE (need authorization to write)</li><li>0x20: ENCRY_WRITE (need encryption to write)</li></td></tr>
+</td><td><p>Bitmask of:</p><li>0x00: None</li><li>0x01: AUTHEN_READ (need authentication to read)</li><li>0x02: AUTHOR_READ (need authorization to read)</li><li>0x04: ENCRY_READ (need encryption to read)</li><li>0x08: AUTHEN_WRITE (need authentication to write)</li><li>0x10: AUTHOR_WRITE (need authorization to write)</li><li>0x20: ENCRY_WRITE (need encryption to write)</li><li>0x40: SC_READ (need Secure Connections to read)</li><li>0x80: SC_WRITE (need Secure Connections to write)</li></td></tr>
 <tr><td><p>GATT_Evt_Mask</p>
 </td><td><p>1</p>
 </td><td><p>GATT event mask.</p>
@@ -4672,7 +4664,7 @@ a variable length.</p>
 <tr><td><p>Security_Permissions</p>
 </td><td><p>1</p>
 </td><td><p>Security permission flags.</p>
-</td><td><p>Bitmask of:</p><li>0x00: None</li><li>0x01: AUTHEN_READ (Need authentication to read)</li><li>0x02: AUTHOR_READ (Need authorization to read)</li><li>0x04: ENCRY_READ (Need encryption to read)</li><li>0x08: AUTHEN_WRITE (need authentication to write)</li><li>0x10: AUTHOR_WRITE (need authorization to write)</li><li>0x20: ENCRY_WRITE (need encryption to write)</li></td></tr>
+</td><td><p>Bitmask of:</p><li>0x00: None</li><li>0x01: AUTHEN_READ (need authentication to read)</li><li>0x02: AUTHOR_READ (need authorization to read)</li><li>0x04: ENCRY_READ (need encryption to read)</li><li>0x08: AUTHEN_WRITE (need authentication to write)</li><li>0x10: AUTHOR_WRITE (need authorization to write)</li><li>0x20: ENCRY_WRITE (need encryption to write)</li><li>0x40: SC_READ (need Secure Connections to read)</li><li>0x80: SC_WRITE (need Secure Connections to write)</li></td></tr>
 <tr><td><p>Access_Permissions</p>
 </td><td><p>1</p>
 </td><td><p>Access permission</p>
@@ -5079,7 +5071,7 @@ This value must not exceed (BLE_CMD_MAX_PARAM_LEN - 6) i.e. 249 for BLE_CMD_MAX_
 </td><td><li>0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the connection handle)</li><li>0xEA00 ... 0xEA3F: Enhanced ATT bearer (the LSB-byte of the parameter is the connection-oriented channel index)</li></td></tr>
 <tr><td><p>Attr_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Handle of the characteristic value to be read</p>
+</td><td><p>Handle of the characteristic value (or descriptor) to be read</p>
 </td><td></tr>
 </table><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
@@ -5115,7 +5107,7 @@ This value must not exceed (BLE_CMD_MAX_PARAM_LEN - 6) i.e. 249 for BLE_CMD_MAX_
 </td><td><p>1</p>
 </td><td><p>Status error code.</p>
 </td><td></td></tr>
-</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_GATT_DISC_READ_CHAR_BY_UUID_RESP_EVENT_anchor">ACI_GATT_DISC_READ_CHAR_BY_UUID_RESP_EVENT</a></li><li><a href="#ACI_GATT_ERROR_RESP_EVENT_anchor">ACI_GATT_ERROR_RESP_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_READ_LONG_CHAR_VALUE_anchor">ACI_GATT_READ_LONG_CHAR_VALUE</a></h2><h3>Description</h3><p>Starts the procedure to read a long characteristic value.<br>When the procedure is completed, a <a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a> event is generated. Before procedure completion the response packets are given through <a href="#ACI_ATT_READ_BLOB_RESP_EVENT_anchor">ACI_ATT_READ_BLOB_RESP_EVENT</a> event.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_GATT_DISC_READ_CHAR_BY_UUID_RESP_EVENT_anchor">ACI_GATT_DISC_READ_CHAR_BY_UUID_RESP_EVENT</a></li><li><a href="#ACI_GATT_ERROR_RESP_EVENT_anchor">ACI_GATT_ERROR_RESP_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_READ_LONG_CHAR_VALUE_anchor">ACI_GATT_READ_LONG_CHAR_VALUE</a></h2><h3>Description</h3><p>Starts the procedure to read a long characteristic value (or descriptor).<br>When the procedure is completed, a <a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a> event is generated. Before procedure completion the response packets are given through <a href="#ACI_ATT_READ_BLOB_RESP_EVENT_anchor">ACI_ATT_READ_BLOB_RESP_EVENT</a> event.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
@@ -5123,7 +5115,7 @@ This value must not exceed (BLE_CMD_MAX_PARAM_LEN - 6) i.e. 249 for BLE_CMD_MAX_
 </td><td><li>0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the connection handle)</li><li>0xEA00 ... 0xEA3F: Enhanced ATT bearer (the LSB-byte of the parameter is the connection-oriented channel index)</li></td></tr>
 <tr><td><p>Attr_Handle</p>
 </td><td><p>2</p>
-</td><td><p>Handle of the characteristic value to be read</p>
+</td><td><p>Handle of the characteristic value (or descriptor) to be read</p>
 </td><td></tr>
 <tr><td><p>Val_Offset</p>
 </td><td><p>2</p>
@@ -5155,7 +5147,7 @@ This value must not exceed (BLE_CMD_MAX_PARAM_LEN - 6) i.e. 249 for BLE_CMD_MAX_
 </td><td><p>1</p>
 </td><td><p>Status error code.</p>
 </td><td></td></tr>
-</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_ATT_READ_MULTIPLE_RESP_EVENT_anchor">ACI_ATT_READ_MULTIPLE_RESP_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_WRITE_CHAR_VALUE_anchor">ACI_GATT_WRITE_CHAR_VALUE</a></h2><h3>Description</h3><p>Starts the procedure to write a characteristic value.<br>When the procedure is completed, a <a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a> event is generated.<br>The length of the value to be written must not exceed (ATT_MTU - 3).<br>It must also not exceed (BLE_CMD_MAX_PARAM_LEN - 5) i.e. 250 for BLE_CMD_MAX_PARAM_LEN default value.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_ATT_READ_MULTIPLE_RESP_EVENT_anchor">ACI_ATT_READ_MULTIPLE_RESP_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_WRITE_CHAR_VALUE_anchor">ACI_GATT_WRITE_CHAR_VALUE</a></h2><h3>Description</h3><p>Starts the procedure to write a characteristic value (or a characteristic descriptor).<br>When the procedure is completed, a <a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a> event is generated.<br>The length of the value to be written must not exceed (ATT_MTU - 3).<br>It must also not exceed (BLE_CMD_MAX_PARAM_LEN - 5) i.e. 250 for BLE_CMD_MAX_PARAM_LEN default value.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
@@ -5179,7 +5171,7 @@ This value must not exceed (BLE_CMD_MAX_PARAM_LEN - 6) i.e. 249 for BLE_CMD_MAX_
 </td><td><p>1</p>
 </td><td><p>Status error code.</p>
 </td><td></td></tr>
-</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_GATT_ERROR_RESP_EVENT_anchor">ACI_GATT_ERROR_RESP_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_WRITE_LONG_CHAR_VALUE_anchor">ACI_GATT_WRITE_LONG_CHAR_VALUE</a></h2><h3>Description</h3><p>Starts the procedure to write a long characteristic value.<br>When the procedure is completed, a <a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a> event is generated. During the procedure, <a href="#ACI_ATT_PREPARE_WRITE_RESP_EVENT_anchor">ACI_ATT_PREPARE_WRITE_RESP_EVENT</a> and <a href="#ACI_ATT_EXEC_WRITE_RESP_EVENT_anchor">ACI_ATT_EXEC_WRITE_RESP_EVENT</a> events are raised.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_GATT_ERROR_RESP_EVENT_anchor">ACI_GATT_ERROR_RESP_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_WRITE_LONG_CHAR_VALUE_anchor">ACI_GATT_WRITE_LONG_CHAR_VALUE</a></h2><h3>Description</h3><p>Starts the procedure to write a long characteristic value (or a long characteristic descriptor).<br>When the procedure is completed, a <a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a> event is generated. During the procedure, <a href="#ACI_ATT_PREPARE_WRITE_RESP_EVENT_anchor">ACI_ATT_PREPARE_WRITE_RESP_EVENT</a> and <a href="#ACI_ATT_EXEC_WRITE_RESP_EVENT_anchor">ACI_ATT_EXEC_WRITE_RESP_EVENT</a> events are raised.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
@@ -5237,96 +5229,7 @@ This value must not exceed (BLE_CMD_MAX_PARAM_LEN - 7) i.e. 248 for BLE_CMD_MAX_
 </td><td><p>1</p>
 </td><td><p>Status error code.</p>
 </td><td></td></tr>
-</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><li><a href="#ACI_ATT_PREPARE_WRITE_RESP_EVENT_anchor">ACI_ATT_PREPARE_WRITE_RESP_EVENT</a></li><li><a href="#ACI_ATT_EXEC_WRITE_RESP_EVENT_anchor">ACI_ATT_EXEC_WRITE_RESP_EVENT</a></li><h2><a name="ACI_GATT_WRITE_LONG_CHAR_DESC_anchor">ACI_GATT_WRITE_LONG_CHAR_DESC</a></h2><h3>Description</h3><p>Starts the procedure to write a long characteristic descriptor.<br>When the procedure is completed, a <a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a> event is generated. During the procedure, <a href="#ACI_ATT_PREPARE_WRITE_RESP_EVENT_anchor">ACI_ATT_PREPARE_WRITE_RESP_EVENT</a> and <a href="#ACI_ATT_EXEC_WRITE_RESP_EVENT_anchor">ACI_ATT_EXEC_WRITE_RESP_EVENT</a> events are raised.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
-<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
-<tr><td><p>Connection_Handle</p>
-</td><td><p>2</p>
-</td><td><p>Specifies the ATT bearer for which the command applies.</p>
-</td><td><li>0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the connection handle)</li><li>0xEA00 ... 0xEA3F: Enhanced ATT bearer (the LSB-byte of the parameter is the connection-oriented channel index)</li></td></tr>
-<tr><td><p>Attr_Handle</p>
-</td><td><p>2</p>
-</td><td><p>Handle of the attribute to be written</p>
-</td><td></tr>
-<tr><td><p>Val_Offset</p>
-</td><td><p>2</p>
-</td><td><p>Offset at which the attribute has to be written</p>
-</td><td></tr>
-<tr><td><p>Attribute_Val_Length</p>
-</td><td><p>1</p>
-</td><td><p>Length of the value to be written.
-This value must not exceed (BLE_CMD_MAX_PARAM_LEN - 7) i.e. 248 for BLE_CMD_MAX_PARAM_LEN default value.</p>
-</td><td></tr>
-<tr><td><p>Attribute_Val</p>
-</td><td><p>Attribute_Val_Length</p>
-</td><td><p>Value to be written</p>
-</td><td></tr>
-</table><h3>Output parameters</h3><table width="800" border="1" class="reference">
-<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
-<tr><td><p>Status</p>
-</td><td><p>1</p>
-</td><td><p>Status error code.</p>
-</td><td></td></tr>
-</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><li><a href="#ACI_ATT_PREPARE_WRITE_RESP_EVENT_anchor">ACI_ATT_PREPARE_WRITE_RESP_EVENT</a></li><li><a href="#ACI_ATT_EXEC_WRITE_RESP_EVENT_anchor">ACI_ATT_EXEC_WRITE_RESP_EVENT</a></li><h2><a name="ACI_GATT_READ_LONG_CHAR_DESC_anchor">ACI_GATT_READ_LONG_CHAR_DESC</a></h2><h3>Description</h3><p>Starts the procedure to read a long characteristic value.<br>When the procedure is completed, a <a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a> event is generated. Before procedure completion the response packets are given through <a href="#ACI_ATT_READ_BLOB_RESP_EVENT_anchor">ACI_ATT_READ_BLOB_RESP_EVENT</a> event.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
-<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
-<tr><td><p>Connection_Handle</p>
-</td><td><p>2</p>
-</td><td><p>Specifies the ATT bearer for which the command applies.</p>
-</td><td><li>0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the connection handle)</li><li>0xEA00 ... 0xEA3F: Enhanced ATT bearer (the LSB-byte of the parameter is the connection-oriented channel index)</li></td></tr>
-<tr><td><p>Attr_Handle</p>
-</td><td><p>2</p>
-</td><td><p>Handle of the characteristic descriptor</p>
-</td><td></tr>
-<tr><td><p>Val_Offset</p>
-</td><td><p>2</p>
-</td><td><p>Offset from which the value needs to be read</p>
-</td><td></tr>
-</table><h3>Output parameters</h3><table width="800" border="1" class="reference">
-<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
-<tr><td><p>Status</p>
-</td><td><p>1</p>
-</td><td><p>Status error code.</p>
-</td><td></td></tr>
-</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_ATT_READ_BLOB_RESP_EVENT_anchor">ACI_ATT_READ_BLOB_RESP_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_WRITE_CHAR_DESC_anchor">ACI_GATT_WRITE_CHAR_DESC</a></h2><h3>Description</h3><p>Starts the procedure to write a characteristic descriptor.<br>When the procedure is completed, a <a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a> event is generated.<br>The length of the value to be written must not exceed (ATT_MTU - 3).<br>It must also not exceed (BLE_CMD_MAX_PARAM_LEN - 5) i.e. 250 for BLE_CMD_MAX_PARAM_LEN default value.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
-<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
-<tr><td><p>Connection_Handle</p>
-</td><td><p>2</p>
-</td><td><p>Specifies the ATT bearer for which the command applies.</p>
-</td><td><li>0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the connection handle)</li><li>0xEA00 ... 0xEA3F: Enhanced ATT bearer (the LSB-byte of the parameter is the connection-oriented channel index)</li></td></tr>
-<tr><td><p>Attr_Handle</p>
-</td><td><p>2</p>
-</td><td><p>Handle of the attribute to be written</p>
-</td><td></tr>
-<tr><td><p>Attribute_Val_Length</p>
-</td><td><p>1</p>
-</td><td><p>Length of the value to be written</p>
-</td><td></tr>
-<tr><td><p>Attribute_Val</p>
-</td><td><p>Attribute_Val_Length</p>
-</td><td><p>Value to be written</p>
-</td><td></tr>
-</table><h3>Output parameters</h3><table width="800" border="1" class="reference">
-<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
-<tr><td><p>Status</p>
-</td><td><p>1</p>
-</td><td><p>Status error code.</p>
-</td><td></td></tr>
-</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_READ_CHAR_DESC_anchor">ACI_GATT_READ_CHAR_DESC</a></h2><h3>Description</h3><p>Starts the procedure to read the descriptor specified.<br>When the procedure is completed, a <a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a> event is generated.<br>Before procedure completion the response packet is given through <a href="#ACI_ATT_READ_RESP_EVENT_anchor">ACI_ATT_READ_RESP_EVENT</a> event.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
-<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
-<tr><td><p>Connection_Handle</p>
-</td><td><p>2</p>
-</td><td><p>Specifies the ATT bearer for which the command applies.</p>
-</td><td><li>0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the connection handle)</li><li>0xEA00 ... 0xEA3F: Enhanced ATT bearer (the LSB-byte of the parameter is the connection-oriented channel index)</li></td></tr>
-<tr><td><p>Attr_Handle</p>
-</td><td><p>2</p>
-</td><td><p>Handle of the descriptor to be read</p>
-</td><td></tr>
-</table><h3>Output parameters</h3><table width="800" border="1" class="reference">
-<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
-<tr><td><p>Status</p>
-</td><td><p>1</p>
-</td><td><p>Status error code.</p>
-</td><td></td></tr>
-</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_ATT_READ_RESP_EVENT_anchor">ACI_ATT_READ_RESP_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_WRITE_WITHOUT_RESP_anchor">ACI_GATT_WRITE_WITHOUT_RESP</a></h2><h3>Description</h3><p>Starts the procedure to write a characteristic value without waiting for any response from the server. No events are generated after this command is executed.<br>The length of the value to be written must not exceed (ATT_MTU - 3).<br>It must also not exceed (BLE_CMD_MAX_PARAM_LEN - 5) i.e. 250 for BLE_CMD_MAX_PARAM_LEN default value.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><li><a href="#ACI_ATT_PREPARE_WRITE_RESP_EVENT_anchor">ACI_ATT_PREPARE_WRITE_RESP_EVENT</a></li><li><a href="#ACI_ATT_EXEC_WRITE_RESP_EVENT_anchor">ACI_ATT_EXEC_WRITE_RESP_EVENT</a></li><h2><a name="ACI_GATT_WRITE_WITHOUT_RESP_anchor">ACI_GATT_WRITE_WITHOUT_RESP</a></h2><h3>Description</h3><p>Starts the procedure to write a characteristic value without waiting for any response from the server. No events are generated after this command is executed.<br>The length of the value to be written must not exceed (ATT_MTU - 3).<br>It must also not exceed (BLE_CMD_MAX_PARAM_LEN - 5) i.e. 250 for BLE_CMD_MAX_PARAM_LEN default value.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
@@ -5386,7 +5289,7 @@ This value must not exceed (BLE_CMD_MAX_PARAM_LEN - 7) i.e. 248 for BLE_CMD_MAX_
 </td><td><p>1</p>
 </td><td><p>Status error code.</p>
 </td><td></td></tr>
-</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_WRITE_RESP_anchor">ACI_GATT_WRITE_RESP</a></h2><h3>Description</h3><p>Allow or reject a write request from a client.<br>This command has to be sent by the application when it receives the <a href="#ACI_GATT_WRITE_PERMIT_REQ_EVENT_anchor">ACI_GATT_WRITE_PERMIT_REQ_EVENT</a>. If the write can be allowed, then the status and error code have to be set to 0. If the write cannot be allowed, then the status has to be set to 1 and the error code has to be set to the error code that has to be passed to the client.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_PERMIT_WRITE_anchor">ACI_GATT_PERMIT_WRITE</a></h2><h3>Description</h3><p>Allow or reject a write request from a client.<br>This command has to be sent by the application when it receives the <a href="#ACI_GATT_WRITE_PERMIT_REQ_EVENT_anchor">ACI_GATT_WRITE_PERMIT_REQ_EVENT</a>. If the write can be allowed, then the status and error code have to be set to 0. If the write cannot be allowed, then the status has to be set to 1 and the error code has to be set to the error code that has to be passed to the client.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
@@ -5402,8 +5305,8 @@ This value must not exceed (BLE_CMD_MAX_PARAM_LEN - 7) i.e. 248 for BLE_CMD_MAX_
 </td><td><li>0x00: The value can be written to the attribute specified by attr_handle</li><li>0x01: The value cannot be written to the attribute specified by the attr_handle</li></td></tr>
 <tr><td><p>Error_Code</p>
 </td><td><p>1</p>
-</td><td><p>The error code that has to be passed to the client in case the write has to be rejected</p>
-</td><td></tr>
+</td><td><p>The error code that has to be passed to the client in case the access is denied.</p>
+</td><td><li>0x08: Insufficient Authorization</li><li>0x80 ... 0x9F: Application Error</li></td></tr>
 <tr><td><p>Attribute_Val_Length</p>
 </td><td><p>1</p>
 </td><td><p>Length of the value to be written as passed in the event ACI_GATT_WRITE_PERMIT_REQ_EVENT</p>
@@ -5418,12 +5321,24 @@ This value must not exceed (BLE_CMD_MAX_PARAM_LEN - 7) i.e. 248 for BLE_CMD_MAX_
 </td><td><p>1</p>
 </td><td><p>Status error code.</p>
 </td><td></td></tr>
-</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_ALLOW_READ_anchor">ACI_GATT_ALLOW_READ</a></h2><h3>Description</h3><p>Allow the GATT server to send a response to a read request from a client.<br>The application has to send this command when it receives the <a href="#ACI_GATT_READ_PERMIT_REQ_EVENT_anchor">ACI_GATT_READ_PERMIT_REQ_EVENT</a> or <a href="#ACI_GATT_READ_MULTI_PERMIT_REQ_EVENT_anchor">ACI_GATT_READ_MULTI_PERMIT_REQ_EVENT</a>. This command indicates to the stack that the response can be sent to the client. So if the application wishes to update any of the attributes before they are read by the client, it must update the characteristic values using the <a href="#ACI_GATT_UPDATE_CHAR_VALUE_anchor">ACI_GATT_UPDATE_CHAR_VALUE</a> and then give this command. The application should perform the required operations within 30 seconds. Otherwise the GATT procedure will be timeout.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_PERMIT_READ_anchor">ACI_GATT_PERMIT_READ</a></h2><h3>Description</h3><p>This command is used to allow or deny the GATT server to send a response to a read request from a client. The application must end this command when it receives the permission request event, either <a href="#ACI_GATT_READ_PERMIT_REQ_EVENT_anchor">ACI_GATT_READ_PERMIT_REQ_EVENT</a> or <a href="#ACI_GATT_READ_MULTI_PERMIT_REQ_EVENT_anchor">ACI_GATT_READ_MULTI_PERMIT_REQ_EVENT</a>. The application should issue this command within 30 seconds from the reception of the permission request event; otherwise the GATT procedure issues a timeout.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
 </td><td><p>Specifies the ATT bearer for which the command applies.</p>
 </td><td><li>0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the connection handle)</li><li>0xEA00 ... 0xEA3F: Enhanced ATT bearer (the LSB-byte of the parameter is the connection-oriented channel index)</li></td></tr>
+<tr><td><p>Read_status</p>
+</td><td><p>1</p>
+</td><td><p>Specifies whether read access is allowed for all attributes from the permission request event (0), or denied for some or all attributes (1).</p>
+</td><td><li>0x00: Read access is allowed</li><li>0x01: Read access is denied</li></td></tr>
+<tr><td><p>Error_Code</p>
+</td><td><p>1</p>
+</td><td><p>The error code that has to be passed to the client in case the access is denied.</p>
+</td><td><li>0x08: Insufficient Authorization</li><li>0x80 ... 0x9F: Application Error</li></td></tr>
+<tr><td><p>Attr_Handle</p>
+</td><td><p>2</p>
+</td><td><p>This parameter is only valid if one or more read permissions are denied. It is the handle of the first attribute in the permission request event for which read permission is denied. When set to 0, reading all attributes from the event is denied.</p>
+</td><td></tr>
 </table><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
@@ -5443,7 +5358,7 @@ This value must not exceed (BLE_CMD_MAX_PARAM_LEN - 7) i.e. 248 for BLE_CMD_MAX_
 <tr><td><p>Security_Permissions</p>
 </td><td><p>1</p>
 </td><td><p>Security permission flags.</p>
-</td><td><p>Bitmask of:</p><li>0x00: None</li><li>0x01: AUTHEN_READ (Need authentication to read)</li><li>0x02: AUTHOR_READ (Need authorization to read)</li><li>0x04: ENCRY_READ (Need encryption to read)</li><li>0x08: AUTHEN_WRITE (need authentication to write)</li><li>0x10: AUTHOR_WRITE (need authorization to write)</li><li>0x20: ENCRY_WRITE (need encryption to write)</li></td></tr>
+</td><td><p>Bitmask of:</p><li>0x00: None</li><li>0x01: AUTHEN_READ (need authentication to read)</li><li>0x02: AUTHOR_READ (need authorization to read)</li><li>0x04: ENCRY_READ (need encryption to read)</li><li>0x08: AUTHEN_WRITE (need authentication to write)</li><li>0x10: AUTHOR_WRITE (need authorization to write)</li><li>0x20: ENCRY_WRITE (need encryption to write)</li><li>0x40: SC_READ (need Secure Connections to read)</li><li>0x80: SC_WRITE (need Secure Connections to write)</li></td></tr>
 </table><h3>Output parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Status</p>
@@ -5556,23 +5471,7 @@ This value must not exceed (BLE_CMD_MAX_PARAM_LEN - 12) i.e. 243 for BLE_CMD_MAX
 </td><td><p>1</p>
 </td><td><p>Status error code.</p>
 </td><td></td></tr>
-</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><li><a href="#ACI_GATT_NOTIFICATION_COMPLETE_EVENT_anchor">ACI_GATT_NOTIFICATION_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_DENY_READ_anchor">ACI_GATT_DENY_READ</a></h2><h3>Description</h3><p>This command is used to deny the GATT server to send a response to a read request from a client.<br>The application may send this command when it receives the <a href="#ACI_GATT_READ_PERMIT_REQ_EVENT_anchor">ACI_GATT_READ_PERMIT_REQ_EVENT</a> or  <a href="#ACI_GATT_READ_MULTI_PERMIT_REQ_EVENT_anchor">ACI_GATT_READ_MULTI_PERMIT_REQ_EVENT</a>.<br>This command indicates to the stack that the client is not allowed to read the requested characteristic due to e.g. application restrictions.<br>The Error code shall be either 0x08 (Insufficient Authorization) or a value in the range 0x80-0x9F (Application Error).<br>The application should issue the <a href="#ACI_GATT_DENY_READ_anchor">ACI_GATT_DENY_READ</a>  or <a href="#ACI_GATT_ALLOW_READ_anchor">ACI_GATT_ALLOW_READ</a> command within 30 seconds from the reception of the <a href="#ACI_GATT_READ_PERMIT_REQ_EVENT_anchor">ACI_GATT_READ_PERMIT_REQ_EVENT</a> or <a href="#ACI_GATT_READ_MULTI_PERMIT_REQ_EVENT_anchor">ACI_GATT_READ_MULTI_PERMIT_REQ_EVENT</a> events; otherwise the GATT procedure issues a timeout.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
-<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
-<tr><td><p>Connection_Handle</p>
-</td><td><p>2</p>
-</td><td><p>Specifies the ATT bearer for which the command applies.</p>
-</td><td><li>0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the connection handle)</li><li>0xEA00 ... 0xEA3F: Enhanced ATT bearer (the LSB-byte of the parameter is the connection-oriented channel index)</li></td></tr>
-<tr><td><p>Error_Code</p>
-</td><td><p>1</p>
-</td><td><p>Error code for the command</p>
-</td><td><li>0x08: Insufficient Authorization</li><li>0x80 ... 0x9F: Application Error</li></td></tr>
-</table><h3>Output parameters</h3><table width="800" border="1" class="reference">
-<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
-<tr><td><p>Status</p>
-</td><td><p>1</p>
-</td><td><p>Status error code.</p>
-</td><td></td></tr>
-</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_SET_ACCESS_PERMISSION_anchor">ACI_GATT_SET_ACCESS_PERMISSION</a></h2><h3>Description</h3><p>This command sets the access permission for the attribute handle specified.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><li><a href="#ACI_GATT_NOTIFICATION_COMPLETE_EVENT_anchor">ACI_GATT_NOTIFICATION_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_SET_ACCESS_PERMISSION_anchor">ACI_GATT_SET_ACCESS_PERMISSION</a></h2><h3>Description</h3><p>This command sets the access permission for the attribute handle specified.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Serv_Handle</p>
 </td><td><p>2</p>
@@ -5638,7 +5537,67 @@ This value must not exceed (BLE_CMD_MAX_PARAM_LEN - 12) i.e. 243 for BLE_CMD_MAX
 </td><td><p>1</p>
 </td><td><p>Status error code.</p>
 </td><td></td></tr>
-</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_ATT_READ_MULTIPLE_RESP_EVENT_anchor">ACI_ATT_READ_MULTIPLE_RESP_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI L2CAP commands_anchor">ACI L2CAP commands</a></h2><h2></h2><table width="800" border="1" class="reference">
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_ATT_READ_MULTIPLE_RESP_EVENT_anchor">ACI_ATT_READ_MULTIPLE_RESP_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_WRITE_WITHOUT_RESP_EXT_anchor">ACI_GATT_WRITE_WITHOUT_RESP_EXT</a></h2><h3>Description</h3><p>This command is used on the client side to write an attribute value to the server. It can replace <a href="#ACI_GATT_WRITE_WITHOUT_RESP_anchor">ACI_GATT_WRITE_WITHOUT_RESP</a> or <a href="#ACI_GATT_SIGNED_WRITE_WITHOUT_RESP_anchor">ACI_GATT_SIGNED_WRITE_WITHOUT_RESP</a> when the length of the data to be written exceeds the capacity supported by these commands. In this case, the data to be written is not part of the command, but is stored in the "extra data" buffer, which must be pre-filled by the application before calling this command. The used portion of the "extra data" buffer can only be reused after receiving <a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a>.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
+<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
+<tr><td><p>Connection_Handle</p>
+</td><td><p>2</p>
+</td><td><p>Connection handle for which the command applies.</p>
+</td><td><li>0x0000 ... 0x0EFF</li></td></tr>
+<tr><td><p>Attr_Handle</p>
+</td><td><p>2</p>
+</td><td><p>Handle of the characteristic value to be written</p>
+</td><td></tr>
+<tr><td><p>Signed_Mode</p>
+</td><td><p>1</p>
+</td><td><p>Specifies the type of GATT write without response: signed or not.</p>
+</td><td><li>0x00: Write Without Response</li><li>0x01: Signed Write Without Response</li></td></tr>
+<tr><td><p>Data_Length</p>
+</td><td><p>2</p>
+</td><td><p>Length of the data to be written.</p>
+</td><td></tr>
+<tr><td><p>Data_Pointer</p>
+</td><td><p>4</p>
+</td><td><p>Pointer to the data to be written (it is the offset in bytes from the start of the &quot;extra data&quot; buffer).</p>
+</td><td></tr>
+</table><h3>Output parameters</h3><table width="800" border="1" class="reference">
+<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
+<tr><td><p>Status</p>
+</td><td><p>1</p>
+</td><td><p>Status error code.</p>
+</td><td></td></tr>
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_COMPLETE_EVENT_anchor">HCI_COMMAND_COMPLETE_EVENT</a></li><h2><a name="ACI_GATT_WRITE_WITH_RESP_EXT_anchor">ACI_GATT_WRITE_WITH_RESP_EXT</a></h2><h3>Description</h3><p>This command is used on the client side to write an attribute value to the server. It can replace <a href="#ACI_GATT_WRITE_CHAR_VALUE_anchor">ACI_GATT_WRITE_CHAR_VALUE</a>, <a href="#ACI_GATT_WRITE_LONG_CHAR_VALUE_anchor">ACI_GATT_WRITE_LONG_CHAR_VALUE</a> or <a href="#ACI_GATT_WRITE_CHAR_RELIABLE_anchor">ACI_GATT_WRITE_CHAR_RELIABLE</a> when the length of the data to be written exceeds the capacity supported by these commands. In this case, the data to be written is not part of the command, but is stored in the "extra data" buffer, which must be pre-filled by the application before calling this command. The used portion of the "extra data" buffer can only be reused after receiving <a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a>.</p><h3>Input parameters</h3><table width="800" border="1" class="reference">
+<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
+<tr><td><p>Connection_Handle</p>
+</td><td><p>2</p>
+</td><td><p>Connection handle for which the command applies.</p>
+</td><td><li>0x0000 ... 0x0EFF</li></td></tr>
+<tr><td><p>Attr_Handle</p>
+</td><td><p>2</p>
+</td><td><p>Handle of the characteristic value to be written</p>
+</td><td></tr>
+<tr><td><p>Write_Mode</p>
+</td><td><p>1</p>
+</td><td><p>Specifies the type of GATT write with response procedure.</p>
+</td><td><li>0x00: Write Characteristic Value/Descriptor</li><li>0x01: Write Long Characteristic Value/Descriptor</li><li>0x02: Reliable Write Characteristic Value</li></td></tr>
+<tr><td><p>Val_Offset</p>
+</td><td><p>2</p>
+</td><td><p>Offset at which the attribute has to be written</p>
+</td><td></tr>
+<tr><td><p>Data_Length</p>
+</td><td><p>2</p>
+</td><td><p>Length of the data to be written.</p>
+</td><td></tr>
+<tr><td><p>Data_Pointer</p>
+</td><td><p>4</p>
+</td><td><p>Pointer to the data to be written (it is the offset in bytes from the start of the &quot;extra data&quot; buffer).</p>
+</td><td></tr>
+</table><h3>Output parameters</h3><table width="800" border="1" class="reference">
+<tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
+<tr><td><p>Status</p>
+</td><td><p>1</p>
+</td><td><p>Status error code.</p>
+</td><td></td></tr>
+</table><h3>Events generated</h3><li><a href="#HCI_COMMAND_STATUS_EVENT_anchor">HCI_COMMAND_STATUS_EVENT</a></li><li><a href="#ACI_GATT_ERROR_RESP_EVENT_anchor">ACI_GATT_ERROR_RESP_EVENT</a></li><li><a href="#ACI_ATT_PREPARE_WRITE_RESP_EVENT_anchor">ACI_ATT_PREPARE_WRITE_RESP_EVENT</a></li><li><a href="#ACI_ATT_EXEC_WRITE_RESP_EVENT_anchor">ACI_ATT_EXEC_WRITE_RESP_EVENT</a></li><li><a href="#ACI_GATT_PROC_COMPLETE_EVENT_anchor">ACI_GATT_PROC_COMPLETE_EVENT</a></li><h2><a name="ACI L2CAP commands_anchor">ACI L2CAP commands</a></h2><h2></h2><table width="800" border="1" class="reference">
 <tr><th>Command</th><th>Opcode</th><th>BF</th><th>PO</th><th>LO</th><th>LB</th><th>BO</th></tr>
 <tr><td><a href="#ACI_L2CAP_CONNECTION_PARAMETER_UPDATE_REQ_anchor">ACI_L2CAP_CONNECTION_PARAMETER_UPDATE_REQ</a></td><td><p>0xFD81</p>
 </td><td><p>Y</p>
@@ -5967,7 +5926,11 @@ Time = N * 0.625 ms.</p>
 </td><td><p>Y</p>
 </td></tr>
 <tr><td><a href="#ACI_HAL_SET_EVENT_MASK_anchor">ACI_HAL_SET_EVENT_MASK</a></td><td><p>0xFC1A</p>
-</td><td></td><td></td><td></td><td></td><td></td></tr>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td></tr>
 <tr><td><a href="#ACI_HAL_SET_PERIPHERAL_LATENCY_anchor">ACI_HAL_SET_PERIPHERAL_LATENCY</a></td><td><p>0xFC20</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
@@ -5982,7 +5945,8 @@ Time = N * 0.625 ms.</p>
 </td><td><p>Y</p>
 </td></tr>
 <tr><td><a href="#ACI_HAL_EAD_ENCRYPT_DECRYPT_anchor">ACI_HAL_EAD_ENCRYPT_DECRYPT</a></td><td><p>0xFC2F</p>
-</td><td></td><td></td><td></td><td></td><td></td></tr>
+</td><td></td><td></td><td><p>Y</p>
+</td><td></td><td></td></tr>
 <tr><td><a href="#ACI_HAL_READ_RADIO_REG_anchor">ACI_HAL_READ_RADIO_REG</a></td><td><p>0xFC30</p>
 </td><td></td><td></td><td></td><td></td><td></td></tr>
 <tr><td><a href="#ACI_HAL_WRITE_RADIO_REG_anchor">ACI_HAL_WRITE_RADIO_REG</a></td><td><p>0xFC31</p>
@@ -7161,7 +7125,7 @@ Units: dBm.</p>
 </td><td><p>Attr_Data_Length</p>
 </td><td><p>The modified value</p>
 </td><td></tr>
-</table><h2><a name="ACI_GATT_PROC_TIMEOUT_EVENT_anchor">ACI_GATT_PROC_TIMEOUT_EVENT</a></h2><h3>Description</h3><p>This event is generated by the client/server to the application on a GATT timeout (30 seconds). This is a critical event that should not happen during normal operating conditions. It is an indication of either a major disruption in the communication link or a mistake in the application which does not provide a reply to GATT procedures. After this event, the GATT channel is closed and no more GATT communication can be performed. The application is expected to issue an <a href="#ACI_GAP_TERMINATE_anchor">ACI_GAP_TERMINATE</a> to disconnect from the peer device. It is important to leave a 100 ms blank window before sending the <a href="#ACI_GAP_TERMINATE_anchor">ACI_GAP_TERMINATE</a>, since immediately after this event, system could save important information in non-volatile memory.</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
+</table><h2><a name="ACI_GATT_PROC_TIMEOUT_EVENT_anchor">ACI_GATT_PROC_TIMEOUT_EVENT</a></h2><h3>Description</h3><p>This event is generated by the client/server to the application on a GATT timeout (30 seconds). This is a critical event that should not happen during normal operating conditions. It is an indication of either a major disruption in the communication link or a mistake in the application which does not provide a reply to GATT procedures. After this event, the GATT channel is closed and no more GATT communication can be performed. The application is expected to issue an <a href="#ACI_GAP_TERMINATE_anchor">ACI_GAP_TERMINATE</a> to disconnect from the peer device.</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
@@ -7403,7 +7367,7 @@ A concatenation of attribute values for each of the attribute handles in the req
 </td><td><p>The attribute value will be a service declaration as defined in Core Specification [Vol 3, Part G, 3.3.1], when a &quot;Discover Characteristics By UUID&quot; has been started.
 It will be the value of the Characteristic if a &quot;Read using Characteristic UUID&quot; has been performed.</p>
 </td><td></tr>
-</table><h2><a name="ACI_GATT_WRITE_PERMIT_REQ_EVENT_anchor">ACI_GATT_WRITE_PERMIT_REQ_EVENT</a></h2><h3>Description</h3><p>This event is given to the application when a write request, write command or signed write command is received by the server from the client. This event will be given to the application only if the event bit for this event generation is set when the characteristic was added.<br>When this event is received, the application has to check whether the value being requested for write can be allowed to be written and respond with the command <a href="#ACI_GATT_WRITE_RESP_anchor">ACI_GATT_WRITE_RESP</a>.<br>The details of the parameters of the command can be found. Based on the response from the application, the attribute value will be modified by the stack. If the write is rejected by the application, then the value of the attribute will not be modified. In case of a write REQ, an error response will be sent to the client, with the error code as specified by the application.<br>In case of write/signed write commands, no response is sent to the client but the attribute is not modified.</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
+</table><h2><a name="ACI_GATT_WRITE_PERMIT_REQ_EVENT_anchor">ACI_GATT_WRITE_PERMIT_REQ_EVENT</a></h2><h3>Description</h3><p>This event is given to the application when a write request, write command or signed write command is received by the server from the client. This event will be given to the application only if the event bit for this event generation is set when the characteristic was added.<br>When this event is received, the application has to check whether the value being requested for write can be allowed to be written and respond with the command <a href="#ACI_GATT_PERMIT_WRITE_anchor">ACI_GATT_PERMIT_WRITE</a>.<br>The details of the parameters of the command can be found. Based on the response from the application, the attribute value will be modified by the stack. If the write is rejected by the application, then the value of the attribute will not be modified. In case of a write REQ, an error response will be sent to the client, with the error code as specified by the application.<br>In case of write/signed write commands, no response is sent to the client but the attribute is not modified.</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
@@ -7421,7 +7385,7 @@ It will be the value of the Characteristic if a &quot;Read using Characteristic 
 </td><td><p>Data_Length</p>
 </td><td><p>The data that the client has requested to write</p>
 </td><td></tr>
-</table><h2><a name="ACI_GATT_READ_PERMIT_REQ_EVENT_anchor">ACI_GATT_READ_PERMIT_REQ_EVENT</a></h2><h3>Description</h3><p>This event is given to the application when a read request or read blob request is received by the server from the client. This event will be given to the application only if the event bit for this event generation is set when the characteristic was added.<br>On receiving this event, the application can update the value of the handle if it desires and when done, it must send the <a href="#ACI_GATT_ALLOW_READ_anchor">ACI_GATT_ALLOW_READ</a> command to indicate to the stack that it can send the response to the client.</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
+</table><h2><a name="ACI_GATT_READ_PERMIT_REQ_EVENT_anchor">ACI_GATT_READ_PERMIT_REQ_EVENT</a></h2><h3>Description</h3><p>This event is given to the application when a read request or read blob request is received by the server from the client. This event will be given to the application only if the event bit for this event generation is set when the characteristic was added.<br>On receiving this event, the application can update the value of the handle if it desires and when done, it must send the <a href="#ACI_GATT_PERMIT_READ_anchor">ACI_GATT_PERMIT_READ</a> command to indicate to the stack that it can send the response to the client.</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
@@ -7435,7 +7399,7 @@ It will be the value of the Characteristic if a &quot;Read using Characteristic 
 </td><td><p>2</p>
 </td><td><p>Contains the offset from which the read has been requested</p>
 </td><td></tr>
-</table><h2><a name="ACI_GATT_READ_MULTI_PERMIT_REQ_EVENT_anchor">ACI_GATT_READ_MULTI_PERMIT_REQ_EVENT</a></h2><h3>Description</h3><p>This event is given to the application when a read multiple request or read by type request is received by the server from the client. This event will be given to the application only if the event bit for this event generation is set when the characteristic was added.<br>On receiving this event, the application can update the values of the handles if it desires and when done, it must send the <a href="#ACI_GATT_ALLOW_READ_anchor">ACI_GATT_ALLOW_READ</a> command to indicate to the stack that it can send the response to the client.</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
+</table><h2><a name="ACI_GATT_READ_MULTI_PERMIT_REQ_EVENT_anchor">ACI_GATT_READ_MULTI_PERMIT_REQ_EVENT</a></h2><h3>Description</h3><p>This event is given to the application when a read multiple request or read by type request is received by the server from the client. This event will be given to the application only if the event bit for this event generation is set when the characteristic was added.<br>On receiving this event, the application can update the values of the handles if it desires and when done, it must send the <a href="#ACI_GATT_PERMIT_READ_anchor">ACI_GATT_PERMIT_READ</a> command to indicate to the stack that it can send the response to the client.</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
@@ -7443,7 +7407,8 @@ It will be the value of the Characteristic if a &quot;Read using Characteristic 
 </td><td><li>0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the connection handle)</li><li>0xEA00 ... 0xEA3F: Enhanced ATT bearer (the LSB-byte of the parameter is the connection-oriented channel index)</li></td></tr>
 <tr><td><p>Number_of_Handles</p>
 </td><td><p>1</p>
-</td><td></td><td></tr>
+</td><td><p>Number of attribute handles contained in this event</p>
+</td><td></tr>
 <tr><td><p>Handle[i]</p>
 </td><td><p>2</p>
 </td><td></td><td></tr>
@@ -7463,7 +7428,7 @@ It will be the value of the Characteristic if a &quot;Read using Characteristic 
 </td><td><p>2</p>
 </td><td><p>Specifies the ATT bearer for which the event applies.</p>
 </td><td><li>0x0000 ... 0x0EFF: Unenhanced ATT bearer (the parameter is the connection handle)</li><li>0xEA00 ... 0xEA3F: Enhanced ATT bearer (the LSB-byte of the parameter is the connection-oriented channel index)</li></td></tr>
-</table><h2><a name="ACI_GATT_PREPARE_WRITE_PERMIT_REQ_EVENT_anchor">ACI_GATT_PREPARE_WRITE_PERMIT_REQ_EVENT</a></h2><h3>Description</h3><p>This event is given to the application when a prepare write request is received by the server from the client. This event will be given to the application only if the event bit for this event generation is set when the characteristic was added.<br>When this event is received, the application has to check whether the value being requested for write can be allowed to be written and respond with the command <a href="#ACI_GATT_WRITE_RESP_anchor">ACI_GATT_WRITE_RESP</a>. Based on the response from the application, the attribute value will be modified by the stack.<br>If the write is rejected by the application, then the value of the attribute will not be modified and an error response will be sent to the client, with the error code as specified by the application.</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
+</table><h2><a name="ACI_GATT_PREPARE_WRITE_PERMIT_REQ_EVENT_anchor">ACI_GATT_PREPARE_WRITE_PERMIT_REQ_EVENT</a></h2><h3>Description</h3><p>This event is given to the application when a prepare write request is received by the server from the client. This event will be given to the application only if the event bit for this event generation is set when the characteristic was added.<br>When this event is received, the application has to check whether the value being requested for write can be allowed to be written and respond with the command <a href="#ACI_GATT_PERMIT_WRITE_anchor">ACI_GATT_PERMIT_WRITE</a>. Based on the response from the application, the attribute value will be modified by the stack.<br>If the write is rejected by the application, then the value of the attribute will not be modified and an error response will be sent to the client, with the error code as specified by the application.</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Connection_Handle</p>
 </td><td><p>2</p>
@@ -7820,15 +7785,19 @@ Time = N * 1.25 ms.</p>
 </td><td></tr>
 </table><h2><a name="ACI_L2CAP_COC_TX_POOL_AVAILABLE_EVENT_anchor">ACI_L2CAP_COC_TX_POOL_AVAILABLE_EVENT</a></h2><h3>Description</h3><p>Each time <a href="#ACI_L2CAP_COC_TX_DATA_anchor">ACI_L2CAP_COC_TX_DATA</a> raises the error code BLE_STATUS_INSUFFICIENT_RESOURCES, the ACI_L2CAP_COC_TX_POOL_AVAILABLE_EVENT event is generated as soon as there is a free buffer available for sending K-frames.</p><h3>Event parameters</h3><p>None</p><h2><a name="ACI HAL events_anchor">ACI HAL events</a></h2><h2></h2><table width="800" border="1" class="reference">
 <tr><th>Event name</th><th>Vendor specific subevent code</th><th>BF</th><th>PO</th><th>LO</th><th>LB</th><th>BO</th></tr>
-<tr><td><a href="#ACI_HAL_END_OF_RADIO_ACTIVITY_EVENT_anchor">ACI_HAL_END_OF_RADIO_ACTIVITY_EVENT</a></td><td><p>0x0004</p>
+<tr><td><a href="#ACI_HAL_END_OF_RADIO_ACTIVITY_EVENT_anchor">ACI_HAL_END_OF_RADIO_ACTIVITY_EVENT</a></td><td><p>0x1804</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td><td><p>Y</p>
 </td></tr>
-<tr><td><a href="#ACI_HAL_SCAN_REQ_REPORT_EVENT_anchor">ACI_HAL_SCAN_REQ_REPORT_EVENT</a></td><td><p>0x0005</p>
-</td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td><a href="#ACI_HAL_SCAN_REQ_REPORT_EVENT_anchor">ACI_HAL_SCAN_REQ_REPORT_EVENT</a></td><td><p>0x1805</p>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td><p>Y</p>
+</td><td></td></tr>
 </table><p>Note: not all ACI HAL events are enabled by default. See <a href="#ACI_HAL_SET_EVENT_MASK_anchor">ACI_HAL_SET_EVENT_MASK</a> and <a href="#ACI_HAL_SET_RADIO_ACTIVITY_MASK_anchor">ACI_HAL_SET_RADIO_ACTIVITY_MASK</a>.</p><h2><a name="ACI_HAL_END_OF_RADIO_ACTIVITY_EVENT_anchor">ACI_HAL_END_OF_RADIO_ACTIVITY_EVENT</a></h2><h3>Description</h3><p>This event is generated when the device completes a radio activity and provide information when a new radio activity will be performed.<br>Information provided includes type of radio activity and absolute time in system ticks when a new radio activity is schedule, if any. Application can use this information to schedule user activities synchronous to selected radio activities. A command <a href="#ACI_HAL_SET_RADIO_ACTIVITY_MASK_anchor">ACI_HAL_SET_RADIO_ACTIVITY_MASK</a> is provided to enable radio activity events of user interests, by default no events are enabled.<br>User should take into account that enabling radio events in application with intense radio activity could lead to a fairly high rate of events generated.<br>Application use cases includes synchronizing notification with connection interval, switching antenna at the end of advertising or performing flash erase operation while radio is idle.</p><h3>Event parameters</h3><table width="800" border="1" class="reference">
 <tr><th>Parameter</th><th>Size</th><th>Description</th><th>Possible values</th></tr>
 <tr><td><p>Last_State</p>
@@ -8157,4 +8126,4 @@ Units: dBm.</p>
 <tr><td><p>0x04</p>
 </td><td><p>event_isr_delay_error: ISR delay error detected [only from cut 2.2]</p>
 </td></tr>
-</table><p>Other values are reserved.</p><p></p><h1><a name="Revision history_anchor">Revision history</a></h1><p>December 2018 - Rev 1.0 - First release.</p><p>February 2019 - Rev 1.1 - Modified HCI_HARDWARE_ERROR_EVENT comment.</p><p>March 2019 - Rev 1.2 - Removed unused event documentation.</p><p>March 2019 - Rev 1.3 - Modified ACI_HAL_FW_ERROR_EVENT error code.</p><p>March 2019 - Rev 1.4 - Changed default mask of HCI_SET_EVENT_MASK.</p><p>May 2019 - Rev 1.5 - Added ACI_GATT_NOTIFICATION_EXT_EVENT.</p><p>June 2019 - Rev 1.6 - Changed comment on usage of Char Handles in multiple ACI_GATT commands; Added ACI_GATT_INDICATION_EXT_EVENT.</p><p>June 2019 - Rev 1.7 - Changed descriptions of ACI_ATT_READ_BY_TYPE_REQ and ACI_GATT_READ_USING_CHAR_UUID.</p><p>July 2019 - Rev 1.8 - Reworked error codes section; Added GAP_ prefix to the GAP procedure bitmap definitions.</p><p>September 2019 - Rev 1.9 - Added ACI_GATT_READ_EXT_EVENT; Modified ACI_GAP_CONFIGURE_WHITELIST comment.</p><p>October 2019 - Rev 1.10 - Changed descriptions of ACI_GATT_WRITE_WITHOUT_RESP and ACI_GATT_SIGNED_WRITE_WITHOUT_RESP; Removed obsolete configuration data elements.</p><p>November 2019 - Rev 1.11 - Completed description of ACI_GAP_INIT; Added specific pairing status definitions.</p><p>November 2019 - Rev 1.12 - Fixed status error codes.</p><p>January 2020 - Rev 1.13 - Removed DIV unused configuration data; Fixed naming of HCI_LE_READ_REMOTE_FEATURES command and complete event.</p><p>March 2020 - Rev 1.14 - Removed unused HCI_Data_Buffer_Overflow event; Fixed naming of FW_Error_Type possible values; Fixed pairing status possible values.</p><p>March 2020 - Rev 1.15 - Added GAP scan timeout value.</p><p>April 2020 - Rev 1.16 - Fixed various format issues; Added LO and PO columns for command and event tables.</p><p>May 2020 - Rev 1.17 - Updated PO stack features; Added comment in HCI_LE_ADVERTISING_REPORT_EVENT description.</p><p>June 2020 - Rev 1.18 - Added BO column for command and event tables; Fixed advertising commands description; Fixed various format issues.</p><p>June 2020 - Rev 1.19 - Completed interval possible values for ACI_GAP_SET_DIRECT_CONNECTABLE.</p><p>July 2020 - Rev 1.20 - Added HCI_LE_SET_PRIVACY_MODE.</p><p>July 2020 - Rev 1.21 - Updated BO stack features.</p><p>September 2020 - Rev 1.22 - Fixed various minor issues.</p><p>November 2020 - Rev 1.23 - Added connection-oriented channels feature; Added HCI_LE_READ_TRANSMIT_POWER; Updated PO variant.</p><p>December 2020 - Rev 1.24 - Added BF column for command and event tables.</p><p>January 2021 - Rev 1.25 - Added Link_Status possible values.</p><p>January 2021 - Rev 1.26 - Fixed some specification references.</p><p>February 2021 - Rev 1.27 - Added ACI_HAL_SET_SLAVE_LATENCY; Updated comments of ACI_HAL_WRITE_CONFIG_DATA and ACI_HAL_READ_CONFIG_DATA.</p><p>March 2021 - Rev 1.28 - Added additional beacon feature.</p><p>April 2021 - Rev 1.29 - Removed unused ACI_HAL_SET_SMP_ENG_CONFIG.</p><p>May 2021 - Rev 1.30 - Fixed event generated by HCI_SET_CONTROLLER_TO_HOST_FLOW_CONTROL and HCI_HOST_BUFFER_SIZE.</p><p>May 2021 - Rev 1.31 - Added HCI_LE_SET_ADVERTISING_DATA in BF and PO variants.</p><p>June 2021 - Rev 1.32 - Added extended advertising feature; Added HCI_DISCONNECT in BF and PO variants; Removed host privacy; Added ACI_GAP_ADD_DEVICES_TO_LIST; Added HCI_LE_CHANNEL_SELECTION_ALGORITHM_EVENT.</p><p>July 2021 - Rev 1.33 - Removed ACI_GAP_START_NAME_DISCOVERY_PROC.</p><p>July 2021 - Rev 1.34 - Updated error status codes; Added HCI_LE_CONNECTION_UPDATE in BF variant.</p><p>October 2021 - Rev 1.35 - Fixed Scanning_PHYs values; Removed HCI_LE_Directed_Advertising_Report event in BO variant; Fixed names of some HCI commands; Added SMP mode in ACI_HAL_WRITE_CONFIG_DATA.</p><p>October 2021 - Rev 1.36 - Fixed NRPA use; Fixed names of some HCI commands.</p><p>December 2021 - Rev 1.37 - Added ACI_GAP_ADV_SET_RANDOM_ADDRESS; Added comment to ACI_HAL_SCAN_REQ_REPORT_EVENT; Updated scan range for extended advertising.</p><p>January 2022 - Rev 1.38 - Added PHY update feature in BF variant; Added additional beacon feature, HCI_LE_SET_PRIVACY_MODE and HCI_LE_SET_RESOLVABLE_PRIVATE_ADDRESS_TIMEOUT in BF and PO variants; Added ACI_HAL_SET_SLAVE_LATENCY in BF, PO and LO variants; Removed DTM feature from PO variant.</p><p>March 2022 - Rev 1.39 - Fixed Length_Of_Test_Data possible values.</p><p>March 2022 - Rev 1.40 - Fixed LE_Event_Mask default value; Added HCI_LE_READ_RF_PATH_COMPENSATION and HCI_LE_WRITE_RF_PATH_COMPENSATION.</p><p>March 2022 - Rev 1.41 - Aligned with Bluetooth Core v.5.3.</p><p>April 2022 - Rev 1.42 - Added "LL Only Basic" variant; Added ACI_HAL_GET_LINK_STATUS in BF and PO variants; Added ACI_HAL_GET_ANCHOR_PERIOD in BF, PO and BO variants.</p><p>May 2022 - Rev 1.43 - Fixed default value of HCI_LE_ENHANCED_CONNECTION_COMPLETE_EVENT mask; Added HCI_LE_READ_PEER_RESOLVABLE_ADDRESS, HCI_LE_READ_LOCAL_RESOLVABLE_ADDRESS, HCI_LE_ENCRYPT and DTM commands in BF and PO variants; Removed HCI_LE_READ_RF_PATH_COMPENSATION and HCI_LE_WRITE_RF_PATH_COMPENSATION from LB and BO variants; Fixed Initiating_PHYs description; Indexed extended scan and initiating parameters.</p><p>June 2022 - Rev 1.44 - Added tone feature in BF, PO, LB and BO variants.</p><p>June 2022 - Rev 1.45 - Added note for ACI_GATT_UPDATE_CHAR_VALUE; Added LL scan channel map and "no blacklist" SMP mode in ACI_HAL_WRITE_CONFIG_DATA; Fixed possible values and added slot numbers for ACI_HAL_END_OF_RADIO_ACTIVITY_EVENT; Updated possible output values of ACI_HAL_GET_LINK_STATUS; Added ACI_GATT_STORE_DB; Fixed name of HCI_LE_Directed_Advertising_Report event; Added HCI_LE_LONG_TERM_KEY_REQUEST_EVENT in BF and PO variants; Removed ACI_HAL_GET_PM_DEBUG_INFO in LO variant.</p><p>July 2022 - Rev 1.46 - Fixed Event_Mask default value; Fixed extended scan interval range; Added ACI_HAL_READ_RSSI command; Removed ACI_HAL_READ_RAW_RSSI in LO variant.</p><p>August 2022 - Rev 1.47 - Fixed extended scan window range.</p><p>September 2022 - Rev 1.48 - Added possible values for HCI_HOST_BUFFER_SIZE; Removed ACI_HAL_READ_RADIO_REG, ACI_HAL_WRITE_RADIO_REG, ACI_HAL_RX_START and ACI_HAL_RX_STOP from LO variant.</p><p>October 2022 - Rev 1.49 - Added Enhanced ATT feature; Added new commands: ACI_GATT_SEND_MULT_NOTIFICATION and ACI_GATT_READ_MULTIPLE_VAR_CHAR_VALUE; Added new events: ACI_GATT_EATT_BEARER_EVENT and ACI_GATT_MULT_NOTIFICATION_EVENT; Changed ACI_GATT_ADD_CHAR, ACI_GATT_TX_POOL_AVAILABLE_EVENT and ACI_HAL_GET_LINK_STATUS descriptions; Removed ACI_GATT_PROC_COMPLETE_EVENT from PO variant; Added note for GAP peripheral commands that only support legacy advertising; Fixed formula of RF_Channel.</p><p>November 2022 - Rev 1.50 - Added LL background scan mode in ACI_HAL_WRITE_CONFIG_DATA; Created annex for TX Power Level; Added some missing error codes; Fixed the width of the counter in description of ACI_HAL_LE_TX_TEST_PACKET_NUMBER.</p><p>January 2023 - Rev 1.51 - Completed the description of Connection_Handle for some primitives; Added error code 4 for HCI_HARDWARE_ERROR_EVENT; Completed the description of ACI_GAP_ADDR_NOT_RESOLVED_EVENT.</p><p>February 2023 - Rev 1.52 - Added new ATT error codes; Completed the description of HCI_DISCONNECTION_COMPLETE_EVENT; Removed HCI_READ_RSSI and HCI_LE_READ_BUFFER_SIZE in BO variant; Updated HCI status error codes; Added CSA2 in PO variant.</p><p>March 2023 - Rev 1.53 - Added ACI_GATT_NOTIFICATION_COMPLETE_EVENT; Added GAP service additional record number in ACI_HAL_WRITE_CONFIG_DATA; Completed description of ACI_GATT_ADD_CHAR and ACI_GATT_ADD_CHAR_DESC; Added HCI_LE_GENERATE_DHKEY_V2; Fixed description of HCI_ENCRYPTION_KEY_REFRESH_COMPLETE_EVENT, ACI_GATT_SET_EVENT_MASK, ACI_GAP_SET_EVENT_MASK and ACI_HAL_SET_EVENT_MASK; Added SC key type in ACI_HAL_WRITE_CONFIG_DATA.</p><p>May 2023 - Rev 1.54 - Changed description of ACI_GAP_SET_OOB_DATA, ACI_GAP_GET_OOB_DATA and ACI_GAP_SET_DIRECT_CONNECTABLE; Updated description of scanning and initiator filter policy; Renamed ACI_GAP_CONFIGURE_WHITELIST, ACI_HAL_SET_SLAVE_LATENCY, ACI_GAP_SLAVE_SECURITY_REQ and ACI_GAP_SLAVE_SECURITY_INITIATED_EVENT, as well as some parameter names.</p><p>June 2023 - Rev 1.55 - Changed description of ACI_HAL_SET_TX_POWER_LEVEL; Fixed maximum value of MPS; Changed note for ACI_GATT_UPDATE_CHAR_VALUE; Changed description of PHY_options; Added HCI_LE_ENHANCED_CONNECTION_COMPLETE_EVENT as "Events generated"; Updated HCI_READ_LOCAL_VERSION_INFORMATION; Added some details about bonding table.</p><p>August 2023 - Rev 1.56 - Added ACI_GAP_EXT_START_SCAN and ACI_GAP_EXT_CREATE_CONNECTION; Added possible values for FW_Error_Type.</p><p>September 2023 - Rev 1.57 - Fixed possible values of Advertising_TX_Power; Fixed possible values of PHY.</p><p>November 2023 - Rev 1.58 - Updated description of ACI_GATT_UPDATE_CHAR_VALUE and ACI_GATT_TX_POOL_AVAILABLE_EVENT; Updated description and possible values of ACI_HAL_WRITE_CONFIG_DATA.</p><p>January 2024 - Rev 1.59 - Added restriction on data length for ACI_GATT_UPDATE_CHAR_VALUE, ACI_GATT_UPDATE_CHAR_VALUE_EXT, ACI_GATT_WRITE_CHAR_VALUE, ACI_GATT_WRITE_LONG_CHAR_VALUE, ACI_GATT_WRITE_CHAR_RELIABLE, ACI_GATT_WRITE_LONG_CHAR_DESC and ACI_GATT_WRITE_CHAR_DESC; Added PHY Update in PO variant.</p><p>February 2024 - Rev 1.60 - Added "no peer debug key" bit for SMP mode in ACI_HAL_WRITE_CONFIG_DATA.</p><p>April 2024 - Rev 1.61 - Added ACI_HAL_EAD_ENCRYPT_DECRYPT command.</p><p>August 2024 - Rev 1.62 - Changed description of ACI_GAP_IS_DEVICE_BONDED; Fixed possible values of PHY for receiver test; Added SMP mode bits and LL RPA mode in ACI_HAL_WRITE_CONFIG_DATA; Added HCI_LE_LONG_TERM_KEY_REQUEST_REPLY, HCI_LE_LONG_TERM_KEY_REQUEST_NEGATIVE_REPLY and HCI_LE_SET_HOST_CHANNEL_CLASSIFICATION in BF and PO variants; Removed HCI_DISCONNECT and HCI_LE_CONNECTION_UPDATE from BF and PO variants; Added ACI_GAP_PAIRING_REQUEST_EVENT and ACI_GAP_PAIRING_REQUEST_REPLY.</p><p>September 2024 - Rev 1.63 - Aligned with Bluetooth Core v.6.0; Added LL maximum data length extension configuration in ACI_HAL_WRITE_CONFIG_DATA; Added HCI_LE_GENERATE_DHKEY and HCI_LE_GENERATE_DHKEY_COMPLETE_EVENT in BF and PO variants.</p><p>December 2024 - Rev 1.64 - Created annex for configuration data and hardware codes; Fixed possible values for HCI_LE_SET_PHY, HCI_LE_SET_DEFAULT_PHY, HCI_LE_ADD_DEVICE_TO_FILTER_ACCEPT_LIST, HCI_LE_REMOVE_DEVICE_FROM_FILTER_ACCEPT_LIST, ACI_GAP_START_GENERAL_DISCOVERY_PROC and ACI_GAP_EXT_START_SCAN. Rework notes for legacy advertising commands; Renamed ACI_HAL_FW_ERROR_EVENT to ACI_HAL_WARNING_EVENT; Added parameter in ACI_GAP_BOND_LOST_EVENT; Removed ACI_GAP_PERIPHERAL_SECURITY_INITIATED_EVENT; Added "SMP unexpected LTK request" warning.</p><p>January 2025 - Rev 1.65 - Removed ACI_GAP_RESOLVE_PRIVATE_ADDR and ACI_GAP_IS_DEVICE_BONDED; Added ACI_GAP_CHECK_BONDED_DEVICE.</p><p>April 2025 - Rev 1.66 - Added CSA2 feature in all variants; Added new value for warning type; Added note about event mask after the event tables; Fixed description of ACI_HAL_SET_EVENT_MASK, ACI_GATT_SET_EVENT_MASK and ACI_GAP_SET_EVENT_MASK; Added new pairing failed reason; Changed description of ACI_GATT_DISC_ALL_CHAR_DESC; Removed ACI_GAP_ADD_DEVICES_TO_RESOLVING_LIST; Changed description of ACI_GATT_SET_SECURITY_PERMISSION; Added HCI_LE_SET_RESOLVABLE_PRIVATE_ADDRESS_TIMEOUT_V2; Changed description of ACI_GAP_UPDATE_ADV_DATA; Changed parameters of ACI_GATT_EATT_BEARER_EVENT; Added Max_Channel_Number parameter to ACI_L2CAP_COC_CONNECT_CONFIRM; Changed description of ACI_L2CAP_COMMAND_REJECT_EVENT; Changed description of HCI_LE_SET_RESOLVABLE_PRIVATE_ADDRESS_TIMEOUT; Removed references to STM32WBA in descriptions.</p><p>April 2025 - Rev 1.67 - Aligned with Bluetooth Core v.6.1; Removed ACI_HAL_STACK_RESET; Added ACI_RESET, ACI_GET_INFORMATION, ACI_WRITE_CONFIG_DATA and ACI_READ_CONFIG_DATA; Renamed ACI_HAL_WARNING_EVENT to ACI_WARNING_EVENT; Removed ACI_HAL_GET_FW_BUILD_NUMBER and ACI_HAL_GET_PM_DEBUG_INFO.</p><p></p><i>&copy; 2018-2025 STMicroelectronics. All rights reserved.</i></font></body></html>
+</table><p>Other values are reserved.</p><p></p><h1><a name="Revision history_anchor">Revision history</a></h1><p>December 2018 - Rev 1.0 - First release.</p><p>February 2019 - Rev 1.1 - Modified HCI_HARDWARE_ERROR_EVENT comment.</p><p>March 2019 - Rev 1.2 - Removed unused event documentation.</p><p>March 2019 - Rev 1.3 - Modified ACI_HAL_FW_ERROR_EVENT error code.</p><p>March 2019 - Rev 1.4 - Changed default mask of HCI_SET_EVENT_MASK.</p><p>May 2019 - Rev 1.5 - Added ACI_GATT_NOTIFICATION_EXT_EVENT.</p><p>June 2019 - Rev 1.6 - Changed comment on usage of Char Handles in multiple ACI_GATT commands; Added ACI_GATT_INDICATION_EXT_EVENT.</p><p>June 2019 - Rev 1.7 - Changed descriptions of ACI_ATT_READ_BY_TYPE_REQ and ACI_GATT_READ_USING_CHAR_UUID.</p><p>July 2019 - Rev 1.8 - Reworked error codes section; Added GAP_ prefix to the GAP procedure bitmap definitions.</p><p>September 2019 - Rev 1.9 - Added ACI_GATT_READ_EXT_EVENT; Modified ACI_GAP_CONFIGURE_WHITELIST comment.</p><p>October 2019 - Rev 1.10 - Changed descriptions of ACI_GATT_WRITE_WITHOUT_RESP and ACI_GATT_SIGNED_WRITE_WITHOUT_RESP; Removed obsolete configuration data elements.</p><p>November 2019 - Rev 1.11 - Completed description of ACI_GAP_INIT; Added specific pairing status definitions.</p><p>November 2019 - Rev 1.12 - Fixed status error codes.</p><p>January 2020 - Rev 1.13 - Removed DIV unused configuration data; Fixed naming of HCI_LE_READ_REMOTE_FEATURES command and complete event.</p><p>March 2020 - Rev 1.14 - Removed unused HCI_Data_Buffer_Overflow event; Fixed naming of FW_Error_Type possible values; Fixed pairing status possible values.</p><p>March 2020 - Rev 1.15 - Added GAP scan timeout value.</p><p>April 2020 - Rev 1.16 - Fixed various format issues; Added LO and PO columns for command and event tables.</p><p>May 2020 - Rev 1.17 - Updated PO stack features; Added comment in HCI_LE_ADVERTISING_REPORT_EVENT description.</p><p>June 2020 - Rev 1.18 - Added BO column for command and event tables; Fixed advertising commands description; Fixed various format issues.</p><p>June 2020 - Rev 1.19 - Completed interval possible values for ACI_GAP_SET_DIRECT_CONNECTABLE.</p><p>July 2020 - Rev 1.20 - Added HCI_LE_SET_PRIVACY_MODE.</p><p>July 2020 - Rev 1.21 - Updated BO stack features.</p><p>September 2020 - Rev 1.22 - Fixed various minor issues.</p><p>November 2020 - Rev 1.23 - Added connection-oriented channels feature; Added HCI_LE_READ_TRANSMIT_POWER; Updated PO variant.</p><p>December 2020 - Rev 1.24 - Added BF column for command and event tables.</p><p>January 2021 - Rev 1.25 - Added Link_Status possible values.</p><p>January 2021 - Rev 1.26 - Fixed some specification references.</p><p>February 2021 - Rev 1.27 - Added ACI_HAL_SET_SLAVE_LATENCY; Updated comments of ACI_HAL_WRITE_CONFIG_DATA and ACI_HAL_READ_CONFIG_DATA.</p><p>March 2021 - Rev 1.28 - Added additional beacon feature.</p><p>April 2021 - Rev 1.29 - Removed unused ACI_HAL_SET_SMP_ENG_CONFIG.</p><p>May 2021 - Rev 1.30 - Fixed event generated by HCI_SET_CONTROLLER_TO_HOST_FLOW_CONTROL and HCI_HOST_BUFFER_SIZE.</p><p>May 2021 - Rev 1.31 - Added HCI_LE_SET_ADVERTISING_DATA in BF and PO variants.</p><p>June 2021 - Rev 1.32 - Added extended advertising feature; Added HCI_DISCONNECT in BF and PO variants; Removed host privacy; Added ACI_GAP_ADD_DEVICES_TO_LIST; Added HCI_LE_CHANNEL_SELECTION_ALGORITHM_EVENT.</p><p>July 2021 - Rev 1.33 - Removed ACI_GAP_START_NAME_DISCOVERY_PROC.</p><p>July 2021 - Rev 1.34 - Updated error status codes; Added HCI_LE_CONNECTION_UPDATE in BF variant.</p><p>October 2021 - Rev 1.35 - Fixed Scanning_PHYs values; Removed HCI_LE_Directed_Advertising_Report event in BO variant; Fixed names of some HCI commands; Added SMP mode in ACI_HAL_WRITE_CONFIG_DATA.</p><p>October 2021 - Rev 1.36 - Fixed NRPA use; Fixed names of some HCI commands.</p><p>December 2021 - Rev 1.37 - Added ACI_GAP_ADV_SET_RANDOM_ADDRESS; Added comment to ACI_HAL_SCAN_REQ_REPORT_EVENT; Updated scan range for extended advertising.</p><p>January 2022 - Rev 1.38 - Added PHY update feature in BF variant; Added additional beacon feature, HCI_LE_SET_PRIVACY_MODE and HCI_LE_SET_RESOLVABLE_PRIVATE_ADDRESS_TIMEOUT in BF and PO variants; Added ACI_HAL_SET_SLAVE_LATENCY in BF, PO and LO variants; Removed DTM feature from PO variant.</p><p>March 2022 - Rev 1.39 - Fixed Length_Of_Test_Data possible values.</p><p>March 2022 - Rev 1.40 - Fixed LE_Event_Mask default value; Added HCI_LE_READ_RF_PATH_COMPENSATION and HCI_LE_WRITE_RF_PATH_COMPENSATION.</p><p>March 2022 - Rev 1.41 - Aligned with Bluetooth Core v.5.3.</p><p>April 2022 - Rev 1.42 - Added "LL Only Basic" variant; Added ACI_HAL_GET_LINK_STATUS in BF and PO variants; Added ACI_HAL_GET_ANCHOR_PERIOD in BF, PO and BO variants.</p><p>May 2022 - Rev 1.43 - Fixed default value of HCI_LE_ENHANCED_CONNECTION_COMPLETE_EVENT mask; Added HCI_LE_READ_PEER_RESOLVABLE_ADDRESS, HCI_LE_READ_LOCAL_RESOLVABLE_ADDRESS, HCI_LE_ENCRYPT and DTM commands in BF and PO variants; Removed HCI_LE_READ_RF_PATH_COMPENSATION and HCI_LE_WRITE_RF_PATH_COMPENSATION from LB and BO variants; Fixed Initiating_PHYs description; Indexed extended scan and initiating parameters.</p><p>June 2022 - Rev 1.44 - Added tone feature in BF, PO, LB and BO variants.</p><p>June 2022 - Rev 1.45 - Added note for ACI_GATT_UPDATE_CHAR_VALUE; Added LL scan channel map and "no blacklist" SMP mode in ACI_HAL_WRITE_CONFIG_DATA; Fixed possible values and added slot numbers for ACI_HAL_END_OF_RADIO_ACTIVITY_EVENT; Updated possible output values of ACI_HAL_GET_LINK_STATUS; Added ACI_GATT_STORE_DB; Fixed name of HCI_LE_Directed_Advertising_Report event; Added HCI_LE_LONG_TERM_KEY_REQUEST_EVENT in BF and PO variants; Removed ACI_HAL_GET_PM_DEBUG_INFO in LO variant.</p><p>July 2022 - Rev 1.46 - Fixed Event_Mask default value; Fixed extended scan interval range; Added ACI_HAL_READ_RSSI command; Removed ACI_HAL_READ_RAW_RSSI in LO variant.</p><p>August 2022 - Rev 1.47 - Fixed extended scan window range.</p><p>September 2022 - Rev 1.48 - Added possible values for HCI_HOST_BUFFER_SIZE; Removed ACI_HAL_READ_RADIO_REG, ACI_HAL_WRITE_RADIO_REG, ACI_HAL_RX_START and ACI_HAL_RX_STOP from LO variant.</p><p>October 2022 - Rev 1.49 - Added Enhanced ATT feature; Added new commands: ACI_GATT_SEND_MULT_NOTIFICATION and ACI_GATT_READ_MULTIPLE_VAR_CHAR_VALUE; Added new events: ACI_GATT_EATT_BEARER_EVENT and ACI_GATT_MULT_NOTIFICATION_EVENT; Changed ACI_GATT_ADD_CHAR, ACI_GATT_TX_POOL_AVAILABLE_EVENT and ACI_HAL_GET_LINK_STATUS descriptions; Removed ACI_GATT_PROC_COMPLETE_EVENT from PO variant; Added note for GAP peripheral commands that only support legacy advertising; Fixed formula of RF_Channel.</p><p>November 2022 - Rev 1.50 - Added LL background scan mode in ACI_HAL_WRITE_CONFIG_DATA; Created annex for TX Power Level; Added some missing error codes; Fixed the width of the counter in description of ACI_HAL_LE_TX_TEST_PACKET_NUMBER.</p><p>January 2023 - Rev 1.51 - Completed the description of Connection_Handle for some primitives; Added error code 4 for HCI_HARDWARE_ERROR_EVENT; Completed the description of ACI_GAP_ADDR_NOT_RESOLVED_EVENT.</p><p>February 2023 - Rev 1.52 - Added new ATT error codes; Completed the description of HCI_DISCONNECTION_COMPLETE_EVENT; Removed HCI_READ_RSSI and HCI_LE_READ_BUFFER_SIZE in BO variant; Updated HCI status error codes; Added CSA2 in PO variant.</p><p>March 2023 - Rev 1.53 - Added ACI_GATT_NOTIFICATION_COMPLETE_EVENT; Added GAP service additional record number in ACI_HAL_WRITE_CONFIG_DATA; Completed description of ACI_GATT_ADD_CHAR and ACI_GATT_ADD_CHAR_DESC; Added HCI_LE_GENERATE_DHKEY_V2; Fixed description of HCI_ENCRYPTION_KEY_REFRESH_COMPLETE_EVENT, ACI_GATT_SET_EVENT_MASK, ACI_GAP_SET_EVENT_MASK and ACI_HAL_SET_EVENT_MASK; Added SC key type in ACI_HAL_WRITE_CONFIG_DATA.</p><p>May 2023 - Rev 1.54 - Changed description of ACI_GAP_SET_OOB_DATA, ACI_GAP_GET_OOB_DATA and ACI_GAP_SET_DIRECT_CONNECTABLE; Updated description of scanning and initiator filter policy; Renamed ACI_GAP_CONFIGURE_WHITELIST, ACI_HAL_SET_SLAVE_LATENCY, ACI_GAP_SLAVE_SECURITY_REQ and ACI_GAP_SLAVE_SECURITY_INITIATED_EVENT, as well as some parameter names.</p><p>June 2023 - Rev 1.55 - Changed description of ACI_HAL_SET_TX_POWER_LEVEL; Fixed maximum value of MPS; Changed note for ACI_GATT_UPDATE_CHAR_VALUE; Changed description of PHY_options; Added HCI_LE_ENHANCED_CONNECTION_COMPLETE_EVENT as "Events generated"; Updated HCI_READ_LOCAL_VERSION_INFORMATION; Added some details about bonding table.</p><p>August 2023 - Rev 1.56 - Added ACI_GAP_EXT_START_SCAN and ACI_GAP_EXT_CREATE_CONNECTION; Added possible values for FW_Error_Type.</p><p>September 2023 - Rev 1.57 - Fixed possible values of Advertising_TX_Power; Fixed possible values of PHY.</p><p>November 2023 - Rev 1.58 - Updated description of ACI_GATT_UPDATE_CHAR_VALUE and ACI_GATT_TX_POOL_AVAILABLE_EVENT; Updated description and possible values of ACI_HAL_WRITE_CONFIG_DATA.</p><p>January 2024 - Rev 1.59 - Added restriction on data length for ACI_GATT_UPDATE_CHAR_VALUE, ACI_GATT_UPDATE_CHAR_VALUE_EXT, ACI_GATT_WRITE_CHAR_VALUE, ACI_GATT_WRITE_LONG_CHAR_VALUE, ACI_GATT_WRITE_CHAR_RELIABLE, ACI_GATT_WRITE_LONG_CHAR_DESC and ACI_GATT_WRITE_CHAR_DESC; Added PHY Update in PO variant.</p><p>February 2024 - Rev 1.60 - Added "no peer debug key" bit for SMP mode in ACI_HAL_WRITE_CONFIG_DATA.</p><p>April 2024 - Rev 1.61 - Added ACI_HAL_EAD_ENCRYPT_DECRYPT command.</p><p>August 2024 - Rev 1.62 - Changed description of ACI_GAP_IS_DEVICE_BONDED; Fixed possible values of PHY for receiver test; Added SMP mode bits and LL RPA mode in ACI_HAL_WRITE_CONFIG_DATA; Added HCI_LE_LONG_TERM_KEY_REQUEST_REPLY, HCI_LE_LONG_TERM_KEY_REQUEST_NEGATIVE_REPLY and HCI_LE_SET_HOST_CHANNEL_CLASSIFICATION in BF and PO variants; Removed HCI_DISCONNECT and HCI_LE_CONNECTION_UPDATE from BF and PO variants; Added ACI_GAP_PAIRING_REQUEST_EVENT and ACI_GAP_PAIRING_REQUEST_REPLY.</p><p>September 2024 - Rev 1.63 - Aligned with Bluetooth Core v.6.0; Added LL maximum data length extension configuration in ACI_HAL_WRITE_CONFIG_DATA; Added HCI_LE_GENERATE_DHKEY and HCI_LE_GENERATE_DHKEY_COMPLETE_EVENT in BF and PO variants.</p><p>December 2024 - Rev 1.64 - Created annex for configuration data and hardware codes; Fixed possible values for HCI_LE_SET_PHY, HCI_LE_SET_DEFAULT_PHY, HCI_LE_ADD_DEVICE_TO_FILTER_ACCEPT_LIST, HCI_LE_REMOVE_DEVICE_FROM_FILTER_ACCEPT_LIST, ACI_GAP_START_GENERAL_DISCOVERY_PROC and ACI_GAP_EXT_START_SCAN. Rework notes for legacy advertising commands; Renamed ACI_HAL_FW_ERROR_EVENT to ACI_HAL_WARNING_EVENT; Added parameter in ACI_GAP_BOND_LOST_EVENT; Removed ACI_GAP_PERIPHERAL_SECURITY_INITIATED_EVENT; Added "SMP unexpected LTK request" warning.</p><p>January 2025 - Rev 1.65 - Removed ACI_GAP_RESOLVE_PRIVATE_ADDR and ACI_GAP_IS_DEVICE_BONDED; Added ACI_GAP_CHECK_BONDED_DEVICE.</p><p>April 2025 - Rev 1.66 - Added CSA2 feature in all variants; Added new value for warning type; Added note about event mask after the event tables; Fixed description of ACI_HAL_SET_EVENT_MASK, ACI_GATT_SET_EVENT_MASK and ACI_GAP_SET_EVENT_MASK; Added new pairing failed reason; Changed description of ACI_GATT_DISC_ALL_CHAR_DESC; Removed ACI_GAP_ADD_DEVICES_TO_RESOLVING_LIST; Changed description of ACI_GATT_SET_SECURITY_PERMISSION; Added HCI_LE_SET_RESOLVABLE_PRIVATE_ADDRESS_TIMEOUT_V2; Changed description of ACI_GAP_UPDATE_ADV_DATA; Changed parameters of ACI_GATT_EATT_BEARER_EVENT; Added Max_Channel_Number parameter to ACI_L2CAP_COC_CONNECT_CONFIRM; Changed description of ACI_L2CAP_COMMAND_REJECT_EVENT; Changed description of HCI_LE_SET_RESOLVABLE_PRIVATE_ADDRESS_TIMEOUT; Removed references to STM32WBA in descriptions.</p><p>April 2025 - Rev 1.67 - Aligned with Bluetooth Core v.6.1; Removed ACI_HAL_STACK_RESET; Added ACI_RESET, ACI_GET_INFORMATION, ACI_WRITE_CONFIG_DATA and ACI_READ_CONFIG_DATA; Renamed ACI_HAL_WARNING_EVENT to ACI_WARNING_EVENT; Removed ACI_HAL_GET_FW_BUILD_NUMBER and ACI_HAL_GET_PM_DEBUG_INFO.</p><p>June 2025 - Rev 1.68 - Added ACI_GATT_WRITE_WITHOUT_RESP_EXT and ACI_GATT_WRITE_WITH_RESP_EXT; Removed ACI_GATT_READ_CHAR_DESC, ACI_GATT_READ_LONG_CHAR_DESC, ACI_GATT_WRITE_CHAR_DESC and ACI_GATT_WRITE_LONG_CHAR_DESC; Added possible values for Security_Permissions and MITM_Mode; Renamed ACI_GATT_WRITE_RESP to ACI_GATT_PERMIT_WRITE; Replaced ACI_GATT_ALLOW_READ and ACI_GATT_DENY_READ by ACI_GATT_PERMIT_READ; Reworked description of HCI_SET_CONTROLLER_TO_HOST_FLOW_CONTROL, HCI_HOST_BUFFER_SIZE and HCI_HOST_NUMBER_OF_COMPLETED_PACKETS; Changed subevent code of ACI HAL events.</p><p>August 2025 - Rev 1.69 - Completed description of HCI_READ_LOCAL_VERSION_INFORMATION; Declared the use of fixed pin deprecated; Added ACI_HAL_EAD_ENCRYPT_DECRYPT in LO variant; Added ACI_HAL_SET_EVENT_MASK and ACI_HAL_SCAN_REQ_REPORT_EVENT in most variants.</p><p></p><i>&copy; 2018-2025 STMicroelectronics. All rights reserved.</i></font></body></html>

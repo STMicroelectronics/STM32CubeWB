@@ -862,7 +862,7 @@ static SVCCTL_EvtAckStatus_t CRCAPP_Event_Handler(void *p_Event)
                 }
               }
             }
-            break; /*ACI_GATT_INDICATION_VSEVT_CODE*/
+            break; /*ACI_GATT_NOTIFICATION_VSEVT_CODE*/
             
           case ACI_GATT_PROC_COMPLETE_VSEVT_CODE:
             {

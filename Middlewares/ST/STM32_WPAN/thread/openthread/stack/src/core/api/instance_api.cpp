@@ -36,10 +36,8 @@
 #include <openthread/instance.h>
 #include <openthread/platform/misc.h>
 
-#include "common/as_core_type.hpp"
-#include "common/locator_getters.hpp"
 #include "common/new.hpp"
-#include "radio/radio.hpp"
+#include "instance/instance.hpp"
 
 #if !defined(OPENTHREAD_BUILD_DATETIME)
 #ifdef __ANDROID__
@@ -67,6 +65,7 @@ otInstance *otInstanceInitMultiple(uint8_t aIdx)
 
     return instance;
 }
+uint8_t otInstanceGetIndex(otInstance *aInstance) { return Instance::GetIdx(AsCoreTypePtr(aInstance)); }
 #endif // OPENTHREAD_CONFIG_MULTIPLE_STATIC_INSTANCE_ENABLE
 otInstance *otInstanceInit(void *aInstanceBuffer, size_t *aInstanceBufferSize)
 {

@@ -44,7 +44,7 @@
 #define BEACON_ONLY 0
 #endif
 
-/* Defintion to determine BLE Host stack presence */
+/* Definition to determine BLE Host stack presence */
 #define BLE_HOST_PRESENT (!(LL_ONLY || LL_ONLY_BASIC || BEACON_ONLY))
 
 

@@ -174,6 +174,7 @@ SECTIONS
    MAPPING_TABLE (NOLOAD) : { *(MAPPING_TABLE) } >RAM_SHARED
    MB_MEM1 (NOLOAD)       : { *(MB_MEM1) } >RAM_SHARED
    MB_MEM2 (NOLOAD)       : { _sMB_MEM2 = . ; *(MB_MEM2) ; _eMB_MEM2 = . ; } >RAM_SHARED
+   EXTRA_BUF (NOLOAD)       : { *(EXTRA_BUF) } >RAM1
 }
 
 

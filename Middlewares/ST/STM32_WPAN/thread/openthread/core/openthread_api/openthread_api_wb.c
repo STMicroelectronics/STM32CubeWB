@@ -494,14 +494,14 @@ HAL_StatusTypeDef OpenThread_CallBack_Processing(void)
   case MSG_M0TOM4_COAP_SECURE_CLIENT_CONNECT:
     if (coapSecureClientConnectCb != NULL)
     {
-      coapSecureClientConnectCb((bool) p_notification->Data[0],
+      coapSecureClientConnectCb((otCoapSecureConnectEvent) p_notification->Data[0],
           (void *) p_notification->Data[1]);
     }
     break;
   case MSG_M0TOM4_COAP_SECURE_SET_CLIENT_CONNECT:
     if (coapSecureClientConnectCb != NULL)
     {
-      coapSecureClientConnectCb((bool) p_notification->Data[0],
+      coapSecureClientConnectCb((otCoapSecureConnectEvent) p_notification->Data[0],
           (void *) p_notification->Data[1]);
     }
     break;

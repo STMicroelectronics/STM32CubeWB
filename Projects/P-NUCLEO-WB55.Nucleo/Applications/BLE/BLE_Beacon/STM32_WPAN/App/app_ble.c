@@ -63,6 +63,7 @@
 #define DATA_SECTOR                                                            6
 
 #define BD_ADDR_SIZE_LOCAL    6
+#define BLE_DEFAULT_PIN         (111111)
 
 /* USER CODE BEGIN PD */
 #define LED_ON_TIMEOUT                 (0.005*1000*1000/CFG_TS_TICK_VAL) /**< 5ms */

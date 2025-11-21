@@ -1,6 +1,6 @@
 /**
   @page FreeRTOS_Semaphore FreeRTOS Semaphore example
- 
+
   @verbatim
   ******************************************************************************
   * @file    FreeRTOS/FreeRTOS_Semaphore/readme.txt
@@ -25,15 +25,15 @@ How to use semaphores with CMSIS RTOS API.
 This application creates two threads that toggle LEDs through a shared semaphore,
 as following:
 
-The first thread which have the higher priority obtains the semaphore and 
-toggle the LED3 each 200 ms. After 5 seconds it releases the semaphore and 
+The first thread which have the higher priority obtains the semaphore and
+toggle the LED_RED each 200 ms. After 5 seconds it releases the semaphore and
 suspends itself.
 
-The low priority thread can execute now, it obtains the semaphore and 
+The low priority thread can execute now, it obtains the semaphore and
 resume execution of the first thread, as it has the higher priority
 the first thread will try to obtain the semaphore but it fails because
 the semaphore is already taken by the low priority thread, which will
-toggle the LED2 each 200 ms for 5 seconds before releasing the semaphore
+toggle the LED_GREEN each 200 ms for 5 seconds before releasing the semaphore
 to begin a new cycle
 
 @note Care must be taken when using HAL_Delay(), this function provides accurate
@@ -43,14 +43,14 @@ to begin a new cycle
       the peripheral interrupt. Otherwise the caller ISR process will be blocked.
       To change the HAL time base interrupt priority you have to use HAL_NVIC_SetPriority()
       function.
- 
+
 @note The application needs to ensure that the HAL time base is always set to 1 millisecond
       to have correct HAL operation.
 
-@note The FreeRTOS heap size configTOTAL_HEAP_SIZE defined in FreeRTOSConfig.h is set accordingly to the 
+@note The FreeRTOS heap size configTOTAL_HEAP_SIZE defined in FreeRTOSConfig.h is set accordingly to the
       OS resources memory requirements of the application with +10% margin and rounded to the upper Kbyte boundary.
 
-For more details about FreeRTOS implementation on STM32Cube, please refer to UM1722 "Developing Applications 
+For more details about FreeRTOS implementation on STM32Cube, please refer to UM1722 "Developing Applications
 on STM32Cube with RTOS".
 
 @par Keywords
@@ -75,14 +75,14 @@ RTOS, FreeRTOS, Threading, Semaphore, Priorities
 
   - This application has been tested with P-NUCLEO-WB55 board and can be
     easily tailored to any other supported device and development board.
-    
+
 
 @par How to use it ?
 
 In order to make the program work, you must do the following:
- - Open your preferred toolchain 
+ - Open your preferred toolchain
  - Rebuild all files and load your image into target memory
  - Run the example
-  
+
  * <h3><center>&copy; COPYRIGHT STMicroelectronics</center></h3>
  */

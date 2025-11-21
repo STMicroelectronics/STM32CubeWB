@@ -13,6 +13,7 @@ Usage : `br [command] ...`
 - [omrprefix](#omrprefix)
 - [onlinkprefix](#onlinkprefix)
 - [pd](#pd)
+- [peers](#peers)
 - [prefixtable](#prefixtable)
 - [rioprf](#rioprf)
 - [routeprf](#routeprf)
@@ -32,11 +33,15 @@ Print BR command help menu.
 counters
 disable
 enable
+multiail
+omrconfig
 omrprefix
 onlinkprefix
 pd
+peers
 prefixtable
 raoptions
+rdnsstable
 rioprf
 routeprf
 routers
@@ -111,6 +116,104 @@ RA TxFailed: 0
 RS Rx: 0
 RS TxSuccess: 2
 RS TxFailed: 0
+Done
+```
+
+### multiail
+
+Usage : `br multiail`
+
+Requires `OPENTHREAD_CONFIG_BORDER_ROUTING_MULTI_AIL_DETECTION_ENABLE`.
+
+Get the current detected state regarding multiple Adjacent Infrastructure Links (AILs) indicating whether the Routing Manager currently believes that Border Routers (BRs) on the Thread mesh may be connected to different AILs.
+
+The detection mechanism operates as follows: The Routing Manager monitors the number of peer BRs listed in the Thread Network Data (see `br peers`) and compares this count with the number of peer BRs discovered by processing received Router Advertisement (RA) messages on its connected AIL. If the count derived from Network Data consistently exceeds the count derived from RAs for a detection duration of 10 minutes, it concludes that BRs are likely connected to different AILs. To clear the state a shorter window of 1 minute is used.
+
+The detection window of 10 minutes helps to avoid false positives due to transient changes. The Routing Manager uses 200 seconds for reachability checks of peer BRs (sending Neighbor Solicitation). Stale Network Data entries are also expected to age out within a few minutes. So a 10-minute detection time accommodates both cases.
+
+While generally effective, this detection mechanism may get less reliable in scenarios with a large number of BRs, particularly exceeding ten. This is related to the "Network Data Publisher" mechanism, where BRs might refrain from publishing their external route information in the Network Data to conserve its limited size, potentially skewing the Network Data BR count.
+
+```bash
+> br multiail
+not detected
+Done
+
+> br multiail
+detected
+Done
+```
+
+Usage: `br multiail callback enable|disable`
+
+Enable or disable callback to be notified of changes in the multi-AIL detection state.
+
+```bash
+> br multiail callback enable
+Done
+
+BR multi AIL callback: detected
+
+> br multiail
+detected
+Done
+
+BR multi AIL callback: cleared
+```
+
+### omrconfig
+
+Usage: `br omrconfig`
+
+Get the current OMR prefix configuration mode.
+
+The possible modes are:
+
+- `auto`: BR auto-generates the local OMR prefix.
+- `custom`: BR uses a given custom OMR prefix with its associated preference.
+- `disabled`: BR does not add local/PD OMR prefix in Network Data.
+
+```bash
+> br omrconfig
+auto
+Done
+```
+
+Usage: `br omrconfig auto`
+
+Set the current OMR prefix configuration mode to `auto`.
+
+```
+> br omrconfig auto
+Done
+
+> br omrconfig
+auto
+Done
+```
+
+Usage: `br omrconfig custom <prefix> [high|med|low]`
+
+Set the current OMR prefix configuration mode to `custom`
+
+```
+> br omrconfig custom fd00::/64 med
+Done
+
+> br omrconfig
+custom (fd00:0:0:0::/64, prf:med)
+Done
+```
+
+Usage: `br omrconfig disable`
+
+Set the current OMR prefix configuration mode to `disabled`
+
+```
+> br omrconfig disable
+Done
+
+> br omrconfig
+disabled
 Done
 ```
 
@@ -221,6 +324,48 @@ Get the DHCPv6 Prefix Delegation (PD) provided off-mesh-routable (OMR) prefix.
 Done
 ```
 
+### peers
+
+Usage: `br peers`
+
+Get the list of peer BRs found in the Network Data.
+
+`OPENTHREAD_CONFIG_BORDER_ROUTING_TRACK_PEER_BR_INFO_ENABLE` is required.
+
+Peer BRs are other devices within the Thread mesh that provide external IP connectivity. A device is considered to provide external IP connectivity if at least one of the following conditions is met regarding its Network Data entries:
+
+- It has added at least one external route entry.
+- It has added at least one prefix entry with both the default-route and on-mesh flags set.
+- It has added at least one domain prefix (with both the domain and on-mesh flags set).
+
+The list of peer BRs specifically excludes the current device, even if it is itself acting as a BR.
+
+Info per BR entry:
+
+- RLOC16 of the BR
+- Age as the duration interval since this BR appeared in Network Data. It is formatted as `{hh}:{mm}:{ss}` for hours, minutes, seconds, if the duration is less than 24 hours. If the duration is 24 hours or more, the format is `{dd}d.{hh}:{mm}:{ss}` for days, hours, minutes, seconds.
+
+```bash
+> br peers
+rloc16:0x5c00 age:00:00:49
+rloc16:0xf800 age:00:01:51
+Done
+```
+
+Usage: `br peers count`
+
+Gets the number of peer BRs found in the Network Data.
+
+The count does not include the current device, even if it is itself acting as a BR.
+
+The output indicates the minimum age among all peer BRs. Age is formatted as `{hh}:{mm}:{ss}` for hours, minutes, seconds, if the duration is less than 24 hours. If the duration is 24 hours or more, the format is `{dd}d.{hh}:{mm}:{ss}` for days, hours, minutes, seconds.
+
+```bash
+> br peer count
+2 min-age:00:00:49
+Done
+```
+
 ### prefixtable
 
 Usage: `br prefixtable`
@@ -239,12 +384,12 @@ Info per prefix entry:
 - Flags in received Router Advertisement header:
   - M: Managed Address Config flag
   - O: Other Config flag
-  - Stub: Stub Router flag (indicates whether the router is a stub router)
+  - S: SNAC Router flag
 
 ```bash
 > br prefixtable
-prefix:fd00:1234:5678:0::/64, on-link:no, ms-since-rx:29526, lifetime:1800, route-prf:med, router:ff02:0:0:0:0:0:0:1 (M:0 O:0 Stub:1)
-prefix:1200:abba:baba:0::/64, on-link:yes, ms-since-rx:29527, lifetime:1800, preferred:1800, router:ff02:0:0:0:0:0:0:1 (M:0 O:0 Stub:1)
+prefix:fd00:1234:5678:0::/64, on-link:no, ms-since-rx:29526, lifetime:1800, route-prf:med, router:ff02:0:0:0:0:0:0:1 (M:0 O:0 S:1)
+prefix:1200:abba:baba:0::/64, on-link:yes, ms-since-rx:29527, lifetime:1800, preferred:1800, router:ff02:0:0:0:0:0:0:1 (M:0 O:0 S:1)
 Done
 ```
 
@@ -267,6 +412,30 @@ Clear any previously set additional options to append at the end of emitted Rout
 
 ```bash
 > br raoptions clear
+Done
+```
+
+### rdnsstable
+
+Usage: `br rdnsstable`
+
+Get the discovered Recursive DNS Server (RDNSS) address table by Border Routing Manager on the infrastructure link.
+
+Info per entry:
+
+- IPv6 address
+- Lifetime in seconds
+- Milliseconds since last received Router Advertisement containing this address
+- The router IPv6 address which advertised this prefix
+- Flags in received Router Advertisement header:
+  - M: Managed Address Config flag
+  - O: Other Config flag
+  - S: SNAC Router flag
+
+```bash
+> br rdnsstable
+fd00:1234:5678::1, lifetime:500, ms-since-rx:29526, router:ff02:0:0:0:0:0:0:1 (M:0 O:0 S:1)
+fd00:aaaa::2, lifetime:500, ms-since-rx:107, router:ff02:0:0:0:0:0:0:1 (M:0 O:0 S:1)
 Done
 ```
 
@@ -350,11 +519,15 @@ Info per router:
 - Flags in received Router Advertisement header:
   - M: Managed Address Config flag
   - O: Other Config flag
-  - Stub: Stub Router flag (indicates whether the router is a stub router)
+  - S: SNAC Router flag (indicates whether the router is a stub router)
 - Milliseconds since last received message from this router
+- Reachability flag: A router is marked as unreachable if it fails to respond to multiple Neighbor Solicitation probes.
+- Age: Duration interval since this router was first discovered. It is formatted as `{hh}:{mm}:{ss}` for hours, minutes, seconds, if the duration is less than 24 hours. If the duration is 24 hours or more, the format is `{dd}d.{hh}:{mm}:{ss}` for days, hours, minutes, seconds.
+- `(this BR)` is appended when the router is the local device itself.
+- `(peer BR)` is appended when the router is likely a peer BR connected to the same Thread mesh. This requires `OPENTHREAD_CONFIG_BORDER_ROUTING_TRACK_PEER_BR_INFO_ENABLE`.
 
 ```bash
 > br routers
-ff02:0:0:0:0:0:0:1 (M:0 O:0 Stub:1) ms-since-rx:1505
+ff02:0:0:0:0:0:0:1 (M:0 O:0 S:1) ms-since-rx:1505 reachable:yes age:00:18:13
 Done
 ```

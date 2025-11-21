@@ -36,10 +36,13 @@
 #include <openthread/platform/misc.h>
 
 #include "common/new.hpp"
-#include "radio/trel_link.hpp"
 #include "utils/heap.hpp"
 
 namespace ot {
+
+#if (OPENTHREAD_FTD + OPENTHREAD_MTD + OPENTHREAD_RADIO) != 1
+#error "Exactly one of {OPENTHREAD_FTD, OPENTHREAD_MTD, OPENTHREAD_RADIO} MUST be set"
+#endif
 
 #if !OPENTHREAD_CONFIG_MULTIPLE_INSTANCE_ENABLE
 
@@ -92,6 +95,12 @@ Instance::Instance(void)
     // allow other modules to use it.
     , mDnssd(*this)
 #endif
+#if OPENTHREAD_CONFIG_MULTICAST_DNS_ENABLE
+    , mMdnsCore(*this)
+#endif
+#if OPENTHREAD_CONFIG_PLATFORM_KEY_REFERENCES_ENABLE
+    , mCryptoStorageKeyRefManager(*this)
+#endif
     , mIp6(*this)
     , mThreadNetif(*this)
     , mTmfAgent(*this)
@@ -122,9 +131,6 @@ Instance::Instance(void)
 #if OPENTHREAD_CONFIG_DNS_DSO_ENABLE
     , mDnsDso(*this)
 #endif
-#if OPENTHREAD_CONFIG_MULTICAST_DNS_ENABLE
-    , mMdnsCore(*this)
-#endif
 #if OPENTHREAD_CONFIG_SNTP_CLIENT_ENABLE
     , mSntpClient(*this)
 #endif
@@ -140,7 +146,7 @@ Instance::Instance(void)
     , mLowpan(*this)
     , mMac(*this)
     , mMeshForwarder(*this)
-    , mMleRouter(*this)
+    , mMle(*this)
     , mDiscoverScanner(*this)
     , mAddressResolver(*this)
 #if OPENTHREAD_CONFIG_MULTI_RADIO
@@ -222,7 +228,7 @@ Instance::Instance(void)
     , mApplicationCoap(*this)
 #endif
 #if OPENTHREAD_CONFIG_COAP_SECURE_API_ENABLE
-    , mApplicationCoapSecure(*this, /* aLayerTwoSecurity */ true)
+    , mApplicationCoapSecure(*this, kWithLinkSecurity)
 #endif
 #if OPENTHREAD_CONFIG_BLE_TCAT_ENABLE
     , mApplicationBleSecure(*this)
@@ -234,8 +240,7 @@ Instance::Instance(void)
     , mChannelMonitor(*this)
 #endif
 #if OPENTHREAD_CONFIG_CHANNEL_MANAGER_ENABLE && \
-    (OPENTHREAD_FTD ||                          \
-     (OPENTHREAD_CONFIG_MAC_CSL_RECEIVER_ENABLE && OPENTHREAD_CONFIG_CHANNEL_MANAGER_CSL_CHANNEL_SELECT_ENABLE))
+    (OPENTHREAD_FTD || OPENTHREAD_CONFIG_CHANNEL_MANAGER_CSL_CHANNEL_SELECT_ENABLE)
     , mChannelManager(*this)
 #endif
 #if OPENTHREAD_CONFIG_MESH_DIAG_ENABLE && OPENTHREAD_FTD
@@ -278,6 +283,14 @@ Instance::Instance(void)
     , mIsInitialized(false)
     , mId(Random::NonCrypto::GetUint32())
 {
+#if OPENTHREAD_CONFIG_MULTIPLE_INSTANCE_ENABLE && OPENTHREAD_CONFIG_PLATFORM_KEY_REFERENCES_ENABLE
+#if OPENTHREAD_CONFIG_MULTIPLE_STATIC_INSTANCE_ENABLE
+    mCryptoStorageKeyRefManager.SetKeyRefExtraOffset(Crypto::Storage::KeyRefManager::kKeyRefExtraOffset * GetIdx(this));
+#else
+#error "MULTIPLE_INSTANCE (without static allocation) is used with PLATFORM_KEY_REFERENCES_ENABLE " \
+       "The `KeyRef` values will be shared across different `Instance` objects"
+#endif
+#endif
 }
 
 #if (OPENTHREAD_MTD || OPENTHREAD_FTD) && !OPENTHREAD_CONFIG_HEAP_EXTERNAL_ENABLE
@@ -342,9 +355,7 @@ Instance &Instance::Get(uint8_t aIdx)
 
 uint8_t Instance::GetIdx(Instance *aInstance)
 {
-    return static_cast<uint8_t>(
-        (reinterpret_cast<uint8_t *>(aInstance) - reinterpret_cast<uint8_t *>(gMultiInstanceRaw)) /
-        INSTANCE_SIZE_ALIGNED);
+    return static_cast<uint8_t>((reinterpret_cast<uint64_t *>(aInstance) - gMultiInstanceRaw) / INSTANCE_SIZE_ALIGNED);
 }
 
 #endif // #if OPENTHREAD_CONFIG_MULTIPLE_STATIC_INSTANCE_ENABLE
@@ -392,10 +403,14 @@ void Instance::AfterInit(void)
     // Restore datasets and network information
 
     Get<Settings>().Init();
-    Get<Mle::MleRouter>().Restore();
+    Get<Mle::Mle>().Restore();
 
 #if OPENTHREAD_CONFIG_RADIO_LINK_TREL_ENABLE
     Get<Trel::Link>().AfterInit();
+#endif
+
+#if OPENTHREAD_CONFIG_MULTICAST_DNS_ENABLE
+    Get<Dns::Multicast::Core>().AfterInstanceInit();
 #endif
 
 #endif // OPENTHREAD_MTD || OPENTHREAD_FTD
@@ -455,7 +470,7 @@ Error Instance::ErasePersistentInfo(void)
 {
     Error error = kErrorNone;
 
-    VerifyOrExit(Get<Mle::MleRouter>().IsDisabled(), error = kErrorInvalidState);
+    VerifyOrExit(Get<Mle::Mle>().IsDisabled(), error = kErrorInvalidState);
     Get<Settings>().Wipe();
 #if OPENTHREAD_CONFIG_PLATFORM_KEY_REFERENCES_ENABLE
     Get<KeyManager>().DestroyTemporaryKeys();
@@ -474,27 +489,23 @@ void Instance::GetBufferInfo(BufferInfo &aInfo)
     aInfo.mFreeBuffers    = Get<MessagePool>().GetFreeBufferCount();
     aInfo.mMaxUsedBuffers = Get<MessagePool>().GetMaxUsedBufferCount();
 
-    Get<MeshForwarder>().GetSendQueue().GetInfo(aInfo.m6loSendQueue);
-    Get<MeshForwarder>().GetReassemblyQueue().GetInfo(aInfo.m6loReassemblyQueue);
-    Get<Ip6::Ip6>().GetSendQueue().GetInfo(aInfo.mIp6Queue);
+    Get<MeshForwarder>().GetQueueInfo(aInfo.m6loSendQueue, aInfo.m6loReassemblyQueue);
+    Get<Ip6::Ip6>().GetSendQueueInfo(aInfo.mIp6Queue);
 
 #if OPENTHREAD_FTD
-    Get<Ip6::Mpl>().GetBufferedMessageSet().GetInfo(aInfo.mMplQueue);
+    Get<Ip6::Mpl>().GetBufferedMessageSetInfo(aInfo.mMplQueue);
 #endif
 
-    Get<Mle::MleRouter>().GetMessageQueue().GetInfo(aInfo.mMleQueue);
+    Get<Mle::Mle>().GetMessageQueueInfo(aInfo.mMleQueue);
 
-    Get<Tmf::Agent>().GetRequestMessages().GetInfo(aInfo.mCoapQueue);
-    Get<Tmf::Agent>().GetCachedResponses().GetInfo(aInfo.mCoapQueue);
+    Get<Tmf::Agent>().GetRequestAndCachedResponsesQueueInfo(aInfo.mCoapQueue);
 
 #if OPENTHREAD_CONFIG_SECURE_TRANSPORT_ENABLE
-    Get<Tmf::SecureAgent>().GetRequestMessages().GetInfo(aInfo.mCoapSecureQueue);
-    Get<Tmf::SecureAgent>().GetCachedResponses().GetInfo(aInfo.mCoapSecureQueue);
+    Get<Tmf::SecureAgent>().GetRequestAndCachedResponsesQueueInfo(aInfo.mCoapSecureQueue);
 #endif
 
 #if OPENTHREAD_CONFIG_COAP_API_ENABLE
-    GetApplicationCoap().GetRequestMessages().GetInfo(aInfo.mApplicationCoapQueue);
-    GetApplicationCoap().GetCachedResponses().GetInfo(aInfo.mApplicationCoapQueue);
+    Get<Coap::ApplicationCoap>().GetRequestAndCachedResponsesQueueInfo(aInfo.mApplicationCoapQueue);
 #endif
 }
 

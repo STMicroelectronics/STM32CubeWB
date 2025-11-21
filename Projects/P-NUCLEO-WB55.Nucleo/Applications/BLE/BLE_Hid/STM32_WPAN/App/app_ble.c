@@ -77,13 +77,6 @@ typedef struct _tSecurityParams
    */
   uint8_t bonding_mode;
 
-  /**
-   * this variable indicates whether to use a fixed pin
-   * during the pairing process or a passkey has to be
-   * requested to the application during the pairing process
-   * 0 implies use fixed pin and 1 implies request for passkey
-   */
-  uint8_t Use_Fixed_Pin;
 
   /**
    * minimum encryption key size requirement
@@ -94,12 +87,6 @@ typedef struct _tSecurityParams
    * maximum encryption key size requirement
    */
   uint8_t encryptionKeySizeMax;
-
-  /**
-   * fixed pin to be used in the pairing process if
-   * Use_Fixed_Pin is set to 1
-   */
-  uint32_t Fixed_Pin;
 
   /**
    * this flag indicates whether the host has to initiate
@@ -177,6 +164,8 @@ typedef struct
 #define FAST_ADV_TIMEOUT            (30*1000*1000/CFG_TS_TICK_VAL) /**< 30s */
 
 #define BD_ADDR_SIZE_LOCAL    6
+#define BLE_DEFAULT_PIN         (111111)
+#define BLE_DEFAULT_PIN         (111111)
 
 #define BOUNCE_THRESHOLD                20U
 #define BUTTON_PRESSED                  GPIO_PIN_RESET
@@ -538,7 +527,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *p_Pckt)
           {
             index++;
           }
-
+          
           if(index < CFG_MAX_CONNECTION)
           {
             APP_DBG_MSG("First index in state %d: %d\n",
@@ -567,6 +556,29 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *p_Pckt)
       }
     }
     break; /* HCI_HCI_LE_META_EVT_CODE */
+    
+    case HCI_VENDOR_SPECIFIC_DEBUG_EVT_CODE:
+      {
+        evt_blecore_aci * p_blecore_evt;
+        
+        p_blecore_evt = (evt_blecore_aci*) p_event_pckt->data;        
+
+        switch (p_blecore_evt->ecode)
+        {
+          case ACI_GATT_INDICATION_VSEVT_CODE:
+            {
+               aci_gatt_indication_event_rp0 *p_gatt_indication_event = (void*) p_blecore_evt->data;
+               APP_DBG_MSG(">>== ACI_GATT_INDICATION_VSEVT_CODE \r");                 
+               aci_gatt_confirm_indication(p_gatt_indication_event->Connection_Handle);
+
+            }
+          break;
+
+          default:
+            break;
+        }
+        break;
+      }
 
       /* USER CODE BEGIN EVENT_PCKT */
 
@@ -864,8 +876,6 @@ static void Ble_Hci_Gap_Gatt_Init(void)
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.mitm_mode = CFG_MITM_PROTECTION;
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMin = CFG_ENCRYPTION_KEY_SIZE_MIN;
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax = CFG_ENCRYPTION_KEY_SIZE_MAX;
-  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin = CFG_USED_FIXED_PIN;
-  BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin = CFG_FIXED_PIN;
   BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.bonding_mode = CFG_BONDING_MODE;
   /* USER CODE BEGIN Ble_Hci_Gap_Gatt_Init_1*/
 
@@ -877,8 +887,8 @@ static void Ble_Hci_Gap_Gatt_Init(void)
                                                CFG_KEYPRESS_NOTIFICATION_SUPPORT,
                                                BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMin,
                                                BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.encryptionKeySizeMax,
-                                               BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Use_Fixed_Pin,
-                                               BleApplicationContext.BleApplicationContext_legacy.bleSecurityParam.Fixed_Pin,
+                                               USE_FIXED_PIN_FOR_PAIRING_FORBIDDEN, /* deprecated feature */
+                                               0,                                   /* deprecated feature */
                                                CFG_IDENTITY_ADDRESS);
 
   if (ret != BLE_STATUS_SUCCESS)

@@ -84,6 +84,7 @@ static SVCCTL_EvtAckStatus_t MyVeryOwnService_EventHandler(void *Event)
   hci_event_pckt *event_pckt;
   evt_blecore_aci *blecore_evt;
   aci_gatt_attribute_modified_event_rp0 *attribute_modified;
+  aci_gatt_indication_event_rp0 *p_gatt_indication_event;
   return_value = SVCCTL_EvtNotAck;
   event_pckt = (hci_event_pckt *)(((hci_uart_pckt*)Event)->data);
   
@@ -107,6 +108,10 @@ static SVCCTL_EvtAckStatus_t MyVeryOwnService_EventHandler(void *Event)
           }
         }
         
+        break;
+      case ACI_GATT_INDICATION_VSEVT_CODE:
+        p_gatt_indication_event = (aci_gatt_indication_event_rp0*)blecore_evt->data;                
+        aci_gatt_confirm_indication(p_gatt_indication_event->Connection_Handle);
         break;
         
       default:

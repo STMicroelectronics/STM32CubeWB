@@ -1,22 +1,28 @@
-# STM32CubeWB MCU Firmware Package
+# STM32CubeWB MCU Firmware
 
 ![latest tag](https://img.shields.io/github/v/tag/STMicroelectronics/STM32CubeWB.svg?color=brightgreen)
 
 > [!IMPORTANT]
-> This repository has been created using the `git submodule` command. Please refer to the ["How to use"](README.md#how-to-use) section for more details.
+> This repository contains **submodules**. Please refer to the ["How to"](README.md#how-to-clone-and-get-updates) section for more details.
 
-## Overview
+## Overview of the STM32Cube MCU offer on GitHub
 
-**STM32Cube** is an STMicroelectronics original initiative to ease developers' life by reducing efforts, time and cost.
+**STM32Cube** is an original initiative by STMicroelectronics to **simplify** prototyping and development by **reducing** effort, time, and cost. It supports the entire ARM™ Cortex-based STM32 microcontroller portfolio and provides a **comprehensive** software solution including:
+  * The CMSIS Core and Device interfaces enabling access to processor core features and device-specific peripherals of STM32 microcontrollers.
+  * The STM32 HAL-LL drivers, an abstraction layer offering a set of APIs ensuring maximized portability across the STM32 portfolio.
+  * The BSP drivers enabling access to peripherals on the STM32 development boards, external to the microcontroller itself.
+  * A consistent set of middleware libraries offering standardized, high-level functionalities — such as USB, TCP/IP, file systems, and graphics.
+  * A full set of software projects (basic examples, applications, and demonstrations) that showcase specific functionalities or use cases, and provided with support for multiple IDEs.
 
-**STM32Cube** covers the overall STM32 products portfolio. It includes a comprehensive embedded software platform delivered for each STM32 series.
-   * The CMSIS modules (core and device) corresponding to the ARM(tm) core implemented in this STM32 product.
-   * The STM32 HAL-LL drivers, an abstraction layer offering a set of APIs ensuring maximized portability across the STM32 portfolio.
-   * The BSP drivers of each evaluation, demonstration or nucleo board provided for this STM32 series.
-   * A consistent set of middleware libraries such as RTOS, USB, FatFS, graphics, touch sensing library...
-   * A full set of software projects (basic examples, applications, and demonstrations) for each board provided for this STM32 series.
+The **STM32Cube embedded software** is available in two flavors:
+  * The **MCU Firmware** _monolithic_ offer, where **all** software components (Drivers, Middleware, Projects, Utilities) are included in a **single** repository for each STM32 series.
+  * The **MCU Software Components** _modular_ offer, where **each** software component (mainly Drivers and Middleware) is provided in a **dedicated** repository, allowing users to **select** only the components they need.
 
-The **STM32CubeWB MCU Package** projects are directly running on the STM32WB series boards. You can find in each Projects/*Board name* directories a set of software projects (Applications/Demonstration/Examples).
+The complete list of repositories is available [here](https://github.com/STMicroelectronics/STM32Cube_MCU_Overall_Offer/blob/master/README.md#content).
+
+## Repository content
+
+This repository provides the **STM32CubeWB** MCU firmware, including **all** software components (Drivers, Middleware, Projects, Utilities).
 
 > [!NOTE]
 > ## Some middleware libraries and projects are unavailable in this repository
@@ -30,39 +36,23 @@ The **STM32CubeWB MCU Package** projects are directly running on the STM32WB ser
 
 Details about the content of this release are available in the release note [here](https://htmlpreview.github.io/?https://github.com/STMicroelectronics/STM32CubeWB/blob/master/Release_Notes.html).
 
-## How to use
+## How to clone and get updates
 
-This repository has been created using the `git submodule` command. Please check the instructions below for proper use. Please check also **the notes at the end of this section** for further information.
-
-1. To **clone** this repository along with the linked submodules, option `--recursive` has to be specified as shown below.
-
-```bash
+This repository contains **submodules**.
+* To **clone** it, run the command below
+```
 git clone --recursive https://github.com/STMicroelectronics/STM32CubeWB.git
 ```
-
-2. To get the **latest updates**, in case this repository is **already** on your local machine, issue the following **two** commands (with this repository as the **current working directory**).
-
-```bash
-git pull
-git submodule update --init --recursive
+* To **pull** the latest updates, run the commands below from the root of the repository
+```
+git pull; git submodule update --init --recursive
 ```
 
-3. To use the **same firmware version** as the one available on [st.com](https://www.st.com/en/microcontrollers-microprocessors/stm32-32-bit-arm-cortex-mcus.html), issue the command below **after** specifying the targeted `vX.Y.Z` version. This should be done **after** the command(s) indicated in instruction (1) or in instruction (2) above have been successfully executed.
-
-```bash
-git checkout vX.Y.Z # Specify the targeted vX.Y.Z version
-```
-
-4. To **avoid** going through the above instructions and **directly** clone the same firmware version as the one available on [st.com](https://www.st.com/en/microcontrollers-microprocessors/stm32-32-bit-arm-cortex-mcus.html), issue the command below **after** specifying the targeted `vX.Y.Z` version.
-
-```bash
-git clone --recursive  --depth 1 --branch vX.Y.Z https://github.com/STMicroelectronics/STM32CubeWB.git
-```
+> [!CAUTION]
+> If the "Download ZIP" option is used instead of the `git clone` command, then the different **submodules** have to be collected and added **manually**.
 
 > [!NOTE]
-> * The latest version of this firmware available on GitHub may be **ahead** of the one available on [st.com](https://www.st.com/en/microcontrollers-microprocessors/stm32-32-bit-arm-cortex-mcus.html) or via [STM32CubeMX](https://www.st.com/en/development-tools/stm32cubemx.html). This is due to the **rolling release** process deployed on GitHub. Please refer to [this](https://github.com/STMicroelectronics/STM32Cube_MCU_Overall_Offer/discussions/21) post for more details.
-> * Option `--depth 1` specified in instruction (4) above is **not** mandatory. It may be useful to skip downloading all previous commits up to the one corresponding to the targeted version.
-> * If GitHub "Download ZIP" option is used instead of the `git clone` command, then the different submodules have to be collected and added **manually**.
+> The latest version of this firmware available on GitHub may be **ahead** of the one available on [st.com](https://www.st.com/en/microcontrollers-microprocessors/stm32-32-bit-arm-cortex-mcus.html) or via [STM32CubeMX](https://www.st.com/en/development-tools/stm32cubemx.html). This is due to the **rolling release**. Please refer to [this](https://github.com/STMicroelectronics/STM32Cube_MCU_Overall_Offer/discussions/21) post for more details.
 
 ## Boards available
 
@@ -72,6 +62,6 @@ git clone --recursive  --depth 1 --branch vX.Y.Z https://github.com/STMicroelect
     * [P-NUCLEO-WB55.USBDongle](https://www.st.com/en/evaluation-tools/p-nucleo-wb55.html)
     * [STM32WB5MM-DK](https://www.st.com/en/evaluation-tools/stm32wb5mm-dk.html)
 
-## Troubleshooting
+## Feedback and contributions
 
 Please refer to the [CONTRIBUTING.md](CONTRIBUTING.md) guide.

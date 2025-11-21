@@ -140,6 +140,9 @@ USBD_ClassTypeDef  USBD_VIDEO =
   USBD_VIDEO_GetOtherSpeedCfgDesc,
   USBD_VIDEO_GetDeviceQualifierDesc,
 #endif /* USE_USBD_COMPOSITE */
+#if (USBD_SUPPORT_USER_STRING_DESC == 1U)
+  NULL,
+#endif /* USBD_SUPPORT_USER_STRING_DESC  */
 };
 
 /* USB VIDEO device Configuration Descriptor (same for all speeds thanks to user defines) */

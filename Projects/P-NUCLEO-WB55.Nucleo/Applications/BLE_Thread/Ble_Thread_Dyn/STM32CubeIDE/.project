@@ -233,6 +233,11 @@
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/ble/core/auto/ble_gap_aci.c</locationURI>
 		</link>
 		<link>
+			<name>Middlewares/STM32_WPAN/ble/core/ble_gen_aci.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/ble/core/auto/ble_gen_aci.c</locationURI>
+		</link>
+		<link>
 			<name>Middlewares/STM32_WPAN/ble/core/ble_gatt_aci.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-6-PROJECT_LOC%7D/Middlewares/ST/STM32_WPAN/ble/core/auto/ble_gatt_aci.c</locationURI>
@@ -636,6 +641,11 @@
 			<name>Middlewares/STM32_WPAN/thread/openthread/stack/src/cli/cli_mac_filter.cpp</name>
 			<type>1</type>
 			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/cli/cli_mac_filter.cpp</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_WPAN/thread/openthread/stack/src/cli/cli_mesh_diag.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/cli/cli_mesh_diag.cpp</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/STM32_WPAN/thread/openthread/stack/src/cli/cli_network_data.cpp</name>

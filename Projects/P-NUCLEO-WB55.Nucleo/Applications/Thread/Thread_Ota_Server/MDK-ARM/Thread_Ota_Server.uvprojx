@@ -340,7 +340,7 @@
               <MiscControls>-Wno-unused-result</MiscControls>
               <Define>MBEDTLS_CONFIG_FILE=&lt;mbedtls-config.h&gt;,MBEDTLS_USER_CONFIG_FILE=&lt;stm32wb-mbedtls-config.h&gt;,OPENTHREAD_CONFIG_FILE=&lt;openthread_api_config_ftd.h&gt;,OPENTHREAD_PROJECT_CORE_CONFIG_FILE=&lt;stm32wb-openthread-ftd-config.h&gt;,USE_HAL_DRIVER,STM32WB55xx,USE_STM32WBXX_NUCLEO,THREAD_WB,WBx_OTLIB_BUILD_IAR_KEIL</Define>
               <Undefine></Undefine>
-              <IncludePath>RTE/_Thread_Ota_Server,../Core/Inc,../STM32_WPAN/App,../../../../../../Drivers/BSP/P-NUCLEO-WB55.Nucleo,../../../../../../Drivers/CMSIS/Device/ST/STM32WBxx/Include,../../../../../../Drivers/CMSIS/Include,../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc,../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc/Legacy,../../../../../../Middlewares/ST/STM32_WPAN,../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread,../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci,../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/mbedtls_config,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_config,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/examples/platforms,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/examples/platforms/utils,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include/openthread,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include/openthread/platform,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/src,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/cli,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/core,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/core/config,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/diag,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/configs,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/include,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/include/mbedtls,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/wbx_include,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/wbx_include/sys,../../../../../../Middlewares/ST/STM32_WPAN/utilities,../../../../../../Utilities/lpm/tiny_lpm,../../../../../../Utilities/sequencer</IncludePath>
+              <IncludePath>RTE/_Thread_Ota_Server,../Core/Inc,../STM32_WPAN/App,../../../../../../Drivers/BSP/P-NUCLEO-WB55.Nucleo,../../../../../../Drivers/CMSIS/Device/ST/STM32WBxx/Include,../../../../../../Drivers/CMSIS/Include,../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc,../../../../../../Drivers/STM32WBxx_HAL_Driver/Inc/Legacy,../../../../../../Middlewares/ST/STM32_WPAN,../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread,../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/shci,../../../../../../Middlewares/ST/STM32_WPAN/interface/patterns/ble_thread/tl,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/mbedtls_config,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_api,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/core/openthread_config,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/examples/platforms,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/examples/platforms/utils,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include/openthread,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/include/openthread/platform,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/src,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/cli,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/core,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/core/config,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/include,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/include,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/diag,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/configs,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/include,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/third_party/mbedtls/repo/include/mbedtls,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/wbx_include,../../../../../../Middlewares/ST/STM32_WPAN/thread/openthread/stack/wbx_include/sys,../../../../../../Middlewares/ST/STM32_WPAN/utilities,../../../../../../Utilities/lpm/tiny_lpm,../../../../../../Utilities/sequencer</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1050,6 +1050,16 @@
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\cli\cli_mac_filter.cpp</FilePath>
             </File>
             <File>
+              <FileName>cli_mesh_diag.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\cli\cli_mesh_diag.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>cli_mesh_diag.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\cli\cli_mesh_diag.cpp</FilePath>
+            </File>
+            <File>
               <FileName>cli_network_data.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\cli\cli_network_data.cpp</FilePath>
@@ -1165,11 +1175,6 @@
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\common\binary_search.cpp</FilePath>
             </File>
             <File>
-              <FileName>crc16.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\common\crc16.cpp</FilePath>
-            </File>
-            <File>
               <FileName>data.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\common\data.cpp</FilePath>
@@ -1268,6 +1273,16 @@
               <FileName>uptime.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\common\uptime.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>crc.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\common\crc.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>offset_range.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\common\offset_range.cpp</FilePath>
             </File>
           </Files>
         </Group>
@@ -1393,6 +1408,26 @@
               <FileName>sub_mac_callbacks.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\mac\sub_mac_callbacks.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>mac_header_ie.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\mac\mac_header_ie.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>sub_mac_csl_receiver.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\mac\sub_mac_csl_receiver.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>sub_mac_wed.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\mac\sub_mac_wed.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>wakeup_tx_scheduler.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\mac\wakeup_tx_scheduler.cpp</FilePath>
             </File>
           </Files>
         </Group>
@@ -1624,6 +1659,11 @@
               <FileType>8</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\net\udp6.cpp</FilePath>
             </File>
+            <File>
+              <FileName>dhcp6_types.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\net\dhcp6_types.cpp</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1770,11 +1810,6 @@
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\thread\mle.cpp</FilePath>
             </File>
             <File>
-              <FileName>mle_router.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\thread\mle_router.cpp</FilePath>
-            </File>
-            <File>
               <FileName>mle_tlvs.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\thread\mle_tlvs.cpp</FilePath>
@@ -1898,6 +1933,21 @@
               <FileName>uri_paths.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\thread\uri_paths.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>mle_ftd.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\thread\mle_ftd.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>thread_link_info.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\thread\thread_link_info.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>version.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\thread\version.cpp</FilePath>
             </File>
           </Files>
         </Group>

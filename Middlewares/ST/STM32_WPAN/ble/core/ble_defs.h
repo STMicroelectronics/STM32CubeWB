@@ -247,7 +247,8 @@
  * (ACI_GAP_SET_AUTHENTICATION_REQUIREMENT)
  */
 #define MITM_PROTECTION_NOT_REQUIRED               0x00U
-#define MITM_PROTECTION_REQUIRED                   0x01U
+#define MITM_PROTECTION_REQUIRED_AS_MANDATORY      0x01U
+#define MITM_PROTECTION_REQUIRED_AS_OPTIONAL       0x02U
 
 /* LE Secure Connections support
  * (ACI_GAP_SET_AUTHENTICATION_REQUIREMENT)
@@ -368,6 +369,8 @@
 #define ATTR_PERMISSION_AUTHEN_WRITE   0x08U /* Need authentication to write */
 #define ATTR_PERMISSION_AUTHOR_WRITE   0x10U /* Need authorization to write */
 #define ATTR_PERMISSION_ENCRY_WRITE    0x20U /* Need encryption to write */
+#define ATTR_PERMISSION_SC_READ        0x40U /* Need SC to read */
+#define ATTR_PERMISSION_SC_WRITE       0x80U /* Need SC tto write */
 
 /* Type of UUID (16 bit or 128 bit)
  */

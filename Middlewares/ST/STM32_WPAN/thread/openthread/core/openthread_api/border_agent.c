@@ -31,7 +31,7 @@
 
 #if OPENTHREAD_CONFIG_BORDER_AGENT_ENABLE
 
-otBorderAgentState otBorderAgentGetState(otInstance *aInstance);
+otBorderAgentState otBorderAgentIsActive(otInstance *aInstance);
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -53,6 +53,53 @@ uint16_t otBorderAgentGetUdpPort(otInstance *aInstance)
   Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
 
   p_ot_req->ID = MSG_M4TOM0_OT_BORDER_AGENT_GET_UDP_PORT;
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
+}
+
+void otBorderAgentInitSessionIterator(otInstance *aInstance, otBorderAgentSessionIterator *aIterator)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_BORDER_AGENT_INIT_SESSION;
+
+  p_ot_req->Size=1;
+  p_ot_req->Data[0] = (uint32_t) aIterator;
+
+  Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
+}
+
+void otBorderAgentGetNextSessionInfo(otBorderAgentSessionIterator *aIterator, otBorderAgentSessionInfo *aSessionInfo)
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_BORDER_AGENT_NEXT_SESSION;
+
+  p_ot_req->Size=2;
+  p_ot_req->Data[0] = (uint32_t) aIterator;
+  p_ot_req->Data[1] = (uint32_t) aSessionInfo;
+
+  Ot_Cmd_Transfer();
+  
+  Post_OtCmdProcessing();
+}
+
+void otBorderAgentCounters *otBorderAgentGetCounters(otInstance *aInstance);
+{
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_BORDER_AGENT_COUNTERS;
 
   p_ot_req->Size=0;
 

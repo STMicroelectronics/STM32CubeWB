@@ -29,7 +29,7 @@ Static means that application can perform alternatively BLE or Thread activities
 The idea is to present a demo with a Thread Network (at least 2 Nucleo Boards
 running THREAD_FTD_Coap_Multicast application) and a BLE connection between 1 Nucleo
 board running Ble_Thread_Static application with a smartphone running 
-"ST BLE Sensor" Application (available on App Store and Google Play)
+"ST BLE Sensor" Application (available on App Store and Google Play), or "ST BLE Toolbox" Application (available on App Store and Google Play)
 The STM32WB55xx-Nucleo board running Ble_Thread_Static application is capable 
 of switching from BLE network to Thread network and vice-versa.
 
@@ -103,8 +103,8 @@ Minimum requirements for the demo:
   (This device will be referred as NODE1)
 - 2 STM32WB55xx-Nucleo board or more for creating Thread Network 
   (see example THREAD_FTD_Coap_Multicast for more details on how to use it)
-- 1 Smartphone (Android/IOS) with "ST BLE Sensor" Phone Application (available on App Store and Google Play)
-  Install the "ST BLE Sensor" application on the ios/android device
+- 1 Smartphone (Android/IOS) with "ST BLE Sensor" or "ST BLE Toolbox" Phone Application (available on App Store and Google Play)
+  Install the "ST BLE Sensor" or "ST BLE Toolbox" application on the ios/android device
   https://play.google.com/store/apps/details?id=com.st.bluems
   https://itunes.apple.com/us/App/st-bluems/id993670214?mt=8
 
@@ -133,7 +133,7 @@ By default, after a reset, the board will start in BLE mode.
 
 The BLE example is to demonstrate Point-to-Point communication using BLE component. 
 The Peripheral device (P2P Server) starts advertising,
-ST BLE Sensor smart Phone Application) scans and can connect to the P2P Server 
+ST BLE Sensor or ST BLE Toolbox Smartphone Application scans and can connect to the P2P Server 
 by selecting = "P2P_SERVER1" entry.
 Once connected, the application starts to search the P2P Services & Characteristics.
 Led Button service, Led Characteristic and Button Characteristic are discovered at this stage 

@@ -34,8 +34,7 @@
 extern otNetDataDnsSrpServicePublisherCallback otNetDataDnsSrpServicePublisherCb;
 
 #if OPENTHREAD_CONFIG_TMF_NETDATA_SERVICE_ENABLE
-
-void otNetDataPublishDnsSrpServiceAnycast(otInstance *aInstance, uint8_t aSequenceNumber)
+void otNetDataPublishDnsSrpServiceAnycast(otInstance *aInstance, uint8_t aSequenceNumber, uint8_t aVersion)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -43,15 +42,17 @@ void otNetDataPublishDnsSrpServiceAnycast(otInstance *aInstance, uint8_t aSequen
 
   p_ot_req->ID = MSG_M4TOM0_OT_NET_DATA_PUBLISH_DNS_SRP_SERVICE_ANYCAST;
 
-  p_ot_req->Size=1;
+  p_ot_req->Size=2;
   p_ot_req->Data[0] = (uint32_t) aSequenceNumber;
+  p_ot_req->Data[1] = (uint32_t) aVersion;
 
   Ot_Cmd_Transfer();
 
   Post_OtCmdProcessing();
 }
 
-void otNetDataPublishDnsSrpServiceUnicast(otInstance *aInstance, const otIp6Address *aAddress, uint16_t aPort)
+void otNetDataPublishDnsSrpServiceUnicast(otInstance *aInstance, const otIp6Address *aAddress,
+                                          uint16_t aPort, uint8_t aVersion)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -59,16 +60,17 @@ void otNetDataPublishDnsSrpServiceUnicast(otInstance *aInstance, const otIp6Addr
 
   p_ot_req->ID = MSG_M4TOM0_OT_NET_DATA_PUBLISH_DNS_SRP_SERVICE_UNICAST;
 
-  p_ot_req->Size=2;
+  p_ot_req->Size=3;
   p_ot_req->Data[0] = (uint32_t) aAddress;
   p_ot_req->Data[1] = (uint32_t) aPort;
+  p_ot_req->Data[2] = (uint32_t) aVersion;
 
   Ot_Cmd_Transfer();
 
   Post_OtCmdProcessing();
 }
 
-void otNetDataPublishDnsSrpServiceUnicastMeshLocalEid(otInstance *aInstance, uint16_t aPort)
+void otNetDataPublishDnsSrpServiceUnicastMeshLocalEid(otInstance *aInstance, uint16_t aPort, uint8_t aVersion)
 {
   Pre_OtCmdProcessing();
   /* prepare buffer */
@@ -76,8 +78,9 @@ void otNetDataPublishDnsSrpServiceUnicastMeshLocalEid(otInstance *aInstance, uin
 
   p_ot_req->ID = MSG_M4TOM0_OT_NET_DATA_PUBLISH_DNS_UNICAST_MESH_LOCAL_EID;
 
-  p_ot_req->Size=1;
+  p_ot_req->Size=2;
   p_ot_req->Data[0] = (uint32_t) aPort;
+  p_ot_req->Data[1] = (uint32_t) aVersion;
 
   Ot_Cmd_Transfer();
 

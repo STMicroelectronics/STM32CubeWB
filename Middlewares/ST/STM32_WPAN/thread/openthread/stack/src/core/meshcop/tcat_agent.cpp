@@ -32,21 +32,12 @@
  */
 
 #include "tcat_agent.hpp"
-#include <openthread/tcat.h>
+#include "common/code_utils.hpp"
 
 #if OPENTHREAD_CONFIG_BLE_TCAT_ENABLE
 
-#include "common/array.hpp"
-#include "common/code_utils.hpp"
-#include "common/debug.hpp"
-#include "common/encoding.hpp"
-#include "common/locator_getters.hpp"
-#include "common/string.hpp"
 #include "instance/instance.hpp"
-#include "radio/radio.hpp"
-#include "thread/thread_netif.hpp"
-#include "thread/uri_paths.hpp"
-#include "utils/otns.hpp"
+#include "thread/network_diagnostic.hpp"
 
 namespace ot {
 namespace MeshCoP {
@@ -55,7 +46,11 @@ RegisterLogModule("TcatAgent");
 
 bool TcatAgent::VendorInfo::IsValid(void) const
 {
-    return mProvisioningUrl == nullptr || IsValidUtf8String(mProvisioningUrl) || mPskdString != nullptr;
+    return (mProvisioningUrl == nullptr ||
+            (IsValidUtf8String(mProvisioningUrl) &&
+             (static_cast<uint8_t>(StringLength(mProvisioningUrl, kProvisioningUrlMaxLength)) <
+              kProvisioningUrlMaxLength))) &&
+           mPskdString != nullptr;
 }
 
 TcatAgent::TcatAgent(Instance &aInstance)
@@ -66,6 +61,10 @@ TcatAgent::TcatAgent(Instance &aInstance)
     , mCommissionerHasNetworkName(false)
     , mCommissionerHasDomainName(false)
     , mCommissionerHasExtendedPanId(false)
+    , mRandomChallenge(0)
+    , mPskdVerified(false)
+    , mPskcVerified(false)
+    , mInstallCodeVerified(false)
 {
     mJoinerPskd.Clear();
     mCurrentServiceName[0] = 0;
@@ -79,6 +78,7 @@ Error TcatAgent::Start(AppDataReceiveCallback aAppDataReceiveCallback, JoinCallb
     VerifyOrExit(mVendorInfo != nullptr, error = kErrorFailed);
     mAppDataReceiveCallback.Set(aAppDataReceiveCallback, aContext);
     mJoinCallback.Set(aHandler, aContext);
+    mRandomChallenge = 0;
 
     mCurrentApplicationProtocol = kApplicationProtocolNone;
     mState                      = kStateEnabled;
@@ -94,6 +94,10 @@ void TcatAgent::Stop(void)
     mState                      = kStateDisabled;
     mAppDataReceiveCallback.Clear();
     mJoinCallback.Clear();
+    mRandomChallenge     = 0;
+    mPskdVerified        = false;
+    mPskcVerified        = false;
+    mInstallCodeVerified = false;
     LogInfo("TCAT agent stopped");
 }
 
@@ -109,7 +113,7 @@ exit:
     return error;
 }
 
-Error TcatAgent::Connected(MeshCoP::SecureTransport &aTlsContext)
+Error TcatAgent::Connected(MeshCoP::Tls::Extension &aTls)
 {
     size_t len;
     Error  error;
@@ -117,13 +121,13 @@ Error TcatAgent::Connected(MeshCoP::SecureTransport &aTlsContext)
     VerifyOrExit(IsEnabled(), error = kErrorInvalidState);
     len = sizeof(mCommissionerAuthorizationField);
     SuccessOrExit(
-        error = aTlsContext.GetThreadAttributeFromPeerCertificate(
+        error = aTls.GetThreadAttributeFromPeerCertificate(
             kCertificateAuthorizationField, reinterpret_cast<uint8_t *>(&mCommissionerAuthorizationField), &len));
     VerifyOrExit(len == sizeof(mCommissionerAuthorizationField), error = kErrorParse);
     VerifyOrExit((mCommissionerAuthorizationField.mHeader & kCommissionerFlag) == 1, error = kErrorParse);
 
     len = sizeof(mDeviceAuthorizationField);
-    SuccessOrExit(error = aTlsContext.GetThreadAttributeFromOwnCertificate(
+    SuccessOrExit(error = aTls.GetThreadAttributeFromOwnCertificate(
                       kCertificateAuthorizationField, reinterpret_cast<uint8_t *>(&mDeviceAuthorizationField), &len));
     VerifyOrExit(len == sizeof(mDeviceAuthorizationField), error = kErrorParse);
     VerifyOrExit((mDeviceAuthorizationField.mHeader & kCommissionerFlag) == 0, error = kErrorParse);
@@ -133,7 +137,7 @@ Error TcatAgent::Connected(MeshCoP::SecureTransport &aTlsContext)
     mCommissionerHasExtendedPanId = false;
 
     len = sizeof(mCommissionerDomainName) - 1;
-    if (aTlsContext.GetThreadAttributeFromPeerCertificate(
+    if (aTls.GetThreadAttributeFromPeerCertificate(
             kCertificateDomainName, reinterpret_cast<uint8_t *>(&mCommissionerDomainName), &len) == kErrorNone)
     {
         mCommissionerDomainName.m8[len] = '\0';
@@ -141,7 +145,7 @@ Error TcatAgent::Connected(MeshCoP::SecureTransport &aTlsContext)
     }
 
     len = sizeof(mCommissionerNetworkName) - 1;
-    if (aTlsContext.GetThreadAttributeFromPeerCertificate(
+    if (aTls.GetThreadAttributeFromPeerCertificate(
             kCertificateNetworkName, reinterpret_cast<uint8_t *>(&mCommissionerNetworkName), &len) == kErrorNone)
     {
         mCommissionerNetworkName.m8[len] = '\0';
@@ -149,7 +153,7 @@ Error TcatAgent::Connected(MeshCoP::SecureTransport &aTlsContext)
     }
 
     len = sizeof(mCommissionerExtendedPanId);
-    if (aTlsContext.GetThreadAttributeFromPeerCertificate(
+    if (aTls.GetThreadAttributeFromPeerCertificate(
             kCertificateExtendedPanId, reinterpret_cast<uint8_t *>(&mCommissionerExtendedPanId), &len) == kErrorNone)
     {
         if (len == sizeof(mCommissionerExtendedPanId))
@@ -176,6 +180,11 @@ void TcatAgent::Disconnected(void)
         mState = kStateEnabled;
     }
 
+    mRandomChallenge     = 0;
+    mPskdVerified        = false;
+    mPskcVerified        = false;
+    mInstallCodeVerified = false;
+
     LogInfo("TCAT agent disconnected");
 }
 
@@ -197,14 +206,14 @@ bool TcatAgent::CheckCommandClassAuthorizationFlags(CommandClassFlags aCommissio
         additionalDeviceRequirementMet = true;
     }
 
-    if (aDeviceCommandClassFlags & kPskdFlag)
+    if (!additionalDeviceRequirementMet && (aDeviceCommandClassFlags & kPskdFlag))
     {
-        additionalDeviceRequirementMet = true;
+        additionalDeviceRequirementMet = mPskdVerified;
     }
 
-    if (aDeviceCommandClassFlags & kPskcFlag)
+    if (!additionalDeviceRequirementMet && (aDeviceCommandClassFlags & kPskcFlag))
     {
-        additionalDeviceRequirementMet = true;
+        additionalDeviceRequirementMet = mPskcVerified;
     }
 
     if (mCommissionerHasNetworkName || mCommissionerHasExtendedPanId)
@@ -355,21 +364,21 @@ bool TcatAgent::CanProcessTlv(uint8_t aTlvType) const
     return IsCommandClassAuthorized(tlvCommandClass);
 }
 
-Error TcatAgent::HandleSingleTlv(const Message &aIncommingMessage, Message &aOutgoingMessage)
+Error TcatAgent::HandleSingleTlv(const Message &aIncomingMessage, Message &aOutgoingMessage)
 {
     Error    error = kErrorParse;
     ot::Tlv  tlv;
-    uint16_t offset = aIncommingMessage.GetOffset();
+    uint16_t offset = aIncomingMessage.GetOffset();
     uint16_t length;
     bool     response = false;
 
     VerifyOrExit(IsConnected(), error = kErrorInvalidState);
-    SuccessOrExit(error = aIncommingMessage.Read(offset, tlv));
+    SuccessOrExit(error = aIncomingMessage.Read(offset, tlv));
 
     if (tlv.IsExtended())
     {
         ot::ExtendedTlv extTlv;
-        SuccessOrExit(error = aIncommingMessage.Read(offset, extTlv));
+        SuccessOrExit(error = aIncomingMessage.Read(offset, extTlv));
         length = extTlv.GetLength();
         offset += sizeof(ot::ExtendedTlv);
     }
@@ -388,11 +397,20 @@ Error TcatAgent::HandleSingleTlv(const Message &aIncommingMessage, Message &aOut
         switch (tlv.GetType())
         {
         case kTlvDisconnect:
-            error = kErrorAbort;
+            error    = kErrorAbort;
+            response = true; // true - to avoid response-with-status being sent.
             break;
 
         case kTlvSetActiveOperationalDataset:
-            error = HandleSetActiveOperationalDataset(aIncommingMessage, offset, length);
+            error = HandleSetActiveOperationalDataset(aIncomingMessage, offset, length);
+            break;
+
+        case kTlvGetActiveOperationalDataset:
+            error = HandleGetActiveOperationalDataset(aOutgoingMessage, response);
+            break;
+
+        case kTlvGetDiagnosticTlvs:
+            error = HandleGetDiagnosticTlvs(aIncomingMessage, aOutgoingMessage, offset, length, response);
             break;
 
         case kTlvStartThreadInterface:
@@ -405,17 +423,53 @@ Error TcatAgent::HandleSingleTlv(const Message &aIncommingMessage, Message &aOut
 
         case kTlvSendApplicationData:
             LogInfo("Application data len:%d, offset:%d", length, offset);
-            mAppDataReceiveCallback.InvokeIfSet(&GetInstance(), &aIncommingMessage, offset,
+            mAppDataReceiveCallback.InvokeIfSet(&GetInstance(), &aIncomingMessage, offset,
                                                 MapEnum(mCurrentApplicationProtocol), mCurrentServiceName);
             response = true;
             error    = kErrorNone;
             break;
 
+        case kTlvDecommission:
+            error = HandleDecomission();
+            break;
+
+        case kTlvPing:
+            error = HandlePing(aIncomingMessage, aOutgoingMessage, offset, length, response);
+            break;
+        case kTlvGetNetworkName:
+            error = HandleGetNetworkName(aOutgoingMessage, response);
+            break;
+        case kTlvGetDeviceId:
+            error = HandleGetDeviceId(aOutgoingMessage, response);
+            break;
+        case kTlvGetExtendedPanID:
+            error = HandleGetExtPanId(aOutgoingMessage, response);
+            break;
+        case kTlvGetProvisioningURL:
+            error = HandleGetProvisioningUrl(aOutgoingMessage, response);
+            break;
+        case kTlvPresentPskdHash:
+            error = HandlePresentPskdHash(aIncomingMessage, offset, length);
+            break;
+        case kTlvPresentPskcHash:
+            error = HandlePresentPskcHash(aIncomingMessage, offset, length);
+            break;
+        case kTlvPresentInstallCodeHash:
+            error = HandlePresentInstallCodeHash(aIncomingMessage, offset, length);
+            break;
+        case kTlvRequestRandomNumChallenge:
+            error = HandleRequestRandomNumberChallenge(aOutgoingMessage, response);
+            break;
+        case kTlvRequestPskdHash:
+            error = HandleRequestPskdHash(aIncomingMessage, aOutgoingMessage, offset, length, response);
+            break;
+        case kTlvGetCommissionerCertificate:
+            error = HandleGetCommissionerCertificate(aOutgoingMessage, response);
+            break;
         default:
             error = kErrorInvalidCommand;
         }
     }
-
     if (!response)
     {
         StatusCode statusCode;
@@ -446,6 +500,10 @@ Error TcatAgent::HandleSingleTlv(const Message &aIncommingMessage, Message &aOut
             statusCode = kStatusUnsupported;
             break;
 
+        case kErrorSecurity:
+            statusCode = kStatusHashError;
+            break;
+
         default:
             statusCode = kStatusGeneralError;
             break;
@@ -458,27 +516,399 @@ exit:
     return error;
 }
 
-Error TcatAgent::HandleSetActiveOperationalDataset(const Message &aIncommingMessage, uint16_t aOffset, uint16_t aLength)
+Error TcatAgent::HandleSetActiveOperationalDataset(const Message &aIncomingMessage, uint16_t aOffset, uint16_t aLength)
 {
-    Dataset       dataset;
-    Dataset::Tlvs datasetTlvs;
-    Error         error;
+    Dataset     dataset;
+    OffsetRange offsetRange;
+    Error       error;
+    uint8_t     buf[kCommissionerCertMaxLength];
+    size_t      bufLen = sizeof(buf);
 
-    SuccessOrExit(error = dataset.SetFrom(aIncommingMessage, aOffset, aLength));
+    offsetRange.Init(aOffset, aLength);
+    SuccessOrExit(error = dataset.SetFrom(aIncomingMessage, offsetRange));
     SuccessOrExit(error = dataset.ValidateTlvs());
 
-    if (!CheckCommandClassAuthorizationFlags(mCommissionerAuthorizationField.mApplicationFlags,
-                                             mDeviceAuthorizationField.mApplicationFlags, &dataset))
+    if (!CheckCommandClassAuthorizationFlags(mCommissionerAuthorizationField.mCommissioningFlags,
+                                             mDeviceAuthorizationField.mCommissioningFlags, &dataset))
     {
         error = kErrorRejected;
         ExitNow();
     }
 
-    dataset.ConvertTo(datasetTlvs);
-    error = Get<ActiveDatasetManager>().SaveLocal(datasetTlvs);
+    SuccessOrExit(error = Get<Ble::BleSecure>().GetPeerCertificateDer(buf, &bufLen, bufLen));
+    Get<Settings>().SaveTcatCommissionerCertificate(buf, static_cast<uint16_t>(bufLen));
+
+    Get<ActiveDatasetManager>().SaveLocal(dataset);
 
 exit:
     return error;
+}
+
+Error TcatAgent::HandleGetActiveOperationalDataset(Message &aOutgoingMessage, bool &aResponse)
+{
+    Error         error = kErrorNone;
+    Dataset       dataset;
+    Dataset::Tlvs datasetTlvs;
+
+    if (!CheckCommandClassAuthorizationFlags(mCommissionerAuthorizationField.mCommissioningFlags,
+                                             mDeviceAuthorizationField.mCommissioningFlags, &dataset))
+    {
+        error = kErrorRejected;
+        ExitNow();
+    }
+
+    SuccessOrExit(error = Get<ActiveDatasetManager>().Read(datasetTlvs));
+    SuccessOrExit(
+        error = Tlv::AppendTlv(aOutgoingMessage, kTlvResponseWithPayload, datasetTlvs.mTlvs, datasetTlvs.mLength));
+    aResponse = true;
+
+exit:
+    return error;
+}
+
+Error TcatAgent::HandleGetCommissionerCertificate(Message &aOutgoingMessage, bool &aResponse)
+{
+    Error    error = kErrorNone;
+    Dataset  dataset;
+    uint8_t  buf[kCommissionerCertMaxLength];
+    uint16_t bufLen = sizeof(buf);
+
+    if (!CheckCommandClassAuthorizationFlags(mCommissionerAuthorizationField.mCommissioningFlags,
+                                             mDeviceAuthorizationField.mCommissioningFlags, &dataset))
+    {
+        error = kErrorRejected;
+        ExitNow();
+    }
+
+    VerifyOrExit(kErrorNone == Get<Settings>().ReadTcatCommissionerCertificate(buf, bufLen),
+                 error = kErrorInvalidState);
+    SuccessOrExit(error = Tlv::AppendTlv(aOutgoingMessage, kTlvResponseWithPayload, buf, bufLen));
+    aResponse = true;
+
+exit:
+    return error;
+}
+
+Error TcatAgent::HandleGetDiagnosticTlvs(const Message &aIncomingMessage,
+                                         Message       &aOutgoingMessage,
+                                         uint16_t       aOffset,
+                                         uint16_t       aLength,
+                                         bool          &aResponse)
+{
+    Error           error = kErrorNone;
+    OffsetRange     offsetRange;
+    ot::ExtendedTlv extTlv;
+    uint16_t        initialLength;
+    uint16_t        length;
+
+    if (!CheckCommandClassAuthorizationFlags(mCommissionerAuthorizationField.mCommissioningFlags,
+                                             mDeviceAuthorizationField.mCommissioningFlags, nullptr))
+    {
+        error = kErrorRejected;
+        ExitNow();
+    }
+
+    offsetRange.Init(aOffset, aLength);
+    initialLength = aOutgoingMessage.GetLength();
+
+    // Start with extTlv to avoid the need for a temporary message buffer to calucalate reply length
+    extTlv.SetType(kTlvResponseWithPayload);
+    extTlv.SetLength(0);
+    SuccessOrExit(error = aOutgoingMessage.Append(extTlv));
+
+    error =
+        Get<NetworkDiagnostic::Server>().AppendRequestedTlvsForTcat(aIncomingMessage, aOutgoingMessage, offsetRange);
+
+    // Ensure enough message buffers are left for transmission of the result. Report error otherwise.
+    if (Get<MessagePool>().GetFreeBufferCount() < kBufferReserve)
+    {
+        error = kErrorNoBufs;
+    }
+
+    if (error != kErrorNone)
+    {
+        IgnoreError(aOutgoingMessage.SetLength(initialLength));
+        ExitNow();
+    }
+
+    length = aOutgoingMessage.GetLength() - initialLength - sizeof(extTlv);
+
+    if (length > 0)
+    {
+        extTlv.SetLength(length);
+        aOutgoingMessage.WriteBytes(initialLength, &extTlv, sizeof(extTlv));
+        aResponse = true;
+    }
+    else
+    {
+        IgnoreError(aOutgoingMessage.SetLength(initialLength));
+    }
+
+exit:
+    return error;
+}
+
+Error TcatAgent::HandleDecomission(void)
+{
+    Error         error = kErrorNone;
+    unsigned char buf[kCommissionerCertMaxLength];
+    size_t        bufLen = sizeof(buf);
+    Dataset       dataset;
+
+    if (!CheckCommandClassAuthorizationFlags(mCommissionerAuthorizationField.mDecommissioningFlags,
+                                             mDeviceAuthorizationField.mDecommissioningFlags, &dataset))
+    {
+        error = kErrorRejected;
+        ExitNow();
+    }
+
+    SuccessOrExit(error = Get<Ble::BleSecure>().GetPeerCertificateDer(buf, &bufLen, bufLen));
+    Get<Settings>().SaveTcatCommissionerCertificate(buf, static_cast<uint16_t>(bufLen));
+
+    IgnoreReturnValue(otThreadSetEnabled(&GetInstance(), false));
+    Get<ActiveDatasetManager>().Clear();
+    Get<PendingDatasetManager>().Clear();
+
+    IgnoreReturnValue(Get<Instance>().ErasePersistentInfo());
+
+#if !OPENTHREAD_CONFIG_PLATFORM_KEY_REFERENCES_ENABLE
+    {
+        NetworkKey networkKey;
+        networkKey.Clear();
+        Get<KeyManager>().SetNetworkKey(networkKey);
+    }
+#endif
+
+exit:
+    return error;
+}
+
+Error TcatAgent::HandlePing(const Message &aIncomingMessage,
+                            Message       &aOutgoingMessage,
+                            uint16_t       aOffset,
+                            uint16_t       aLength,
+                            bool          &aResponse)
+{
+    Error           error = kErrorNone;
+    ot::ExtendedTlv extTlv;
+    ot::Tlv         tlv;
+
+    VerifyOrExit(aLength <= kPingPayloadMaxLength, error = kErrorParse);
+    if (aLength > ot::Tlv::kBaseTlvMaxLength)
+    {
+        extTlv.SetType(kTlvResponseWithPayload);
+        extTlv.SetLength(aLength);
+        SuccessOrExit(error = aOutgoingMessage.Append(extTlv));
+    }
+    else
+    {
+        tlv.SetType(kTlvResponseWithPayload);
+        tlv.SetLength(static_cast<uint8_t>(aLength));
+        SuccessOrExit(error = aOutgoingMessage.Append(tlv));
+    }
+
+    SuccessOrExit(error = aOutgoingMessage.AppendBytesFromMessage(aIncomingMessage, aOffset, aLength));
+    aResponse = true;
+
+exit:
+    return error;
+}
+
+Error TcatAgent::HandleGetNetworkName(Message &aOutgoingMessage, bool &aResponse)
+{
+    Error             error    = kErrorNone;
+    MeshCoP::NameData nameData = Get<MeshCoP::NetworkNameManager>().GetNetworkName().GetAsData();
+
+    VerifyOrExit(Get<ActiveDatasetManager>().IsCommissioned(), error = kErrorInvalidState);
+#if !OPENTHREAD_CONFIG_ALLOW_EMPTY_NETWORK_NAME
+    VerifyOrExit(nameData.GetLength() > 0, error = kErrorInvalidState);
+#endif
+
+    SuccessOrExit(
+        error = Tlv::AppendTlv(aOutgoingMessage, kTlvResponseWithPayload, nameData.GetBuffer(), nameData.GetLength()));
+    aResponse = true;
+
+exit:
+    return error;
+}
+
+Error TcatAgent::HandleGetDeviceId(Message &aOutgoingMessage, bool &aResponse)
+{
+    const uint8_t  *deviceId;
+    uint16_t        length = 0;
+    Mac::ExtAddress eui64;
+    Error           error = kErrorNone;
+
+    if (mVendorInfo->mGeneralDeviceId != nullptr)
+    {
+        length   = mVendorInfo->mGeneralDeviceId->mDeviceIdLen;
+        deviceId = mVendorInfo->mGeneralDeviceId->mDeviceId;
+    }
+
+    if (length == 0)
+    {
+        Get<Radio>().GetIeeeEui64(eui64);
+
+        length   = sizeof(Mac::ExtAddress);
+        deviceId = eui64.m8;
+    }
+
+    SuccessOrExit(error = Tlv::AppendTlv(aOutgoingMessage, kTlvResponseWithPayload, deviceId, length));
+
+    aResponse = true;
+
+exit:
+    return error;
+}
+
+Error TcatAgent::HandleGetExtPanId(Message &aOutgoingMessage, bool &aResponse)
+{
+    Error error;
+
+    VerifyOrExit(Get<ActiveDatasetManager>().IsCommissioned(), error = kErrorInvalidState);
+
+    SuccessOrExit(error = Tlv::AppendTlv(aOutgoingMessage, kTlvResponseWithPayload,
+                                         &Get<MeshCoP::ExtendedPanIdManager>().GetExtPanId(), sizeof(ExtendedPanId)));
+    aResponse = true;
+
+exit:
+    return error;
+}
+
+Error TcatAgent::HandleGetProvisioningUrl(Message &aOutgoingMessage, bool &aResponse)
+{
+    Error    error = kErrorNone;
+    uint16_t length;
+
+    VerifyOrExit(mVendorInfo->mProvisioningUrl != nullptr, error = kErrorInvalidState);
+
+    length = StringLength(mVendorInfo->mProvisioningUrl, kProvisioningUrlMaxLength);
+    VerifyOrExit(length > 0 && length <= Tlv::kBaseTlvMaxLength, error = kErrorInvalidState);
+
+    SuccessOrExit(error =
+                      Tlv::AppendTlv(aOutgoingMessage, kTlvResponseWithPayload, mVendorInfo->mProvisioningUrl, length));
+    aResponse = true;
+
+exit:
+    return error;
+}
+
+Error TcatAgent::HandlePresentPskdHash(const Message &aIncomingMessage, uint16_t aOffset, uint16_t aLength)
+{
+    Error error = kErrorNone;
+
+    VerifyOrExit(mVendorInfo->mPskdString != nullptr, error = kErrorSecurity);
+
+    SuccessOrExit(error = VerifyHash(aIncomingMessage, aOffset, aLength, mVendorInfo->mPskdString,
+                                     StringLength(mVendorInfo->mPskdString, kMaxPskdLength)));
+    mPskdVerified = true;
+
+exit:
+    return error;
+}
+
+Error TcatAgent::HandlePresentPskcHash(const Message &aIncomingMessage, uint16_t aOffset, uint16_t aLength)
+{
+    Error         error = kErrorNone;
+    Dataset::Info datasetInfo;
+    Pskc          pskc;
+
+    VerifyOrExit(Get<ActiveDatasetManager>().Read(datasetInfo) == kErrorNone, error = kErrorSecurity);
+    VerifyOrExit(datasetInfo.IsPresent<Dataset::kPskc>(), error = kErrorSecurity);
+    pskc = datasetInfo.Get<Dataset::kPskc>();
+
+    SuccessOrExit(error = VerifyHash(aIncomingMessage, aOffset, aLength, pskc.m8, Pskc::kSize));
+    mPskcVerified = true;
+
+exit:
+    return error;
+}
+
+Error TcatAgent::HandlePresentInstallCodeHash(const Message &aIncomingMessage, uint16_t aOffset, uint16_t aLength)
+{
+    Error error = kErrorNone;
+
+    VerifyOrExit(mVendorInfo->mInstallCode != nullptr, error = kErrorSecurity);
+
+    SuccessOrExit(error = VerifyHash(aIncomingMessage, aOffset, aLength, mVendorInfo->mInstallCode,
+                                     StringLength(mVendorInfo->mInstallCode, kInstallCodeMaxSize)));
+    mInstallCodeVerified = true;
+
+exit:
+    return error;
+}
+
+Error TcatAgent::HandleRequestRandomNumberChallenge(Message &aOutgoingMessage, bool &aResponse)
+{
+    Error error = kErrorNone;
+
+    SuccessOrExit(error = Random::Crypto::Fill(mRandomChallenge));
+
+    SuccessOrExit(
+        error = Tlv::AppendTlv(aOutgoingMessage, kTlvResponseWithPayload, &mRandomChallenge, sizeof(mRandomChallenge)));
+    aResponse = true;
+exit:
+    return error;
+}
+
+Error TcatAgent::HandleRequestPskdHash(const Message &aIncomingMessage,
+                                       Message       &aOutgoingMessage,
+                                       uint16_t       aOffset,
+                                       uint16_t       aLength,
+                                       bool          &aResponse)
+{
+    Error                    error             = kErrorNone;
+    uint64_t                 providedChallenge = 0;
+    Crypto::HmacSha256::Hash hash;
+
+    VerifyOrExit(StringLength(mVendorInfo->mPskdString, kMaxPskdLength) != 0, error = kErrorFailed);
+    VerifyOrExit(aLength == sizeof(providedChallenge), error = kErrorParse);
+
+    SuccessOrExit(error = aIncomingMessage.Read(aOffset, &providedChallenge, aLength));
+
+    CalculateHash(providedChallenge, mVendorInfo->mPskdString, StringLength(mVendorInfo->mPskdString, kMaxPskdLength),
+                  hash);
+
+    SuccessOrExit(error = Tlv::AppendTlv(aOutgoingMessage, kTlvResponseWithPayload, hash.GetBytes(),
+                                         Crypto::HmacSha256::Hash::kSize));
+    aResponse = true;
+
+exit:
+    return error;
+}
+
+Error TcatAgent::VerifyHash(const Message &aIncomingMessage,
+                            uint16_t       aOffset,
+                            uint16_t       aLength,
+                            const void    *aBuf,
+                            size_t         aBufLen)
+{
+    Error                    error = kErrorNone;
+    Crypto::HmacSha256::Hash hash;
+
+    VerifyOrExit(aLength == Crypto::HmacSha256::Hash::kSize, error = kErrorSecurity);
+    VerifyOrExit(mRandomChallenge != 0, error = kErrorSecurity);
+
+    CalculateHash(mRandomChallenge, reinterpret_cast<const char *>(aBuf), aBufLen, hash);
+
+    VerifyOrExit(aIncomingMessage.Compare(aOffset, hash), error = kErrorSecurity);
+
+exit:
+    return error;
+}
+
+void TcatAgent::CalculateHash(uint64_t aChallenge, const char *aBuf, size_t aBufLen, Crypto::HmacSha256::Hash &aHash)
+{
+    const mbedtls_asn1_buf &rawKey = Get<Ble::BleSecure>().GetOwnPublicKey();
+    Crypto::Key             cryptoKey;
+    Crypto::HmacSha256      hmac;
+
+    cryptoKey.Set(reinterpret_cast<const uint8_t *>(aBuf), static_cast<uint16_t>(aBufLen));
+
+    hmac.Start(cryptoKey);
+    hmac.Update(aChallenge);
+    hmac.Update(rawKey.p, static_cast<uint16_t>(rawKey.len));
+    hmac.Finish(aHash);
 }
 
 Error TcatAgent::HandleStartThreadInterface(void)
@@ -494,7 +924,7 @@ Error TcatAgent::HandleStartThreadInterface(void)
 #endif
 
     Get<ThreadNetif>().Up();
-    error = Get<Mle::MleRouter>().Start();
+    error = Get<Mle::Mle>().Start();
 
 exit:
     return error;
@@ -526,31 +956,31 @@ Error TcatAgent::GetAdvertisementData(uint16_t &aLen, uint8_t *aAdvertisementDat
     aAdvertisementData[2] = OPENTHREAD_CONFIG_THREAD_VERSION << 4 | OT_TCAT_OPCODE;
     aLen++;
 
-    if (mVendorInfo->mDeviceIds != nullptr)
+    if (mVendorInfo->mAdvertisedDeviceIds != nullptr)
     {
-        for (uint8_t i = 0; mVendorInfo->mDeviceIds[i].mDeviceIdType != OT_TCAT_DEVICE_ID_EMPTY; i++)
+        for (uint8_t i = 0; mVendorInfo->mAdvertisedDeviceIds[i].mDeviceIdType != OT_TCAT_DEVICE_ID_EMPTY; i++)
         {
-            switch (MapEnum(mVendorInfo->mDeviceIds[i].mDeviceIdType))
+            switch (MapEnum(mVendorInfo->mAdvertisedDeviceIds[i].mDeviceIdType))
             {
             case kTcatDeviceIdOui24:
                 SeralizeTcatAdvertisementTlv(aAdvertisementData, aLen, kTlvVendorOui24,
-                                             mVendorInfo->mDeviceIds[i].mDeviceIdLen,
-                                             mVendorInfo->mDeviceIds[i].mDeviceId);
+                                             mVendorInfo->mAdvertisedDeviceIds[i].mDeviceIdLen,
+                                             mVendorInfo->mAdvertisedDeviceIds[i].mDeviceId);
                 break;
             case kTcatDeviceIdOui36:
                 SeralizeTcatAdvertisementTlv(aAdvertisementData, aLen, kTlvVendorOui36,
-                                             mVendorInfo->mDeviceIds[i].mDeviceIdLen,
-                                             mVendorInfo->mDeviceIds[i].mDeviceId);
+                                             mVendorInfo->mAdvertisedDeviceIds[i].mDeviceIdLen,
+                                             mVendorInfo->mAdvertisedDeviceIds[i].mDeviceId);
                 break;
             case kTcatDeviceIdDiscriminator:
                 SeralizeTcatAdvertisementTlv(aAdvertisementData, aLen, kTlvDeviceDiscriminator,
-                                             mVendorInfo->mDeviceIds[i].mDeviceIdLen,
-                                             mVendorInfo->mDeviceIds[i].mDeviceId);
+                                             mVendorInfo->mAdvertisedDeviceIds[i].mDeviceIdLen,
+                                             mVendorInfo->mAdvertisedDeviceIds[i].mDeviceId);
                 break;
             case kTcatDeviceIdIanaPen:
                 SeralizeTcatAdvertisementTlv(aAdvertisementData, aLen, kTlvVendorIanaPen,
-                                             mVendorInfo->mDeviceIds[i].mDeviceIdLen,
-                                             mVendorInfo->mDeviceIds[i].mDeviceId);
+                                             mVendorInfo->mAdvertisedDeviceIds[i].mDeviceIdLen,
+                                             mVendorInfo->mAdvertisedDeviceIds[i].mDeviceId);
                 break;
             default:
                 break;

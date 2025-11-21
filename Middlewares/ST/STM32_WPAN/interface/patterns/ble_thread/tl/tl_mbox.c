@@ -742,8 +742,8 @@ static void OutputDbgTrace(TL_MB_PacketType_t packet_type, uint8_t* buffer)
     break;
     
   case TL_MB_ACL_DATA_RSP:
-    TL_HCI_CMD_DBG_MSG(" ACL Data Tx Ack received");
-    TL_HCI_CMD_DBG_MSG("\r\n");
+      TL_HCI_CMD_DBG_MSG(" ACL Data Tx Ack received");
+      TL_HCI_CMD_DBG_MSG("\r\n");
     break;
     
   case TL_MB_BLE_CMD_RSP:

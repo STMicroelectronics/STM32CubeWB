@@ -620,6 +620,10 @@
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/auto/ble_gap_aci.c</FilePath>
             </File>
             <File>
+              <FileName>ble_gen_aci.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/auto/ble_gen_aci.c</FilePath>
+            </File>            <File>
               <FileName>ble_gatt_aci.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../Middlewares/ST/STM32_WPAN/ble/core/auto/ble_gatt_aci.c</FilePath>

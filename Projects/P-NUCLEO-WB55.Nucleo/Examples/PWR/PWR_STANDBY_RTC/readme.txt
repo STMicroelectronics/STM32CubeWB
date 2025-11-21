@@ -94,7 +94,7 @@ Power, PWR, Standby mode, Interrupt, EXTI, Wakeup, Low Power, RTC, External rese
     and development board.
 
   - P-NUCLEO-WB55 Set-up
-    - Use LED2 and LED1 connected respectively to PB.00 and LED1 pins
+    - Use LED2 and LED1 connected respectively to PB.00 and PB.05 pins
 
 @par How to use it ?
 

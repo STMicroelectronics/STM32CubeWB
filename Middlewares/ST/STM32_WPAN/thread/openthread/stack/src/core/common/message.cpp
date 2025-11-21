@@ -33,17 +33,7 @@
 
 #include "message.hpp"
 
-#include "common/as_core_type.hpp"
-#include "common/code_utils.hpp"
-#include "common/debug.hpp"
-#include "common/heap.hpp"
-#include "common/locator_getters.hpp"
-#include "common/log.hpp"
-#include "common/num_utils.hpp"
-#include "common/numeric_limits.hpp"
 #include "instance/instance.hpp"
-#include "net/checksum.hpp"
-#include "net/ip6.hpp"
 
 #if OPENTHREAD_MTD || OPENTHREAD_FTD
 
@@ -328,28 +318,9 @@ void Message::SetOffset(uint16_t aOffset)
     GetMetadata().mOffset = aOffset;
 }
 
-bool Message::IsSubTypeMle(void) const
+bool Message::IsMleCommand(Mle::Command aMleCommand) const
 {
-    bool rval;
-
-    switch (GetMetadata().mSubType)
-    {
-    case kSubTypeMleGeneral:
-    case kSubTypeMleAnnounce:
-    case kSubTypeMleDiscoverRequest:
-    case kSubTypeMleDiscoverResponse:
-    case kSubTypeMleChildUpdateRequest:
-    case kSubTypeMleDataResponse:
-    case kSubTypeMleChildIdRequest:
-        rval = true;
-        break;
-
-    default:
-        rval = false;
-        break;
-    }
-
-    return rval;
+    return (GetSubType() == kSubTypeMle) && (GetMetadata().mMleCommand == aMleCommand);
 }
 
 Error Message::SetPriority(Priority aPriority)
@@ -392,10 +363,14 @@ const char *Message::PriorityToString(Priority aPriority)
         "net",    // (3) kPriorityNet
     };
 
-    static_assert(kPriorityLow == 0, "kPriorityLow value is incorrect");
-    static_assert(kPriorityNormal == 1, "kPriorityNormal value is incorrect");
-    static_assert(kPriorityHigh == 2, "kPriorityHigh value is incorrect");
-    static_assert(kPriorityNet == 3, "kPriorityNet value is incorrect");
+    struct EnumCheck
+    {
+        InitEnumValidatorCounter();
+        ValidateNextEnum(kPriorityLow);
+        ValidateNextEnum(kPriorityNormal);
+        ValidateNextEnum(kPriorityHigh);
+        ValidateNextEnum(kPriorityNet);
+    };
 
     return kPriorityStrings[aPriority];
 }
@@ -410,6 +385,11 @@ Error Message::AppendBytes(const void *aBuf, uint16_t aLength)
 
 exit:
     return error;
+}
+
+Error Message::AppendBytesFromMessage(const Message &aMessage, const OffsetRange &aOffsetRange)
+{
+    return AppendBytesFromMessage(aMessage, aOffsetRange.GetOffset(), aOffsetRange.GetLength());
 }
 
 Error Message::AppendBytesFromMessage(const Message &aMessage, uint16_t aOffset, uint16_t aLength)
@@ -649,9 +629,31 @@ uint16_t Message::ReadBytes(uint16_t aOffset, void *aBuf, uint16_t aLength) cons
     return static_cast<uint16_t>(bufPtr - reinterpret_cast<uint8_t *>(aBuf));
 }
 
+uint16_t Message::ReadBytes(const OffsetRange &aOffsetRange, void *aBuf) const
+{
+    return ReadBytes(aOffsetRange.GetOffset(), aBuf, aOffsetRange.GetLength());
+}
+
 Error Message::Read(uint16_t aOffset, void *aBuf, uint16_t aLength) const
 {
-    return (ReadBytes(aOffset, aBuf, aLength) == aLength) ? kErrorNone : kErrorParse;
+    Error error = kErrorNone;
+
+    VerifyOrExit(aOffset + aLength <= GetLength(), error = kErrorParse);
+    ReadBytes(aOffset, aBuf, aLength);
+
+exit:
+    return error;
+}
+
+Error Message::Read(const OffsetRange &aOffsetRange, void *aBuf, uint16_t aLength) const
+{
+    Error error = kErrorNone;
+
+    VerifyOrExit(aOffsetRange.Contains(aLength), error = kErrorParse);
+    error = Read(aOffsetRange.GetOffset(), aBuf, aLength);
+
+exit:
+    return error;
 }
 
 bool Message::CompareBytes(uint16_t aOffset, const void *aBuf, uint16_t aLength, ByteMatcher aMatcher) const
@@ -793,16 +795,6 @@ exit:
     FreeAndNullMessageOnError(messageCopy, error);
     return messageCopy;
 }
-
-#if OPENTHREAD_FTD
-bool Message::GetChildMask(uint16_t aChildIndex) const { return GetMetadata().mChildMask.Get(aChildIndex); }
-
-void Message::ClearChildMask(uint16_t aChildIndex) { GetMetadata().mChildMask.Set(aChildIndex, false); }
-
-void Message::SetChildMask(uint16_t aChildIndex) { GetMetadata().mChildMask.Set(aChildIndex, true); }
-
-bool Message::IsChildPending(void) const { return GetMetadata().mChildMask.HasAny(); }
-#endif
 
 Error Message::GetLinkInfo(ThreadLinkInfo &aLinkInfo) const
 {
@@ -952,12 +944,21 @@ Message::ConstIterator MessageQueue::begin(void) const { return Message::ConstIt
 
 void MessageQueue::GetInfo(Info &aInfo) const
 {
+    ClearAllBytes(aInfo);
+
     for (const Message &message : *this)
     {
         aInfo.mNumMessages++;
         aInfo.mNumBuffers += message.GetBufferCount();
         aInfo.mTotalBytes += message.GetLength();
     }
+}
+
+void MessageQueue::AddQueueInfos(Info &aInfo, const Info &aOther)
+{
+    aInfo.mNumMessages += aOther.mNumMessages;
+    aInfo.mNumBuffers += aOther.mNumBuffers;
+    aInfo.mTotalBytes += aOther.mTotalBytes;
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -1101,6 +1102,8 @@ Message::ConstIterator PriorityQueue::begin(void) const { return Message::ConstI
 
 void PriorityQueue::GetInfo(Info &aInfo) const
 {
+    ClearAllBytes(aInfo);
+
     for (const Message &message : *this)
     {
         aInfo.mNumMessages++;

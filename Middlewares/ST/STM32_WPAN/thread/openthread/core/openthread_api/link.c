@@ -453,6 +453,29 @@ otShortAddress otLinkGetShortAddress(otInstance *aInstance)
   return rspData;
 }
 
+otShortAddress otLinkGetAlternateShortAddress(otInstance *aInstance)
+{
+  otShortAddress rspData;
+  
+  Pre_OtCmdProcessing();
+  /* prepare buffer */
+  Thread_OT_Cmd_Request_t* p_ot_req = THREAD_Get_OTCmdPayloadBuffer();
+
+  p_ot_req->ID = MSG_M4TOM0_OT_LINK_GET_ALT_SHORT_ADDRESS;
+
+  p_ot_req->Size=0;
+
+  Ot_Cmd_Transfer();
+
+  p_ot_req = THREAD_Get_OTCmdRspPayloadBuffer();
+  rspData = (otShortAddress)p_ot_req->Data[0];
+  
+  Post_OtCmdProcessing();
+  
+  return rspData;
+
+}
+
 uint8_t otLinkGetMaxFrameRetriesDirect(otInstance *aInstance)
 {
   uint8_t rspData;

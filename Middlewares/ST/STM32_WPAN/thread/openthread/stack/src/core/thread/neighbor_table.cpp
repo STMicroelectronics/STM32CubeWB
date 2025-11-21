@@ -33,10 +33,7 @@
 
 #include "neighbor_table.hpp"
 
-#include "common/code_utils.hpp"
-#include "common/locator_getters.hpp"
 #include "instance/instance.hpp"
-#include "thread/dua_manager.hpp"
 
 namespace ot {
 
@@ -139,9 +136,9 @@ Neighbor *NeighborTable::FindNeighbor(const Ip6::Address &aIp6Address, Neighbor:
     Neighbor    *neighbor = nullptr;
     Mac::Address macAddress;
 
-    if (aIp6Address.IsLinkLocal())
+    if (aIp6Address.IsLinkLocalUnicast())
     {
-        aIp6Address.GetIid().ConvertToMacAddress(macAddress);
+        macAddress.SetExtendedFromIid(aIp6Address.GetIid());
     }
 
     if (Get<Mle::Mle>().IsRoutingLocator(aIp6Address))
