@@ -50,3 +50,27 @@
 	path = Drivers/BSP/Components/stts22h
 	url = https://github.com/STMicroelectronics/stm32-stts22h.git
 	branch = main
+[submodule "Middlewares/Third_Party/FatFs"]
+	path = Middlewares/Third_Party/FatFs
+	url = https://github.com/STMicroelectronics/stm32-mw-fatfs
+	branch = master
+[submodule "Middlewares/Third_Party/FreeRTOS"]
+	path = Middlewares/Third_Party/FreeRTOS
+	url = https://github.com/STMicroelectronics/stm32-mw-freertos
+	branch = master
+[submodule "Middlewares/ST/STM32_USB_Device_Library"]
+	path = Middlewares/ST/STM32_USB_Device_Library
+	url = https://github.com/STMicroelectronics/stm32-mw-usb-device
+	branch = master
+[submodule "Middlewares/ST/STM32_TouchSensing_Library"]
+	path = Middlewares/ST/STM32_TouchSensing_Library
+	url = https://github.com/STMicroelectronics/stm32-mw-touchsensing
+	branch = main
+[submodule "Middlewares/ST/STM32_WPAN"]
+	path = Middlewares/ST/STM32_WPAN
+	url = https://github.com/STMicroelectronics/stm32-mw-wpan.git
+	branch = main
+[submodule "Middlewares/ST/threadx"]
+	path = Middlewares/ST/threadx
+	url = https://github.com/STMicroelectronics/stm32-mw-threadx
+	branch = main
