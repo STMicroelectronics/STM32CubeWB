@@ -28,8 +28,14 @@
 ; *     time during input microsec value.
 ; *   - If 0 is given as input
 ; */
+				.syntax unified
+				.cpu cortex-m4
+				.thumb
+
                 .global us_delay_16m
                 .section .text.us_delay_16m
+                .thumb_func
+
 us_delay_16m:
                nop
                 nop
@@ -50,6 +56,7 @@ us_delay_16m:
 
                 .global us_delay_32m
                 .section .text.us_delay_32m
+                .thumb_func
 
 us_delay_32m:
                 nop
