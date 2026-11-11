@@ -28,6 +28,7 @@
 ; *     time during input microsec value.
 ; *   - If 0 is given as input
 ; */
+                .type us_delay_16m, %function
                 .global us_delay_16m
                 .section .text.us_delay_16m
 us_delay_16m:
@@ -48,6 +49,7 @@ us_delay_16m:
                 BHI   us_delay_16m
                 BX    LR
 
+                .type us_delay_32m, %function
                 .global us_delay_32m
                 .section .text.us_delay_32m
 
