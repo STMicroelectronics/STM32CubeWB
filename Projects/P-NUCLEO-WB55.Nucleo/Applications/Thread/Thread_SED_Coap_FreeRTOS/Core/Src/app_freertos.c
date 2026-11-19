@@ -65,4 +65,3 @@ __weak void vPortSuppressTicksAndSleep( TickType_t xExpectedIdleTime )
 /* USER CODE BEGIN Application */
      
 /* USER CODE END Application */
-

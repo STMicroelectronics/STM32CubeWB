@@ -81,6 +81,41 @@ Refer to /Projects/STM32_Copro_Wireless_Binaries/ReleaseNote.html for the detail
 Wireless Coprocessor binary or see following wiki for Hardware setup:
 https://wiki.st.com/stm32mcu/wiki/Connectivity:STM32WB_BLE_Hardware_Setup
 
+Here are some typical settings to be adapted for stm32wb5x_BLE_Stack_Light_fw.bin use:
+
+#define CFG_BLE_NUM_LINK           4
+#define CFG_BLE_MBLOCK_COUNT          (BLE_MBLOCKS_CALC(0, \
+                                       MAX(CFG_BLE_MAX_ATT_MTU, SM_MTU),\
+                                       CFG_BLE_NUM_LINK))                                      
+#define CFG_BLE_OPTIONS  (SHCI_C2_BLE_INIT_OPTIONS_LL_HOST | 
+                          SHCI_C2_BLE_INIT_OPTIONS_WITH_SVC_CHANGE_DESC | 
+                          SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RW |
+                          SHCI_C2_BLE_INIT_OPTIONS_NO_EXT_ADV |
+                          SHCI_C2_BLE_INIT_OPTIONS_CS_ALGO2 |
+                          SHCI_C2_BLE_INIT_OPTIONS_REDUC_GATTDB_NVM |
+                          SHCI_C2_BLE_INIT_OPTIONS_GATT_CACHING_NOTUSED |
+                          SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3)
+#define CFG_BLE_OPTIONS_EXT  (SHCI_C2_BLE_INIT_OPTIONS_APPEARANCE_READONLY | SHCI_C2_BLE_INIT_OPTIONS_ENHANCED_ATT_NOTSUPPORTED)
+#define CFG_BLE_MAX_ADD_EATT_BEARERS    (0) 
+//********************************************************************************************
+Here are some typical settings to be adapted for stm32wb5x_BLE_Stack_Full_fw.bin use:
+
+#define CFG_BLE_NUM_LINK           8
+#define CFG_BLE_MBLOCK_COUNT          (BLE_MBLOCKS_CALC(CFG_BLE_PREPARE_WRITE_LIST_SIZE, \
+                                       MAX(MAX(CFG_BLE_MAX_ATT_MTU, (HCI_EVENT_MAX_PARAM_LEN-7)), SM_MTU),\
+                                       CFG_BLE_NUM_LINK))  
+#define CFG_BLE_OPTIONS  (SHCI_C2_BLE_INIT_OPTIONS_LL_HOST | 
+                          SHCI_C2_BLE_INIT_OPTIONS_WITH_SVC_CHANGE_DESC | 
+                          SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RW |
+                          SHCI_C2_BLE_INIT_OPTIONS_NO_EXT_ADV |
+                          SHCI_C2_BLE_INIT_OPTIONS_CS_ALGO2 |
+                          SHCI_C2_BLE_INIT_OPTIONS_REDUC_GATTDB_NVM |
+                          SHCI_C2_BLE_INIT_OPTIONS_GATT_CACHING_NOTUSED |
+                          SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3)
+#define CFG_BLE_OPTIONS_EXT  (SHCI_C2_BLE_INIT_OPTIONS_APPEARANCE_READONLY | SHCI_C2_BLE_INIT_OPTIONS_ENHANCED_ATT_NOTSUPPORTED)
+#define CFG_BLE_MAX_ADD_EATT_BEARERS    (0) 
+
+
 In order to make the program work, you must do the following:
  - Open your toolchain 
  - Rebuild all files and flash the board with the executable file

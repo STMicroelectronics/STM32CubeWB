@@ -85,14 +85,24 @@ uint8_t NotifyCharData[512];
 uint16_t Connection_Handle;
 /* USER CODE BEGIN PV */
 uint8_t hr_energy_reset = CUSTOM_STM_HRS_ENERGY_NOT_RESET;
+extern uint16_t SizeLong_C;
+uint8_t NotifyCharLongData1[512];
+uint8_t NotifyCharLongData2[512];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 /* My_P2P_Server */
 static void Custom_Switch_c_Update_Char(void);
+
 static void Custom_Switch_c_Send_Notification(void);
+
+static void Custom_Long_c_Update_Char_Ext(void);
+
+static void Custom_Long_c_Send_Notification(void);
+
 /* My_Heart_Rate */
 static void Custom_Hrs_m_Update_Char(void);
+
 static void Custom_Hrs_m_Send_Notification(void);
 
 /* USER CODE BEGIN PFP */
@@ -104,7 +114,6 @@ void Custom_STM_App_Notification(Custom_STM_App_Notification_evt_t *pNotificatio
 {
   /* USER CODE BEGIN CUSTOM_STM_App_Notification_1 */
   static uint16_t hr_value, hr_energy;
-  tBleStatus        ret = BLE_STATUS_INVALID_PARAMS;
     
   /* USER CODE END CUSTOM_STM_App_Notification_1 */
   switch (pNotification->Custom_Evt_Opcode)
@@ -156,15 +165,6 @@ void Custom_STM_App_Notification(Custom_STM_App_Notification_evt_t *pNotificatio
       /* USER CODE BEGIN CUSTOM_STM_LONG_C_NOTIFY_ENABLED_EVT */
       APP_DBG_MSG("\r\n\r** CUSTOM_STM_LONG_C_NOTIFY_ENABLED_EVT \n");
       Custom_App_Context.Long_c_Notification_Status = TOGGLE_ON;
-      ret = aci_gatt_exchange_config(Connection_Handle);
-      if (ret != BLE_STATUS_SUCCESS)
-      {
-        APP_DBG_MSG("aci_gatt_exchange_config failure: reason=0x%02X\n", ret);
-      }
-      else
-      {
-        APP_DBG_MSG("==>> aci_gatt_exchange_config : Success\n");
-      }
       /* USER CODE END CUSTOM_STM_LONG_C_NOTIFY_ENABLED_EVT */
       break;
 
@@ -298,6 +298,13 @@ void Custom_APP_Init(void)
 {
   /* USER CODE BEGIN CUSTOM_APP_Init */
   uint8_t sensor_loc;
+  uint16_t i;
+  
+  for (i=0; i < sizeof(NotifyCharLongData1); i++)
+  {
+    NotifyCharLongData1[i] = 0xAA;
+    NotifyCharLongData2[i] = 0xBB;
+  }
 
   sensor_loc = CUSTOM_STM_HRS_BODY_SENSOR_LOCATION_WRIST;
   Custom_STM_App_Update_Char(CUSTOM_STM_HRS_SL, (uint8_t *) &sensor_loc);       /*initialise My_Sensor_Loc char to wrist */
@@ -306,10 +313,12 @@ void Custom_APP_Init(void)
   Custom_Hrs_m_Update_Char();
 
   UTIL_SEQ_RegTask(1<< CFG_TASK_SW1_BUTTON_PUSHED_ID, UTIL_SEQ_RFU, Custom_Switch_c_Send_Notification);
+  UTIL_SEQ_RegTask(1<< CFG_TASK_SW2_BUTTON_PUSHED_ID, UTIL_SEQ_RFU, Custom_Long_c_Send_Notification);
   
   Custom_App_Context.Long_c_Notification_Status = TOGGLE_OFF; 
   Custom_App_Context.Switch_c_Notification_Status = TOGGLE_OFF;   
   Custom_App_Context.SW1_Status = 0; 
+  Custom_App_Context.SW2_Status = 0;
   /* USER CODE END CUSTOM_APP_Init */
   return;
 }
@@ -344,7 +353,7 @@ __USED void Custom_Switch_c_Update_Char(void) /* Property Read */
   return;
 }
 
-void Custom_Switch_c_Send_Notification(void) /* Property Notification */
+__USED void Custom_Switch_c_Send_Notification(void) /* Property Notification */
 {
   uint8_t updateflag = 0;
 
@@ -358,12 +367,14 @@ void Custom_Switch_c_Send_Notification(void) /* Property Notification */
       Custom_App_Context.SW1_Status = 1;
       NotifyCharData[0] = 0x00;
       NotifyCharData[1] = 0x01;
+      memcpy(UpdateCharData, NotifyCharData, 2);
     }
     else
     {
       Custom_App_Context.SW1_Status = 0;
       NotifyCharData[0] = 0x00;
       NotifyCharData[1] = 0x00;
+      memcpy(UpdateCharData, NotifyCharData, 2);
     }
 
     APP_DBG_MSG("-- CUSTOM APPLICATION SERVER  : INFORM CLIENT BUTTON 1 PUSHED \n");
@@ -376,12 +387,71 @@ void Custom_Switch_c_Send_Notification(void) /* Property Notification */
 
   if (updateflag != 0)
   {
-    Custom_STM_App_Update_Char(CUSTOM_STM_SWITCH_C, (uint8_t *)NotifyCharData);
+    Custom_STM_App_Update_Char(CUSTOM_STM_SWITCH_C, (uint8_t *)UpdateCharData);
   }
 
   /* USER CODE BEGIN Switch_c_NS_Last*/
 
   /* USER CODE END Switch_c_NS_Last*/
+
+  return;
+}
+
+__USED void Custom_Long_c_Update_Char_Ext(void) /* Property Read */
+{
+  uint8_t updateflag = 0;
+
+  /* USER CODE BEGIN Long_c_UC_1*/
+
+  /* USER CODE END Long_c_UC_1*/
+
+  if (updateflag != 0)
+  {
+    Custom_STM_App_Update_Char_Ext(Custom_App_Context.ConnectionHandle, CUSTOM_STM_LONG_C, (uint8_t *)UpdateCharData);
+  }
+
+  /* USER CODE BEGIN Long_c_UC_Last*/
+
+  /* USER CODE END Long_c_UC_Last*/
+  return;
+}
+
+__USED void Custom_Long_c_Send_Notification(void) /* Property Notification */
+{
+  uint8_t updateflag = 0;
+
+  /* USER CODE BEGIN Long_c_NS_1*/
+  if (Custom_App_Context.Long_c_Notification_Status == TOGGLE_ON)
+  {
+    updateflag = 1;
+    
+    if (Custom_App_Context.SW2_Status == 0)
+    {
+      Custom_App_Context.SW2_Status = 1;
+      memcpy(UpdateCharData, NotifyCharLongData1, SizeLong_C);
+    }
+    else
+    {
+      Custom_App_Context.SW2_Status = 0;
+      memcpy(UpdateCharData, NotifyCharLongData2, SizeLong_C);
+    }
+
+    APP_DBG_MSG("-- CUSTOM APPLICATION SERVER  : INFORM CLIENT BUTTON 1 PUSHED \n");
+  }
+  else
+  {
+    APP_DBG_MSG("-- CUSTOM APPLICATION : CAN'T INFORM CLIENT -  NOTIFICATION DISABLED\n");
+  } 
+  /* USER CODE END Long_c_NS_1*/
+
+  if (updateflag != 0)
+  {
+	Custom_STM_App_Update_Char_Ext(Custom_App_Context.ConnectionHandle, CUSTOM_STM_LONG_C, (uint8_t *)UpdateCharData);
+  }
+
+  /* USER CODE BEGIN Long_c_NS_Last*/
+
+  /* USER CODE END Long_c_NS_Last*/
 
   return;
 }
@@ -406,7 +476,7 @@ __USED void Custom_Hrs_m_Update_Char(void) /* Property Read */
   return;
 }
 
-void Custom_Hrs_m_Send_Notification(void) /* Property Notification */
+__USED void Custom_Hrs_m_Send_Notification(void) /* Property Notification */
 {
   uint8_t updateflag = 0;
 
@@ -416,7 +486,7 @@ void Custom_Hrs_m_Send_Notification(void) /* Property Notification */
 
   if (updateflag != 0)
   {
-    Custom_STM_App_Update_Char(CUSTOM_STM_HRS_M, (uint8_t *)NotifyCharData);
+    Custom_STM_App_Update_Char(CUSTOM_STM_HRS_M, (uint8_t *)UpdateCharData);
   }
 
   /* USER CODE BEGIN Hrs_m_NS_Last*/
@@ -435,4 +505,10 @@ void SW1_Button_Action(void)
   return;
 }
 
+void SW2_Button_Action(void)
+{
+  UTIL_SEQ_SetTask( 1<<CFG_TASK_SW2_BUTTON_PUSHED_ID, CFG_SCH_PRIO_0);
+
+  return;
+}
 /* USER CODE END FD_LOCAL_FUNCTIONS*/

@@ -26,6 +26,7 @@
 #include "hw_conf.h"
 #include "hw_if.h"
 #include "ble_bufsize.h"
+#include "ble_std.h"
 
 /******************************************************************************
  * Application Config
@@ -132,7 +133,7 @@
  * Maximum supported ATT_MTU size
  * This parameter is ignored by the CPU2 when CFG_BLE_OPTIONS has SHCI_C2_BLE_INIT_OPTIONS_LL_ONLY flag set
  */
-#define CFG_BLE_MAX_ATT_MTU             (156)
+#define CFG_BLE_MAX_ATT_MTU             (255)
 
 /**
  * Size of the storage area for Attribute values
@@ -157,7 +158,7 @@
  * Number of allocated memory blocks
  * This parameter is overwritten by the CPU2 with an hardcoded optimal value when the parameter CFG_BLE_OPTIONS has SHCI_C2_BLE_INIT_OPTIONS_LL_ONLY flag set
  */
-#define CFG_BLE_MBLOCK_COUNT            (BLE_MBLOCKS_CALC(CFG_BLE_PREPARE_WRITE_LIST_SIZE, CFG_BLE_MAX_ATT_MTU, CFG_BLE_NUM_LINK))
+#define CFG_BLE_MBLOCK_COUNT            (BLE_MBLOCKS_CALC(CFG_BLE_PREPARE_WRITE_LIST_SIZE, MAX(MAX(CFG_BLE_MAX_ATT_MTU, (HCI_EVENT_MAX_PARAM_LEN-7)), SM_MTU), CFG_BLE_NUM_LINK))
 
 /**
  * Enable or disable the Extended Packet length feature. Valid values are 0 or 1.

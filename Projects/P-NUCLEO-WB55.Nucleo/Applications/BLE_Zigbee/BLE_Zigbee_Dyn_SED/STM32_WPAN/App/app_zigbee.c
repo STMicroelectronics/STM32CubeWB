@@ -381,6 +381,9 @@ static void APP_ZIGBEE_NwkForm(void)
       uint32_t bcast_timeout = 3;
       ZbNwkSet(zigbee_app_info.zb, ZB_NWK_NIB_ID_NetworkBroadcastDeliveryTime, &bcast_timeout, sizeof(bcast_timeout));
 
+      uint8_t age_limit = 10; 
+      ZbNwkSet(zigbee_app_info.zb, ZB_NWK_NIB_ID_RouterAgeLimit, &age_limit, sizeof(age_limit));
+
       APP_DBG("==> Start_ZB Task Toggle");
       /* Start First Toggle */
       APP_ZIGBEE_Process_OnOff_Toggle();

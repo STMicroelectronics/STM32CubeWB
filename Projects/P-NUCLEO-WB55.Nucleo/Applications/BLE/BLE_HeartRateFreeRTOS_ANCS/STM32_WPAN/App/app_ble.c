@@ -64,7 +64,6 @@ typedef struct _tSecurityParams
    */
   uint8_t bonding_mode;
 
-
   /**
    * minimum encryption key size requirement
    */
@@ -188,7 +187,7 @@ typedef enum
 #define INITIAL_ADV_TIMEOUT            (60*1000*1000/CFG_TS_TICK_VAL) /**< 60s */
 
 #define BD_ADDR_SIZE_LOCAL    6
-#define BLE_DEFAULT_PIN         (111111)
+#define BLE_DEFAULT_PIN                     (111111)
 
 /* USER CODE BEGIN PD */
 #define LED_ON_TIMEOUT                 (0.005*1000*1000/CFG_TS_TICK_VAL) /**< 5ms */
@@ -352,7 +351,7 @@ void APP_BLE_Init(void)
      CFG_BLE_RX_PATH_COMPENS,
      CFG_BLE_CORE_VERSION,
      CFG_BLE_OPTIONS_EXT,
-     CFG_BLE_MAX_ADD_EATT_BEARERS
+	 CFG_BLE_MAX_ADD_EATT_BEARERS
     }
   };
 
@@ -902,7 +901,6 @@ static void Ble_Hci_Gap_Gatt_Init(void)
    * The lowest 32bits is read from the UDN to differentiate between devices
    * The RNG may be used to provide a random number on each power on
    */
-
 #if (CFG_BLE_ADDRESS_TYPE != GAP_PUBLIC_ADDR)
   /* BLE MAC in ADV Packet */
   a_ManufData[ sizeof(a_ManufData)-6] = a_srd_bd_addr[1] >> 8 ;
@@ -1379,10 +1377,10 @@ static void GapProcReq(GapProcId_t GapProcId)
     case GAP_PROC_PERIPHERAL_SECURITY_REQ:
     {
       BleApplicationContext.Security_Request = 0x01;
-      status = aci_gap_slave_security_req(BleApplicationContext.connection_handle); 
+      status = aci_gap_peripheral_security_req(BleApplicationContext.connection_handle); 
       if (status != BLE_STATUS_SUCCESS)
       {
-        APP_DBG_MSG("GAP_PROC_PERIPHERAL_SECURITY_REQ aci_gap_slave_security_req  status=0x%02x \n\r",status);
+        APP_DBG_MSG("GAP_PROC_PERIPHERAL_SECURITY_REQ aci_gap_peripheral_security_req  status=0x%02x \n\r",status);
       }
       APP_DBG_MSG("waiting for  ACI_GAP_PAIRING_COMPLETE_VSEVT_CODE \n\r");
       gap_cmd_resp_wait(GAP_DEFAULT_TIMEOUT);/* waiting for ACI_GAP_PAIRING_COMPLETE_VSEVT_CODE */

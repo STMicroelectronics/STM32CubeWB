@@ -247,7 +247,7 @@ void APP_THREAD_Init( void )
   /* Create binary semaphores for OT command handling */
   OtCmdAckSem = osSemaphoreNew(1, 0, NULL);
   MtxOtCmdId = osMutexNew(NULL);
-  
+
   /* Create the different FreeRTOS tasks requested to run this Thread application*/
   OsTaskMsgM0ToM4Id = osThreadNew(APP_THREAD_FreeRTOSProcessMsgM0ToM4Task, NULL,&ThreadMsgM0ToM4Process_attr);
 
@@ -362,15 +362,15 @@ static void APP_THREAD_DeviceConfig(void)
   OT_LinkMode.mRxOnWhenIdle = 0;
   OT_LinkMode.mDeviceType = 0;
   OT_LinkMode.mNetworkData = 1U;
-  
-#if (CFG_FULL_LOW_POWER == 0)
-#ifdef ENABLE_OPENTHREAD_CLI
+
+ #if (CFG_FULL_LOW_POWER == 0)
+ #ifdef ENABLE_OPENTHREAD_CLI
   static otInstance *PtOpenThreadInstance;
   otInstanceFinalize(NULL);
   PtOpenThreadInstance = otInstanceInitSingle();
   otAppCliInit(PtOpenThreadInstance);
-#endif /* ENABLE_OPENTHREAD_CLI */
-#endif /* (CFG_FULL_LOW_POWER == 0) */
+ #endif /* ENABLE_OPENTHREAD_CLI */
+ #endif /* (CFG_FULL_LOW_POWER == 0) */
 
   error = otInstanceErasePersistentInfo(NULL);
   if (error != OT_ERROR_NONE)
@@ -400,9 +400,8 @@ static void APP_THREAD_DeviceConfig(void)
   error = otThreadSetLinkMode(NULL, OT_LinkMode);
   if (error != OT_ERROR_NONE)
   {
-    APP_THREAD_Error(ERR_THREAD_LINK_MODE,error);
+   APP_THREAD_Error(ERR_THREAD_LINK_MODE,error);
   }
-  
   error = otIp6SetEnabled(NULL, true);
   if (error != OT_ERROR_NONE)
   {
@@ -955,13 +954,13 @@ void Pre_OtCmdProcessing(void)
     /* 'assert' endless loop */
     for( ; ; );
   }
- 
+
   osMutexAcquire(MtxOtCmdId, osWaitForever);
 }
 
 /**
   * @brief  This function is called at the end of any ot commands sent to the M0
-  *         core. It is the counterpart of Pre_OtCmdProcessing() function, 
+  *         core. It is the counterpart of Pre_OtCmdProcessing() function,
   *         unlocking sending of new ot commands.
   * @param  None
   * @retval None
@@ -970,7 +969,6 @@ void Post_OtCmdProcessing(void)
 {
    osMutexRelease(MtxOtCmdId);
 }
-
 
 /**
   * @brief  This function waits for getting an acknowledgment from the M0.
@@ -1078,25 +1076,25 @@ static uint32_t  ProcessCmdString( uint8_t* buf , uint32_t len )
  * @retval None
  */
 static void Send_CLI_To_M0(void)
-{ 
-#ifdef ENABLE_OPENTHREAD_CLI
+{
+ #ifdef ENABLE_OPENTHREAD_CLI
   /* Don't use the ThreadCliCmdBuffer when buffer is too large as data may be overwritten.
      Use locals variables instead */
   uint16_t l_plen = 0;
   uint8_t l_ThreadCliCmdBuffer[255] = {0};
-  
+
   memcpy(l_ThreadCliCmdBuffer, CommandString, indexReceiveChar);
   l_plen = indexReceiveChar;
-  
+
     /* Clear receive buffer, character counter and command complete */
   CptReceiveCmdFromUser = 0;
   indexReceiveChar = 0;
   memset(CommandString, 0, C_SIZE_CMD_STRING);
-  
+
   APP_DBG("[Send_CLI_To_M0] payload : %s", l_ThreadCliCmdBuffer);
 
-  otPlatUartReceived(l_ThreadCliCmdBuffer, l_plen);  
-#else
+  otPlatUartReceived(l_ThreadCliCmdBuffer, l_plen);
+ #else
   memset(ThreadCliCmdBuffer.cmdserial.cmd.payload, 0x0U, 255U);
   memcpy(ThreadCliCmdBuffer.cmdserial.cmd.payload, CommandString, indexReceiveChar);
   ThreadCliCmdBuffer.cmdserial.cmd.plen = indexReceiveChar;
@@ -1141,7 +1139,7 @@ otError otPlatUartSend(const uint8_t *aBuf, uint16_t aBufLength)
   }
 
   otPlatUartSendDone();
-  
+
   return OT_ERROR_NONE;
 }
 #endif /* ENABLE_OPENTHREAD_CLI */

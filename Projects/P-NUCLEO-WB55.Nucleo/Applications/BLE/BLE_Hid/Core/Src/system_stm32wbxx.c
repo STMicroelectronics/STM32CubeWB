@@ -82,8 +82,6 @@
   * @{
   */
 
-#include "app_common.h"
-#include "otp.h"
 #include "stm32wbxx.h"
 
 #if !defined  (HSE_VALUE)

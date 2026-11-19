@@ -65,6 +65,7 @@ extern DMA_HandleTypeDef hdma_usart1_tx;
   */
 void HAL_MspInit(void)
 {
+
   /* USER CODE BEGIN MspInit 0 */
 
   /* USER CODE END MspInit 0 */
@@ -413,7 +414,7 @@ void HAL_RTC_MspInit(RTC_HandleTypeDef* hrtc)
     HAL_NVIC_SetPriority(RTC_WKUP_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(RTC_WKUP_IRQn);
   /* USER CODE BEGIN RTC_MspInit 1 */
-  HAL_RTCEx_EnableBypassShadow(hrtc);
+
   /* USER CODE END RTC_MspInit 1 */
   }
 

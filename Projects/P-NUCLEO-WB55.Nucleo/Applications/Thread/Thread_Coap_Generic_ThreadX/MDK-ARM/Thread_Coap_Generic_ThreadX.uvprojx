@@ -1350,11 +1350,6 @@
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\examples\platforms\utils\mac_frame_renamed.cpp</FilePath>
             </File>
             <File>
-              <FileName>otns_utils.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\examples\platforms\utils\otns_utils.cpp</FilePath>
-            </File>
-            <File>
               <FileName>soft_source_match_table.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\examples\platforms\utils\soft_source_match_table.c</FilePath>
@@ -1545,6 +1540,11 @@
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\common\binary_search.cpp</FilePath>
             </File>
             <File>
+              <FileName>bit_utils.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\common\bit_utils.cpp</FilePath>
+            </File>
+            <File>
               <FileName>data.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\common\data.cpp</FilePath>
@@ -1670,9 +1670,14 @@
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\crypto\aes_ecb.cpp</FilePath>
             </File>
             <File>
-              <FileName>crypto_platform.cpp</FileName>
+              <FileName>crypto_platform_mbedtls.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\crypto\crypto_platform.cpp</FilePath>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\crypto\crypto_platform_mbedtls.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>crypto_platform_psa.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\crypto\crypto_platform_psa.cpp</FilePath>
             </File>
             <File>
               <FileName>hkdf_sha256.cpp</FileName>
@@ -1785,6 +1790,11 @@
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\mac\mac_header_ie.cpp</FilePath>
             </File>
             <File>
+              <FileName>scan_result.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\mac\scan_result.cpp</FilePath>
+            </File>
+            <File>
               <FileName>sub_mac_csl_receiver.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\mac\sub_mac_csl_receiver.cpp</FilePath>
@@ -1875,6 +1885,11 @@
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\meshcop\meshcop_tlvs.cpp</FilePath>
             </File>
             <File>
+              <FileName>network_identity.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\meshcop\network_identity.cpp</FilePath>
+            </File>
+            <File>
               <FileName>network_name.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\meshcop\network_name.cpp</FilePath>
@@ -1888,6 +1903,16 @@
               <FileName>secure_transport.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\meshcop\secure_transport.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>seeker.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\meshcop\seeker.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>steering_data.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\meshcop\steering_data.cpp</FilePath>
             </File>
             <File>
               <FileName>tcat_agent.cpp</FileName>
@@ -1993,6 +2018,11 @@
               <FileName>netif.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\net\netif.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>slaac_address.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\net\slaac_address.cpp</FilePath>
             </File>
             <File>
               <FileName>sntp_client.cpp</FileName>
@@ -2195,6 +2225,11 @@
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\thread\mlr_manager.cpp</FilePath>
             </File>
             <File>
+              <FileName>message_framer.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\thread\message_framer.cpp</FilePath>
+            </File>
+            <File>
               <FileName>neighbor.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\thread\neighbor.cpp</FilePath>
@@ -2315,6 +2350,11 @@
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\thread\thread_link_info.cpp</FilePath>
             </File>
             <File>
+              <FileName>vendor_info.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\thread\vendor_info.cpp</FilePath>
+            </File>
+            <File>
               <FileName>version.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\thread\version.cpp</FilePath>
@@ -2378,11 +2418,6 @@
               <FileName>power_calibration.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\utils\power_calibration.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>slaac_address.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\utils\slaac_address.cpp</FilePath>
             </File>
             <File>
               <FileName>srp_client_buffers.cpp</FileName>

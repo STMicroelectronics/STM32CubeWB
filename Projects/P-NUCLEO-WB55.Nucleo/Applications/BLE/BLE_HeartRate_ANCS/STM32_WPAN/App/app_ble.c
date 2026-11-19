@@ -1341,10 +1341,10 @@ static void GapProcReq(GapProcId_t GapProcId)
     case GAP_PROC_PERIPHERAL_SECURITY_REQ:
     {
       BleApplicationContext.Security_Request = 0x01;
-      status = aci_gap_slave_security_req(BleApplicationContext.connection_handle); 
+      status = aci_gap_peripheral_security_req(BleApplicationContext.connection_handle); 
       if (status != BLE_STATUS_SUCCESS)
       {
-        APP_DBG_MSG("GAP_PROC_PERIPHERAL_SECURITY_REQ aci_gap_slave_security_req  status=0x%02x \n",status);
+        APP_DBG_MSG("GAP_PROC_PERIPHERAL_SECURITY_REQ aci_gap_peripheral_security_req  status=0x%02x \n",status);
       }
      
       APP_DBG_MSG("waiting for  ACI_GAP_PAIRING_COMPLETE_VSEVT_CODE \n");

@@ -165,7 +165,7 @@ typedef struct
 #if OOB_DEMO != 0 
 #define LED_ON_TIMEOUT            (0.005*1000*1000/CFG_TS_TICK_VAL) /**< 5ms */
 #endif 
-#define L_BUFF_SIZE 256
+#define L_BUFF_SIZE 512
 /* USER CODE END PD */
 
 /* Private macros ------------------------------------------------------------*/

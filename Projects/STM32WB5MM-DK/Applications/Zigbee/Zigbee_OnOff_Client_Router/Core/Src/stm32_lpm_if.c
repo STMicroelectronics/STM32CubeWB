@@ -101,9 +101,11 @@ void PWR_EnterOffMode( void )
   /**
    * This option is used to ensure that store operations are completed
    */
-#if defined (__CC_ARM) || defined (__ARMCC_VERSION)
+#if defined(__CC_ARM) || (defined(__ARMCC_VERSION) && (__ARMCC_VERSION < 6000000))
   __force_stores();
-#endif
+#else
+  __DSB();  /* or: __asm volatile ("" ::: "memory"); */
+#endif /* defined(__CC_ARM) || (defined(__ARMCC_VERSION) && (__ARMCC_VERSION < 6000000)) */
 
   __WFI();
 
@@ -166,9 +168,11 @@ void PWR_EnterStopMode( void )
   /**
    * This option is used to ensure that store operations are completed
    */
-#if defined (__CC_ARM) || defined (__ARMCC_VERSION)
+#if defined(__CC_ARM) || (defined(__ARMCC_VERSION) && (__ARMCC_VERSION < 6000000))
   __force_stores();
-#endif
+#else
+  __DSB();  /* or: __asm volatile ("" ::: "memory"); */
+#endif /* defined(__CC_ARM) || (defined(__ARMCC_VERSION) && (__ARMCC_VERSION < 6000000)) */
 
   __WFI();
 
@@ -223,9 +227,11 @@ void PWR_EnterSleepMode( void )
   /**
    * This option is used to ensure that store operations are completed
    */
-#if defined (__CC_ARM) || defined (__ARMCC_VERSION)
+#if defined(__CC_ARM) || (defined(__ARMCC_VERSION) && (__ARMCC_VERSION < 6000000))
   __force_stores();
-#endif
+#else
+  __DSB();  /* or: __asm volatile ("" ::: "memory"); */
+#endif /* defined(__CC_ARM) || (defined(__ARMCC_VERSION) && (__ARMCC_VERSION < 6000000)) */
 
   __WFI( );
 /* USER CODE BEGIN PWR_EnterSleepMode_2 */

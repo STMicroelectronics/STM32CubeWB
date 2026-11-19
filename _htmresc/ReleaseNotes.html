@@ -4,48 +4,38 @@
     <title>_htmresc\ReleaseNotes.html</title>
   </head>
   <body style="font-size: 10pt; font-family: Verdana;">
-    <h3 style="color: blue; text-decoration: underline;">STM32CubeWB Firmware Package V1.24.0 / 29-October-2025</h3>
+    <h3 style="color: blue; text-decoration: underline;">STM32CubeWB Firmware Package V1.25.0 / 28-October-2026</h3>
     <div style="margin-left: 18pt;">
       <p>
         <b><u>Main Changes</u></b>
       </p>
       <ul>
-        <li>SLA0044 Legal terms updated to latest revision (Rev 6 / October 2025)</li>
-        <li>SLA0048 Legal terms updated to latest revision (Rev 5 / October 2025)</li>
+        <li>Add the SW_Security_Level.md security classification file to the HAL driver and the STM32WB_Copro_Wireless_Binaries folders</li>
+        <li>Update CMSIS to v5.9.0</li>
       </ul>
       <p>
-        <b>Maintenance Release for BLE, 802.15.4 and FUS updates</b>
+        <b>Maintenance Release for BLE and Thread updates</b>
       </p>
       <ul>
         <li>
-          <strong>FUS</strong> updates
-          <ul>
-            <li>New FUS version: v2.2.0 (Enhanced Security, SA0024 remains applicable)</li>
-          </ul>
-        </li>
-        <li>
           <strong>BLE</strong> updates
           <ul>
-            <li>BLE host stack is updated to comply with “Security and Privacy Mandates” Batch 2.</li>
-            <li>Man-In-The-Middle (MITM) management is enhanced in the BLE stack to provide more flexibility and better interoperability.</li>
+            <li>Update to the Bluetooth® Core Specification v6.3 and Bluetooth® TCRL pkg104</li>
+          </ul>
+          <ul>
+            <li>Reworked part of ACI interface for greater simplification</li>
+          </ul>
+          <ul>
+            <li>Improved GATT robustness and ease of integration</li>
+          </ul>
+          <ul>
+            <li>Applied Bluetooth® Erratum 26770 unconditionally</li>
           </ul>
         </li>
         <li>
           <strong>Thread</strong> updates
           <ul>
-            <li>Thread 1.4 support. OT stack update to SHA-1: cbb04be4a64910a8ad160ae1aae2e34fc31031b9 (June 9th 2025)</li>
-          </ul>
-        </li>
-        <li>
-          <strong>802.15.4</strong> updates
-          <ul>
-            <li>Bug fixes</li>
-          </ul>
-        </li>
-        <li>
-          <strong>Zigbee</strong> updates
-          <ul>
-            <li>Bug fixes</li>
+            <li>Updates the OpenThread stack to the February 2026 commit SHA-1: b81da07ace250b7d3800928848feaa1fb126fa43</li>
           </ul>
         </li>
       </ul>
@@ -58,24 +48,26 @@
           <ul>
             <li>Update HAL/LL drivers to include latest corrections
               <ul>
-                <li>Update of HAL CRYP, GPIO, LPUART, RTC LPTIM, TIM, UART, USART drivers.</li>
-                <li>Update of LL ADC, RTC drivers.</li>
-              </ul>
-            </li>
-          </ul>
-        </li>
-        <li>
-          <strong>Projects</strong> updates
-          <ul>
-            <li>For B-WB1M-WPAN1 board
-              <ul>
-                <li>Fix warning for B-WB1M-WPAN1/Examples/BSP_Example</li>
+                <li>Update of HAL CRC, CRYP, DMA, LCD, EXTI, Flash, GPIO, PWR, IWDG, RTC, RCC, SMARTCARD, SPI, I2S, TIM, UART, USART, USB, WWDG drivers</li>
+                <li>Update of LL SPI, RTC, USART, USB drivers</li>
               </ul>
             </li>
             <li>Refer to <a href="../Drivers/STM32WBxx_HAL_Driver/Release_Notes.html">release notes</a> for further details</li>
           </ul>
         </li>
       </ul>
+      <p>
+        <b>Maintenance Release for STM32WBxx CMSIS updates</b>
+      </p>
+          <ul>
+            <li>Add the missing pull-up/pull-down bit definitions for PA13, PA14, PA15, and PB4.</li>
+            <li>Default VTOR to the internal Flash base address if ‘USER_VECT_TAB_ADDRESS’ is not defined to ensure correct IRQ dispatch.</li>
+            <li>Fix MISRA 12.2 warning</li>
+          </ul>
+      <p>
+        <li>Documentation based on jQuery 1.7.1 removed</li>
+        <li>Documentation based on jQuery 3.4.1 removed</li>
+      </p>
     </div>
   </body>
 </html>

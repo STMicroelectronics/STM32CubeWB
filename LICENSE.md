@@ -1,7 +1,7 @@
 | Component                       | Copyright                          | License                                   |
 |:---------                       |:----------                         |:-------                                   |
-| CMSIS                           | ARM Limited                        | Apache-2.0                                |
-| CMSIS Device                    | ARM Limited - STMicroelectronics   | Apache-2.0                                |
+| CMSIS                           | Arm Limited                        | Apache-2.0                                |
+| CMSIS Device                    | Arm Limited - STMicroelectronics   | Apache-2.0                                |
 | STM32WB HAL                     | STMicroelectronics                 | BSD-3-Clause                              |
 | BSP P-NUCLEO-WB55.Nucleo        | STMicroelectronics                 | BSD-3-Clause                              |
 | BSP P-NUCLEO-WB55.USBDongle     | STMicroelectronics                 | BSD-3-Clause                              |

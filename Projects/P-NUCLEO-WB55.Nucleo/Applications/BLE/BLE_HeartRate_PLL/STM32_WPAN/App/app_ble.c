@@ -713,15 +713,15 @@ void APP_BLE_Key_Button2_Action(void)
 {
   tBleStatus ret = BLE_STATUS_INVALID_PARAMS;
   
-  ret = aci_gap_slave_security_req(BleApplicationContext.BleApplicationContext_legacy.connectionHandle); 
+  ret = aci_gap_peripheral_security_req(BleApplicationContext.BleApplicationContext_legacy.connectionHandle); 
 
   if (ret != BLE_STATUS_SUCCESS)
   {
-    APP_DBG_MSG("==>> aci_gap_slave_security_req() Fail , result: %d \n", ret);
+    APP_DBG_MSG("==>> aci_gap_peripheral_security_req() Fail , result: %d \n", ret);
   }
   else
   {
-    APP_DBG_MSG("===>> aci_gap_slave_security_req - Success\n");
+    APP_DBG_MSG("===>> aci_gap_peripheral_security_req - Success\n");
   }
 }
 

@@ -26,8 +26,6 @@
 #include "ble.h"
 #include "hids_app.h"
 #include "stm32_seq.h"
-#include <time.h>
-#include "hids_menu.h"
 
 
 /* Private typedef -----------------------------------------------------------*/
@@ -58,13 +56,20 @@ typedef struct
 /* Private defines -----------------------------------------------------------*/
 #define MOUSE_REPORT_SIZE       52
 
+#define MOUSE_LEFT_BUTTON       0x01
+#define MOUSE_MIDDLE_BUTTON     0x04
+#define MOUSE_RIGHT_BUTTON      0x02
+
+#define MOUSE_SPEED             10
+#define MOUSE_STEP              5
+
 #define ENABLED         1
 #define DISABLED        0
 
   
 /* Private macros ------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-static uint8_t report_mouse[MOUSE_REPORT_SIZE] =
+static uint8_t report_mouse_map[MOUSE_REPORT_SIZE] =
 {
   0x05, 0x01,         /* USAGE_PAGE (Generic Desktop) */
   0x09, 0x02,         /* USAGE (Mouse) */
@@ -95,6 +100,9 @@ static uint8_t report_mouse[MOUSE_REPORT_SIZE] =
   0xc0,               /* END_COLLECTION (Application) */
 };
 
+static uint8_t usb_hid_version[4] = {0x01, 0x01, 0x00, 0x03}; // BASE USB HID SPEC VERSION
+static uint8_t invertx;
+static uint8_t inverty;
 
 /**
  * START of Section BLE_APP_CONTEXT
@@ -123,6 +131,7 @@ void HIDS_Notification(HIDS_App_Notification_evt_t *pNotification)
       {
         BLE_DBG_APP_MSG("HIDS_REPORT_NOTIFICATION_ENABLED\n");
         HIDSAPP_Context[pNotification->Index].ReportNotificationEnabled[pNotification->Index] = ENABLED;
+        aci_gatt_store_db(); /* Store CCCD value in GATT database: CCCD state restored if reset */
       }
       break;
 
@@ -130,6 +139,7 @@ void HIDS_Notification(HIDS_App_Notification_evt_t *pNotification)
       {
         BLE_DBG_APP_MSG("HIDS_REPORT_NOTIFICATION_DISABLED\n");
         HIDSAPP_Context[pNotification->Index].ReportNotificationEnabled[pNotification->Index] = DISABLED;
+        aci_gatt_store_db(); /* Store CCCD value in GATT database: CCCD state restored if reset */
       }
       break;
 #endif
@@ -139,6 +149,7 @@ void HIDS_Notification(HIDS_App_Notification_evt_t *pNotification)
       {
         BLE_DBG_APP_MSG("HIDS_KEYB_INPUT_NOTIFY_ENABLED\n");
         HIDSAPP_Context[pNotification->Index].KeyboardInputNotificationEnabled = ENABLED;
+        aci_gatt_store_db(); /* Store CCCD value in GATT database: CCCD state restored if reset */
       }
       break;
 
@@ -146,6 +157,7 @@ void HIDS_Notification(HIDS_App_Notification_evt_t *pNotification)
       {
         BLE_DBG_APP_MSG("HIDS_KEYB_INPUT_NOTIFY_DISABLED\n");
         HIDSAPP_Context[pNotification->Index].KeyboardInputNotificationEnabled = DISABLED;
+        aci_gatt_store_db(); /* Store CCCD value in GATT database: CCCD state restored if reset */
       }
       break;
 #endif
@@ -155,6 +167,7 @@ void HIDS_Notification(HIDS_App_Notification_evt_t *pNotification)
       {
         BLE_DBG_APP_MSG("HIDS_MOUSE_INPUT_NOTIFY_ENABLED\n");
         HIDSAPP_Context[pNotification->Index].MouseInputNotificationEnabled = ENABLED;
+        aci_gatt_store_db(); /* Store CCCD value in GATT database: CCCD state restored if reset */
       }
       break;
 
@@ -162,6 +175,7 @@ void HIDS_Notification(HIDS_App_Notification_evt_t *pNotification)
       {
         BLE_DBG_APP_MSG("HIDS_MOUSE_INPUT_NOTIFY_DISABLED\n");
         HIDSAPP_Context[pNotification->Index].MouseInputNotificationEnabled = DISABLED;
+        aci_gatt_store_db(); /* Store CCCD value in GATT database: CCCD state restored if reset */
       }
       break;
 #endif
@@ -248,59 +262,182 @@ void HIDSAPP_Init(void)
 {
   tBleStatus result = BLE_STATUS_INVALID_PARAMS;
 
-  UTIL_SEQ_RegTask( 1<< CFG_TASK_HID_UPDATE_REQ_ID, UTIL_SEQ_RFU, HIDSAPP_Profile_UpdateChar );
-
+  /* Set the Keyboard Report Map */
   result = HIDS_Update_Char(REPORT_MAP_CHAR_UUID, 
                             0, 
                             0, 
-                            MOUSE_REPORT_SIZE,
-                            (uint8_t *)&report_mouse);
+                            sizeof(report_mouse_map),
+                            (uint8_t *)&report_mouse_map);
 
-  if( result == BLE_STATUS_SUCCESS )
+  if( result != BLE_STATUS_SUCCESS )
   {
-    BLE_DBG_APP_MSG("Report Map Successfully Sent\n");
+    APP_DBG_MSG("Sending of Report Map Failed error 0x%X\n", result);
   }
-  else 
+
+  /* Set the HID Information */
+  result = HIDS_Update_Char(HID_INFORMATION_CHAR_UUID, 
+                            0, 
+                            0, 
+                            4,
+                            (uint8_t *)&usb_hid_version);
+
+  if( result != BLE_STATUS_SUCCESS )
   {
-    BLE_DBG_APP_MSG("Sending of Report Map Failed error 0x%X\n", result);
+    APP_DBG_MSG("Sending of HID INFORMATION Failed error 0x%X\n", result);
   }
+
+  UTIL_SEQ_RegTask(1<< CFG_TASK_SW1_BUTTON_PUSHED_ID, UTIL_SEQ_RFU, SW1_Button_Action);
+  UTIL_SEQ_RegTask(1<< CFG_TASK_SW2_BUTTON_PUSHED_ID, UTIL_SEQ_RFU, SW2_Button_Action);
+  UTIL_SEQ_RegTask(1<< CFG_TASK_SW3_BUTTON_PUSHED_ID, UTIL_SEQ_RFU, SW3_Button_Action);
+  
+  invertx = 0;
+  inverty = 0;
+
+  return;
 }
 
 
-/**
- * @brief  Alert Notification Application service update characteristic
- * @param  None
- * @retval None
- */
-void HIDSAPP_Profile_UpdateChar(void)
+void SW1_Button_Action(void)
 {
-  uint8_t action_type;
-  mouse_report_t mouse_report;
+  mouse_report_t mouse_report = {0};
+  tBleStatus result = BLE_STATUS_INVALID_PARAMS;
   
-  HIDS_Menu(&action_type, (uint8_t *)&mouse_report);
-    
-  if(action_type == 1)
+  if(APP_BLE_Get_Server_Connection_Status() == APP_BLE_CONNECTED_SERVER)
   {
-    tBleStatus result = BLE_STATUS_INVALID_PARAMS;
+    do
+    {
+      if(!invertx)
+      {
+        mouse_report.x = MOUSE_STEP;
+      }
+      else
+      {
+        mouse_report.x = -MOUSE_STEP;
+      }
+      
+      /* Set Input Report */
+      result = HIDS_Update_Char(REPORT_CHAR_UUID, 
+                                0, 
+                                0, 
+                                sizeof(mouse_report_t),
+                                (uint8_t *)&mouse_report);
 
+      if( result != BLE_STATUS_SUCCESS )
+      {
+        APP_DBG_MSG("Mouse move Failed error 0x%X\n", result);
+      }
+      else
+      {
+        if(mouse_report.x > 0)
+        {
+          APP_DBG_MSG("Mouse right move\n");
+        }
+        else
+        {
+          APP_DBG_MSG("Mouse left move\n");
+        }
+      }
+
+      HAL_Delay(MOUSE_SPEED); /* Prevent Insufficient Resources error */
+    }
+    while(!BSP_PB_GetState(BUTTON_SW1));
+
+    invertx = !invertx;
+  }
+
+  return;
+}
+
+void SW2_Button_Action(void)
+{
+  mouse_report_t mouse_report = {0};
+  tBleStatus result = BLE_STATUS_INVALID_PARAMS;
+  
+  if(APP_BLE_Get_Server_Connection_Status() == APP_BLE_CONNECTED_SERVER)
+  {
+    do
+    {
+      if(!inverty)
+      {
+        mouse_report.y = MOUSE_STEP;
+      }
+      else
+      {
+        mouse_report.y = -MOUSE_STEP;
+      }
+
+      /* Set Input Report */
+      result = HIDS_Update_Char(REPORT_CHAR_UUID, 
+                                0, 
+                                0, 
+                                sizeof(mouse_report_t),
+                                (uint8_t *)&mouse_report);
+
+      if( result != BLE_STATUS_SUCCESS )
+      {
+        APP_DBG_MSG("Mouse move Failed error 0x%X\n", result);
+      }
+      else
+      {
+        if(mouse_report.y > 0)
+        {
+          APP_DBG_MSG("Mouse down move\n");
+        }
+        else
+        {
+          APP_DBG_MSG("Mouse up move\n");
+        }
+      }
+    
+      HAL_Delay(MOUSE_SPEED); /* Prevent Insufficient Resources error */
+    }
+    while(!BSP_PB_GetState(BUTTON_SW2));
+      
+    inverty = !inverty;
+  }
+  
+  return;
+}
+
+void SW3_Button_Action(void)
+{
+  mouse_report_t mouse_report = {0};
+  tBleStatus result = BLE_STATUS_INVALID_PARAMS;
+
+  if(APP_BLE_Get_Server_Connection_Status() == APP_BLE_CONNECTED_SERVER)
+  {
+    mouse_report.buttons |= MOUSE_LEFT_BUTTON;
+    
+    /* Set Input Report */
     result = HIDS_Update_Char(REPORT_CHAR_UUID, 
                               0, 
                               0, 
                               sizeof(mouse_report_t),
                               (uint8_t *)& mouse_report);
 
-    if( result == BLE_STATUS_SUCCESS )
+    if( result != BLE_STATUS_SUCCESS )
     {
-      BLE_DBG_APP_MSG("Mouse Report 0x%x %d %d %d Successfully Sent\n",
-                       mouse_report.buttons,
-                       mouse_report.x,
-                       mouse_report.y,
-                       mouse_report.wheel);
+      APP_DBG_MSG("Mouse left click Failed error 0x%X\n", result);
     }
-    else 
+
+    mouse_report.buttons &= ~MOUSE_LEFT_BUTTON;
+    
+    /* Set Input Report */
+    result = HIDS_Update_Char(REPORT_CHAR_UUID, 
+                              0, 
+                              0, 
+                              sizeof(mouse_report_t),
+                              (uint8_t *)&mouse_report);
+
+    if( result != BLE_STATUS_SUCCESS )
     {
-      BLE_DBG_APP_MSG("Sending of Mouse Report Failed error 0x%X\n", result);
+      APP_DBG_MSG("Mouse left clck Failed error 0x%X\n", result);
+    }
+    else
+    {
+      APP_DBG_MSG("Mouse left click\n");
     }
   }
-}
 
+  return;
+}

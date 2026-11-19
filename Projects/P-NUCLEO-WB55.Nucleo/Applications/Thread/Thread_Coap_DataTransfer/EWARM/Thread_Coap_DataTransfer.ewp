@@ -1542,7 +1542,10 @@
                                 <group>
                                     <name>crypto</name>
                                     <file>
-                                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\crypto\crypto_platform.cpp</name>
+                                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\crypto\crypto_platform_mbedtls.cpp</name>
+                                    </file>
+                                    <file>
+                                        <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\crypto\crypto_platform_psa.cpp</name>
                                     </file>
                                     <file>
                                         <name>$PROJ_DIR$\..\..\..\..\..\..\Middlewares\ST\STM32_WPAN\thread\openthread\stack\src\core\crypto\mbedtls.cpp</name>

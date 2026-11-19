@@ -42,7 +42,6 @@
 
 /* Private typedef -----------------------------------------------------------*/
 extern RTC_HandleTypeDef hrtc;
-
 /**
  * Structure of Trace_Elt_t
  * buffer : trace buffer
@@ -75,7 +74,6 @@ typedef struct __attribute__((packed, aligned(4)))
   TraceEltHeader_t header;
   TraceElt_t trace;
 } TraceEltPacket_t;
-
 
 /* USER CODE BEGIN PTD */
 
@@ -232,7 +230,6 @@ static void AMM_WrapperFree (uint32_t * const p_BufferAddr);
 static void AMM_BackgroundProcess_Entry(void* thread_input);
 static void TRC_BackgroundProcess_Entry(void* thread_input);
 #endif
-
 /* Functions Definition ------------------------------------------------------*/
 void MX_APPE_Config(void)
 {
@@ -295,6 +292,7 @@ void MX_APPE_Init(void)
 /* USER CODE BEGIN APPE_Init_2 */
 
 /* USER CODE END APPE_Init_2 */
+
    return;
 }
 
@@ -707,9 +705,11 @@ void HAL_Delay(uint32_t Delay)
     /**
      * This option is used to ensure that store operations are completed
      */
-  #if defined (__CC_ARM) || defined (__ARMCC_VERSION)
+#if defined(__CC_ARM) || (defined(__ARMCC_VERSION) && (__ARMCC_VERSION < 6000000))
     __force_stores();
-  #endif /*__ARMCC_VERSION */
+#else
+    __DSB();  /* or: __asm volatile ("" ::: "memory"); */
+#endif /* defined(__CC_ARM) || (defined(__ARMCC_VERSION) && (__ARMCC_VERSION < 6000000)) */
 
     __WFI();
   }
@@ -861,7 +861,6 @@ void DbgOutputTraces(uint8_t *p_data, uint16_t size, void (*cb)(void))
   return;
 }
 #endif /* CFG_DEBUG_TRACE != 0 */
-
 /* USER CODE BEGIN FD_WRAP_FUNCTIONS */
 
 /* USER CODE END FD_WRAP_FUNCTIONS */

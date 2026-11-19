@@ -1012,9 +1012,14 @@
 			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/core/common/tlvs.cpp</locationURI>
 		</link>
 		<link>
-			<name>Middlewares/STM32_WPAN/thread/openthread/stack/src/core/crypto/crypto_platform.cpp</name>
+			<name>Middlewares/STM32_WPAN/thread/openthread/stack/src/core/crypto/crypto_platform_mbedtls.cpp</name>
 			<type>1</type>
-			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/core/crypto/crypto_platform.cpp</locationURI>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/core/crypto/crypto_platform_mbedtls.cpp</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_WPAN/thread/openthread/stack/src/core/crypto/crypto_platform_psa.cpp</name>
+			<type>1</type>
+			<locationURI>PARENT-6-PROJECT_LOC/Middlewares/ST/STM32_WPAN/thread/openthread/stack/src/core/crypto/crypto_platform_psa.cpp</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/STM32_WPAN/thread/openthread/stack/src/core/crypto/mbedtls.cpp</name>

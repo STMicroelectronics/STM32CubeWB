@@ -38,9 +38,14 @@ extern "C" {
 
 typedef enum
 {
-  APP_BLE_Limited,
-  APP_BLE_Full,
-} APP_BLE_InitMode_t;
+  APP_BLE_IDLE,
+  APP_BLE_FAST_ADV,
+  APP_BLE_LP_ADV,
+  APP_BLE_SCAN,
+  APP_BLE_LP_CONNECTING,
+  APP_BLE_CONNECTED_SERVER,
+  APP_BLE_CONNECTED_CLIENT
+} APP_BLE_ConnStatus_t;
 
 /* USER CODE BEGIN ET */
 
@@ -63,7 +68,7 @@ typedef enum
 
 /* Exported functions ---------------------------------------------*/
 void APP_BLE_Init(void);
-
+APP_BLE_ConnStatus_t APP_BLE_Get_Server_Connection_Status(void);
 
 /* USER CODE BEGIN EF */
 void APP_BLE_Key_Button1_Action(void);

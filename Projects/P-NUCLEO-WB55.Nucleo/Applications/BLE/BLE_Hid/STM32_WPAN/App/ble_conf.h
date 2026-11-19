@@ -92,9 +92,9 @@
  * Human Interface Device Service (HIDS)
  ******************************************************************************/
 #define BLE_CFG_HIDS_NUMBER                                                    1
-#define BLE_CFG_HIDS_REPORT_MAP_MAX_LEN                                       80
+#define BLE_CFG_HIDS_REPORT_MAP_MAX_LEN                                       52
 #define BLE_CFG_HIDS_REPORT_REFERENCE_LEN                                      2
-#define BLE_CFG_HIDS_REPORT_MAX_LEN                                           80
+#define BLE_CFG_HIDS_REPORT_MAX_LEN                                            4
 #define BLE_CFG_HIDS_EXTERNAL_REPORT_REFERENCE_LEN                             2
 #define BLE_CFG_HIDS_BOOT_KEYBOARD_INPUT_REPORT_MAX_LEN                       80
 #define BLE_CFG_HIDS_BOOT_KEYBOARD_OUTPUT_REPORT_MAX_LEN                      80
@@ -125,6 +125,6 @@
 #define BLE_CFG_UNKNOWN_APPEARANCE                                           (0)
 #define BLE_CFG_HID_MOUSE_APPEARANCE                                       (962)
 #define BLE_CFG_HID_KEYBOARD_APPEARANCE                                    (961)
-#define BLE_CFG_GAP_APPEARANCE                 (BLE_CFG_HID_KEYBOARD_APPEARANCE)
+#define BLE_CFG_GAP_APPEARANCE                 (BLE_CFG_HID_MOUSE_APPEARANCE)
 
 #endif /* BLE_CONF_H */

@@ -34,8 +34,10 @@ extern "C"
   /* Exported macros -----------------------------------------------------------*/
   /* Exported functions ------------------------------------------------------- */
   void HIDSAPP_Init(void);
-  void HIDSAPP_Profile_UpdateChar(void);
 
+  void SW1_Button_Action(void);
+  void SW2_Button_Action(void);
+  void SW3_Button_Action(void);
 
 #ifdef __cplusplus
 }

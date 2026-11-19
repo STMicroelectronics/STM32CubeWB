@@ -44,7 +44,7 @@ extern "C" {
 
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
-#define DEMO_STACK_SIZE      (1024)
+#define DEMO_STACK_SIZE      (1536)
 #define DEMO_BYTE_POOL_SIZE  (9120)
 #define DEMO_BLOCK_POOL_SIZE (100)
 #ifdef TX_ENABLE_EVENT_TRACE

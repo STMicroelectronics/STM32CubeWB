@@ -288,7 +288,7 @@ void APP_BLE_Init(void)
      CFG_BLE_RX_PATH_COMPENS,
      CFG_BLE_CORE_VERSION,
      CFG_BLE_OPTIONS_EXT,
-     CFG_BLE_MAX_ADD_EATT_BEARERS
+	 CFG_BLE_MAX_ADD_EATT_BEARERS
     }
   };
 
@@ -591,28 +591,27 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *p_Pckt)
 
         /* PAIRING */
         case (ACI_GAP_KEYPRESS_NOTIFICATION_VSEVT_CODE):
-          APP_DBG_MSG(">>== ACI_GAP_KEYPRESS_NOTIFICATION_VSEVT_CODE\n");
+            APP_DBG_MSG(">>== ACI_GAP_KEYPRESS_NOTIFICATION_VSEVT_CODE\n");
           /* USER CODE BEGIN ACI_GAP_KEYPRESS_NOTIFICATION_VSEVT_CODE*/
 
           /* USER CODE END ACI_GAP_KEYPRESS_NOTIFICATION_VSEVT_CODE*/
           break;
 
-      case ACI_GAP_PASS_KEY_REQ_VSEVT_CODE:
-        {
-          uint32_t pin;
+        case ACI_GAP_PASS_KEY_REQ_VSEVT_CODE:
+		{
+	      uint32_t pin;
           APP_DBG_MSG(">>== ACI_GAP_PASS_KEY_REQ_VSEVT_CODE \n");
           pin = BLE_DEFAULT_PIN;
           /* USER CODE BEGIN ACI_GAP_PASS_KEY_REQ_VSEVT_CODE_0 */
           
           /* USER CODE END ACI_GAP_PASS_KEY_REQ_VSEVT_CODE_0 */
-          
-          
+
           ret = aci_gap_pass_key_resp(BleApplicationContext.BleApplicationContext_legacy.connectionHandle, pin);
           if (ret != BLE_STATUS_SUCCESS)
           {
             APP_DBG_MSG("==>> aci_gap_pass_key_resp : Fail, reason: 0x%x\n", ret);
-          } 
-          else 
+          }
+          else
           {
             APP_DBG_MSG("==>> aci_gap_pass_key_resp : Success \n");
           }
@@ -620,8 +619,7 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *p_Pckt)
           
           /* USER CODE END ACI_GAP_PASS_KEY_REQ_VSEVT_CODE*/
           break;
-        }
-
+		}
 
         case ACI_GAP_NUMERIC_COMPARISON_VALUE_VSEVT_CODE:
           APP_DBG_MSG(">>== ACI_GAP_NUMERIC_COMPARISON_VALUE_VSEVT_CODE\n");
@@ -669,15 +667,15 @@ SVCCTL_UserEvtFlowStatus_t SVCCTL_App_Notification(void *p_Pckt)
         }
         break;
 
-      case ACI_HAL_WARNING_VSEVT_CODE:
+        case ACI_HAL_WARNING_VSEVT_CODE:
         {
           aci_hal_warning_event_rp0 *p_warning_event;
-          
-          p_warning_event = (aci_hal_warning_event_rp0 *)p_blecore_evt->data;
-          UNUSED(p_warning_event);
+
+	      p_warning_event = (aci_hal_warning_event_rp0 *)p_blecore_evt->data;
+		  UNUSED(p_warning_event);
           APP_DBG_MSG(">>== ACI_HAL_WARNING_VSEVT_CODE\n");
           APP_DBG_MSG("Warning Type = 0x%02X\n", p_warning_event->Warning_Type);
-          /* USER CODE BEGIN ACI_HAL_WARNING_VSEVT_CODE */
+	      /* USER CODE BEGIN ACI_HAL_WARNING_VSEVT_CODE */
           
           /* USER CODE END ACI_HAL_WARNING_VSEVT_CODE */
           break;
@@ -1214,6 +1212,37 @@ static void Connection_Interval_Update_Req(void)
 void APP_BLE_Key_Button1_Action(void)
 {
   P2PS_APP_SW1_Button_Action();
+}
+
+void APP_BLE_Key_Button2_Action(void)
+{
+  tBleStatus ret = BLE_STATUS_INVALID_PARAMS;
+
+  if (BleApplicationContext.Device_Connection_Status != APP_BLE_CONNECTED_SERVER)
+  {
+    ret = aci_gap_clear_security_db();
+    if (ret != BLE_STATUS_SUCCESS)
+    {
+      APP_DBG_MSG("==>> aci_gap_clear_security_db - Fail, result: %d \n", ret);
+    }
+    else
+    {
+      APP_DBG_MSG("==>> aci_gap_clear_security_db - Success\n");
+    }
+  }
+  else
+  {
+
+  }
+}
+
+void APP_BLE_Key_Button3_Action(void)
+{
+#if (L2CAP_REQUEST_NEW_CONN_PARAM != 0 )    
+  UTIL_SEQ_SetTask( 1<<CFG_TASK_CONN_UPDATE_REG_ID, CFG_SCH_PRIO_0);
+#endif
+  
+  return;
 }
 /* USER CODE END FD_SPECIFIC_FUNCTIONS */
 /*************************************************************

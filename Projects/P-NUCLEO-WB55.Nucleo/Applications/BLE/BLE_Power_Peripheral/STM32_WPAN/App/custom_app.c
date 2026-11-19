@@ -246,7 +246,7 @@ __USED void Custom_Pwrco_notify_Update_Char(void) /* Property Read */
   return;
 }
 
-void Custom_Pwrco_notify_Send_Notification(void) /* Property Notification */
+__USED void Custom_Pwrco_notify_Send_Notification(void) /* Property Notification */
 {
   uint8_t updateflag = 0;
 
@@ -256,7 +256,7 @@ void Custom_Pwrco_notify_Send_Notification(void) /* Property Notification */
 
   if (updateflag != 0)
   {
-    Custom_STM_App_Update_Char(CUSTOM_STM_PWRCO_NOTIFY, (uint8_t *)NotifyCharData);
+    Custom_STM_App_Update_Char(CUSTOM_STM_PWRCO_NOTIFY, (uint8_t *)UpdateCharData);
   }
 
   /* USER CODE BEGIN Pwrco_notify_NS_Last*/

@@ -1441,7 +1441,7 @@ static void Manage_Peripheral_Security_Request(void)
 {
   tBleStatus result;
   
-  result = aci_gap_slave_security_req(BleApplicationContext.BleApplicationContext_legacy.connectionHandle);
+  result = aci_gap_peripheral_security_req(BleApplicationContext.BleApplicationContext_legacy.connectionHandle);
   if( result == BLE_STATUS_SUCCESS )
   {
     printf("Peripheral_security_req(), Successfully \r\n\r");

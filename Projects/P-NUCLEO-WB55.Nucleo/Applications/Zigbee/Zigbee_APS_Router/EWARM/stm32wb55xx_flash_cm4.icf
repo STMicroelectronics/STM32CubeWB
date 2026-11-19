@@ -22,7 +22,7 @@ define symbol __ICFEDIT_size_heap__   = 102400; /* was 4K */
 /**** End of ICF editor section. ###ICF###*/
 
 define symbol __ICFEDIT_region_RAM_SHARED_start__ = 0x20030000;
-define symbol __ICFEDIT_region_RAM_SHARED_end__   = 0x20031000;
+define symbol __ICFEDIT_region_RAM_SHARED_end__   = 0x20031000; /* 4k */
 
 define memory mem with size = 4G;
 define region ROM_region        = mem:[from __ICFEDIT_region_ROM_start__   to __ICFEDIT_region_ROM_end__];

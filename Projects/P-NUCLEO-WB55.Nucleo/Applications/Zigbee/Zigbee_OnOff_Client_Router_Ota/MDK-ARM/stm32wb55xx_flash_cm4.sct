@@ -20,7 +20,7 @@ LR_IROM1    0x08030000                      ; load region size_region
     .ANY (+RW +ZI)
   }
   
-  RW_RAM2aRet_SHARED 0x20030000 0x2800      ; RW data
+  RW_RAM2aRet_SHARED 0x20030000 0x1000      ; RW data
   {  
     *(MAPPING_TABLE)
     *(MB_MEM1)

@@ -64,7 +64,6 @@ typedef struct _tSecurityParams
    */
   uint8_t bonding_mode;
 
-
   /**
    * minimum encryption key size requirement
    */
@@ -163,7 +162,7 @@ typedef struct
 #define INITIAL_ADV_TIMEOUT            (60*1000*1000/CFG_TS_TICK_VAL) /**< 60s */
 
 #define BD_ADDR_SIZE_LOCAL    6
-#define BLE_DEFAULT_PIN         (111111)
+#define BLE_DEFAULT_PIN                     (111111)
 
 /* USER CODE BEGIN PD */
 #define LED_ON_TIMEOUT                 (0.005*1000*1000/CFG_TS_TICK_VAL) /**< 5ms */
@@ -319,7 +318,7 @@ void APP_BLE_Init(void)
      CFG_BLE_RX_PATH_COMPENS,
      CFG_BLE_CORE_VERSION,
      CFG_BLE_OPTIONS_EXT,
-     CFG_BLE_MAX_ADD_EATT_BEARERS
+	 CFG_BLE_MAX_ADD_EATT_BEARERS
     }
   };
 
@@ -741,15 +740,15 @@ void APP_BLE_Key_Button2_Action(void)
 {
   tBleStatus ret = BLE_STATUS_INVALID_PARAMS;
   
-  ret = aci_gap_slave_security_req(BleApplicationContext.BleApplicationContext_legacy.connectionHandle); 
+  ret = aci_gap_peripheral_security_req(BleApplicationContext.BleApplicationContext_legacy.connectionHandle); 
 
   if (ret != BLE_STATUS_SUCCESS)
   {
-    APP_DBG_MSG("==>> aci_gap_slave_security_req() Fail , result: %d \n", ret);
+    APP_DBG_MSG("==>> aci_gap_peripheral_security_req() Fail , result: %d \n", ret);
   }
   else
   {
-    APP_DBG_MSG("===>> aci_gap_slave_security_req - Success\n");
+    APP_DBG_MSG("===>> aci_gap_peripheral_security_req - Success\n");
   }
 }
 
@@ -875,7 +874,6 @@ static void Ble_Hci_Gap_Gatt_Init(void)
    * The lowest 32bits is read from the UDN to differentiate between devices
    * The RNG may be used to provide a random number on each power on
    */
-
 #if (CFG_BLE_ADDRESS_TYPE != GAP_PUBLIC_ADDR)
   /* BLE MAC in ADV Packet */
   a_ManufData[ sizeof(a_ManufData)-6] = a_srd_bd_addr[1] >> 8 ;

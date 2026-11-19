@@ -18,9 +18,9 @@
   ******************************************************************************
   @endverbatim
 
-@par application Description
+@par Application Description
 
-How to use the Human Interface Device profile as specified by the BLE SIG.
+How to use the Human Interface Device Mouse profile as specified by the BLE SIG.
 
 @note Care must be taken when using HAL_Delay(), this function provides accurate delay (in milliseconds)
       based on variable incremented in SysTick ISR. This implies that if HAL_Delay() is called from
@@ -72,11 +72,11 @@ Connectivity, BLE, IPCC, HSEM, RTC, UART, PWR, BLE protocol, BLE pairing, BLE pr
      
 @par Hardware and Software environment
 
-  - This application runs on STM32WB55xx devices.
+     - This application runs on STM32WB55xx device, Nucleo board (MB1355C).
   
-  - This application has been tested with an STMicroelectronics P-NUCLEO-WB55
-    board and can be easily tailored to any other supported device 
-    and development board.
+     - Nucleo board (MB1355C) Set-up
+       - Connect the Nucleo Board to your PC with a USB cable type A to mini-B to ST-LINK connector (USB_STLINK).
+       - Please ensure that the ST-LINK connectors and jumpers are fitted.
 
 @par How to use it ? 
 
@@ -105,19 +105,21 @@ On the PC side:
  
 On the PC/Smartphone:
  - enable the Bluetooth communication (PC: or install any Bluetooth 4.0 USB adapter dongle)
- - Connect to the STM32WB55xx device with PIN code 111111.
+ - Connect to the STM32WB55xx device with reading and accepting the Bluetooth pairing request.
 
 On the Nucleo board side:
- Each action on the SW1 button display a menu in the terminal window, a kind of a mouth 
- with 3 button and a wheel emulation.
- In this menu you can toggle each mouth button state, set the vertical an horizontal position
- of the mouse pointer between -127 to +127, set the wheel indentation between -127 to +127.
- When you validate the Save & Quit menu item the setting becomes effective and you can 
- see the result on the screen of the PC/Smartphoone.
+ Each maintained press action on the SW1 button process the horizontal deplacement of a mouse cursor on the PC/smartphone screen.
+ Each SW1 button release action reverse the direction of the next horizontal deplacement. 
+ Each maintained press action on the SW2 button process the vertical deplacement of a mouse cursor on the PC/smartphone screen.
+ Each SW2 button release action reverse the direction of the next vertical deplacement. 
+ Each SW3 button action process a mouse left button click on the PC/smartphone screen. 
 
 Available Wiki pages:
   - https://wiki.st.com/stm32mcu/wiki/Connectivity:BLE_overview
+ - https://wiki.st.com/stm32mcu/wiki/Connectivity:STM32WB_BLE_STM32CubeMX
+
+For more details refer to the Application Note:
+  AN5289 - Building a Wireless application
 
  * <h3><center>&copy; COPYRIGHT STMicroelectronics</center></h3>
  */
- 

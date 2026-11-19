@@ -26,6 +26,7 @@
 #include "hw_conf.h"
 #include "hw_if.h"
 #include "ble_bufsize.h"
+#include "ble_std.h"
 
 /******************************************************************************
  * Application Config
@@ -70,8 +71,6 @@
  * Define IO Authentication
  */
 #define CFG_BONDING_MODE                 (0)
-
-
 #define CFG_ENCRYPTION_KEY_SIZE_MAX      (16)
 #define CFG_ENCRYPTION_KEY_SIZE_MIN      (8)
 
@@ -212,7 +211,7 @@
  * Maximum supported ATT_MTU size
  * This parameter is ignored by the CPU2 when CFG_BLE_OPTIONS has SHCI_C2_BLE_INIT_OPTIONS_LL_ONLY flag set
  */
-#define CFG_BLE_MAX_ATT_MTU             (350)
+#define CFG_BLE_MAX_ATT_MTU             (512)
 
 /**
  * Size of the storage area for Attribute values
@@ -237,7 +236,9 @@
  * Number of allocated memory blocks
  * This parameter is overwritten by the CPU2 with an hardcoded optimal value when the parameter CFG_BLE_OPTIONS has SHCI_C2_BLE_INIT_OPTIONS_LL_ONLY flag set
  */
-#define CFG_BLE_MBLOCK_COUNT            (BLE_MBLOCKS_CALC(CFG_BLE_PREPARE_WRITE_LIST_SIZE, CFG_BLE_MAX_ATT_MTU, CFG_BLE_NUM_LINK))
+#define CFG_BLE_MBLOCK_COUNT          (BLE_MBLOCKS_CALC(CFG_BLE_PREPARE_WRITE_LIST_SIZE, \
+                                       MAX(MAX(CFG_BLE_MAX_ATT_MTU, (HCI_EVENT_MAX_PARAM_LEN-7)), SM_MTU),\
+                                       CFG_BLE_NUM_LINK))
 
 /**
  * Enable or disable the Extended Packet length feature. Valid values are 0 or 1.
@@ -353,12 +354,11 @@
 #define CFG_BLE_MAX_TX_POWER            (6)
 
 /**
-* BLE stack Maximum number of created Enhanced ATT bearers to be configured
-* in addition to the number of links
-*     - Range: 0 .. 4
-*/ 
-#define CFG_BLE_MAX_ADD_EATT_BEARERS    (4)
-        
+ * BLE stack Maximum number of created Enhanced ATT bearers to be configured
+ * in addition to the number of links
+ *     - Range: 0 .. 4
+ */
+#define CFG_BLE_MAX_ADD_EATT_BEARERS            (4)
 
 /**
  * BLE Rx model configuration flags to be configured with:
@@ -681,7 +681,7 @@ typedef enum
   CFG_TASK_HCI_ASYNCH_EVT_ID,
   /* USER CODE BEGIN CFG_Task_Id_With_HCI_Cmd_t */
   CFG_TASK_SW1_BUTTON_PUSHED_ID,
-//  CFG_TASK_SW2_BUTTON_PUSHED_ID,
+  CFG_TASK_SW2_BUTTON_PUSHED_ID,
 //  CFG_TASK_SW3_BUTTON_PUSHED_ID,
   /* USER CODE END CFG_Task_Id_With_HCI_Cmd_t */
   CFG_LAST_TASK_ID_WITH_HCICMD,                                               /**< Shall be LAST in the list */

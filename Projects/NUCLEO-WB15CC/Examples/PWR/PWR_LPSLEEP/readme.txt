@@ -43,8 +43,9 @@ Two leds LED2 and LED3 are used to monitor the system state as following:
 
 These steps are repeated in an infinite loop.
 
-@note To measure the current consumption in LP SLEEP mode, remove JP2 jumper 
-      and connect an amperemeter to JP2 to measure IDD current.     
+@note To measure the current consumption in LP SLEEP mode:
+      - remove all jumpers on connector JP5 to avoid leakages between ST-Link circuitry and STM32WB device.
+      - remove JP2 jumper and connect an amperemeter to JP2 to measure IDD current.
       
 @note This example can not be used in DEBUG mode due to the fact 
       that the Cortex-M4 core is no longer clocked during low power mode 

@@ -26,11 +26,11 @@
 #include "hw_conf.h"
 #include "hw_if.h"
 #include "ble_bufsize.h"
+#include "ble_std.h"
 
 /******************************************************************************
  * Application Config
  ******************************************************************************/
-
 /**< generic parameters ******************************************************/
 
 /**
@@ -43,24 +43,28 @@
  */
 #define CFG_ADV_BD_ADDRESS                (0x7257acd87a6c)
 
-/* BD_ADDR type: define proper address. Can only be GAP_PUBLIC_ADDR (0x00) or GAP_STATIC_RANDOM_ADDR (0x01) */
-#define CFG_IDENTITY_ADDRESS           GAP_PUBLIC_ADDR   /* GAP_STATIC_RANDOM_ADDR */
-//#define CFG_STATIC_RANDOM_ADDRESS               (0x1234567890ab) /**< Static Random Address fixed for lifetime of the device */
+/**
+ * Define BD_ADDR type: define proper address. Can only be GAP_PUBLIC_ADDR (0x00) or GAP_STATIC_RANDOM_ADDR (0x01)
+ */
+#define CFG_IDENTITY_ADDRESS              GAP_PUBLIC_ADDR
 
-/* Define privacy: PRIVACY_DISABLED or PRIVACY_ENABLED */
-#define CFG_PRIVACY                       PRIVACY_DISABLED /* PRIVACY_ENABLED */
+/**
+ * Define privacy: PRIVACY_DISABLED or PRIVACY_ENABLED
+ */
+#define CFG_PRIVACY                       PRIVACY_DISABLED
 
-/* if CFG_PRIVACY equals PRIVACY_DISABLED,  CFG_BLE_ADDRESS_TYPE has 2 allowed values: GAP_PUBLIC_ADDR or GAP_STATIC_RANDOM_ADDR */
-#define CFG_BLE_ADDRESS_TYPE              CFG_IDENTITY_ADDRESS /**< Bluetooth address types defined in ble_legacy.h */
-
-/* if CFG_PRIVACY equals PRIVACY_ENABLED, CFG_BLE_ADDRESS_TYPE has 2 allowed values: GAP_RESOLVABLE_PRIVATE_ADDR or GAP_NON_RESOLVABLE_PRIVATE_ADDR */
-//#define CFG_BLE_ADDRESS_TYPE              GAP_RESOLVABLE_PRIVATE_ADDR /* GAP_NON_RESOLVABLE_PRIVATE_ADDR */
+/**
+ * Define BLE Address Type
+ * Bluetooth address types defined in ble_legacy.h
+ * if CFG_PRIVACY equals PRIVACY_DISABLED, CFG_BLE_ADDRESS_TYPE has 2 allowed values: GAP_PUBLIC_ADDR or GAP_STATIC_RANDOM_ADDR
+ * if CFG_PRIVACY equals PRIVACY_ENABLED, CFG_BLE_ADDRESS_TYPE has 2 allowed values: GAP_RESOLVABLE_PRIVATE_ADDR or GAP_NON_RESOLVABLE_PRIVATE_ADDR
+ */
+#define CFG_BLE_ADDRESS_TYPE              GAP_PUBLIC_ADDR
 
 #define CFG_FAST_CONN_ADV_INTERVAL_MIN    (0x80)      /**< 80ms */
-#define CFG_FAST_CONN_ADV_INTERVAL_MAX    (0xA0)      /**< 100ms */
+#define CFG_FAST_CONN_ADV_INTERVAL_MAX    (0xa0)      /**< 100ms */
 #define CFG_LP_CONN_ADV_INTERVAL_MIN      (0x640)     /**< 1s */
-#define CFG_LP_CONN_ADV_INTERVAL_MAX      (0xFA0)     /**< 2.5s */
-
+#define CFG_LP_CONN_ADV_INTERVAL_MAX      (0xfa0)     /**< 2.5s */
 /**
  * Define IO Authentication
  */
@@ -78,7 +82,7 @@
 #define CFG_IO_CAPABILITY_NO_INPUT_NO_OUTPUT  (0x03)
 #define CFG_IO_CAPABILITY_KEYBOARD_DISPLAY    (0x04)
 
-#define CFG_IO_CAPABILITY                     CFG_IO_CAPABILITY_DISPLAY_ONLY
+#define CFG_IO_CAPABILITY                     CFG_IO_CAPABILITY_DISPLAY_YES_NO
 
 /**
  * Define MITM modes
@@ -95,7 +99,7 @@
 #define CFG_SECURE_OPTIONAL                   (0x01)
 #define CFG_SECURE_MANDATORY                  (0x02)
 
-#define CFG_SC_SUPPORT                 CFG_SECURE_NOT_SUPPORTED
+#define CFG_SC_SUPPORT                        CFG_SECURE_OPTIONAL
 
 /**
  * Define Keypress Notification Support
@@ -110,6 +114,12 @@
  */
 #define YES (0x01)
 #define NO  (0x00)
+
+/**
+ * Device name configuration for Generic Access Service
+ */
+#define CFG_GAP_DEVICE_NAME             "TEMPLATE"
+#define CFG_GAP_DEVICE_NAME_LENGTH      (8)
 
 /**
  * Define PHY
@@ -147,14 +157,17 @@
 #define CFG_USE_SMPS    0
 
 /* USER CODE BEGIN Generic_Parameters */
-
 /* USER CODE END Generic_Parameters */
 
 /**< specific parameters */
 /*****************************************************/
-#define CFG_MAX_CONNECTION                    (8)
 
-#define CFG_DATA_ROLE_MODE                                                     2
+/**
+* AD Element - Group B Feature
+*/
+/* USER CODE BEGIN Specific_Parameters */
+
+/* USER CODE END Specific_Parameters */
 
 /******************************************************************************
  * BLE Stack
@@ -209,7 +222,9 @@
  * Number of allocated memory blocks
  * This parameter is overwritten by the CPU2 with an hardcoded optimal value when the parameter CFG_BLE_OPTIONS has SHCI_C2_BLE_INIT_OPTIONS_LL_ONLY flag set
  */
-#define CFG_BLE_MBLOCK_COUNT            (BLE_MBLOCKS_CALC(CFG_BLE_PREPARE_WRITE_LIST_SIZE, CFG_BLE_MAX_ATT_MTU, CFG_BLE_NUM_LINK))
+#define CFG_BLE_MBLOCK_COUNT          (BLE_MBLOCKS_CALC(CFG_BLE_PREPARE_WRITE_LIST_SIZE, \
+                                       MAX(MAX(CFG_BLE_MAX_ATT_MTU, (HCI_EVENT_MAX_PARAM_LEN-7)), SM_MTU),\
+                                       CFG_BLE_NUM_LINK))
 
 /**
  * Enable or disable the Extended Packet length feature. Valid values are 0 or 1.
@@ -301,7 +316,7 @@
  *          0: LE Power Class 2-3
  * other bits: complete with Options_extension flag
  */
-#define CFG_BLE_OPTIONS  (SHCI_C2_BLE_INIT_OPTIONS_LL_HOST | SHCI_C2_BLE_INIT_OPTIONS_WITH_SVC_CHANGE_DESC | SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RW | SHCI_C2_BLE_INIT_OPTIONS_NO_EXT_ADV | SHCI_C2_BLE_INIT_OPTIONS_NO_CS_ALGO2 | SHCI_C2_BLE_INIT_OPTIONS_FULL_GATTDB_NVM | SHCI_C2_BLE_INIT_OPTIONS_GATT_CACHING_NOTUSED | SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3)
+#define CFG_BLE_OPTIONS  (SHCI_C2_BLE_INIT_OPTIONS_LL_HOST | SHCI_C2_BLE_INIT_OPTIONS_WITH_SVC_CHANGE_DESC | SHCI_C2_BLE_INIT_OPTIONS_DEVICE_NAME_RW | SHCI_C2_BLE_INIT_OPTIONS_NO_EXT_ADV | SHCI_C2_BLE_INIT_OPTIONS_NO_CS_ALGO2 | SHCI_C2_BLE_INIT_OPTIONS_REDUC_GATTDB_NVM | SHCI_C2_BLE_INIT_OPTIONS_GATT_CACHING_NOTUSED | SHCI_C2_BLE_INIT_OPTIONS_POWER_CLASS_2_3)
 
 /**
  * BLE stack Options_extension flags to be configured with:
@@ -383,7 +398,6 @@
    
 #define CFG_BLE_CORE_VERSION   (SHCI_C2_BLE_INIT_BLE_CORE_5_4)
 
-
 /******************************************************************************
  * Transport Layer
  ******************************************************************************/
@@ -420,10 +434,8 @@
 /**
  * Select UART interfaces
  */
-#define CFG_UART_GUI
-#define CFG_DEBUG_TRACE_UART      /*hw_uart1*/hw_lpuart1
-#define CFG_CONSOLE_MENU          /*hw_lpuart1*/hw_uart1
-
+#define CFG_DEBUG_TRACE_UART    hw_uart1
+#define CFG_CONSOLE_MENU        0
 /******************************************************************************
  * USB interface
  ******************************************************************************/
@@ -452,7 +464,7 @@
  *  When set to 1, the low power mode is enable
  *  When set to 0, the device stays in RUN mode
  */
-#define CFG_LPM_SUPPORTED    1
+#define CFG_LPM_SUPPORTED    0
 
 /******************************************************************************
  * RTC interface
@@ -555,7 +567,7 @@ typedef enum
  * This shall be set to 0 in a final product
  *
  */
-#define CFG_HW_RESET_BY_FW         1
+#define CFG_HW_RESET_BY_FW         0
 
 /**
  * keep debugger enabled while in any low power mode when set to 1
@@ -634,6 +646,7 @@ typedef enum
 #define PUSH_BUTTON_SW2_EXTI_IRQHandler     EXTI0_IRQHandler
 #define PUSH_BUTTON_SW3_EXTI_IRQHandler     EXTI1_IRQHandler
 /* USER CODE END Defines */
+
 /******************************************************************************
  * Scheduler
  ******************************************************************************/
@@ -648,12 +661,14 @@ typedef enum
 /**< Add in that list all tasks that may send a ACI/HCI command */
 typedef enum
 {
-  CFG_TASK_CONN_MGR_ID,
-  CFG_TASK_HID_UPDATE_REQ_ID,
-  CFG_TASK_HID_DISC_REQ_ID,
-  CFG_TASK_BAS_LEVEL_REQ_ID,
+  CFG_TASK_ADV_UPDATE_ID,
   CFG_TASK_HCI_ASYNCH_EVT_ID,
-
+  /* USER CODE BEGIN CFG_Task_Id_With_HCI_Cmd_t */
+  CFG_TASK_SW1_BUTTON_PUSHED_ID,
+  CFG_TASK_SW2_BUTTON_PUSHED_ID,
+  CFG_TASK_SW3_BUTTON_PUSHED_ID,
+  CFG_TASK_BAS_LEVEL_REQ_ID,
+  /* USER CODE END CFG_Task_Id_With_HCI_Cmd_t */
   CFG_LAST_TASK_ID_WITH_HCICMD,                                               /**< Shall be LAST in the list */
 } CFG_Task_Id_With_HCI_Cmd_t;
 

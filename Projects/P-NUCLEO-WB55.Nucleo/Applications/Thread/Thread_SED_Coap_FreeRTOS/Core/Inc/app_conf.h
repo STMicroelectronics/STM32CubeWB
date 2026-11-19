@@ -375,4 +375,3 @@ typedef enum
 
 #define CFG_AMM_ENABLED                             	(1U)
 #endif /*APP_CONF_H */
-

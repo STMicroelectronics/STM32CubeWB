@@ -1872,7 +1872,7 @@ void BLE_SVC_GAP_Security_Req(void)
 {
   tBleStatus ret = BLE_STATUS_INVALID_PARAMS;
   
-  ret = aci_gap_slave_security_req(BleApplicationContext.BleApplicationContext_legacy.connectionHandle);
+  ret = aci_gap_peripheral_security_req(BleApplicationContext.BleApplicationContext_legacy.connectionHandle);
   if (ret == BLE_STATUS_SUCCESS)
   {
     APP_DBG_MSG("slave req security cmd OK ok\n");

@@ -68,14 +68,13 @@ void BAS_Notification(BAS_Notification_evt_t *pNotification)
   {
     case BAS_LEVEL_NOT_ENABLED_EVT:
       {
-        HW_TS_Stop(BASAPP_Context[pNotification->ServiceInstance].TimerLevel_Id);
-        HW_TS_Start(BASAPP_Context[pNotification->ServiceInstance].TimerLevel_Id, BASAPP_DEFAULT_BAT_LEVEL_CHG);
+        aci_gatt_store_db(); /* Store CCCD value in GATT database: CCCD state restored if reset */
       }
       break;
 
     case BAS_LEVEL_NOT_DISABLED_EVT:
       {
-        HW_TS_Stop(BASAPP_Context[pNotification->ServiceInstance].TimerLevel_Id);
+        aci_gatt_store_db(); /* Store CCCD value in GATT database: CCCD state restored if reset */
       }
       break;
 
@@ -114,6 +113,7 @@ void BASAPP_Init(uint8_t index)
    */
   HW_TS_Create(CFG_TIM_PROC_ID_ISR, &(BASAPP_Context[index].TimerLevel_Id), hw_ts_Repeated, BASAPP_UpdateLevel);
 
+  HW_TS_Start(BASAPP_Context[index].TimerLevel_Id, BASAPP_DEFAULT_BAT_LEVEL_CHG);
   return;
 }
 

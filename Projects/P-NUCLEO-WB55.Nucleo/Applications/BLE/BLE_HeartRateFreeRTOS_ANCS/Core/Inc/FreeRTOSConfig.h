@@ -26,7 +26,6 @@
  * 1 tab == 4 spaces!
  */
 /* USER CODE END Header */
-
 #ifndef FREERTOS_CONFIG_H
 #define FREERTOS_CONFIG_H
 
@@ -48,8 +47,8 @@
 
 /* Ensure definitions are only used by the compiler, and not by the assembler. */
 #if defined(__ICCARM__) || defined(__CC_ARM) || defined(__ARMCC_VERSION) || defined(__GNUC__)
-  #include <stdint.h>
-  extern uint32_t SystemCoreClock;
+#include <stdint.h>
+extern uint32_t SystemCoreClock;
 #endif
 #ifndef CMSIS_device_header
 #define CMSIS_device_header "stm32wbxx.h"
@@ -103,7 +102,6 @@
 #define configUSE_OS2_THREAD_FLAGS           1
 #define configUSE_OS2_TIMER                  1
 #define configUSE_OS2_MUTEX                  1
-
 /* Set the following definitions to 1 to include the API function, or zero
 to exclude the API function. */
 #define INCLUDE_vTaskPrioritySet             1
@@ -136,6 +134,7 @@ to exclude the API function. */
 
 /* The lowest interrupt priority that can be used in a call to a "set priority"
 function. */
+
 #define configLIBRARY_LOWEST_INTERRUPT_PRIORITY   15
 
 /* The highest interrupt priority that can be used by any interrupt service
@@ -161,7 +160,6 @@ header file. */
 standard names. */
 #define vPortSVCHandler    SVC_Handler
 #define xPortPendSVHandler PendSV_Handler
-
 /* IMPORTANT: After 10.3.1 update, Systick_Handler comes from NVIC (if SYS timebase = systick), otherwise from cmsis_os2.c */
 
 #define USE_CUSTOM_SYSTICK_HANDLER_IMPLEMENTATION 0

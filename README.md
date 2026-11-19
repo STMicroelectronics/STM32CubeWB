@@ -1,6 +1,6 @@
 # STM32CubeWB MCU Firmware
 
-![latest tag](https://img.shields.io/github/v/tag/STMicroelectronics/STM32CubeWB.svg?color=brightgreen)
+![tag](https://img.shields.io/badge/tag-v1.25.0-brightgreen.svg)
 
 > [!IMPORTANT]
 > This repository contains **submodules**. Please refer to the ["How to"](README.md#how-to-clone-and-get-updates) section for more details.

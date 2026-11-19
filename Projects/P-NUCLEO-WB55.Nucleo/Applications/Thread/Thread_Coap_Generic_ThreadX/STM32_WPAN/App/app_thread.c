@@ -586,6 +586,7 @@ void APP_THREAD_TraceError(const char * pMess, uint32_t ErrCode)
  */
 static void APP_THREAD_CheckWirelessFirmwareInfo(void)
 {
+#ifdef TX_DISABLE_EVENT_TRACE
   WirelessFwInfo_t 	wireless_info_instance;
   WirelessFwInfo_t	* p_wireless_info = &wireless_info_instance;
   SHCI_CmdStatus_t	eShciComdStatus;
@@ -631,6 +632,7 @@ static void APP_THREAD_CheckWirelessFirmwareInfo(void)
   	  { APP_THREAD_Error((uint32_t)ERR_THREAD_CHECK_WIRELESS, (uint32_t)ERR_INTERFACE_FATAL); }
   else
   	  { APP_DBG("**********************************************************"); }
+#endif // TX_ENABLE_EVENT_TRACE
 }
 
 

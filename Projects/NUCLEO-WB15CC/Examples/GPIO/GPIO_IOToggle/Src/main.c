@@ -44,13 +44,13 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-static GPIO_InitTypeDef  GPIO_InitStruct;
 
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 void PeriphCommonClock_Config(void);
+static void MX_GPIO_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -91,7 +91,7 @@ int main(void)
   /* Configure the system clock */
   SystemClock_Config();
 
-/* Configure the peripherals common clocks */
+  /* Configure the peripherals common clocks */
   PeriphCommonClock_Config();
 
   /* USER CODE BEGIN SysInit */
@@ -99,21 +99,8 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
+  MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-
-   /* -1- Enable GPIO Clock (to be able to program the configuration registers) */
-  LED2_GPIO_CLK_ENABLE();
-  LED1_GPIO_CLK_ENABLE();
-
-  /* -2- Configure IO in output push-pull mode to drive external LEDs */
-  GPIO_InitStruct.Mode  = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull  = GPIO_PULLUP;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-
-  GPIO_InitStruct.Pin = LED2_PIN;
-  HAL_GPIO_Init(LED2_GPIO_PORT, &GPIO_InitStruct);
-  GPIO_InitStruct.Pin = LED1_PIN;
-  HAL_GPIO_Init(LED1_GPIO_PORT, &GPIO_InitStruct);
 
   /* USER CODE END 2 */
 
@@ -124,10 +111,10 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    HAL_GPIO_TogglePin(LED2_GPIO_PORT, LED2_PIN);
+    HAL_GPIO_TogglePin(LED2_GPIO_Port, LED2_Pin);
     /* Insert delay 100 ms */
     HAL_Delay(100);
-    HAL_GPIO_TogglePin(LED1_GPIO_PORT, LED1_PIN);
+    HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
     /* Insert delay 100 ms */
     HAL_Delay(100);
 
@@ -206,6 +193,36 @@ void PeriphCommonClock_Config(void)
   /* USER CODE END Smps */
 }
 
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_GPIO_Init(void)
+{
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+  /* USER CODE BEGIN MX_GPIO_Init_1 */
+
+  /* USER CODE END MX_GPIO_Init_1 */
+
+  /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOB_CLK_ENABLE();
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, LED2_Pin|LED1_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pins : LED2_Pin LED1_Pin */
+  GPIO_InitStruct.Pin = LED2_Pin|LED1_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /* USER CODE BEGIN MX_GPIO_Init_2 */
+
+  /* USER CODE END MX_GPIO_Init_2 */
+}
+
 /* USER CODE BEGIN 4 */
 /* USER CODE END 4 */
 
@@ -222,8 +239,7 @@ void Error_Handler(void)
   }
   /* USER CODE END Error_Handler_Debug */
 }
-
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.

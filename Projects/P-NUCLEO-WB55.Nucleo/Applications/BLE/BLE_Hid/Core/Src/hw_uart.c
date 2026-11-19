@@ -21,8 +21,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "app_common.h"
 #include "hw_conf.h"
-#include "main.h"
-
 #if (CFG_HW_LPUART1_ENABLED == 1)
 extern UART_HandleTypeDef hlpuart1;
 #endif
@@ -67,28 +65,6 @@ extern UART_HandleTypeDef huart1;
     void (*HW_hlpuart1RxCb)(void);
     void (*HW_hlpuart1TxCb)(void);
 #endif
-
-void HW_UART_Init(hw_uart_id_t hw_uart_id)
-{
-  switch (hw_uart_id)
-  {
-#if (CFG_HW_USART1_ENABLED == 1)
-    case hw_uart1:
-      MX_USART1_UART_Init();
-      break;
-#endif
-
-#if (CFG_HW_LPUART1_ENABLED == 1)
-    case hw_lpuart1:
-      MX_LPUART1_UART_Init();
-      break;
-#endif
-
-    default:
-      break;
-    }
-  return;
-}
 
 void HW_UART_Receive_IT(hw_uart_id_t hw_uart_id, uint8_t *p_data, uint16_t size, void (*cb)(void))
 {

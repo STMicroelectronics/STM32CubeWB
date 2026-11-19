@@ -19,8 +19,8 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef STM32WBxx_HAL_CONF_H
-#define STM32WBxx_HAL_CONF_H
+#ifndef __STM32WBxx_HAL_CONF_H
+#define __STM32WBxx_HAL_CONF_H
 
 #ifdef __cplusplus
  extern "C" {
@@ -34,38 +34,38 @@
   * @brief This is the list of modules to be used in the HAL driver
   */
 #define HAL_MODULE_ENABLED
-#define HAL_ADC_MODULE_ENABLED
-#define HAL_COMP_MODULE_ENABLED
+/*#define HAL_ADC_MODULE_ENABLED   */
+/*#define HAL_CRYP_MODULE_ENABLED   */
+/*#define HAL_COMP_MODULE_ENABLED   */
+/*#define HAL_CRC_MODULE_ENABLED   */
+#define HAL_HSEM_MODULE_ENABLED
+/*#define HAL_I2C_MODULE_ENABLED   */
+#define HAL_IPCC_MODULE_ENABLED
+/*#define HAL_IRDA_MODULE_ENABLED   */
+/*#define HAL_IWDG_MODULE_ENABLED   */
+/*#define HAL_LCD_MODULE_ENABLED   */
+/*#define HAL_LPTIM_MODULE_ENABLED   */
+/*#define HAL_PCD_MODULE_ENABLED   */
+/*#define HAL_PKA_MODULE_ENABLED   */
+/*#define HAL_QSPI_MODULE_ENABLED   */
+#define HAL_RNG_MODULE_ENABLED
+#define HAL_RTC_MODULE_ENABLED
+/*#define HAL_SAI_MODULE_ENABLED   */
+/*#define HAL_SMBUS_MODULE_ENABLED   */
+/*#define HAL_SMARTCARD_MODULE_ENABLED   */
+/*#define HAL_SPI_MODULE_ENABLED   */
+/*#define HAL_TIM_MODULE_ENABLED   */
+/*#define HAL_TSC_MODULE_ENABLED   */
+#define HAL_UART_MODULE_ENABLED
+/*#define HAL_USART_MODULE_ENABLED   */
+/*#define HAL_WWDG_MODULE_ENABLED   */
+#define HAL_EXTI_MODULE_ENABLED
 #define HAL_CORTEX_MODULE_ENABLED
-#define HAL_CRC_MODULE_ENABLED
-#define HAL_CRYP_MODULE_ENABLED
 #define HAL_DMA_MODULE_ENABLED
 #define HAL_FLASH_MODULE_ENABLED
 #define HAL_GPIO_MODULE_ENABLED
-#define HAL_HSEM_MODULE_ENABLED
-#define HAL_I2C_MODULE_ENABLED
-#define HAL_IPCC_MODULE_ENABLED
-#define HAL_IRDA_MODULE_ENABLED
-#define HAL_IWDG_MODULE_ENABLED
-#define HAL_LCD_MODULE_ENABLED
-#define HAL_LPTIM_MODULE_ENABLED
-#define HAL_PCD_MODULE_ENABLED
-#define HAL_PKA_MODULE_ENABLED
 #define HAL_PWR_MODULE_ENABLED
-#define HAL_QSPI_MODULE_ENABLED
 #define HAL_RCC_MODULE_ENABLED
-#define HAL_RNG_MODULE_ENABLED
-#define HAL_RTC_MODULE_ENABLED
-#define HAL_SAI_MODULE_ENABLED
-#define HAL_SMARTCARD_MODULE_ENABLED
-#define HAL_SMBUS_MODULE_ENABLED
-#define HAL_SPI_MODULE_ENABLED
-#define HAL_TIM_MODULE_ENABLED
-#define HAL_TSC_MODULE_ENABLED
-#define HAL_UART_MODULE_ENABLED
-#define HAL_USART_MODULE_ENABLED
-#define HAL_WWDG_MODULE_ENABLED
-#define HAL_EXTI_MODULE_ENABLED
 
 #define USE_HAL_ADC_REGISTER_CALLBACKS       0u
 #define USE_HAL_COMP_REGISTER_CALLBACKS      0u
@@ -85,7 +85,7 @@
 #define USE_HAL_TIM_REGISTER_CALLBACKS       0u
 #define USE_HAL_TSC_REGISTER_CALLBACKS       0u
 #define USE_HAL_UART_REGISTER_CALLBACKS      0u
-#define USE_HAL_USART_REGISTER_CALLBACKS     1u
+#define USE_HAL_USART_REGISTER_CALLBACKS     0u
 #define USE_HAL_WWDG_REGISTER_CALLBACKS      0u
 
 /* ########################## Oscillator Values adaptation ####################*/
@@ -349,4 +349,4 @@
 }
 #endif
 
-#endif /* STM32WBxx_HAL_CONF_H */
+#endif /* __STM32WBxx_HAL_CONF_H */

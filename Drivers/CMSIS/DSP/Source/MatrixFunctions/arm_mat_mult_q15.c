@@ -3,13 +3,13 @@
  * Title:        arm_mat_mult_q15.c
  * Description:  Q15 matrix multiplication
  *
- * $Date:        18. March 2019
- * $Revision:    V1.6.0
+ * $Date:        3 Nov 2021
+ * $Revision:    V1.10.0
  *
- * Target Processor: Cortex-M cores
+ * Target Processor: Cortex-M and Cortex-A cores
  * -------------------------------------------------------------------- */
 /*
- * Copyright (C) 2010-2019 ARM Limited or its affiliates. All rights reserved.
+ * Copyright (C) 2010-2021 ARM Limited or its affiliates. All rights reserved.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -26,7 +26,7 @@
  * limitations under the License.
  */
 
-#include "arm_math.h"
+#include "dsp/matrix_functions.h"
 
 /**
   @ingroup groupMatrix
@@ -42,7 +42,7 @@
   @param[in]     pSrcA      points to the first input matrix structure
   @param[in]     pSrcB      points to the second input matrix structure
   @param[out]    pDst       points to output matrix structure
-  @param[in]     pState     points to the array for storing intermediate results (Unused)
+  @param[in]     pState     points to the array for storing intermediate results
   @return        execution status
                    - \ref ARM_MATH_SUCCESS       : Operation successful
                    - \ref ARM_MATH_SIZE_MISMATCH : Matrix size check failed
@@ -57,7 +57,567 @@
   @par
                    Refer to \ref arm_mat_mult_fast_q15() for a faster but less precise version of this function.
  */
+#if defined(ARM_MATH_MVEI) && !defined(ARM_MATH_AUTOVECTORIZE)
 
+#define MVE_ASRL_SAT16(acc, shift)          ((sqrshrl_sat48(acc, -(32-shift)) >> 32) & 0xffffffff)
+
+#define MATRIX_DIM2 2
+#define MATRIX_DIM3 3
+#define MATRIX_DIM4 4
+
+__STATIC_INLINE arm_status arm_mat_mult_q15_2x2_mve(
+    const arm_matrix_instance_q15 * pSrcA,
+    const arm_matrix_instance_q15 * pSrcB,
+    arm_matrix_instance_q15 * pDst)
+{
+    q15_t       *pInB = pSrcB->pData;  /* input data matrix pointer B */
+    q15_t       *pInA = pSrcA->pData;  /* input data matrix pointer A */
+    q15_t       *pOut = pDst->pData;   /* output data matrix pointer */
+    uint16x8_t  vecColBOffs;
+    q15_t       *pInA0 = pInA;
+    q15_t       *pInA1 = pInA0 + MATRIX_DIM2;
+    q63_t        acc0, acc1;
+    q15x8_t     vecB, vecA0, vecA1;
+    mve_pred16_t p0 = vctp16q(MATRIX_DIM2);
+
+    vecColBOffs = vidupq_u16((uint32_t)0, 2); /* MATRIX_DIM2 */
+
+    pInB = pSrcB->pData;
+
+    vecB = vldrhq_gather_shifted_offset_z_s16((q15_t const *)pInB, vecColBOffs, p0);
+
+    vecA0 = vldrhq_s16(pInA0);
+    vecA1 = vldrhq_s16(pInA1);
+
+    acc0 = vmlaldavq(vecA0, vecB);
+    acc1 = vmlaldavq(vecA1, vecB);
+
+    acc0 = asrl(acc0, 15);
+    acc1 = asrl(acc1, 15);
+
+    pOut[0 * MATRIX_DIM2] = (q15_t) __SSAT(acc0, 16);
+    pOut[1 * MATRIX_DIM2] = (q15_t) __SSAT(acc1, 16);
+    pOut++;
+
+    /* move to next B column */
+    pInB = pInB + 1;
+
+    vecB = vldrhq_gather_shifted_offset_z_s16(pInB, vecColBOffs, p0);
+
+    acc0 = vmlaldavq(vecA0, vecB);
+    acc1 = vmlaldavq(vecA1, vecB);
+
+    acc0 = asrl(acc0, 15);
+    acc1 = asrl(acc1, 15);
+
+    pOut[0 * MATRIX_DIM2] = (q15_t) __SSAT(acc0, 16);
+    pOut[1 * MATRIX_DIM2] = (q15_t) __SSAT(acc1, 16);
+
+    /*
+     * Return to application
+     */
+    return (ARM_MATH_SUCCESS);
+}
+
+
+
+__STATIC_INLINE arm_status arm_mat_mult_q15_3x3_mve(
+    const arm_matrix_instance_q15 * pSrcA,
+    const arm_matrix_instance_q15 * pSrcB,
+    arm_matrix_instance_q15 * pDst)
+{
+    q15_t       *pInB = pSrcB->pData;  /* input data matrix pointer B */
+    q15_t       *pInA = pSrcA->pData;  /* input data matrix pointer A */
+    q15_t       *pOut = pDst->pData;   /* output data matrix pointer */
+    uint16x8_t vecColBOffs;
+    q15_t       *pInA0 = pInA;
+    q15_t       *pInA1 = pInA0 + MATRIX_DIM3;
+    q15_t       *pInA2 = pInA1 + MATRIX_DIM3;
+    q63_t        acc0, acc1, acc2;
+    q15x8_t    vecB, vecA0, vecA1, vecA2;
+    mve_pred16_t p0 = vctp16q(MATRIX_DIM3);
+
+    vecColBOffs = vidupq_u16((uint32_t)0, 1);
+    vecColBOffs = vecColBOffs * MATRIX_DIM3;
+
+    pInB = pSrcB->pData;
+
+    vecB = vldrhq_gather_shifted_offset_z_s16((q15_t const *)pInB, vecColBOffs, p0);
+
+    vecA0 = vldrhq_s16(pInA0);
+    vecA1 = vldrhq_s16(pInA1);
+    vecA2 = vldrhq_s16(pInA2);
+
+    acc0 = vmlaldavq(vecA0, vecB);
+    acc1 = vmlaldavq(vecA1, vecB);
+    acc2 = vmlaldavq(vecA2, vecB);
+
+    acc0 = asrl(acc0, 15);
+    acc1 = asrl(acc1, 15);
+    acc2 = asrl(acc2, 15);
+
+    pOut[0 * MATRIX_DIM3] = (q15_t) __SSAT(acc0, 16);
+    pOut[1 * MATRIX_DIM3] = (q15_t) __SSAT(acc1, 16);
+    pOut[2 * MATRIX_DIM3] = (q15_t) __SSAT(acc2, 16);
+    pOut++;
+
+    /* move to next B column */
+    pInB = pInB + 1;
+
+    vecB = vldrhq_gather_shifted_offset_z_s16(pInB, vecColBOffs, p0);
+
+    acc0 = vmlaldavq(vecA0, vecB);
+    acc1 = vmlaldavq(vecA1, vecB);
+    acc2 = vmlaldavq(vecA2, vecB);
+
+    acc0 = asrl(acc0, 15);
+    acc1 = asrl(acc1, 15);
+    acc2 = asrl(acc2, 15);
+
+    pOut[0 * MATRIX_DIM3] = (q15_t) __SSAT(acc0, 16);
+    pOut[1 * MATRIX_DIM3] = (q15_t) __SSAT(acc1, 16);
+    pOut[2 * MATRIX_DIM3] = (q15_t) __SSAT(acc2, 16);
+    pOut++;
+
+    /* move to next B column */
+    pInB = pInB + 1;
+
+    vecB = vldrhq_gather_shifted_offset_z_s16(pInB, vecColBOffs, p0);
+
+    acc0 = vmlaldavq(vecA0, vecB);
+    acc1 = vmlaldavq(vecA1, vecB);
+    acc2 = vmlaldavq(vecA2, vecB);
+
+    acc0 = asrl(acc0, 15);
+    acc1 = asrl(acc1, 15);
+    acc2 = asrl(acc2, 15);
+
+    pOut[0 * MATRIX_DIM3] = (q15_t) __SSAT(acc0, 16);
+    pOut[1 * MATRIX_DIM3] = (q15_t) __SSAT(acc1, 16);
+    pOut[2 * MATRIX_DIM3] = (q15_t) __SSAT(acc2, 16);
+    /*
+     * Return to application
+     */
+    return (ARM_MATH_SUCCESS);
+}
+
+
+__STATIC_INLINE arm_status arm_mat_mult_q15_4x4_mve(
+    const arm_matrix_instance_q15 * pSrcA,
+    const arm_matrix_instance_q15 * pSrcB,
+    arm_matrix_instance_q15 * pDst)
+{
+    q15_t       *pInB = pSrcB->pData;  /* input data matrix pointer B */
+    q15_t       *pInA = pSrcA->pData;  /* input data matrix pointer A */
+    q15_t       *pOut = pDst->pData;   /* output data matrix pointer */
+    uint16x8_t vecColBOffs;
+    q15_t       *pInA0 = pInA;
+    q15_t       *pInA1 = pInA0 + MATRIX_DIM4;
+    q15_t       *pInA2 = pInA1 + MATRIX_DIM4;
+    q15_t       *pInA3 = pInA2 + MATRIX_DIM4;
+    q63_t        acc0, acc1, acc2, acc3;
+    q15x8_t     vecB, vecA0, vecA1, vecA2, vecA3;
+    mve_pred16_t p0 = vctp16q(MATRIX_DIM4);
+
+    vecColBOffs = vidupq_u16((uint32_t)0, 4);
+
+    pInB = pSrcB->pData;
+
+    vecB = vldrhq_gather_shifted_offset_z_s16((q15_t const *)pInB, vecColBOffs, p0);
+
+    vecA0 = vldrhq_s16(pInA0);
+    vecA1 = vldrhq_s16(pInA1);
+    vecA2 = vldrhq_s16(pInA2);
+    vecA3 = vldrhq_s16(pInA3);
+
+    acc0 = vmlaldavq(vecA0, vecB);
+    acc1 = vmlaldavq(vecA1, vecB);
+    acc2 = vmlaldavq(vecA2, vecB);
+    acc3 = vmlaldavq(vecA3, vecB);
+
+    acc0 = asrl(acc0, 15);
+    acc1 = asrl(acc1, 15);
+    acc2 = asrl(acc2, 15);
+    acc3 = asrl(acc3, 15);
+
+    pOut[0 * MATRIX_DIM4] = (q15_t) __SSAT(acc0, 16);
+    pOut[1 * MATRIX_DIM4] = (q15_t) __SSAT(acc1, 16);
+    pOut[2 * MATRIX_DIM4] = (q15_t) __SSAT(acc2, 16);
+    pOut[3 * MATRIX_DIM4] = (q15_t) __SSAT(acc3, 16);
+    pOut++;
+
+    /* move to next B column */
+    pInB = pInB + 1;
+
+    vecB = vldrhq_gather_shifted_offset_z_s16(pInB, vecColBOffs, p0);
+
+    acc0 = vmlaldavq(vecA0, vecB);
+    acc1 = vmlaldavq(vecA1, vecB);
+    acc2 = vmlaldavq(vecA2, vecB);
+    acc3 = vmlaldavq(vecA3, vecB);
+
+    acc0 = asrl(acc0, 15);
+    acc1 = asrl(acc1, 15);
+    acc2 = asrl(acc2, 15);
+    acc3 = asrl(acc3, 15);
+
+    pOut[0 * MATRIX_DIM4] = (q15_t) __SSAT(acc0, 16);
+    pOut[1 * MATRIX_DIM4] = (q15_t) __SSAT(acc1, 16);
+    pOut[2 * MATRIX_DIM4] = (q15_t) __SSAT(acc2, 16);
+    pOut[3 * MATRIX_DIM4] = (q15_t) __SSAT(acc3, 16);
+
+    pOut++;
+
+    /* move to next B column */
+    pInB = pInB + 1;
+
+    vecB = vldrhq_gather_shifted_offset_z_s16(pInB, vecColBOffs, p0);
+
+    acc0 = vmlaldavq(vecA0, vecB);
+    acc1 = vmlaldavq(vecA1, vecB);
+    acc2 = vmlaldavq(vecA2, vecB);
+    acc3 = vmlaldavq(vecA3, vecB);
+
+    acc0 = asrl(acc0, 15);
+    acc1 = asrl(acc1, 15);
+    acc2 = asrl(acc2, 15);
+    acc3 = asrl(acc3, 15);
+
+    pOut[0 * MATRIX_DIM4] = (q15_t) __SSAT(acc0, 16);
+    pOut[1 * MATRIX_DIM4] = (q15_t) __SSAT(acc1, 16);
+    pOut[2 * MATRIX_DIM4] = (q15_t) __SSAT(acc2, 16);
+    pOut[3 * MATRIX_DIM4] = (q15_t) __SSAT(acc3, 16);
+
+    pOut++;
+
+    /* move to next B column */
+    pInB = pInB + 1;
+
+    vecB = vldrhq_gather_shifted_offset_z_s16(pInB, vecColBOffs, p0);
+
+    acc0 = vmlaldavq(vecA0, vecB);
+    acc1 = vmlaldavq(vecA1, vecB);
+    acc2 = vmlaldavq(vecA2, vecB);
+    acc3 = vmlaldavq(vecA3, vecB);
+
+    acc0 = asrl(acc0, 15);
+    acc1 = asrl(acc1, 15);
+    acc2 = asrl(acc2, 15);
+    acc3 = asrl(acc3, 15);
+
+    pOut[0 * MATRIX_DIM4] = (q15_t) __SSAT(acc0, 16);
+    pOut[1 * MATRIX_DIM4] = (q15_t) __SSAT(acc1, 16);
+    pOut[2 * MATRIX_DIM4] = (q15_t) __SSAT(acc2, 16);
+    pOut[3 * MATRIX_DIM4] = (q15_t) __SSAT(acc3, 16);
+    /*
+     * Return to application
+     */
+    return (ARM_MATH_SUCCESS);
+}
+
+
+arm_status arm_mat_mult_q15(
+    const arm_matrix_instance_q15 * pSrcA,
+    const arm_matrix_instance_q15 * pSrcB,
+    arm_matrix_instance_q15 * pDst,
+    q15_t * pState)
+{
+    q15_t          *pInA = pSrcA->pData;        /* input data matrix pointer A */
+    q15_t          *pInB = pSrcB->pData;        /* input data matrix pointer B */
+    q15_t          *pInA2;
+    q15_t          *pInB2;
+    q15_t          *px;         /* Temporary output data matrix pointer */
+    q15_t          *px2;        /* Temporary output data matrix pointer */
+    uint32_t        numRowsA = pSrcA->numRows;  /* number of rows of input matrix A    */
+    uint32_t        numColsB = pSrcB->numCols;  /* number of columns of input matrix B */
+    uint32_t        numColsA = pSrcA->numCols;  /* number of columns of input matrix A */
+    uint32_t        numRowsB = pSrcB->numRows;  /* number of rows of input matrix A    */
+    uint32_t        col, i = 0u, j, row = numRowsB;     /* loop counters */
+    q15_t          *pSrcBT = pState;    /* input data matrix pointer for transpose */
+    uint32_t        blkCnt;     /* loop counters */
+    arm_status      status;                             /* Status of matrix multiplication */
+    arm_matrix_instance_q15 BT;
+
+#ifdef ARM_MATH_MATRIX_CHECK
+
+    /* Check for matrix mismatch condition */
+    if ((pSrcA->numCols != pSrcB->numRows) ||
+      (pSrcA->numRows != pDst->numRows)  ||
+      (pSrcB->numCols != pDst->numCols)    )
+    {
+        /* Set status as ARM_MATH_SIZE_MISMATCH */
+        status = ARM_MATH_SIZE_MISMATCH;
+    }
+    else
+#endif
+    {
+        /* small squared matrix specialized routines */
+        if (numRowsA == numColsB && numColsB == numColsA) {
+
+            if (numRowsA == 1) {
+                q63_t           sum;
+                sum = pInA[0] * pInB[0];
+                pDst->pData[0] = (q15_t) __SSAT((sum >> 15), 16);
+                return (ARM_MATH_SUCCESS);
+            } else if (numRowsA == 2)
+                return arm_mat_mult_q15_2x2_mve(pSrcA, pSrcB, pDst);
+            else if (numRowsA == 3)
+                return arm_mat_mult_q15_3x3_mve(pSrcA, pSrcB, pDst);
+            else if (numRowsA == 4)
+                return arm_mat_mult_q15_4x4_mve(pSrcA, pSrcB, pDst);
+        }
+
+        /*
+         * Matrix transpose
+         */
+
+        BT.numRows = numColsB;
+        BT.numCols = numRowsB;
+        BT.pData = pSrcBT;
+
+        arm_mat_trans_q15(pSrcB, &BT);
+
+
+        /*
+         * Reset the variables for the usage in the following multiplication process
+         */
+        i = 0;
+        row = numRowsA >> 1;
+        px = pDst->pData;
+        px2 = px + numColsB;
+
+        /*
+         * The following loop performs the dot-product of each row in pSrcA with each column in pSrcB
+         */
+
+        /*
+         * row loop
+         */
+        while (row > 0u) {
+            /*
+             * For every row wise process, the column loop counter is to be initiated
+             */
+            col = numColsB >> 1;
+            /*
+             * For every row wise process, the pIn2 pointer is set
+             * to the starting address of the transposed pSrcB data
+             */
+            pInB = pSrcBT;
+            pInB2 = pInB + numRowsB;
+            j = 0;
+
+            /*
+             * column loop
+             */
+            while (col > 0u) {
+                q15_t const    *pSrcAVec, *pSrcBVec, *pSrcA2Vec, *pSrcB2Vec;
+                q15x8_t         vecA, vecA2, vecB, vecB2;
+                q63_t           acc0, acc1, acc2, acc3;
+
+                /*
+                 * Initiate the pointer pIn1 to point to the starting address of the column being processed
+                 */
+                pInA = pSrcA->pData + i;
+                pInA2 = pInA + numColsA;
+                pInB = pSrcBT + j;
+                pInB2 = pInB + numRowsB;
+
+
+                pSrcAVec = (q15_t const *) pInA;
+                pSrcA2Vec = (q15_t const *) pInA2;
+                pSrcBVec = (q15_t const *) pInB;
+                pSrcB2Vec = (q15_t const *) pInB2;
+
+                acc0 = 0LL;
+                acc1 = 0LL;
+                acc2 = 0LL;
+                acc3 = 0LL;
+
+                vecA = vld1q(pSrcAVec);
+                pSrcAVec += 8;
+
+                blkCnt = numColsA / 8;
+                while (blkCnt > 0U) {
+                    vecB = vld1q(pSrcBVec);
+                    pSrcBVec += 8;
+                    acc0 = vmlaldavaq(acc0, vecA, vecB);
+                    vecA2 = vld1q(pSrcA2Vec);
+                    pSrcA2Vec += 8;
+                    acc1 = vmlaldavaq(acc1, vecA2, vecB);
+                    vecB2 = vld1q(pSrcB2Vec);
+                    pSrcB2Vec += 8;
+                    acc2 = vmlaldavaq(acc2, vecA, vecB2);
+                    vecA = vld1q(pSrcAVec);
+                    pSrcAVec += 8;
+                    acc3 = vmlaldavaq(acc3, vecA2, vecB2);
+
+                    blkCnt--;
+                }
+                /*
+                 * tail
+                 */
+                blkCnt = numColsA & 7;
+                if (blkCnt > 0U) {
+                    mve_pred16_t    p0 = vctp16q(blkCnt);
+                    vecB = vld1q(pSrcBVec);
+                    acc0 = vmlaldavaq_p(acc0, vecA, vecB, p0);
+                    vecA2 = vld1q(pSrcA2Vec);
+                    acc1 = vmlaldavaq_p(acc1, vecA2, vecB, p0);
+                    vecB2 = vld1q(pSrcB2Vec);
+                    acc2 = vmlaldavaq_p(acc2, vecA, vecB2, p0);
+                    vecA = vld1q(pSrcAVec);
+                    acc3 = vmlaldavaq_p(acc3, vecA2, vecB2, p0);
+                }
+
+                *px++ = (q15_t) MVE_ASRL_SAT16(acc0, 15);
+                *px++ = (q15_t) MVE_ASRL_SAT16(acc2, 15);
+                *px2++ = (q15_t) MVE_ASRL_SAT16(acc1, 15);
+                *px2++ = (q15_t) MVE_ASRL_SAT16(acc3, 15);
+                j += numRowsB * 2;
+                /*
+                 * Decrement the column loop counter
+                 */
+                col--;
+
+            }
+
+            i = i + numColsA * 2;
+            px = px2 + (numColsB & 1u);
+            px2 = px + numColsB;
+            /*
+             * Decrement the row loop counter
+             */
+            row--;
+        }
+
+        /*
+         * Compute remaining row and/or column below
+         */
+
+        if (numColsB & 1u) {
+            row = numRowsA & (~0x1);    //avoid redundant computation
+            px = pDst->pData + numColsB - 1;
+            i = 0;
+
+            /*
+             * row loop
+             */
+            while (row > 0) {
+                q15_t const    *pSrcAVec, *pSrcBVec;
+                q15x8_t         vecA, vecB;
+                q63_t           acc0;
+
+                /*
+                 * point to last column in matrix B
+                 */
+                pInB = pSrcBT + numRowsB * (numColsB - 1);
+                pInA = pSrcA->pData + i;
+
+                pSrcAVec = (q15_t const *) pInA;
+                pSrcBVec = (q15_t const *) pInB;
+
+                acc0 = 0LL;
+                blkCnt = (numColsA) / 8;
+                while (blkCnt > 0U) {
+                    vecA = vld1q(pSrcAVec);
+                    pSrcAVec += 8;
+                    vecB = vld1q(pSrcBVec);
+                    pSrcBVec += 8;
+                    acc0 = vmlaldavaq(acc0, vecA, vecB);
+
+                    blkCnt--;
+                }
+                /*
+                 * tail
+                 */
+                blkCnt = (numColsA & 7);
+                if (blkCnt > 0U) {
+                    mve_pred16_t    p0 = vctp16q(blkCnt);
+                    vecA = vld1q(pSrcAVec);
+                    vecB = vld1q(pSrcBVec);
+                    acc0 = vmlaldavaq_p(acc0, vecA, vecB, p0);
+                }
+
+                *px = (q15_t) MVE_ASRL_SAT16(acc0, 15);
+
+                px += numColsB;
+
+                i += numColsA;
+                /*
+                 * Decrement the row loop counter
+                 */
+                row--;
+            }
+        }
+
+        if (numRowsA & 1u) {
+            col = numColsB;
+            i = 0u;
+            /*
+             * point to last row in output matrix
+             */
+            px = pDst->pData + (numColsB) * (numRowsA - 1);
+            /*
+             * col loop
+             */
+            while (col > 0) {
+                q15_t const    *pSrcAVec, *pSrcBVec;
+                q15x8_t         vecA, vecB;
+                q63_t           acc0;
+
+                /*
+                 * point to last row in matrix A
+                 */
+                pInA = pSrcA->pData + (numRowsA - 1) * numColsA;
+                pInB = pSrcBT + i;
+
+                /*
+                 * Set the variable sum, that acts as accumulator, to zero
+                 */
+                pSrcAVec = (q15_t const *) pInA;
+                pSrcBVec = (q15_t const *) pInB;
+                acc0 = 0LL;
+
+                blkCnt = ((numColsA) / 8);
+                while (blkCnt > 0U) {
+                    vecA = vld1q(pSrcAVec);
+                    pSrcAVec += 8;
+                    vecB = vld1q(pSrcBVec);
+                    pSrcBVec += 8;
+                    acc0 = vmlaldavaq(acc0, vecA, vecB);
+
+                    blkCnt--;
+                }
+                /*
+                 * tail
+                 */
+                blkCnt = (numColsA & 7);
+                if (blkCnt > 0U) {
+                    mve_pred16_t    p0 = vctp16q(blkCnt);
+                    vecA = vld1q(pSrcAVec);
+                    vecB = vld1q(pSrcBVec);
+                    acc0 = vmlaldavaq_p(acc0, vecA, vecB, p0);
+                }
+
+                *px++ = (q15_t) MVE_ASRL_SAT16(acc0, 15);
+
+                i += numColsA;
+
+                /*
+                 * Decrement the col loop counter
+                 */
+                col--;
+            }
+        }
+
+        /* Set status as ARM_MATH_SUCCESS */
+        status = ARM_MATH_SUCCESS;
+    }
+    /* Return to application */
+    return (status);
+}
+
+#else 
 arm_status arm_mat_mult_q15(
   const arm_matrix_instance_q15 * pSrcA,
   const arm_matrix_instance_q15 * pSrcB,
@@ -75,12 +635,12 @@ arm_status arm_mat_mult_q15(
         uint16_t numRowsA = pSrcA->numRows;            /* Number of rows of input matrix A */
         uint16_t numColsB = pSrcB->numCols;            /* Number of columns of input matrix B */
         uint16_t numColsA = pSrcA->numCols;            /* Number of columns of input matrix A */
-        uint16_t numRowsB = pSrcB->numRows;            /* Number of rows of input matrix A */
+        uint16_t numRowsB = pSrcB->numRows;            /* Number of rows of input matrix B */
         uint32_t col, i = 0U, row = numRowsB, colCnt;  /* Loop counters */
         arm_status status;                             /* Status of matrix multiplication */
-        
-        q31_t in;                                      /* Temporary variable to hold the input value */
+
         q31_t inA1, inB1, inA2, inB2;
+        arm_matrix_instance_q15 BT;
 
 #ifdef ARM_MATH_MATRIX_CHECK
 
@@ -95,89 +655,13 @@ arm_status arm_mat_mult_q15(
   else
 
 #endif /* #ifdef ARM_MATH_MATRIX_CHECK */
-
   {
-    /* Matrix transpose */
-    do
-    {
-      /* The pointer px is set to starting address of column being processed */
-      px = pSrcBT + i;
 
-      /* Apply loop unrolling and exchange columns with row elements */
-      col = numColsB >> 2U;
+    BT.numRows = numColsB;
+    BT.numCols = numRowsB;
+    BT.pData = pSrcBT;
 
-      /* First part of the processing with loop unrolling.  Compute 4 outputs at a time.
-       ** a second loop below computes the remaining 1 to 3 samples. */
-      while (col > 0U)
-      {
-        /* Read two elements from row */
-        in = read_q15x2_ia ((q15_t **) &pInB);
-
-        /* Unpack and store one element in destination */
-#ifndef ARM_MATH_BIG_ENDIAN
-        *px = (q15_t) in;
-#else
-        *px = (q15_t) ((in & (q31_t) 0xffff0000) >> 16);
-#endif /* #ifndef ARM_MATH_BIG_ENDIAN */
-
-        /* Update pointer px to point to next row of transposed matrix */
-        px += numRowsB;
-
-        /* Unpack and store second element in destination */
-#ifndef ARM_MATH_BIG_ENDIAN
-        *px = (q15_t) ((in & (q31_t) 0xffff0000) >> 16);
-#else
-        *px = (q15_t) in;
-#endif /* #ifndef ARM_MATH_BIG_ENDIAN */
-
-        /* Update pointer px to point to next row of transposed matrix */
-        px += numRowsB;
-
-        /* Read two elements from row */
-        in = read_q15x2_ia ((q15_t **) &pInB);
-
-        /* Unpack and store one element in destination */
-#ifndef ARM_MATH_BIG_ENDIAN
-        *px = (q15_t) in;
-#else
-        *px = (q15_t) ((in & (q31_t) 0xffff0000) >> 16);
-#endif /* #ifndef ARM_MATH_BIG_ENDIAN */
-        px += numRowsB;
-
-#ifndef ARM_MATH_BIG_ENDIAN
-        *px = (q15_t) ((in & (q31_t) 0xffff0000) >> 16);
-#else
-        *px = (q15_t) in;
-#endif /* #ifndef ARM_MATH_BIG_ENDIAN */
-        px += numRowsB;
-
-        /* Decrement column loop counter */
-        col--;
-      }
-
-      /* If the columns of pSrcB is not a multiple of 4, compute any remaining output samples here.
-       ** No loop unrolling is used. */
-      col = numColsB % 0x4U;
-
-      while (col > 0U)
-      {
-        /* Read and store input element in destination */
-        *px = *pInB++;
-
-        /* Update pointer px to point to next row of transposed matrix */
-        px += numRowsB;
-
-        /* Decrement column loop counter */
-        col--;
-      }
-
-      i++;
-
-      /* Decrement row loop counter */
-      row--;
-
-    } while (row > 0U);
-
+    arm_mat_trans_q15(pSrcB,&BT);
     /* Reset variables for usage in following multiplication process */
     row = numRowsA;
     i = 0U;
@@ -211,13 +695,13 @@ arm_status arm_mat_mult_q15(
           /* c(m,n) = a(1,1) * b(1,1) + a(1,2) * b(2,1) + .... + a(m,p) * b(p,n) */
 
           /* read real and imag values from pSrcA and pSrcB buffer */
-          inA1 = read_q15x2_ia ((q15_t **) &pInA);
-          inB1 = read_q15x2_ia ((q15_t **) &pInB);
+          inA1 = read_q15x2_ia (&pInA);
+          inB1 = read_q15x2_ia (&pInB);
 
-          inA2 = read_q15x2_ia ((q15_t **) &pInA);
-          inB2 = read_q15x2_ia ((q15_t **) &pInB);
+          inA2 = read_q15x2_ia (&pInA);
+          inB2 = read_q15x2_ia (&pInB);
 
-          /* Multiply and Accumlates */
+          /* Multiply and Accumulates */
           sum = __SMLALD(inA1, inB1, sum);
           sum = __SMLALD(inA2, inB2, sum);
 
@@ -266,6 +750,7 @@ arm_status arm_mat_mult_q15(
         uint16_t numRowsA = pSrcA->numRows;            /* Number of rows of input matrix A    */
         uint32_t col, i = 0U, row = numRowsA, colCnt;  /* Loop counters */
         arm_status status;                             /* Status of matrix multiplication */
+        (void)pState;
 
 #ifdef ARM_MATH_MATRIX_CHECK
 
@@ -351,6 +836,7 @@ arm_status arm_mat_mult_q15(
   /* Return to application */
   return (status);
 }
+#endif /* defined(ARM_MATH_MVEI) */
 
 /**
   @} end of MatrixMult group

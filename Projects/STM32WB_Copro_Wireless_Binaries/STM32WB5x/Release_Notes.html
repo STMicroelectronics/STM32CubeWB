@@ -11,7 +11,7 @@
       span.underline{text-decoration: underline;}
       div.column{display: inline-block; vertical-align: top; width: 50%;}
   </style>
-  <link rel="stylesheet" href="./../../../_htmresc/mini-st_2020.css" />
+  <link rel="stylesheet" href="../../../_htmresc/mini-st_2020.css" />
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
@@ -35,6 +35,7 @@
 <ul>
 <li><a href="http://www.st.com/st-web-ui/static/active/en/resource/technical/document/application_note/dm00513965.pdf">AN5185</a> : ST FW upgrade services for STM32WB</li>
 <li><a href="https://www.st.com/resource/en/user_manual/dm00403500-stm32cubeprogrammer-software-description-stmicroelectronics.pdf">UM2237</a> : STM32CubeProgrammer User Manual</li>
+<li><a href="https://wiki.st.com/stm32mcu/wiki/Connectivity:STM32WB_FUS">Wiki page</a> : An STMicroelectronics wiki page concerning FUS is available for additional detailed information</li>
 </ul>
 <p>Please refer to document « STM32WB Bluetooth LE and 802.15.4 Certifications » providing information details on available QDIDs BLE certification and related STM32WB5x products at: <a href="https://www.st.com/en/microcontrollers-microprocessors/stm32wb50cg.html#documentation">certification_stm32wb50cg</a>; <a href="https://www.st.com/en/microcontrollers-microprocessors/stm32wb55cc.html#documentation">certification_stm32wb55cc</a>; <a href="https://www.st.com/en/microcontrollers-microprocessors/stm32wb55ce.html#documentation">certification_stm32wb55ce</a>; <a href="https://www.st.com/en/microcontrollers-microprocessors/stm32wb55cg.html#documentation">certification_stm32wb55rg</a>; <a href="https://www.st.com/en/microcontrollers-microprocessors/stm32wb55rc.html#documentation">certification_stm32wb55rc</a>; <a href="https://www.st.com/en/microcontrollers-microprocessors/stm32wb55re.html#documentation">certification_stm32wb55re</a>; <a href="https://www.st.com/en/microcontrollers-microprocessors/stm32wb55rg.html#documentation">certification_stm32wb55rg</a>; <a href="https://www.st.com/en/microcontrollers-microprocessors/stm32wb55vc.html#documentation">certification_stm32wb55vc</a>; <a href="https://www.st.com/en/microcontrollers-microprocessors/stm32wb55ve.html#documentation">certification_stm32wb55ve</a>; <a href="https://www.st.com/en/microcontrollers-microprocessors/stm32wb55vg.html#documentation">certification_stm32wb55vg</a>; <a href="https://www.st.com/en/microcontrollers-microprocessors/stm32wb55vy.html#documentation">certification_stm32wb55vy</a>; <a href="https://www.st.com/en/microcontrollers-microprocessors/stm32wb5mmg.html#documentation">certification_stm32wb5mmg</a>;</p>
 <p>Here is the list of the supported binaries:</p>
@@ -257,7 +258,7 @@
 <ul>
 <li>When option bytes are corrupted, the STM32WB hardware forces the boot to safeboot whatever the running firmware.</li>
 <li>The Safeboot performs a factory reset (on FUS versions V1.1.0 and higher) which means the wireless stack is removed if any and the Cortex®-M4 code is erased and boot is reset to FUS (virgin part state).</li>
-<li>This operation is also not reversible. In order to activate the Safeboot, the user must activate Cortex®-M0+ by writing the value 0x00008000 at the address 0x5800040C using the SWD interface.</li>
+<li>This operation is also not reversible. In order to activate the Safeboot, the user must activate Cortex®-M0+ by writing the value 0x00008000 at the address 0x5800040C (C2BOOT) using the SWD interface.</li>
 <li>Please note that if a part has FUS version strictly lower than V1.1.0 and gets option bytes corruption case, then, no recovery is possible.</li>
 </ul></li>
 </ul></li>
@@ -269,7 +270,7 @@
 <ul>
 <li>When option bytes are corrupted, the STM32WB hardware forces the boot to safeboot whatever the running firmware.</li>
 <li>The Safeboot performs a factory reset which means the wireless stack is removed if any and the Cortex®-M4 code is erased and boot is reset to FUS (virgin part state).</li>
-<li>This operation is also not reversible. In order to activate the Safeboot, the user must activate Cortex®-M0+ by writing the value 0x00008000 at the address 0x5800040C using the SWD interface.</li>
+<li>This operation is also not reversible. In order to activate the Safeboot, the user must activate Cortex®-M0+ by writing the value 0x00008000 at the address 0x5800040C (C2BOOT) using the SWD interface.</li>
 </ul></li>
 </ul></li>
 </ul>
@@ -358,8 +359,7 @@
 <li><p>STEP 3: select “Start FUS” in Firmware Upgrade Services</p></li>
 <li><p>STEP 4: Read and upgrade FUS Version</p>
 <ul>
-<li>it can been obtained selecting “Read FUS infos” <mark style="background-color: red;"><strong>(cf Warning above)</strong></mark><br />
-please follow <strong>incremental steps</strong> to upgrade FUS version.
+<li>it can been obtained selecting “Read FUS infos” please follow <strong>incremental steps</strong> to upgrade FUS version.
 <ul>
 <li><em>00050300</em>: FUSv0.5.3 =&gt; <strong>Must be updated first to FUSv1.2.0 using STEP 5.</strong></li>
 <li><em>010X0Y00</em>: FUSv1.<strong>x</strong>.y =&gt; <strong>Must be updated first to FUSv1.2.0 using STEP 6 (when x &lt; 2).</strong></li>
@@ -484,8 +484,7 @@ please follow <strong>incremental steps</strong> to upgrade FUS version.
 <ul>
 <li><em>STM32_Programmer_CLI.exe -c port=swd -startfus</em></li>
 </ul></li>
-<li>STEP 4: Read and upgrade FUS Version <mark style="background-color: red;"><strong>(cf Warning above)</strong></mark><br />
-Please follow <strong>incremental steps</strong> to upgrade FUS version.
+<li>STEP 4: Read and upgrade FUS Version Please follow <strong>incremental steps</strong> to upgrade FUS version.
 <ul>
 <li><em>STM32_Programmer_CLI.exe -c port=swd mode=UR -r32 0x20030030 1</em>
 <ul>
@@ -597,9 +596,394 @@ Please follow <strong>incremental steps</strong> to upgrade FUS version.
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section39" checked aria-hidden="true"> <label for="collapse-section39" aria-hidden="false">V1.24.0 / 23-October-2025</label>
+<input type="checkbox" id="collapse-section40" checked aria-hidden="true"> <label for="collapse-section40" aria-hidden="false">V1.25.0 / 23-October-2026</label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
+<p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
+<ul>
+<li>General:
+<ul>
+<li>SLA0044 Legal terms updated to latest revision (Rev 6 / October 2025)</li>
+</ul></li>
+<li>BLE:
+<ul>
+<li>Update to the Bluetooth® Core Specification v6.3 and Bluetooth® TCRL pkg104.</li>
+<li>SWCU1-13324: As stated in Core Erratum 26770, Passkey Entry in Legacy Pairing is now considered as unauthenticated. This change is now effective whatever the core version.</li>
+<li>SWCU1-13661 : The memory issue induced by the deletion of a GATT characteristic including CCCD field has been fixed</li>
+<li>SWCU1-13679 : The first connection event of a Peripheral channel map update has been fixed.</li>
+<li>SWCU1-13699 : The parameter “IO_Capability” is added to ACI_GAP_PASS_KEY_REQ_EVENT.</li>
+<li>SWCU1-13746 : Issue with Val_Offset parameter of ACI_GATT_SET_DESC_VALUE is fixed.</li>
+<li>SWCU1-13748 : The memory issue induced by the deletion of a GATT service including other services has been fixed.</li>
+<li>SWCU1-13755 : The GATT caching feature is now available in all BLE stack variants.</li>
+<li>SWCU1-13760 : The command ACI_GATT_READ_MULTIPLE_VAR_CHAR_VALUE is now also available in “Basic Features” variant.</li>
+<li>SWCU1-13776 : Added mode in ACI_GAP_ADD_DEVICES_TO_LIST to configure Filter Accept List or resolving list from bonded devices. ACI_GAP_CONFIGURE_FILTER_ACCEPT_LIST is now deprecated.</li>
+<li>SWCU1-13826 : The “Authenticated Signed Writes” feature has been removed from BLE stack.</li>
+<li>SWCU1-13834 : The commands ACI_GAP_START_OBSERVATION_PROC, ACI_GAP_START_LIMITED_DISCOVERY_PROC, ACI_GAP_START_GENERAL_DISCOVERY_PROC, ACI_GAP_START_GENERAL_CONNECTION_ESTABLISH_PROC, ACI_GAP_START_SELECTIVE_CONNECTION_ESTABLISH_PROC are noted as deprecated and ACI_GAP_EXT_START_SCAN is removed. These commands are replaced with the new command ACI_GAP_START_SCAN.</li>
+<li>SWCU1-13835 : The commands ACI_GAP_ADDITIONAL_BEACON_START, ACI_GAP_ADDITIONAL_BEACON_STOP and ACI_GAP_ADDITIONAL_BEACON_SET_DATA have been renamed to ACI_HAL_ADDITIONAL_BEACON_START, ACI_HAL_ADDITIONAL_BEACON_STOP and ACI_HAL_ADDITIONAL_BEACON_SET_DATA respectively.</li>
+<li>SWCU1-24456 : The <em>max_coc_mps</em> parameter for BLE stack initialization is now internally limited by the value of the <em>attMtu</em> parameter. Consequently, if connection-oriented channels (CoC) are used, <em>attMtu</em> must be set to at least the value of the <em>max_coc_mps</em> being used.</li>
+<li>SWCU1-24471 : A new event (ACI_GATT_NOTIFICATION_LL_ACK_EVENT) is now generated on the server side when an ATT notification has been acknowledged by the peer device at Link Layer level.</li>
+<li>SWCU1-25034 : The ACI_GATT_STORE_DB command now returns an error if the size of the GATT database exceeds the local memory capacity required to perform the storage operation. <em>[STM32WB only]</em> In addition, the local memory capacity required to perform the storage operation has been increased from 512 bytes to 672 bytes.</li>
+<li>SWCU1-25105 : Attribute_Val_Length and Attribute_Val of ACI_GATT_PERMIT_WRITE command are no more used by the BLE stack.</li>
+<li>SWCU1-13656 : Fixes BLE connection drops during high-throughput notifications caused by automatic 2M-to-1M PHY switching not being signalled to the host.</li>
+<li>SWCU1-24280 : The default BD address is now set to 0x000000000000.</li>
+</ul></li>
+<li>MAC:
+<ul>
+<li>SWCU1-12934 : Resolves a crash issue in the interrupt handling path observed during OTA stress testing.</li>
+<li>SWCU1-23673: Fixes a crash that was caused due to incorrect MAC Reset confirmation sent to Zigbee</li>
+</ul></li>
+<li>Thread:
+<ul>
+<li>SWCU1-23674 / SWCU1-24187 : Updates the OpenThread stack to the February 2026 commit (SHA-1: b81da07ace250b7d3800928848feaa1fb126fa43).</li>
+<li>SWCU1-13716 : Fixes an M4 halt when calling the OpenThread ipmaddr API to list registered multicast addresses.</li>
+</ul></li>
+<li>Zigbee:
+<ul>
+<li>SWCU1-13836 : Fixes a system NMI when SRAM2 parity is enabled, by correcting SRAM2 initialization in the BLE-Zigbee RFD static firmware.</li>
+</ul></li>
+</ul>
+<p><strong>Firmware Upgrade Services Binary Table</strong>: Provides the install address for the target binary (to be used in the flash procedure “STEP 5/6/7” via USB or via SWD/JTAG) at first install when SFSA = SFSA_PROD; <br> otherwise, it must be adjusted at least as: start_address = max_start_address – SFSA_offset × sector_size with SFSA_offset= SFSA_PROD-SFSA and sector_size = 0x1000 (refer to <a href="https://wiki.st.com/stm32mcu/wiki/Connectivity:STM32WB_FUS">Wiki page</a> : for more details).</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 14%" />
+<col style="width: 5%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>FW Upgrade Services Binary</th>
+<th>STM32WB5xxG(1M)</th>
+<th>STM32WB5xxY(640K)</th>
+<th>STM32WB5xxE(512K)</th>
+<th>STM32WB5xxC(256K)</th>
+<th>FUS compatibility</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb5x_FUS_fw_for_fus_0_5_3.bin</td>
+<td>0x080<strong>EC</strong>000</td>
+<td>0x080<strong>9A</strong>000</td>
+<td>0x080<strong>7A</strong>000</td>
+<td>0x080<strong>3A</strong>000</td>
+<td>-</td>
+<td>V1.0.0<span class="icon-st-unchanged"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_FUS_fw_1_2_0.bin</td>
+<td>0x080<strong>EC</strong>000</td>
+<td>0x080<strong>9A</strong>000</td>
+<td>0x080<strong>7A</strong>000</td>
+<td>0x080<strong>3A</strong>000</td>
+<td>-</td>
+<td>V1.2.0<span class="icon-st-unchanged"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_FUS_fw.bin</td>
+<td>0x080<strong>EE</strong>000</td>
+<td>0x080<strong>9A</strong>000</td>
+<td>0x080<strong>7A</strong>000</td>
+<td>0x080<strong>3A</strong>000</td>
+<td>-</td>
+<td>V2.2.0<span class="icon-st-unchanged"></span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Wireless Coprocessor Binary Table</strong>: Provides Install address for the targeted binary to be used in flash procedure “STEP 7” via USB or via SWD/JTAG.</p>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 12%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+<col style="width: 13%" />
+<col style="width: 12%" />
+<col style="width: 4%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Wireless Coprocessor Binary</th>
+<th>STM32WB5xxG(1M)</th>
+<th>STM32WB5xxY(640k)</th>
+<th>STM32WB5xxE(512K)</th>
+<th>STM32WB5xxC(256K)</th>
+<th>FUS compatibility</th>
+<th>version</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb5x_BLE_HCILayer_extended_fw.bin</td>
+<td>0x080DB000</td>
+<td>0x08087000</td>
+<td>0x08067000</td>
+<td>0x08027000</td>
+<td>-</td>
+<td>V1.25.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_BLE_HCILayer_fw.bin</td>
+<td>0x080E1000</td>
+<td>0x0808D000</td>
+<td>0x0806D000</td>
+<td>0x0802D000</td>
+<td>-</td>
+<td>V1.25.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_BLE_HCI_AdvScan_fw.bin</td>
+<td>0x080EB000</td>
+<td>0x08097000</td>
+<td>0x08077000</td>
+<td>0x08037000</td>
+<td>-</td>
+<td>V1.25.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_BLE_LLD_fw.bin</td>
+<td>0x080EC000</td>
+<td>0x08098000</td>
+<td>0x08078000</td>
+<td>0x08038000</td>
+<td>-</td>
+<td>V1.18.0<span class="icon-st-unchanged"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_BLE_Mac_802_15_4_fw.bin</td>
+<td>0x080C0000</td>
+<td>0x0806C000</td>
+<td>0x0804C000</td>
+<td>0x0800C000</td>
+<td>FUS_v2 only</td>
+<td>V1.25.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_BLE_Stack_full_extended_fw.bin</td>
+<td>0x080C8000</td>
+<td>0x08074000</td>
+<td>0x08054000</td>
+<td>0x08014000</td>
+<td>FUS_v2 only</td>
+<td>V1.25.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_BLE_Stack_full_fw.bin</td>
+<td>0x080D0000</td>
+<td>0x0807C000</td>
+<td>0x0805C000</td>
+<td>0x0801C000</td>
+<td>FUS_v2 only</td>
+<td>V1.25.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_BLE_Stack_light_fw.bin</td>
+<td>0x080D7000</td>
+<td>0x08083000</td>
+<td>0x08063000</td>
+<td>0x08023000</td>
+<td>FUS_v2 only</td>
+<td>V1.25.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_BLE_Thread_dynamic_fw.bin</td>
+<td>0x08068000</td>
+<td>0x08014000</td>
+<td>NA</td>
+<td>NA</td>
+<td>FUS_v2 only</td>
+<td>V1.25.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_BLE_Thread_static_fw.bin</td>
+<td>0x0806B000</td>
+<td>0x08017000</td>
+<td>NA</td>
+<td>NA</td>
+<td>FUS_v2 only</td>
+<td>V1.25.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_BLE_Zigbee_FFD_dynamic_fw.bin</td>
+<td>0x0807D000</td>
+<td>0x08029000</td>
+<td>0x08009000</td>
+<td>NA</td>
+<td>FUS_v2 only</td>
+<td>V1.25.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_BLE_Zigbee_FFD_static_fw.bin</td>
+<td>0x0807F000</td>
+<td>0x0802B000</td>
+<td>0x0800B000</td>
+<td>NA</td>
+<td>FUS_v2 only</td>
+<td>V1.25.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_BLE_Zigbee_RFD_dynamic_fw.bin</td>
+<td>0x0808C000</td>
+<td>0x08038000</td>
+<td>0x08018000</td>
+<td>NA</td>
+<td>FUS_v2 only</td>
+<td>V1.25.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_BLE_Zigbee_RFD_static_fw.bin</td>
+<td>0x0808E000</td>
+<td>0x0803A000</td>
+<td>0x0801A000</td>
+<td>NA</td>
+<td>FUS_v2 only</td>
+<td>V1.25.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_Mac_802_15_4_fw.bin</td>
+<td>0x080E1000</td>
+<td>0x0808D000</td>
+<td>0x0806D000</td>
+<td>0x0802D000</td>
+<td>-</td>
+<td>V1.25.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_Phy_802_15_4_fw.bin</td>
+<td>0x080DD000</td>
+<td>0x08089000</td>
+<td>0x08069000</td>
+<td>0x08029000</td>
+<td>-</td>
+<td>V1.25.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_Thread_FTD_fw.bin</td>
+<td>0x0808B000</td>
+<td>0x08037000</td>
+<td>0x08017000</td>
+<td>NA</td>
+<td>-</td>
+<td>V1.25.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_Thread_MTD_fw.bin</td>
+<td>0x0809F000</td>
+<td>0x0804B000</td>
+<td>0x0802B000</td>
+<td>NA</td>
+<td>-</td>
+<td>V1.25.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_Thread_RCP_fw.bin</td>
+<td>0x080DF000</td>
+<td>0x0808B000</td>
+<td>0x0806B000</td>
+<td>0x0802B000</td>
+<td>-</td>
+<td>V1.25.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_Zigbee_FFD_fw.bin</td>
+<td>0x0809F000</td>
+<td>0x0804B000</td>
+<td>0x0802B000</td>
+<td>NA</td>
+<td>-</td>
+<td>V1.25.0<span class="icon-st-update"></span></td>
+</tr>
+<tr class="odd">
+<td>stm32wb5x_Zigbee_RFD_fw.bin</td>
+<td>0x080AE000</td>
+<td>0x0805A000</td>
+<td>0x0803A000</td>
+<td>NA</td>
+<td>-</td>
+<td>V1.25.0<span class="icon-st-update"></span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Firmware Safeboot Binary Table</strong>: Provides the install address for the target binary (to be used in the flash procedure “STEP 5/6/7” via USB or via SWD/JTAG) at first install when SFSA = SFSA_PROD; <br> otherwise, it must be adjusted at least as: start_address = max_start_address – SFSA_offset × sector_size with SFSA_offset= SFSA_PROD-SFSA and sector_size = 0x1000 (refer to <a href="https://wiki.st.com/stm32mcu/wiki/Connectivity:STM32WB_FUS">Wiki page</a> : for more details).</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 27%" />
+<col style="width: 12%" />
+<col style="width: 12%" />
+<col style="width: 12%" />
+<col style="width: 12%" />
+<col style="width: 15%" />
+<col style="width: 5%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Firmware Safeboot Binary</th>
+<th>STM32WB5xxG(1M)</th>
+<th>STM32WB5xxY(640k)</th>
+<th>STM32WB5xxE(512K)</th>
+<th>STM32WB5xxC(256K)</th>
+<th>FUS compatibility</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>stm32wb5x_Safeboot_fw_2_0_0.bin</td>
+<td>0x080<strong>F2</strong>000</td>
+<td>0x080<strong>9E</strong>000</td>
+<td>0x080<strong>7E</strong>000</td>
+<td>0x080<strong>3E</strong>000</td>
+<td>-</td>
+<td>V2.0.0<span class="icon-st-unchanged"></span></td>
+</tr>
+<tr class="even">
+<td>stm32wb5x_Safeboot_fw.bin</td>
+<td>0x080<strong>F2</strong>000</td>
+<td>0x080<strong>9E</strong>000</td>
+<td>0x080<strong>7E</strong>000</td>
+<td>0x080<strong>3E</strong>000</td>
+<td>FUSv2 only</td>
+<td>V2.0.1<span class="icon-st-unchanged"></span></td>
+</tr>
+</tbody>
+</table>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 18%" />
+<col style="width: 18%" />
+<col style="width: 18%" />
+<col style="width: 18%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>FW Upgrade Services</th>
+<th>STM32WB5xxG(1M)</th>
+<th>STM32WB5xxY(640K)</th>
+<th>STM32WB5xxE(512K)</th>
+<th>STM32WB5xxC(256K)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>SFSA_PROD</td>
+<td>0xF4</td>
+<td>0xA0</td>
+<td>0x080</td>
+<td>0x40</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section39" aria-hidden="true"> <label for="collapse-section39" aria-hidden="false">V1.24.0 / 23-October-2025</label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>General:
@@ -953,7 +1337,7 @@ Please follow <strong>incremental steps</strong> to upgrade FUS version.
 <div class="collapse">
 <input type="checkbox" id="collapse-section38" aria-hidden="true"> <label for="collapse-section38" aria-hidden="false">V1.23.0 / 02-June-2025</label>
 <div>
-<h2 id="main-changes-1">Main Changes</h2>
+<h2 id="main-changes-2">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>FUS:
@@ -1318,7 +1702,7 @@ Please follow <strong>incremental steps</strong> to upgrade FUS version.
 <div class="collapse">
 <input type="checkbox" id="collapse-section37" aria-hidden="true"> <label for="collapse-section37" aria-hidden="false">V1.22.1 / 14-March-2025</label>
 <div>
-<h2 id="main-changes-2">Main Changes</h2>
+<h2 id="main-changes-3">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>FUS:
@@ -1649,7 +2033,7 @@ Please follow <strong>incremental steps</strong> to upgrade FUS version.
 <div class="collapse">
 <input type="checkbox" id="collapse-section36" aria-hidden="true"> <label for="collapse-section36" aria-hidden="false">V1.22.0 / 03-Feb-2025</label>
 <div>
-<h2 id="main-changes-3">Main Changes</h2>
+<h2 id="main-changes-4">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -1953,7 +2337,7 @@ Please follow <strong>incremental steps</strong> to upgrade FUS version.
 <div class="collapse">
 <input type="checkbox" id="collapse-section35" aria-hidden="true"> <label for="collapse-section35" aria-hidden="false">V1.21.0 / 30-Oct-2024</label>
 <div>
-<h2 id="main-changes-4">Main Changes</h2>
+<h2 id="main-changes-5">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -2258,7 +2642,7 @@ Please follow <strong>incremental steps</strong> to upgrade FUS version.
 <div class="collapse">
 <input type="checkbox" id="collapse-section34" aria-hidden="true"> <label for="collapse-section34" aria-hidden="false">V1.20.0 / 03-June-2024</label>
 <div>
-<h2 id="main-changes-5">Main Changes</h2>
+<h2 id="main-changes-6">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -2570,7 +2954,7 @@ Please follow <strong>incremental steps</strong> to upgrade FUS version.
 <div class="collapse">
 <input type="checkbox" id="collapse-section33" aria-hidden="true"> <label for="collapse-section33" aria-hidden="false">V1.19.1 / 5-Apr-2024</label>
 <div>
-<h2 id="main-changes-6">Main Changes</h2>
+<h2 id="main-changes-7">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -2850,7 +3234,7 @@ Please follow <strong>incremental steps</strong> to upgrade FUS version.
 <div class="collapse">
 <input type="checkbox" id="collapse-section31" aria-hidden="true"> <label for="collapse-section31" aria-hidden="false">V1.19.0 / 7-Feb-2024</label>
 <div>
-<h2 id="main-changes-7">Main Changes</h2>
+<h2 id="main-changes-8">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -3158,7 +3542,7 @@ Please follow <strong>incremental steps</strong> to upgrade FUS version.
 <div class="collapse">
 <input type="checkbox" id="collapse-section30" aria-hidden="true"> <label for="collapse-section30" aria-hidden="false">V1.18.0 / 30-Oct-2023</label>
 <div>
-<h2 id="main-changes-8">Main Changes</h2>
+<h2 id="main-changes-9">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -3446,7 +3830,7 @@ Please follow <strong>incremental steps</strong> to upgrade FUS version.
 <div class="collapse">
 <input type="checkbox" id="collapse-section29" aria-hidden="true"> <label for="collapse-section29" aria-hidden="false">V1.17.3 / 08-Sep-2023</label>
 <div>
-<h2 id="main-changes-9">Main Changes</h2>
+<h2 id="main-changes-10">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -3720,7 +4104,7 @@ Please follow <strong>incremental steps</strong> to upgrade FUS version.
 <div class="collapse">
 <input type="checkbox" id="collapse-section28" aria-hidden="true"> <label for="collapse-section28" aria-hidden="false">V1.17.2 / 07-Aug-2023</label>
 <div>
-<h2 id="main-changes-10">Main Changes</h2>
+<h2 id="main-changes-11">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -3994,7 +4378,7 @@ Please follow <strong>incremental steps</strong> to upgrade FUS version.
 <div class="collapse">
 <input type="checkbox" id="collapse-section27" aria-hidden="true"> <label for="collapse-section27" aria-hidden="false">V1.17.1 / 24-July-2023</label>
 <div>
-<h2 id="main-changes-11">Main Changes</h2>
+<h2 id="main-changes-12">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>CKS:
@@ -4291,7 +4675,7 @@ Please follow <strong>incremental steps</strong> to upgrade FUS version.
 <div class="collapse">
 <input type="checkbox" id="collapse-section26" aria-hidden="true"> <label for="collapse-section26" aria-hidden="false">V1.17.0 / 24-May-2023</label>
 <div>
-<h2 id="main-changes-12">Main Changes</h2>
+<h2 id="main-changes-13">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -4630,7 +5014,7 @@ Please follow <strong>incremental steps</strong> to upgrade FUS version.
 <div class="collapse">
 <input type="checkbox" id="collapse-section25" aria-hidden="true"> <label for="collapse-section25" aria-hidden="false">V1.16.0 / 08-February-2023</label>
 <div>
-<h2 id="main-changes-13">Main Changes</h2>
+<h2 id="main-changes-14">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE :
@@ -4935,7 +5319,7 @@ Please follow <strong>incremental steps</strong> to upgrade FUS version.
 <div class="collapse">
 <input type="checkbox" id="collapse-section24" aria-hidden="true"> <label for="collapse-section24" aria-hidden="false">V1.15.0 / 05-Nov-2022</label>
 <div>
-<h2 id="main-changes-14">Main Changes</h2>
+<h2 id="main-changes-15">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE :
@@ -5238,7 +5622,7 @@ Please follow <strong>incremental steps</strong> to upgrade FUS version.
 <div class="collapse">
 <input type="checkbox" id="collapse-section23" aria-hidden="true"> <label for="collapse-section23" aria-hidden="false">V1.14.1 / 29-June-2022</label>
 <div>
-<h2 id="main-changes-15">Main Changes</h2>
+<h2 id="main-changes-16">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -5532,7 +5916,7 @@ Please follow <strong>incremental steps</strong> to upgrade FUS version.
 <div class="collapse">
 <input type="checkbox" id="collapse-section22" aria-hidden="true"> <label for="collapse-section22" aria-hidden="false">V1.14.0 / 06-June-2022</label>
 <div>
-<h2 id="main-changes-16">Main Changes</h2>
+<h2 id="main-changes-17">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -5835,7 +6219,7 @@ Please follow <strong>incremental steps</strong> to upgrade FUS version.
 <div class="collapse">
 <input type="checkbox" id="collapse-section21" aria-hidden="true"> <label for="collapse-section21" aria-hidden="false">V1.13.3 / 17-Mar-2022</label>
 <div>
-<h2 id="main-changes-17">Main Changes</h2>
+<h2 id="main-changes-18">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -6131,7 +6515,7 @@ Please follow <strong>incremental steps</strong> to upgrade FUS version.
 <div class="collapse">
 <input type="checkbox" id="collapse-section20" aria-hidden="true"> <label for="collapse-section20" aria-hidden="false">V1.13.2 / 09-Feb-2022</label>
 <div>
-<h2 id="main-changes-18">Main Changes</h2>
+<h2 id="main-changes-19">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -6431,7 +6815,7 @@ with predefined fixed configuration: ( 3 sets maximum number, 1650 bytes maximum
 <div class="collapse">
 <input type="checkbox" id="collapse-section19" aria-hidden="true"> <label for="collapse-section19" aria-hidden="false">V1.13.1 / 06-Dec-2021</label>
 <div>
-<h2 id="main-changes-19">Main Changes</h2>
+<h2 id="main-changes-20">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE updates:
@@ -6703,7 +7087,7 @@ with predefined fixed configuration: ( 3 sets maximum number, 1650 bytes maximum
 <div class="collapse">
 <input type="checkbox" id="collapse-section18" aria-hidden="true"> <label for="collapse-section18" aria-hidden="false">V1.13.0 / 03-Nov-2021</label>
 <div>
-<h2 id="main-changes-20">Main Changes</h2>
+<h2 id="main-changes-21">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -7008,7 +7392,7 @@ with predefined fixed configuration: ( 3 sets maximum number, 1650 bytes maximum
 <div class="collapse">
 <input type="checkbox" id="collapse-section17" aria-hidden="true"> <label for="collapse-section17" aria-hidden="false">V1.12.1 / 12-July-2021</label>
 <div>
-<h2 id="main-changes-21">Main Changes</h2>
+<h2 id="main-changes-22">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -7243,7 +7627,7 @@ with predefined fixed configuration: ( 3 sets maximum number, 1650 bytes maximum
 <div class="collapse">
 <input type="checkbox" id="collapse-section16" aria-hidden="true"> <label for="collapse-section16" aria-hidden="false">V1.12.0 / 17-June-2021</label>
 <div>
-<h2 id="main-changes-22">Main Changes</h2>
+<h2 id="main-changes-23">Main Changes</h2>
 <ul>
 <li>Thread:
 <ul>
@@ -7508,7 +7892,7 @@ with predefined fixed configuration: ( 3 sets maximum number, 1650 bytes maximum
 <div class="collapse">
 <input type="checkbox" id="collapse-section15" aria-hidden="true"> <label for="collapse-section15" aria-hidden="false">V1.11.1 / 23-March-2021</label>
 <div>
-<h2 id="main-changes-23">Main Changes</h2>
+<h2 id="main-changes-24">Main Changes</h2>
 <ul>
 <li>BLE:
 <ul>
@@ -7772,7 +8156,7 @@ with predefined fixed configuration: ( 3 sets maximum number, 1650 bytes maximum
 <div class="collapse">
 <input type="checkbox" id="collapse-section14" aria-hidden="true"> <label for="collapse-section14" aria-hidden="false">V1.11.0 / 5-February-2021</label>
 <div>
-<h2 id="main-changes-24">Main Changes</h2>
+<h2 id="main-changes-25">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>Support of new binary:
@@ -8053,7 +8437,7 @@ with predefined fixed configuration: ( 3 sets maximum number, 1650 bytes maximum
 <div class="collapse">
 <input type="checkbox" id="collapse-section13" aria-hidden="true"> <label for="collapse-section13" aria-hidden="false">V1.10.0 / 26-October-2020</label>
 <div>
-<h2 id="main-changes-25">Main Changes</h2>
+<h2 id="main-changes-26">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -8296,7 +8680,7 @@ with predefined fixed configuration: ( 3 sets maximum number, 1650 bytes maximum
 <div class="collapse">
 <input type="checkbox" id="collapse-section12" aria-hidden="true"> <label for="collapse-section12" aria-hidden="false">V1.9.0 / 21-September-2020</label>
 <div>
-<h2 id="main-changes-26">Main Changes</h2>
+<h2 id="main-changes-27">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>Introducing following new binaries:
@@ -8585,7 +8969,7 @@ with predefined fixed configuration: ( 3 sets maximum number, 1650 bytes maximum
 <div class="collapse">
 <input type="checkbox" id="collapse-section9" aria-hidden="true"> <label for="collapse-section9" aria-hidden="false">V1.8.0 / 19-June-2020</label>
 <div>
-<h2 id="main-changes-27">Main Changes</h2>
+<h2 id="main-changes-28">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE:
@@ -8781,7 +9165,7 @@ with predefined fixed configuration: ( 3 sets maximum number, 1650 bytes maximum
 <div class="collapse">
 <input type="checkbox" id="collapse-section8" aria-hidden="true"> <label for="collapse-section8" aria-hidden="false">V1.6.0 / 27-March-2020</label>
 <div>
-<h2 id="main-changes-28">Main Changes</h2>
+<h2 id="main-changes-29">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>MAC:
@@ -8977,7 +9361,7 @@ with predefined fixed configuration: ( 3 sets maximum number, 1650 bytes maximum
 <div class="collapse">
 <input type="checkbox" id="collapse-section7" aria-hidden="true"> <label for="collapse-section7" aria-hidden="false">V1.5.0 / 14-February-2020</label>
 <div>
-<h2 id="main-changes-29">Main Changes</h2>
+<h2 id="main-changes-30">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>FUS:
@@ -9169,7 +9553,7 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <div class="collapse">
 <input type="checkbox" id="collapse-section6" aria-hidden="true"> <label for="collapse-section6" aria-hidden="false">V1.4.0 / 22-November-2019</label>
 <div>
-<h2 id="main-changes-30">Main Changes</h2>
+<h2 id="main-changes-31">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>ZIGBEE :
@@ -9314,7 +9698,7 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <div class="collapse">
 <input type="checkbox" id="collapse-section5" aria-hidden="true"> <label for="collapse-section5" aria-hidden="true">V1.3.0 / 09-September-2019</label>
 <div>
-<h2 id="main-changes-31">Main Changes</h2>
+<h2 id="main-changes-32">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>ZIGBEE :
@@ -9454,7 +9838,7 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <div class="collapse">
 <input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" aria-hidden="true">V1.2.0 / 3rd-July-2019</label>
 <div>
-<h2 id="main-changes-32">Main Changes</h2>
+<h2 id="main-changes-33">Main Changes</h2>
 <p><strong>Associated changes in Wireless Coprocessor Binary</strong>:</p>
 <ul>
 <li>BLE Link layer : fix issues with pairing</li>
@@ -9567,7 +9951,7 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <div class="collapse">
 <input type="checkbox" id="collapse-section3"  aria-hidden="true"> <label for="collapse-section3" aria-hidden="true">V1.1.1 / 10-May-2019</label>
 <div>
-<h2 id="main-changes-33">Main Changes</h2>
+<h2 id="main-changes-34">Main Changes</h2>
 <p><strong>Associated changes in Firmware Upgrade Services (FUS)</strong>:</p>
 <ul>
 <li>Add support for STM32WB5xE(512K) and STM32WB5xC(256K) devices.</li>
@@ -9673,7 +10057,7 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <div class="collapse">
 <input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" aria-hidden="true">V1.1.0 / 05-April-2019</label>
 <div>
-<h2 id="main-changes-34">Main Changes</h2>
+<h2 id="main-changes-35">Main Changes</h2>
 <p><strong>Introduction of the Firmware Upgrade Services (FUS)</strong>:</p>
 <ul>
 <li>This feature is embedded inside stm32wb5x_FUS_fw.bin.</li>
@@ -9782,7 +10166,7 @@ then #define CFG_BLE_NUM_LINK in app_conf.h shall be updated accordingly.</li>
 <div class="collapse">
 <input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="true">V1.0.0 / 06-February-2019</label>
 <div>
-<h2 id="main-changes-35">Main Changes</h2>
+<h2 id="main-changes-36">Main Changes</h2>
 <h3 id="first-release">First release</h3>
 <p>First official release.</p>
 <p><strong>Binary Install Address and version</strong> : Provides Install address for the targeted binary to be used in “STEP 6” of flash procedure.</p>
